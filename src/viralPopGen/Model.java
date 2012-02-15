@@ -3,10 +3,13 @@ package viralPopGen;
 import java.util.*;
 
 public class Model {
-	
+
+	// Populations in model:
 	ArrayList<Population> populations;
+
+	// Reactions to model:
 	ArrayList<Reaction> reactions;
-	
+
 	/**
 	 * Add population to model.
 	 * 

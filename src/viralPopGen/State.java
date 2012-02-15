@@ -55,10 +55,10 @@ public class State {
 	}
 
 	/**
-	 * Get size of a particular population.
+	 * Get size of a particular sub-population.
 	 * 
-	 * @param name		Name of population.
-	 * @param location	Specific population location.
+	 * @param name		Name of sub-population.
+	 * @param location	Specific sub-population location.
 	 * @return
 	 */
 	public double getSize(String name, int[] location) {
@@ -68,10 +68,10 @@ public class State {
 	}
 
 	/**
-	 * Set size of a particular population.
+	 * Set size of a particular sub-population.
 	 * 
-	 * @param name		Name of population to modify.
-	 * @param location	Specific population location.
+	 * @param name		Name of sub-population to modify.
+	 * @param location	Specific sub-population location.
 	 */
 	public void setSize(String name, int[] location, double value) {
 		
@@ -79,7 +79,7 @@ public class State {
 		popSizes[idx][locToOffset(idx,location)] = value;
 		
 	}
-	
+
 	/**
 	 * Add two states together.
 	 * 

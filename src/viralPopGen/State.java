@@ -10,6 +10,11 @@ public class State {
 	HashMap<String,Integer> popIndex;
 	
 	
+	/**
+	 * Constructor
+	 * 
+	 * @param populations Vararg list of population objects.
+	 */
 	public State (Population ... populations) {
 		
 		this.populations = populations;
@@ -22,7 +27,6 @@ public class State {
 			popIndex.put(populations[i].name, i);
 		}
 		
-		
 	}
 	
 	/**
@@ -31,9 +35,23 @@ public class State {
 	 * @param location Array specification of sub-population.
 	 * @return Offset into popSizes vector.
 	 */
-	private int locToOffset(int[] location) {
+	private int locToOffset(int idx, int[] location) {
+		
+		int offset = 0;
+		int mul = 1;
 
-		return 0;
+		int i;
+		for (i=0; i<populations[idx].seqDims.length; i++) {
+			offset += location[i]*mul;
+			mul *= populations[idx].seqDims[i];
+		}
+
+		for (int j=0; j<populations[idx].otherDims.length; j++) {
+			offset += location[i+j]*mul;
+			mul *= populations[idx].otherDims[j];
+		}
+
+		return offset;
 	}
 
 	/**
@@ -46,7 +64,7 @@ public class State {
 	public double getSize(String name, int[] location) {
 		
 		int idx = popIndex.get(name);
-		return popSizes[idx][locToOffset(location)];
+		return popSizes[idx][locToOffset(idx,location)];
 	}
 
 	/**
@@ -55,7 +73,10 @@ public class State {
 	 * @param name		Name of population to modify.
 	 * @param location	Specific population location.
 	 */
-	public void setSize(String name, int[] location) {
+	public void setSize(String name, int[] location, double value) {
+		
+		int idx = popIndex.get(name);
+		popSizes[idx][locToOffset(idx,location)] = value;
 		
 	}
 	
@@ -67,6 +88,10 @@ public class State {
 	 */
 	public State add(State arg) {
 		
+		for (int p=0; p<populations.length; p++)
+			for (int i=0; i<popSizes[p].length; i++)
+				popSizes[p][i] += arg.popSizes[p][i];
+		
 		return this;
 	}
 	
@@ -77,6 +102,10 @@ public class State {
 	 * @return		Result of multiplication.
 	 */
 	public State mul(int arg) {
+		
+		for (int p=0; p<populations.length; p++)
+			for (int i=0; i<popSizes[p].length; i++)
+				popSizes[p][i] *= arg;
 		
 		return this;
 	}

@@ -6,13 +6,13 @@ package viralPopGen;
  */
 public class Population {
 	
-	String name;
-	
-	int[] seqDims;
-	int[] otherDims;
+	String name;	 // Population name
+
+	int[] seqDims;	 // Sequence space dimensions
+	int[] otherDims; // Other dimensions
 	
 	int subPops;
-	
+
 	public Population(String name, int[] seqDims, int[] otherDims) {
 		super();
 		this.name = name;

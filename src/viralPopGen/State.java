@@ -69,10 +69,10 @@ public class State {
 	 * @param location	Specific sub-population location.
 	 */
 	public void setSize(String name, int[] location, double value) {
-		
+
 		int idx = popIndex.get(name);
 		popSizes[idx][locToOffset(idx,location)] = value;
-		
+
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class State {
 		
 		return this;
 	}
-	
+
 	/**
 	 * Multiply state by an integer.
 	 * 

@@ -1,28 +1,24 @@
 package viralPopGen;
 
-/**
- * @author Tim Vaughan
- *
- */
 public class Population {
 	
 	String name;	 // Population name
 
 	int[] seqDims;	 // Sequence space dimensions
 	int[] otherDims; // Other dimensions
-	
+
 	int[] dims;  // Sequence and other dims together.
-	
+
 	int subPops; // Total number of sub-populations.
 
 	public Population(String name, int[] seqDims, int[] otherDims) {
-		super();
+
 		this.name = name;
 		this.seqDims = seqDims;
 		this.otherDims = otherDims;
-		
+
 		dims = new int[seqDims.length + otherDims.length];
-		
+
 		subPops = 1;
 		int i = 0;
 		for (int d : seqDims) {
@@ -34,7 +30,7 @@ public class Population {
 			subPops *= d;
 		}
 	}
-	
+
 	/**
 	 * Retrieve the total number of sub-populations.
 	 * 

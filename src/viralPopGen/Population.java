@@ -11,7 +11,9 @@ public class Population {
 	int[] seqDims;	 // Sequence space dimensions
 	int[] otherDims; // Other dimensions
 	
-	int subPops;
+	int[] dims;  // Sequence and other dims together.
+	
+	int subPops; // Total number of sub-populations.
 
 	public Population(String name, int[] seqDims, int[] otherDims) {
 		super();
@@ -19,11 +21,18 @@ public class Population {
 		this.seqDims = seqDims;
 		this.otherDims = otherDims;
 		
+		dims = new int[seqDims.length + otherDims.length];
+		
 		subPops = 1;
-		for (int d : seqDims)
+		int i = 0;
+		for (int d : seqDims) {
+			dims[i++] = d;
 			subPops *= d;
-		for (int d : otherDims)
+		}
+		for (int d : otherDims) {
+			dims[i++] = d;
 			subPops *= d;
+		}
 	}
 	
 	/**

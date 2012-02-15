@@ -41,14 +41,9 @@ public class State {
 		int mul = 1;
 
 		int i;
-		for (i=0; i<populations[idx].seqDims.length; i++) {
+		for (i=0; i<populations[idx].dims.length; i++) {
 			offset += location[i]*mul;
-			mul *= populations[idx].seqDims[i];
-		}
-
-		for (int j=0; j<populations[idx].otherDims.length; j++) {
-			offset += location[i+j]*mul;
-			mul *= populations[idx].otherDims[j];
+			mul *= populations[idx].dims[i];
 		}
 
 		return offset;

@@ -60,6 +60,48 @@ public class Ensemble {
 	 * @param argv
 	 */
 	public static void main (String[] argv) {
-
+		
+		/**
+		 *  Simulation parameters:
+		 */
+		
+		double T = 1.0;
+		int Nt = 1001;
+		int Nsamples = 1001;
+		int Ntraj = 1;
+		
+		/**
+		 * Assemble model:
+		 */
+		
+		Model model = new Model();
+		
+		// Define populations:
+		
+		int[] seqDims = {1};
+		int[] otherDims = {1};
+		Population X = new Population("X", seqDims, otherDims);
+		model.addPopulation(X);
+		
+		// Define reactions:
+		
+		// X -> 2X
+		Reaction birth = new Reaction();
+		int[] loc = {0,0};
+		birth.addReactant(X, loc);
+		birth.addProduct(X, loc);
+		birth.addProduct(X, loc);
+		double[] birthRate = {0.1};
+		birth.setRate(birthRate);
+		model.addReaction(birth);
+		
+		// X -> 0
+		Reaction death = new Reaction();
+		death.addReactant(X, loc);
+		death.addProduct(X, loc);
+		double[] deathRate = {0.1};
+		death.setRate(deathRate);
+		model.addReaction(death);
+		
 	}
 }

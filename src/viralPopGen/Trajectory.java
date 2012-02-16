@@ -8,11 +8,20 @@ public class Trajectory {
 	// Initial state:
 	State initState;
 	
+	// Sampled states:
+	State[] states;
+	
 	// Integration time:
 	double T;
 	
-	// Step size:
+	// Number of time steps:
 	int Nt;
+	
+	// Number of samples:
+	int Nsamples;
+	
+	// Model:
+	Model model;
 	
 	// Poissonian RNG:
 	Poisson poissonian;
@@ -33,8 +42,23 @@ public class Trajectory {
 		// Initialise Poissonian RNG:
 		poissonian = new Poisson(1, engine);
 		
-		
-		
 	}
 
+	/**
+	 * Dump trajectory data to stdout. (Mostly for debugging.)
+	 */
+	public void dump() {
+		
+		for (int s=0; s<states.length; s++) {
+			double t = s*T/(Nsamples-1);
+			System.out.print(t);
+			for (int p=0; p<initState.populations.size(); p++) {
+				for (int i=0; i<initState.popSizes[p].length; i++) {
+					System.out.print(" "+states[s].popSizes[p][i]);
+				}
+			}
+			System.out.println();
+		}
+		
+	}
 }

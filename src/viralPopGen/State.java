@@ -1,10 +1,10 @@
 package viralPopGen;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class State {
 	
-	Population[] populations;
+	ArrayList<Population> populations;
 	double[][] popSizes;
 	
 	HashMap<String,Integer> popIndex;
@@ -15,16 +15,16 @@ public class State {
 	 * 
 	 * @param populations Vararg list of population objects.
 	 */
-	public State (Population ... populations) {
+	public State (Model model) {
 		
-		this.populations = populations;
+		this.populations = model.populations;
 		
-		popSizes = new double[populations.length][];
-		for (int i=0; i<populations.length; i++) {
-			popSizes[i] = new double[populations[i].getSubPops()];
+		popSizes = new double[populations.size()][];
+		for (int i=0; i<populations.size(); i++) {
+			popSizes[i] = new double[populations.get(i).getSubPops()];
 			
 			// Add name to look-up table:
-			popIndex.put(populations[i].name, i);
+			popIndex.put(populations.get(i).name, i);
 		}
 		
 	}
@@ -41,9 +41,9 @@ public class State {
 		int mul = 1;
 
 		int i;
-		for (i=0; i<populations[idx].dims.length; i++) {
+		for (i=0; i<populations.get(idx).dims.length; i++) {
 			offset += location[i]*mul;
-			mul *= populations[idx].dims[i];
+			mul *= populations.get(idx).dims[i];
 		}
 
 		return offset;
@@ -83,7 +83,7 @@ public class State {
 	 */
 	public State add(State arg) {
 		
-		for (int p=0; p<populations.length; p++)
+		for (int p=0; p<populations.size(); p++)
 			for (int i=0; i<popSizes[p].length; i++)
 				popSizes[p][i] += arg.popSizes[p][i];
 		
@@ -98,7 +98,7 @@ public class State {
 	 */
 	public State mul(int arg) {
 		
-		for (int p=0; p<populations.length; p++)
+		for (int p=0; p<populations.size(); p++)
 			for (int i=0; i<popSizes[p].length; i++)
 				popSizes[p][i] *= arg;
 		

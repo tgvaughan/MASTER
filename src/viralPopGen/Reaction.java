@@ -47,11 +47,22 @@ public class Reaction {
 	 */
 	public void setRate(double[] rate) {
 		
+		/* TODO:
+		 * 
+		 * Allow every element of each dimension of the
+		 * reduced sequence space to have 3 rates associated
+		 * with it -> 3*D rates per dimension.
+		 * 
+		 * Also allow a dimension to have just 1 rate associated
+		 * with it, which is taken to be a uniform rate in that
+		 * dimension.
+		 */
+		
 		int ratesNeeded = 1;
 		for (int r=0; r<reactants.size(); r++) {
 			for (int i=0; i<reactantLocs.get(r).length; i++)
 				if (reactantLocs.get(r)[i]<1)
-					ratesNeeded *= reactants.get(r).dims[i];
+					ratesNeeded *= reactants.get(r).seqDims[i];
 		}
 		assert(rate.length == ratesNeeded);
 			

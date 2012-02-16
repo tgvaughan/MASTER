@@ -82,15 +82,14 @@ public class Ensemble {
 		// Define populations:
 
 		int[] seqDims = {1};
-		int[] otherDims = {1};
-		Population X = new Population("X", seqDims, otherDims);
+		Population X = new Population("X", seqDims);
 		model.addPopulation(X);
 
 		// Define reactions:
 
 		// X -> 2X
 		Reaction birth = new Reaction();
-		int[] loc = {0,0};
+		int[] loc = {0};
 		birth.addReactant(X, loc);
 		birth.addProduct(X, loc);
 		birth.addProduct(X, loc);

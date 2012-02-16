@@ -76,18 +76,18 @@ public class Ensemble {
 		/**
 		 * Assemble model:
 		 */
-		
+
 		Model model = new Model();
-		
+
 		// Define populations:
-		
+
 		int[] seqDims = {1};
 		int[] otherDims = {1};
 		Population X = new Population("X", seqDims, otherDims);
 		model.addPopulation(X);
-		
+
 		// Define reactions:
-		
+
 		// X -> 2X
 		Reaction birth = new Reaction();
 		int[] loc = {0,0};
@@ -97,7 +97,7 @@ public class Ensemble {
 		double[] birthRate = {1.0};
 		birth.setRate(birthRate);
 		model.addReaction(birth);
-		
+
 		// X -> 0
 		Reaction death = new Reaction();
 		death.addReactant(X, loc);
@@ -105,23 +105,23 @@ public class Ensemble {
 		double[] deathRate = {0.01};
 		death.setRate(deathRate);
 		model.addReaction(death);
-		
+
 		/**
 		 * Set initial state:
 		 */
 		State initState = new State(model);
 		initState.setSize("X", loc, 10.0);
-		
+
 		/**
 		 * Generate ensemble
 		 */
 		Ensemble ensemble = new Ensemble(model, initState,
 				T, Nt, Nsamples, Ntraj, 4253);
-		
+
 		/**
 		 * Dump first trajectory to stdout:
 		 */
 		//ensemble.trajectories.get(0).dump();
-		
+
 	}
 }

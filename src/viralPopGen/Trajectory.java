@@ -42,7 +42,6 @@ public class Trajectory {
 		
 		// Derived simulation parameters:
 		double dt = T/(Nt-1);
-		double sdt = T/(Nsamples-1);
 		int stepsPerSample = (Nt-1)/(Nsamples-1);
 
 		// Integration loop:
@@ -67,6 +66,14 @@ public class Trajectory {
 	 * @param poissonian	Poissonian RNG.
 	 */
 	private void step(double dt, Poisson poissonian) {
+		
+		// Calculate transition rates:
+		
+		for (int r=0; r<model.reactions.size(); r++) {
+			
+			model.reactions.get(r).getPropensities();
+			
+		}
 		
 	}
 

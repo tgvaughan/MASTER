@@ -7,6 +7,16 @@ public class Reaction {
 	ArrayList<Population> reactants, products;
 	ArrayList<int[]> reactantLocs, productLocs;
 	double[] rate;
+	
+	/**
+	 * Constructor.
+	 */
+	public Reaction() {
+		reactants = new ArrayList<Population>(0);
+		products = new ArrayList<Population>(0);
+		reactantLocs = new ArrayList<int[]>(0);
+		productLocs = new ArrayList<int[]>(0);
+	}
 
 	/**
 	 * Add reactant to reaction spec.

@@ -43,6 +43,9 @@ public class Ensemble {
 		// Initialise RNG:
 		RandomEngine engine = new MersenneTwister(seed);
 		
+		// Initialise trajectory arraylist:
+		trajectories = new ArrayList<Trajectory>(Ntraj);
+		
 		// Generate trajectories:
 		for (int traj=0; traj<Ntraj; traj++) {
 			
@@ -118,7 +121,7 @@ public class Ensemble {
 		/**
 		 * Dump first trajectory to stdout:
 		 */
-		ensemble.trajectories.get(0).dump();
+		//ensemble.trajectories.get(0).dump();
 		
 	}
 }

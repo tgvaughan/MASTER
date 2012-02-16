@@ -9,6 +9,14 @@ public class Model {
 
 	// Reactions to model:
 	ArrayList<Reaction> reactions;
+	
+	/**
+	 * Constructor.
+	 */
+	public Model () {
+		populations = new ArrayList<Population>(0);
+		reactions = new ArrayList<Reaction>(0);
+	}
 
 	/**
 	 * Add population to model.

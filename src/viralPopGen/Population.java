@@ -11,6 +11,13 @@ public class Population {
 
 	int subPops; // Total number of sub-populations.
 
+	/**
+	 * Define population.
+	 * 
+	 * @param name		Population name.
+	 * @param seqDims	Sequence space dimensions.
+	 * @param otherDims	Other dimensions (spatial, etc).
+	 */
 	public Population(String name, int[] seqDims, int[] otherDims) {
 
 		this.name = name;

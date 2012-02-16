@@ -19,11 +19,12 @@ public class State {
 		
 		this.populations = model.populations;
 		
+		// Initialise popSizes and popIndex look-up table:
 		popSizes = new double[populations.size()][];
+		popIndex = new HashMap<String, Integer>(populations.size());
+		
 		for (int i=0; i<populations.size(); i++) {
 			popSizes[i] = new double[populations.get(i).getSubPops()];
-			
-			// Add name to look-up table:
 			popIndex.put(populations.get(i).name, i);
 		}
 		

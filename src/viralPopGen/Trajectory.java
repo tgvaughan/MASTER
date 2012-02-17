@@ -3,6 +3,15 @@ package viralPopGen;
 import cern.jet.random.Poisson;
 import cern.jet.random.engine.RandomEngine;
 
+/**
+ * Class of objects representing trajectories through the
+ * state space of the birth-death model. Will include
+ * methods to generate these trajectories using a variety
+ * of stochastic integration algorithms.
+ * 
+ * @author Tim Vaughan
+ *
+ */
 public class Trajectory {
 
 	State currentState;

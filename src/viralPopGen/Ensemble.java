@@ -6,6 +6,14 @@ import java.util.*;
 import cern.jet.random.engine.RandomEngine;
 import cern.jet.random.engine.MersenneTwister;
 
+/**
+ * A class representing an ensemble of stochastic trajectories
+ * through the state space of a population genetics model of viral
+ * dynamics.
+ * 
+ * @author Tim Vaughan
+ *
+ */
 public class Ensemble {
 	
 	// The ensemble is a large number of trajectories:
@@ -109,7 +117,7 @@ public class Ensemble {
 		 * Set initial state:
 		 */
 		State initState = new State(model);
-		initState.setSize("X", loc, 10.0);
+		initState.setScalar(X, 10.0);
 
 		/*
 		 * Generate ensemble

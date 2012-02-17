@@ -2,6 +2,15 @@ package viralPopGen;
 
 import java.util.*;
 
+/**
+ * Class of objects describing the reactions which occur
+ * between the various populations in the model.  Reactions
+ * may involve both scalar and genetically-diverse
+ * populations, and they may involve genetic mutation.
+ * 
+ * @author Tim Vaughan
+ *
+ */
 public class Reaction {
 	
 	ArrayList<Population> reactants, products;

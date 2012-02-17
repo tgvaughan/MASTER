@@ -2,6 +2,14 @@ package viralPopGen;
 
 import java.util.*;
 
+/**
+ * Class describing a birth-death viral population genetics model.
+ * Basically a container class including a sets of population and
+ * reaction objects.
+ * 
+ * @author Tim Vaughan
+ *
+ */
 public class Model {
 
 	// Populations in model:

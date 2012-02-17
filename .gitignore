@@ -1,4 +1,10 @@
+# Eclipse cruft:
 .project
 .classpath
 .settings
+
+# Build directory:
 bin
+
+# JavaDoc:
+doc

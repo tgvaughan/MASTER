@@ -15,7 +15,7 @@ public class Reaction {
 	
 	ArrayList<Population> reactants, products;
 	ArrayList<Boolean> mutateProduct;
-	double[] rate;
+	double[] rates, propensities;
 	
 	boolean genetic, mutation;
 	
@@ -66,7 +66,31 @@ public class Reaction {
 	 * @param rate
 	 */
 	public void setRate(double[] rate) {
-		this.rate = rate;
+		this.rates = rate;
+	}
+	
+	/**
+	 * Calculate instantaneous transition rates (propensities)
+	 * for the given state.
+	 * 
+	 * @param state State vector used to calculate propensities.
+	 */
+	public void calcPropensities(State state) {
+		
+		// Simple scalar propensity:
+		if (!genetic) {
+			
+			return;
+		}
+		
+		// Genetic propensity, without mutation:
+		if (genetic && !mutation) {
+			
+			return;
+		}
+		
+		// Genetic propensity with mutation:
+		
 	}
 
 }

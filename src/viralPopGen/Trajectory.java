@@ -80,13 +80,13 @@ public class Trajectory {
 	 * @param dt			Time step size.
 	 * @param poissonian	Poissonian RNG.
 	 */
-	void step(double dt, Poisson poissonian) {
+	private void step(double dt, Poisson poissonian) {
 
 		// Calculate transition rates:
 
 		for (int r=0; r<model.reactions.size(); r++) {
 
-			//model.reactions.get(r).getPropensities();
+			//model.reactions.get(r).calcPropensities();
 
 		}
 

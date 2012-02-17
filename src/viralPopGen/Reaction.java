@@ -5,7 +5,7 @@ import java.util.*;
 public class Reaction {
 	
 	ArrayList<Population> reactants, products;
-	ArrayList<int[]> reactantLocs, productLocs;
+	ArrayList<Boolean> mutateProduct;
 	double[] rate;
 	
 	/**
@@ -14,30 +14,27 @@ public class Reaction {
 	public Reaction() {
 		reactants = new ArrayList<Population>(0);
 		products = new ArrayList<Population>(0);
-		reactantLocs = new ArrayList<int[]>(0);
-		productLocs = new ArrayList<int[]>(0);
+		mutateProduct = new ArrayList<Boolean>(0);
 	}
 
 	/**
 	 * Add reactant to reaction spec.
 	 * 
 	 * @param pop Reactant population.
-	 * @param loc Specific reactant subpopulation.
 	 */
-	public void addReactant(Population pop, int[] loc) {
+	public void addReactant(Population pop) {
 		reactants.add(pop);
-		reactantLocs.add(loc);
 	}
 
 	/**
 	 * Add reactant product to reaction spec.
 	 * 
 	 * @param pop Product population.
-	 * @param loc Specific product subpopulation.
+	 * @param mutate True if genetic population mutates.
 	 */
-	public void addProduct(Population pop, int[] loc) {
+	public void addProduct(Population pop, boolean mutate) {
 		products.add(pop);
-		productLocs.add(loc);
+		mutateProduct.add(mutate);
 	}
 
 	/**
@@ -57,16 +54,7 @@ public class Reaction {
 		 * with it, which is taken to be a uniform rate in that
 		 * dimension.
 		 */
-		
-		int ratesNeeded = 1;
-		for (int r=0; r<reactants.size(); r++) {
-			for (int i=0; i<reactantLocs.get(r).length; i++)
-				if (reactantLocs.get(r)[i]<1)
-					ratesNeeded *= reactants.get(r).seqDims[i];
-		}
-		assert(rate.length == ratesNeeded);
-			
-		this.rate = rate;
+	
 	}
 
 }

@@ -2,36 +2,17 @@ package viralPopGen;
 
 public class Population {
 	
-	String name;	 // Population name
-
-	int[] seqDims;	 // Sequence space dimensions
-
-	int subPops; // Total number of sub-populations.
+	String name; // Population name
+	boolean genetic; // True if population has genetic component.
 
 	/**
 	 * Define population.
 	 * 
 	 * @param name		Population name.
-	 * @param seqDims	Sequence space dimensions.
-	 * @param otherDims	Other dimensions (spatial, etc).
+	 * @param genetic	True if population has genetic component.
 	 */
-	public Population(String name, int[] seqDims) {
-
+	public Population(String name, boolean genetic) {
 		this.name = name;
-		this.seqDims = seqDims;
-
-		subPops = 1;
-		for (int d : seqDims)
-			subPops *= d;
+		this.genetic = genetic;
 	}
-
-	/**
-	 * Retrieve the total number of sub-populations.
-	 * 
-	 * @return Sub-population number.
-	 */
-	public int getSubPops () {
-		return subPops;
-	}
-
 }

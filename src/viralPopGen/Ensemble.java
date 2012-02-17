@@ -64,7 +64,7 @@ public class Ensemble {
 	 */
 	public static void main (String[] argv) {
 		
-		/**
+		/*
 		 *  Simulation parameters:
 		 */
 		
@@ -73,54 +73,54 @@ public class Ensemble {
 		int Nsamples = 1001;
 		int Ntraj = 1;
 		
-		/**
+		/*
 		 * Assemble model:
 		 */
 
-		Model model = new Model();
+		int L = 105;
+		int[] seqDims = {105};
+		Model model = new Model(L, seqDims);
 
 		// Define populations:
 
-		int[] seqDims = {1};
-		Population X = new Population("X", seqDims);
+		Population X = new Population("X", false);
 		model.addPopulation(X);
 
 		// Define reactions:
 
 		// X -> 2X
 		Reaction birth = new Reaction();
-		int[] loc = {0};
-		birth.addReactant(X, loc);
-		birth.addProduct(X, loc);
-		birth.addProduct(X, loc);
+		birth.addReactant(X);
+		birth.addProduct(X, false);
+		birth.addProduct(X, false);
 		double[] birthRate = {1.0};
 		birth.setRate(birthRate);
 		model.addReaction(birth);
 
 		// X -> 0
 		Reaction death = new Reaction();
-		death.addReactant(X, loc);
-		death.addProduct(X, loc);
+		death.addReactant(X);
+		death.addProduct(X, false);
 		double[] deathRate = {0.01};
 		death.setRate(deathRate);
 		model.addReaction(death);
 
-		/**
+		/*
 		 * Set initial state:
 		 */
 		State initState = new State(model);
 		initState.setSize("X", loc, 10.0);
 
-		/**
+		/*
 		 * Generate ensemble
 		 */
 		Ensemble ensemble = new Ensemble(model, initState,
 				T, Nt, Nsamples, Ntraj, 4253);
 
-		/**
+		/*
 		 * Dump first trajectory to stdout:
 		 */
-		//ensemble.trajectories.get(0).dump();
+		ensemble.trajectories.get(0).dump();
 
 	}
 }

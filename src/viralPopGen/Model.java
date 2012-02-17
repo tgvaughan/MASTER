@@ -10,12 +10,34 @@ public class Model {
 	// Reactions to model:
 	ArrayList<Reaction> reactions;
 	
+	// Sequence length:
+	int L;
+	
+	// Sequence space dimensionality:
+	int[] seqDims;
+	
+	// Total number of included types:
+	int typeNum;
+	
 	/**
-	 * Constructor.
+	 * Model constructor.  Note that each element of seqDims
+	 * must be <= L+1, otherwise an assertion error will be raised.
+	 * 
+	 * @param L Genetic sequence length.
+	 * @param seqDims Reduced sequence space dimensionality.
 	 */
-	public Model () {
+	public Model (int L, int[] seqDims) {
+		this.seqDims = seqDims;
 		populations = new ArrayList<Population>(0);
 		reactions = new ArrayList<Reaction>(0);
+		
+		// Count reduced volume of sequence space:
+		typeNum = 1;
+		for (int d=0; d<seqDims.length; d++) {
+			typeNum *= seqDims[d];
+			assert(seqDims[d] <= L+1);
+		}
+		
 	}
 
 	/**

@@ -80,7 +80,7 @@ public class Trajectory {
 		
 		for (int r=0; r<model.reactions.size(); r++) {
 			
-			model.reactions.get(r).getPropensities();
+			//model.reactions.get(r).getPropensities();
 			
 		}
 		
@@ -90,17 +90,6 @@ public class Trajectory {
 	 * Dump trajectory data to stdout. (Mostly for debugging.)
 	 */
 	public void dump() {
-
-		for (int s=0; s<sampledStates.length; s++) {
-			double t = s*T/(Nsamples-1);
-			System.out.print(t);
-			for (int p=0; p<currentState.populations.size(); p++) {
-				for (int i=0; i<currentState.popSizes[p].length; i++) {
-					System.out.print(" "+sampledStates[s].popSizes[p][i]);
-				}
-			}
-			System.out.println();
-		}
 
 	}
 }

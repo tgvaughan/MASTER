@@ -36,25 +36,6 @@ public class State {
 	}
 
 	/**
-	 * Get offset into popSizes vector.
-	 * 
-	 * @param location Array specification of sub-population.
-	 * @return Offset into popSizes vector.
-	 */
-	private int locToOffset(int[] loc) {
-		
-		int offset = 0;
-		int mul = 1;
-
-		for (int d=0; d<model.seqDims.length; d++) {
-			offset += loc[d]*mul;
-			mul *= model.seqDims[d];
-		}
-		
-		return offset;
-	}
-
-	/**
 	 * Get size of a particular genetic sub-population.
 	 * 
 	 * @param p		Population to interrogate.
@@ -62,7 +43,7 @@ public class State {
 	 * @return Size of sub-population.
 	 */
 	public double getGen(Population p, int[] loc) {
-		return genPopSizes.get(p)[locToOffset(loc)];
+		return genPopSizes.get(p)[model.locToOffset(loc)];
 	}
 	
 	/**
@@ -73,7 +54,7 @@ public class State {
 	 * @param value	Desired size.
 	 */
 	public void setGen(Population p, int[] loc, double value) {
-		genPopSizes.get(p)[locToOffset(loc)] = value;
+		genPopSizes.get(p)[model.locToOffset(loc)] = value;
 	}
 	
 	/**

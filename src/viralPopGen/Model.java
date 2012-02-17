@@ -71,4 +71,24 @@ public class Model {
 		reactions.add(react);
 	}
 
+	/**
+	 * Convert sequence space location vector to
+	 * integer offset into linear array.
+	 * 
+	 * @param location Array specification of sub-population.
+	 * @return Offset into popSizes vector.
+	 */
+	public int locToOffset(int[] loc) {
+		
+		int offset = 0;
+		int mul = 1;
+	
+		for (int d=0; d<seqDims.length; d++) {
+			offset += loc[d]*mul;
+			mul *= seqDims[d];
+		}
+		
+		return offset;
+	}
+
 }

@@ -122,13 +122,12 @@ public class Ensemble {
 		/*
 		 * Generate ensemble
 		 */
-		Ensemble ensemble = new Ensemble(model, initState,
-				T, Nt, Nsamples, Ntraj, 4253);
+		Ensemble ensemble = new Ensemble(model, initState, T, Nt, Nsamples, Ntraj, 4253);
 
 		/*
 		 * Dump first trajectory to stdout:
 		 */
-		ensemble.trajectories.get(0).dump();
+		//ensemble.trajectories.get(0).dump();
 
 	}
 }

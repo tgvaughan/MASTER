@@ -40,6 +40,12 @@ public class Trajectory {
 	public Trajectory(Model model, State initState,
 			double T, int Nt, int Nsamples, RandomEngine engine) {
 		
+		// Keep copy of simulation parameters with trajectory:
+		this.model = model;
+		this.T = T;
+		this.Nt = Nt;
+		this.Nsamples = Nsamples;
+		
 		// Initialise Poissonian RNG:
 		poissonian = new Poisson(1, engine);
 		
@@ -60,7 +66,7 @@ public class Trajectory {
 			// Sample state if necessary:
 			if (tidx % stepsPerSample == 0)
 				sampledStates[sidx++] = currentState;
-
+		
 			// Perform single time step:
 			step(dt, poissonian);
 
@@ -74,16 +80,16 @@ public class Trajectory {
 	 * @param dt			Time step size.
 	 * @param poissonian	Poissonian RNG.
 	 */
-	private void step(double dt, Poisson poissonian) {
-		
+	void step(double dt, Poisson poissonian) {
+
 		// Calculate transition rates:
-		
+
 		for (int r=0; r<model.reactions.size(); r++) {
-			
+
 			//model.reactions.get(r).getPropensities();
-			
+
 		}
-		
+
 	}
 
 	/**

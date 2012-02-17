@@ -8,6 +8,8 @@ public class Reaction {
 	ArrayList<Boolean> mutateProduct;
 	double[] rate;
 	
+	boolean genetic, mutation;
+	
 	/**
 	 * Constructor.
 	 */
@@ -24,6 +26,9 @@ public class Reaction {
 	 */
 	public void addReactant(Population pop) {
 		reactants.add(pop);
+		
+		if (pop.genetic)
+			genetic = true;
 	}
 
 	/**
@@ -35,6 +40,15 @@ public class Reaction {
 	public void addProduct(Population pop, boolean mutate) {
 		products.add(pop);
 		mutateProduct.add(mutate);
+		
+		if (pop.genetic) {
+			genetic = true;
+			if(mutate) {
+				mutateProduct.add(true);
+				mutation = true;
+			}
+		} else
+			mutateProduct.add(false);
 	}
 
 	/**
@@ -43,18 +57,7 @@ public class Reaction {
 	 * @param rate
 	 */
 	public void setRate(double[] rate) {
-		
-		/* TODO:
-		 * 
-		 * Allow every element of each dimension of the
-		 * reduced sequence space to have 3 rates associated
-		 * with it -> 3*D rates per dimension.
-		 * 
-		 * Also allow a dimension to have just 1 rate associated
-		 * with it, which is taken to be a uniform rate in that
-		 * dimension.
-		 */
-	
+		this.rate = rate;
 	}
 
 }

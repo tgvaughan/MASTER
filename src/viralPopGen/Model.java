@@ -5,7 +5,8 @@ import java.util.*;
 public class Model {
 
 	// Populations in model:
-	ArrayList<Population> populations;
+	ArrayList<Population> geneticPops;
+	ArrayList<Population> scalarPops;
 
 	// Reactions to model:
 	ArrayList<Reaction> reactions;
@@ -20,15 +21,17 @@ public class Model {
 	int typeNum;
 	
 	/**
-	 * Model constructor.  Note that each element of seqDims
-	 * must be <= L+1, otherwise an assertion error will be raised.
+	 * Model constructor.  Note that each element of seqDims must be <= L+1.
 	 * 
 	 * @param L Genetic sequence length.
 	 * @param seqDims Reduced sequence space dimensionality.
 	 */
 	public Model (int L, int[] seqDims) {
 		this.seqDims = seqDims;
-		populations = new ArrayList<Population>(0);
+		
+		geneticPops = new ArrayList<Population>(0);
+		scalarPops = new ArrayList<Population>(0);
+		
 		reactions = new ArrayList<Reaction>(0);
 		
 		// Count reduced volume of sequence space:
@@ -37,7 +40,6 @@ public class Model {
 			typeNum *= seqDims[d];
 			assert(seqDims[d] <= L+1);
 		}
-		
 	}
 
 	/**
@@ -46,9 +48,12 @@ public class Model {
 	 * @param pop Population to add.
 	 */
 	public void addPopulation(Population pop) {
-		populations.add(pop);
+		if (pop.genetic)
+			geneticPops.add(pop);
+		else
+			scalarPops.add(pop);
 	}
-	
+
 	/**
 	 * Add reaction to model.
 	 * 

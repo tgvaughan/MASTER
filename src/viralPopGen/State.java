@@ -4,77 +4,70 @@ import java.util.*;
 
 public class State {
 	
-	ArrayList<Population> populations;
-	double[][] popSizes;
-	
-	HashMap<String,Integer> popIndex;
+	Model model;
+	HashMap<Population,Double[]> genPopSizes;
+	HashMap<Population,Double> scalarPopSizes;
 	
 	
 	/**
 	 * Constructor
 	 * 
-	 * @param populations Vararg list of population objects.
+	 * @param model Model defining the state space.
 	 */
 	public State (Model model) {
 		
-		this.populations = model.populations;
+		this.model = model;
 		
-		// Initialise popSizes and popIndex look-up table:
-		popSizes = new double[populations.size()][];
-		popIndex = new HashMap<String, Integer>(populations.size());
+		// Initialise genPopSizes and scalarPopSizes:
 		
-		for (int i=0; i<populations.size(); i++) {
-			popSizes[i] = new double[populations.get(i).getSubPops()];
-			popIndex.put(populations.get(i).name, i);
-		}
+		genPopSizes = new HashMap<Population, Double[]>(model.geneticPops.size());
+		for (Population p : genPopSizes.keySet())
+			genPopSizes.put(p, new Double[model.typeNum]);
+		
+		scalarPopSizes = new HashMap<Population, Double>(model.scalarPops.size());
 		
 	}
-	
+
 	/**
 	 * Get offset into popSizes vector.
 	 * 
 	 * @param location Array specification of sub-population.
 	 * @return Offset into popSizes vector.
 	 */
-	private int locToOffset(int idx, int[] location) {
+	private int locToOffset(int[] loc) {
 		
 		int offset = 0;
 		int mul = 1;
 
-		int i;
-		for (i=0; i<populations.get(idx).dims.length; i++) {
-			offset += location[i]*mul;
-			mul *= populations.get(idx).dims[i];
+		for (int d=0; d<model.seqDims.length; d++) {
+			offset += loc[d]*mul;
+			mul *= model.seqDims[d];
 		}
-
+		
 		return offset;
 	}
 
 	/**
-	 * Get size of a particular sub-population.
+	 * Get size of a particular genetic sub-population.
 	 * 
 	 * @param name		Name of sub-population.
-	 * @param location	Specific sub-population location.
-	 * @return
+	 * @param loc	Specific sub-population location.
+	 * @return Size of sub-population.
 	 */
-	public double getSize(String name, int[] location) {
-		
-		int idx = popIndex.get(name);
-		return popSizes[idx][locToOffset(idx,location)];
+	public double getGen(Population p, int[] loc) {
+		return genPopSizes.get(p)[locToOffset(loc)];
 	}
-
+	
 	/**
-	 * Set size of a particular sub-population.
+	 * Set size of a particular genetic sub-population.
 	 * 
 	 * @param name		Name of sub-population to modify.
-	 * @param location	Specific sub-population location.
+	 * @param loc	Specific sub-population location.
 	 */
-	public void setSize(String name, int[] location, double value) {
-
-		int idx = popIndex.get(name);
-		popSizes[idx][locToOffset(idx,location)] = value;
-
+	public void setGen(Population p, int[] loc, double value) {
+		genPopSizes.get(p)[locToOffset(loc)] = value;
 	}
+	
 
 	/**
 	 * Add two states together.
@@ -83,11 +76,17 @@ public class State {
 	 * @return		Result of addition.
 	 */
 	public State add(State arg) {
+
+		for (Population p : genPopSizes.keySet()) {
+			for (int i=0; i<genPopSizes.get(p).length; i++)
+				genPopSizes.get(p)[i] += arg.genPopSizes.get(p)[i];
+		}
 		
-		for (int p=0; p<populations.size(); p++)
-			for (int i=0; i<popSizes[p].length; i++)
-				popSizes[p][i] += arg.popSizes[p][i];
-		
+		for (Population p : scalarPopSizes.keySet()) {
+			double thisSize = scalarPopSizes.get(p);
+			scalarPopSizes.put(p, thisSize + arg.scalarPopSizes.get(p));
+		}
+
 		return this;
 	}
 
@@ -99,10 +98,16 @@ public class State {
 	 */
 	public State mul(int arg) {
 		
-		for (int p=0; p<populations.size(); p++)
-			for (int i=0; i<popSizes[p].length; i++)
-				popSizes[p][i] *= arg;
+		for (Population p : genPopSizes.keySet()) {
+			for (int i=0; i<genPopSizes.get(p).length; i++)
+				genPopSizes.get(p)[i] *= arg;
+		}
 		
+		for (Population p : scalarPopSizes.keySet()) {
+			double thisSize = scalarPopSizes.get(p);
+			scalarPopSizes.put(p, thisSize*arg);
+		}
+
 		return this;
 	}
 

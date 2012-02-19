@@ -103,10 +103,11 @@ public class Trajectory {
 		
 		double dt = T/(Nsamples-1);
 		
+		System.out.print("t");
 		sampledStates[0].dumpNames();
 		int sidx = 0;
 		for (State s : sampledStates) {
-			System.out.print(String.valueOf(dt*(sidx++)) + " ");
+			System.out.print(dt*(sidx++));
 			s.dump();
 		}
 	}

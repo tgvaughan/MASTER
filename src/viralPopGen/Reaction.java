@@ -44,7 +44,10 @@ public class Reaction {
 	 * @param pop Reactant population.
 	 */
 	public void addReactant(Population pop) {
-		reactants.put(pop,reactants.get(pop)+1);
+		if (reactants.containsKey(pop))
+			reactants.put(pop,reactants.get(pop)+1);
+		else
+			reactants.put(pop, 1);
 		
 		if (pop.genetic)
 			genetic = true;
@@ -57,7 +60,10 @@ public class Reaction {
 	 * @param mutate True if genetic population mutates.
 	 */
 	public void addProduct(Population pop, boolean mutate) {
-		products.put(pop, reactants.get(pop)+1);
+		if (products.containsKey(pop))
+			products.put(pop, products.get(pop)+1);
+		else
+			products.put(pop, 1);
 		
 		if (pop.genetic) {
 			genetic = true;

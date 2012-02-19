@@ -100,6 +100,15 @@ public class Trajectory {
 	 * Dump trajectory data to stdout. (Mostly for debugging.)
 	 */
 	public void dump() {
-
+		
+		double dt = T/(Nsamples-1);
+		
+		sampledStates[0].dumpNames();
+		int sidx = 0;
+		for (State s : sampledStates) {
+			System.out.print(String.valueOf(dt*(sidx++)) + " ");
+			s.dump();
+		}
 	}
+
 }

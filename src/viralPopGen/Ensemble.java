@@ -129,7 +129,7 @@ public class Ensemble {
 		/*
 		 * Dump first trajectory to stdout:
 		 */
-		//ensemble.trajectories.get(0).dump();
+		ensemble.trajectories.get(0).dump();
 
 	}
 }

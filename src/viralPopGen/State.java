@@ -159,5 +159,39 @@ public class State {
 
 		return this;
 	}
+	
+	/**
+	 * Dump representation of state to stdout.
+	 */
+	public void dump() {
+
+		for (Population p : scalarPopSizes.keySet())
+			System.out.print(" " + String.valueOf(scalarPopSizes.get(p)));
+
+		for (Population p : genPopSizes.keySet()) {
+			for (int i=0; i<genPopSizes.get(p).length; i++)
+				System.out.print(" " + String.valueOf(genPopSizes.get(p)[i]));
+		}
+
+		System.out.println();
+
+	}
+	
+	/**
+	 * Dump names of constituent populations to stdout.
+	 */
+	public void dumpNames() {
+		
+		for (Population p : scalarPopSizes.keySet())
+			System.out.print(" " + p.name);
+
+		for (Population p : genPopSizes.keySet()) {
+			for (int i=0; i<genPopSizes.get(p).length; i++)
+				System.out.print(" " + p.name + String.valueOf(i));
+		}
+		
+		System.out.println();
+		
+	}
 
 }

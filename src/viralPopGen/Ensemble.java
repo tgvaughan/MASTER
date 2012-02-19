@@ -103,6 +103,7 @@ public class Ensemble {
 		birth.addProduct(X, false);
 		double[] birthRate = {1.0};
 		birth.setRate(birthRate);
+		birth.calcDeltas();
 		model.addReaction(birth);
 
 		// X -> 0
@@ -111,6 +112,7 @@ public class Ensemble {
 		death.addProduct(X, false);
 		double[] deathRate = {0.01};
 		death.setRate(deathRate);
+		death.calcDeltas();
 		model.addReaction(death);
 
 		/*

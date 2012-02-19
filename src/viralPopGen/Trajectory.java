@@ -14,7 +14,7 @@ import cern.jet.random.engine.RandomEngine;
  */
 public class Trajectory {
 
-	State currentState;
+	State currentState, newState;
 
 	// Sampled states:
 	State[] sampledStates;
@@ -55,6 +55,9 @@ public class Trajectory {
 		// Initialise system state:
 		currentState = initState;
 		
+		// Allocate memory for temporary state:
+		newState = new State(model);
+		
 		// Derived simulation parameters:
 		double dt = T/(Nt-1);
 		int stepsPerSample = (Nt-1)/(Nsamples-1);
@@ -65,7 +68,7 @@ public class Trajectory {
 
 			// Sample state if necessary:
 			if (tidx % stepsPerSample == 0)
-				sampledStates[sidx++] = currentState;
+				sampledStates[sidx++] = new State(currentState);
 		
 			// Perform single time step:
 			step(dt, poissonian);
@@ -81,15 +84,16 @@ public class Trajectory {
 	 * @param poissonian	Poissonian RNG.
 	 */
 	private void step(double dt, Poisson poissonian) {
-
+		
 		// Calculate transition rates:
 
-		for (int r=0; r<model.reactions.size(); r++) {
-
-			//model.reactions.get(r).calcPropensities();
-
-		}
-
+		for (int r=0; r<model.reactions.size(); r++)
+			model.reactions.get(r).calcPropensities(currentState);
+		
+		// Update state with required changes:
+		for (int r=0; r<model.reactions.size(); r++)
+			model.reactions.get(r).leap(currentState, dt, poissonian);
+		
 	}
 
 	/**

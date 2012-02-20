@@ -14,7 +14,7 @@ import cern.jet.random.engine.RandomEngine;
  */
 public class Trajectory {
 
-	State currentState, newState;
+	State currentState;
 
 	// Sampled states:
 	State[] sampledStates;
@@ -39,25 +39,22 @@ public class Trajectory {
 	 */
 	public Trajectory(Model model, State initState,
 			double T, int Nt, int Nsamples, RandomEngine engine) {
-		
+
 		// Keep copy of simulation parameters with trajectory:
 		this.model = model;
 		this.T = T;
 		this.Nt = Nt;
 		this.Nsamples = Nsamples;
-		
+
 		// Initialise Poissonian RNG:
 		poissonian = new Poisson(1, engine);
-		
+
 		// Initialise state list:
 		sampledStates = new State[Nsamples];
-		
+
 		// Initialise system state:
-		currentState = initState;
-		
-		// Allocate memory for temporary state:
-		newState = new State(model);
-		
+		currentState = new State(initState);
+
 		// Derived simulation parameters:
 		double dt = T/(Nt-1);
 		int stepsPerSample = (Nt-1)/(Nsamples-1);

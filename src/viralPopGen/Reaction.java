@@ -12,14 +12,6 @@ import cern.jet.random.Poisson;
  * @author Tim Vaughan
  *
  */
-/**
- * @author Tim Vaughan
- *
- */
-/**
- * @author Tim Vaughan
- *
- */
 public class Reaction {
 	
 	HashMap<Population,Integer> reactants, products, deltas;
@@ -32,10 +24,10 @@ public class Reaction {
 	 * Constructor.
 	 */
 	public Reaction() {
-		reactants = new HashMap<Population,Integer>(0);
-		products = new HashMap<Population,Integer>(0);
-		deltas = new HashMap<Population,Integer>(0);
-		mutateProduct = new HashMap<Population,Boolean>(0);
+		reactants = new HashMap<Population,Integer>();
+		products = new HashMap<Population,Integer>();
+		deltas = new HashMap<Population,Integer>();
+		mutateProduct = new HashMap<Population,Boolean>();
 	}
 
 	/**
@@ -146,8 +138,10 @@ public class Reaction {
 			
 			double nReacts = poissonian.nextInt(dt*propensities[0]);
 			
-			for (Population p : deltas.keySet())
-				state.setScalar(p, nReacts*deltas.get(p));
+			for (Population p : deltas.keySet()) {
+				double oldSize = state.getScalar(p);
+				state.setScalar(p, oldSize + nReacts*deltas.get(p));
+			}
 
 			return;
 		}

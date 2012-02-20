@@ -35,12 +35,13 @@ public class Model {
 	 * @param seqDims Reduced sequence space dimensionality.
 	 */
 	public Model (int L, int[] seqDims) {
+		this.L = L;
 		this.seqDims = seqDims;
 		
-		geneticPops = new ArrayList<Population>(0);
-		scalarPops = new ArrayList<Population>(0);
+		geneticPops = new ArrayList<Population>();
+		scalarPops = new ArrayList<Population>();
 		
-		reactions = new ArrayList<Reaction>(0);
+		reactions = new ArrayList<Reaction>();
 		
 		// Count reduced volume of sequence space:
 		typeNum = 1;

@@ -76,8 +76,8 @@ public class Ensemble {
 		 *  Simulation parameters:
 		 */
 		
-		double T = 1.0;
-		int Nt = 1001;
+		double T = 100.0;
+		int Nt = 10001;
 		int Nsamples = 1001;
 		int Ntraj = 1;
 		
@@ -106,8 +106,9 @@ public class Ensemble {
 		birth.calcDeltas();
 		model.addReaction(birth);
 
-		// X -> 0
+		// 2X -> X
 		Reaction death = new Reaction();
+		death.addReactant(X);
 		death.addReactant(X);
 		death.addProduct(X, false);
 		double[] deathRate = {0.01};
@@ -124,7 +125,7 @@ public class Ensemble {
 		/*
 		 * Generate ensemble
 		 */
-		Ensemble ensemble = new Ensemble(model, initState, T, Nt, Nsamples, Ntraj, 4253);
+		Ensemble ensemble = new Ensemble(model, initState, T, Nt, Nsamples, Ntraj, 42);
 
 		/*
 		 * Dump first trajectory to stdout:

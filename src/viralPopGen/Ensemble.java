@@ -120,7 +120,7 @@ public class Ensemble {
 		 * Set initial state:
 		 */
 		State initState = new State(model);
-		initState.setScalar(X, 10.0);
+		initState.setScalar(X, 1.0);
 
 		/*
 		 * Generate ensemble

@@ -8,3 +8,6 @@ bin
 
 # JavaDoc:
 doc
+
+# Subversion directories:
+.svn

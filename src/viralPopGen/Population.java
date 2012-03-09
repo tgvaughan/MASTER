@@ -11,16 +11,15 @@ package viralPopGen;
 public class Population {
 	
 	String name; // Population name
-	boolean genetic; // True if population has genetic component.
+	double[] dims; // Structural space dimensions
 
 	/**
 	 * Define population.
 	 * 
 	 * @param name		Population name.
-	 * @param genetic	True if population has genetic component.
 	 */
-	public Population(String name, boolean genetic) {
+	public Population(String name, double[] dims) {
 		this.name = name;
-		this.genetic = genetic;
+		this.dims = dims.clone();
 	}
 }

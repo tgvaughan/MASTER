@@ -18,8 +18,6 @@ public class Reaction {
 	HashMap<Population,Boolean> mutateProduct;
 	double[] rates, propensities;
 	
-	boolean genetic, mutation;
-	
 	/**
 	 * Constructor.
 	 */
@@ -41,8 +39,6 @@ public class Reaction {
 		else
 			reactants.put(pop, 1);
 		
-		if (pop.genetic)
-			genetic = true;
 	}
 
 	/**
@@ -56,15 +52,6 @@ public class Reaction {
 			products.put(pop, products.get(pop)+1);
 		else
 			products.put(pop, 1);
-		
-		if (pop.genetic) {
-			genetic = true;
-			if(mutate) {
-				mutateProduct.put(pop, true);
-				mutation = true;
-			}
-		} else
-			mutateProduct.put(pop, false);
 	}
 
 	/**

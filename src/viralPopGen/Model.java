@@ -13,42 +13,23 @@ import java.util.*;
 public class Model {
 
 	// Populations in model:
-	ArrayList<Population> geneticPops;
-	ArrayList<Population> scalarPops;
+	ArrayList<Population> pops;
 
 	// Reactions to model:
 	ArrayList<Reaction> reactions;
-	
-	// Sequence length:
-	int L;
-	
-	// Sequence space dimensionality:
-	int[] seqDims;
 	
 	// Total number of included types:
 	int typeNum;
 	
 	/**
-	 * Model constructor.  Note that each element of seqDims must be <= L+1.
-	 * 
-	 * @param L Genetic sequence length.
-	 * @param seqDims Reduced sequence space dimensionality.
+	 * Model constructor.
 	 */
-	public Model (int L, int[] seqDims) {
-		this.L = L;
-		this.seqDims = seqDims;
-		
-		geneticPops = new ArrayList<Population>();
-		scalarPops = new ArrayList<Population>();
-		
+	public Model () {
+		pops = new ArrayList<Population>();
 		reactions = new ArrayList<Reaction>();
 		
 		// Count reduced volume of sequence space:
 		typeNum = 1;
-		for (int d=0; d<seqDims.length; d++) {
-			typeNum *= seqDims[d];
-			assert(seqDims[d] <= L+1);
-		}
 	}
 
 	/**
@@ -57,10 +38,7 @@ public class Model {
 	 * @param pop Population to add.
 	 */
 	public void addPopulation(Population pop) {
-		if (pop.genetic)
-			geneticPops.add(pop);
-		else
-			scalarPops.add(pop);
+		pops.add(pop);
 	}
 
 	/**
@@ -70,26 +48,6 @@ public class Model {
 	 */
 	public void addReaction(Reaction react) {
 		reactions.add(react);
-	}
-
-	/**
-	 * Convert sequence space location vector to
-	 * integer offset into linear array.
-	 * 
-	 * @param location Array specification of sub-population.
-	 * @return Offset into popSizes vector.
-	 */
-	public int locToOffset(int[] loc) {
-		
-		int offset = 0;
-		int mul = 1;
-	
-		for (int d=0; d<seqDims.length; d++) {
-			offset += loc[d]*mul;
-			mul *= seqDims[d];
-		}
-		
-		return offset;
 	}
 
 }

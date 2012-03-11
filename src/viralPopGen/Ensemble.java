@@ -85,13 +85,11 @@ public class Ensemble {
 		 * Assemble model:
 		 */
 
-		int L = 105;
-		int[] seqDims = {105};
-		Model model = new Model(L, seqDims);
+		Model model = new Model();
 
 		// Define populations:
 
-		Population X = new Population("X", false);
+		Population X = new Population("X");
 		model.addPopulation(X);
 
 		// Define reactions:
@@ -120,7 +118,7 @@ public class Ensemble {
 		 * Set initial state:
 		 */
 		State initState = new State(model);
-		initState.setScalar(X, 1.0);
+		initState.set(X, 1.0);
 
 		/*
 		 * Generate ensemble

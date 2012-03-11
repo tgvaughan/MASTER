@@ -25,8 +25,8 @@ public class State {
 		this.model = model;
 		
 		// Initialise sub-population sizes:
-		popSizes = new HashMap<Population, Double[]>(model.geneticPops.size());
-		for (Population p : model.geneticPops)
+		popSizes = new HashMap<Population, Double[]>(model.pops.size());
+		for (Population p : model.pops)
 			popSizes.put(p, new Double[model.typeNum]);
 		
 	}
@@ -40,8 +40,8 @@ public class State {
 		this.model = oldState.model;
 		
 		// Copy sub-population sizes:
-		this.popSizes = new HashMap<Population, Double[]>(model.geneticPops.size());
-		for (Population p : model.geneticPops) {
+		this.popSizes = new HashMap<Population, Double[]>(model.pops.size());
+		for (Population p : model.pops) {
 				popSizes.put(p, new Double[model.typeNum]);
 				for (int i=0; i<model.typeNum; i++)
 					popSizes.get(p)[i] = oldState.popSizes.get(p)[i];
@@ -57,7 +57,7 @@ public class State {
 	public void makeCopy (State oldState) {
 		
 		// Copy sub-population sizes:
-		for (Population p : model.geneticPops) {
+		for (Population p : model.pops) {
 			for (int i=0; i<model.typeNum; i++)
 				popSizes.get(p)[i] = oldState.popSizes.get(p)[i];
 		}
@@ -72,7 +72,17 @@ public class State {
 	 * @return Size of sub-population.
 	 */
 	public double get(Population p, int[] loc) {
-		return popSizes.get(p)[model.locToOffset(loc)];
+		return popSizes.get(p)[locToOffset(p, loc)];
+	}
+
+	/**
+	 * Get size of structureless population.
+	 * 
+	 * @param p		Population to interrogate.
+	 * @return Size of sub-population.
+	 */
+	public double get(Population p) {
+		return popSizes.get(p)[0];
 	}
 	
 	/**
@@ -83,7 +93,36 @@ public class State {
 	 * @param value	Desired size.
 	 */
 	public void set(Population p, int[] loc, double value) {
-		popSizes.get(p)[model.locToOffset(loc)] = value;
+		popSizes.get(p)[locToOffset(p, loc)] = value;
+	}
+	
+	/**
+	 * Set size of structureless population.
+	 * 
+	 * @param p		Population to modify.
+	 * @param value Desired size.
+	 */
+	public void set(Population p, double value) {
+		popSizes.get(p)[0] = value;
+	}
+
+	/**
+	 * Get offset into sub-population sizes vector.
+	 * 
+	 * @param p Population.
+	 * @param loc Location of sub-population.
+	 * @return Offset.
+	 */
+	public int locToOffset(Population p, int[] loc) {
+		int offset = 0;
+		
+		int m=1;
+		for (int i=0; i<loc.length; i++) {
+			offset += m*loc[i];
+			m *= p.dims[i];
+		}
+		
+		return offset;
 	}
 
 	/**
@@ -113,5 +152,4 @@ public class State {
 		System.out.println();
 		
 	}
-
 }

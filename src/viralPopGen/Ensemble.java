@@ -97,21 +97,19 @@ public class Ensemble {
 		// X -> 2X
 		Reaction birth = new Reaction();
 		birth.addReactant(X);
-		birth.addProduct(X, false);
-		birth.addProduct(X, false);
+		birth.addProduct(X);
+		birth.addProduct(X);
 		double[] birthRate = {1.0};
 		birth.setRate(birthRate);
-		birth.calcDeltas();
 		model.addReaction(birth);
 
 		// 2X -> X
 		Reaction death = new Reaction();
 		death.addReactant(X);
 		death.addReactant(X);
-		death.addProduct(X, false);
+		death.addProduct(X);
 		double[] deathRate = {0.01};
 		death.setRate(deathRate);
-		death.calcDeltas();
 		model.addReaction(death);
 
 		/*

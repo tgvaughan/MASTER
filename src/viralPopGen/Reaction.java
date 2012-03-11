@@ -14,42 +14,63 @@ import cern.jet.random.Poisson;
  */
 public class Reaction {
 	
-	HashMap<Population,Integer> reactants, products;
-	HashMap<Population,Integer[][]> reactantLocs, productLocs;
+	ArrayList <Population> reactants, products;
+	ArrayList <Integer[]> reactantLocs, productLocs;
 	double[] rates, propensities;
 
 	/**
 	 * Constructor.
 	 */
 	public Reaction() {
-		reactants = new HashMap<Population,Integer>();
-		products = new HashMap<Population,Integer>();
+		reactants = new ArrayList<Population>();
+		products = new ArrayList<Population>();
+		
+		reactantLocs = new ArrayList<Integer[]>();
+		productLocs = new ArrayList<Integer[]>();
 	}
 
 	/**
 	 * Add reactant to reaction spec.
 	 * 
 	 * @param pop Reactant population.
+	 * @param loc Specific reactant sub-population.
+	 */
+	public void addReactant(Population pop, Integer[] loc) {
+		reactants.add(pop);
+		reactantLocs.add(loc);
+	}
+	
+	/**
+	 * Add scalar reactant to reaction spec.
+	 * 
+	 * @param pop
 	 */
 	public void addReactant(Population pop) {
-		if (reactants.containsKey(pop))
-			reactants.put(pop,reactants.get(pop)+1);
-		else
-			reactants.put(pop, 1);
-		
+		Integer[] loc = new Integer[1];
+		loc[0] = 0;
+		addReactant(pop, loc);
 	}
 
 	/**
 	 * Add reactant product to reaction spec.
 	 * 
 	 * @param pop Product population.
-	 * @param mutate True if genetic population mutates.
+	 * @param loc Specific product sub-population.
 	 */
-	public void addProduct(Population pop, boolean mutate) {
-		if (products.containsKey(pop))
-			products.put(pop, products.get(pop)+1);
-		else
-			products.put(pop, 1);
+	public void addProduct(Population pop, Integer[] loc) {
+		products.add(pop);
+		productLocs.add(loc);
+	}
+
+	/**
+	 * Add scalar product to reaction spec.
+	 * 
+	 * @param pop
+	 */
+	public void addProduct(Population pop) {
+		Integer[] loc = new Integer[1];
+		loc[0] = 0;
+		addProduct(pop, loc);
 	}
 
 	/**
@@ -63,20 +84,7 @@ public class Reaction {
 		// Same number of propensities as rates:
 		propensities = new double[rate.length];
 	}
-	
-	/**
-	 * Use existing reactant and product HashMaps to pre-calculate
-	 * deltas for populations involved in the reaction.
-	 */
-	public void calcDeltas() {
-		
-		for (Population p : reactants.keySet())
-			deltas.put(p, -1*reactants.get(p));
-		
-		for (Population p : products.keySet())
-			deltas.put(p, deltas.get(p)+products.get(p));
-	}
-	
+
 	/**
 	 * Calculate instantaneous transition rates (propensities)
 	 * for the given state.
@@ -84,28 +92,7 @@ public class Reaction {
 	 * @param state State vector used to calculate propensities.
 	 */
 	public void calcPropensities(State state) {
-
-		// Simple scalar propensity:
-		if (!genetic) {
-
-			propensities[0] = rates[0];
-
-			for (Population r : reactants.keySet()) {
-				for (int m=0; m<reactants.get(r); m++)
-					propensities[0] *= state.getScalar(r)-m;
-			}
-
-			return;
-		}
-
-		// Genetic propensity, without mutation:
-		if (genetic && !mutation) {
-
-			return;
-		}
-
-		// Genetic propensity with mutation:
-
+		
 	}
 
 	/**
@@ -117,27 +104,6 @@ public class Reaction {
 	 * @param poissonian Poissonian RNG.
 	 */
 	public void leap(State state, double dt, Poisson poissonian) {
-
-		// Simple scalar leap:
-		if (!genetic) {
-			
-			double nReacts = poissonian.nextInt(dt*propensities[0]);
-			
-			for (Population p : deltas.keySet()) {
-				double oldSize = state.getScalar(p);
-				state.setScalar(p, oldSize + nReacts*deltas.get(p));
-			}
-
-			return;
-		}
-
-		// Genetic reaction leap, without mutation:
-		if (genetic && !mutation) {
-
-			return ;
-		}
-
-		// Genetic reaction leap with mutation:
 
 	}
 

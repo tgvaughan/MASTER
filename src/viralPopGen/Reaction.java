@@ -14,18 +14,16 @@ import cern.jet.random.Poisson;
  */
 public class Reaction {
 	
-	HashMap<Population,Integer> reactants, products, deltas;
-	HashMap<Population,Boolean> mutateProduct;
+	HashMap<Population,Integer> reactants, products;
+	HashMap<Population,Integer[][]> reactantLocs, productLocs;
 	double[] rates, propensities;
-	
+
 	/**
 	 * Constructor.
 	 */
 	public Reaction() {
 		reactants = new HashMap<Population,Integer>();
 		products = new HashMap<Population,Integer>();
-		deltas = new HashMap<Population,Integer>();
-		mutateProduct = new HashMap<Population,Boolean>();
 	}
 
 	/**

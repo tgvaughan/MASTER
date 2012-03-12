@@ -12,9 +12,13 @@ import cern.jet.random.Poisson;
  * @author Tim Vaughan
  *
  */
+/**
+ * @author Tim Vaughan
+ *
+ */
 public class Reaction {
 
-	HashMap <Population, ArrayList<HashMap<Integer, Integer>>> reactants, products;
+	HashMap <Population, ArrayList<HashMap<Integer, Integer>>> reactants, products, deltas;
 	double[] rates, propensities;
 	
 	int nSubReacts;
@@ -25,6 +29,7 @@ public class Reaction {
 	public Reaction() {
 		reactants = new HashMap<Population, ArrayList<HashMap<Integer, Integer>>>();
 		products = new HashMap<Population, ArrayList<HashMap<Integer, Integer>>>();
+		deltas = new HashMap<Population, ArrayList<HashMap<Integer, Integer>>>();
 		
 		nSubReacts = 0;
 	}
@@ -159,7 +164,60 @@ public class Reaction {
 		// Same number of propensities as rates:
 		propensities = new double[rates.length];
 	}
-
+	
+	/**
+	 * Pre-calculate changes in each sub-population due to reactions.
+	 */
+	public void getDeltas() {
+		
+		for (Population pop : reactants.keySet()) {
+			
+			ArrayList<HashMap<Integer,Integer>> locVec = new ArrayList<HashMap<Integer,Integer>>();
+			for (int r = 0; r<reactants.get(pop).size(); r++) {
+				
+				HashMap<Integer,Integer> locMap = new HashMap<Integer,Integer>();
+				for (int offset : reactants.get(pop).get(r).keySet())
+					locMap.put(offset, -reactants.get(pop).get(r).get(offset));
+				
+				locVec.add(locMap);
+			}
+			deltas.put(pop, locVec);
+		}
+		
+		for (Population pop : products.keySet()) {
+			
+			if (deltas.containsKey(pop)) {
+				
+				for (int r=0; r<products.get(pop).size(); r++) {
+					for (int offset : products.get(pop).get(r).keySet()) {
+						
+						if (deltas.get(pop).get(r).containsKey(offset)) {
+							int oldVal = deltas.get(pop).get(r).get(offset);
+							int newVal = oldVal + products.get(pop).get(r).get(offset);
+							deltas.get(pop).get(r).put(offset, newVal);
+						} else {
+							deltas.get(pop).get(r).put(offset, products.get(pop).get(r).get(offset));
+						}
+						
+					}
+				}
+				
+			} else {
+				
+				ArrayList<HashMap<Integer,Integer>> locVec = new ArrayList<HashMap<Integer,Integer>>();
+				for (int r=0; r<products.get(pop).size(); r++) {
+					
+					HashMap<Integer,Integer> locMap = new HashMap<Integer,Integer>();
+					for (int offset : products.get(pop).get(r).keySet())
+						locMap.put(offset, products.get(pop).get(r).get(offset));
+					
+					locVec.add(locMap);
+				}
+				deltas.put(pop, locVec);
+			}
+		}
+	}
+	
 	/**
 	 * Calculate instantaneous transition rates (propensities)
 	 * for the given state.
@@ -188,7 +246,14 @@ public class Reaction {
 	 * @param poissonian Poissonian RNG.
 	 */
 	public void leap(State state, double dt, Poisson poissonian) {
-
+		
+		for (int r=0; r<nSubReacts; r++) {
+			
+			double n = poissonian.nextInt(propensities[r]*dt);
+			
+			
+		}
+		
 	}
 
 }

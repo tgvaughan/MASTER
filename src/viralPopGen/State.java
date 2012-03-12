@@ -74,6 +74,17 @@ public class State {
 	public double get(Population p, int[] loc) {
 		return popSizes.get(p)[p.locToOffset(loc)];
 	}
+	
+	/**
+	 * Get size of a population using pre-calculated offset.
+	 * 
+	 * @param p			Population to interrogate.
+	 * @param offset	Offset into sub-population size array.
+	 * @return Size of sub-population.
+	 */
+	public double get(Population p, int offset) {
+		return popSizes.get(p)[offset];
+	}
 
 	/**
 	 * Get size of structureless population.

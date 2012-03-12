@@ -72,7 +72,7 @@ public class State {
 	 * @return Size of sub-population.
 	 */
 	public double get(Population p, int[] loc) {
-		return popSizes.get(p)[locToOffset(p, loc)];
+		return popSizes.get(p)[p.locToOffset(loc)];
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class State {
 	 * @param value	Desired size.
 	 */
 	public void set(Population p, int[] loc, double value) {
-		popSizes.get(p)[locToOffset(p, loc)] = value;
+		popSizes.get(p)[p.locToOffset(loc)] = value;
 	}
 	
 	/**
@@ -104,25 +104,6 @@ public class State {
 	 */
 	public void set(Population p, double value) {
 		popSizes.get(p)[0] = value;
-	}
-
-	/**
-	 * Get offset into sub-population sizes vector.
-	 * 
-	 * @param p Population.
-	 * @param loc Location of sub-population.
-	 * @return Offset.
-	 */
-	public int locToOffset(Population p, int[] loc) {
-		int offset = 0;
-		
-		int m=1;
-		for (int i=0; i<loc.length; i++) {
-			offset += m*loc[i];
-			m *= p.dims[i];
-		}
-		
-		return offset;
 	}
 
 	/**

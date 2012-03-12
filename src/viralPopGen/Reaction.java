@@ -13,28 +13,15 @@ import cern.jet.random.Poisson;
  *
  */
 public class Reaction {
-	
-	ArrayList <Population> reactants, products;
-	ArrayList <Integer[][]> reactantLocs, productLocs;
-	double[] rates, propensities;
-	
-	HashMap <Population, Integer[]> cReactantOffsets, cProductOffsets;
-	HashMap <Population, Integer[]> cReactantN, cProductN;
-	
-	int nSubReacts;
 
+	HashMap <Population, HashMap<Integer, Integer>> reactants, products;
+	
 	/**
 	 * Constructor.
 	 */
 	public Reaction() {
-		reactants = new ArrayList<Population>();
-		products = new ArrayList<Population>();
-		
-		reactantLocs = new ArrayList<Integer[][]>();
-		productLocs = new ArrayList<Integer[][]>();
-		
-		// Use zero to indicate a scalar reaction:
-		nSubReacts = 0;
+		reactants = new HashMap<Population, HashMap<Integer, Integer>>();
+		products = new HashMap<Population, HashMap<Integer, Integer>>();
 	}
 
 	/**
@@ -43,19 +30,22 @@ public class Reaction {
 	 * @param pop Reactant population.
 	 * @param locs Specific reactant sub-populations.
 	 */
-	public void addReactant(Population pop, Integer[][] locs) {
-		reactants.add(pop);
-		reactantLocs.add(locs);
+	public void addReactant(Population pop, int[][] locs) {
 		
-		if (locs != null) {
-			if (nSubReacts == 0)
-				nSubReacts = locs.length;
-			else
-				assert(nSubReacts == locs.length);
-		}
-		
-		if (cReactantOffsets.containsKey(pop)) {
+		if (!reactants.containsKey(pop)) {
+			HashMap<Integer, Integer> locMap = new HashMap<Integer, Integer>();
 			
+			for (int i=0; i<locs.length; i++)
+				locMap.put(pop.locToOffset(locs[i]), 1);
+			reactants.put(pop, locMap);
+		} else {
+			for (int i=0; i<locs.length; i++) {
+				int offset = pop.locToOffset(locs[i]);
+				if (reactants.get(pop).containsKey(offset)) {
+					int oldVal = reactants.get(pop).get(offset);
+					reactants.get(pop).put(offset, oldVal+1);
+				}
+			}
 		}
 	}
 

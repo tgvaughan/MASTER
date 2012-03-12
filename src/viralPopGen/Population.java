@@ -33,4 +33,23 @@ public class Population {
 		dims = new int[1];
 		dims[0] = 1;
 	}
+
+	/**
+	 * Get offset into sub-population sizes vector.
+	 * 
+	 * @param p Population.
+	 * @param loc Location of sub-population.
+	 * @return Offset.
+	 */
+	public int locToOffset(int[] loc) {
+		int offset = 0;
+		
+		int m=1;
+		for (int i=0; i<loc.length; i++) {
+			offset += m*loc[i];
+			m *= dims[i];
+		}
+		
+		return offset;
+	}
 }

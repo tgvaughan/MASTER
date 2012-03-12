@@ -15,6 +15,9 @@ import cern.jet.random.Poisson;
 public class Reaction {
 
 	HashMap <Population, HashMap<Integer, Integer>> reactants, products;
+	double[] rates, propensities;
+	
+	int nSubReacts;
 	
 	/**
 	 * Constructor.
@@ -22,6 +25,8 @@ public class Reaction {
 	public Reaction() {
 		reactants = new HashMap<Population, HashMap<Integer, Integer>>();
 		products = new HashMap<Population, HashMap<Integer, Integer>>();
+		
+		nSubReacts = 0;
 	}
 
 	/**
@@ -31,16 +36,28 @@ public class Reaction {
 	 * @param locs Specific reactant sub-populations.
 	 */
 	public void addReactant(Population pop, int[][] locs) {
-		
+
+		// Ensure number of sub-reactions is consistent:
+		if (nSubReacts>0)
+			assert(nSubReacts==locs.length);
+		else
+			nSubReacts = locs.length;
+
+		// Check for multiple occurrences of reactant populations:
 		if (!reactants.containsKey(pop)) {
 			HashMap<Integer, Integer> locMap = new HashMap<Integer, Integer>();
 			
 			for (int i=0; i<locs.length; i++)
 				locMap.put(pop.locToOffset(locs[i]), 1);
+
 			reactants.put(pop, locMap);
+
 		} else {
+
 			for (int i=0; i<locs.length; i++) {
+
 				int offset = pop.locToOffset(locs[i]);
+				
 				if (reactants.get(pop).containsKey(offset)) {
 					int oldVal = reactants.get(pop).get(offset);
 					reactants.get(pop).put(offset, oldVal+1);
@@ -55,34 +72,69 @@ public class Reaction {
 	 * @param pop
 	 */
 	public void addReactant(Population pop) {
-		addReactant(pop, null);
-	}
 
-	/**
-	 * Add reactant product to reaction spec.
-	 * 
-	 * @param pop Product population.
-	 * @param locs Specific product sub-populations.
-	 */
-	public void addProduct(Population pop, Integer[][] locs) {
-		products.add(pop);
-		productLocs.add(locs);
-		
-		if (locs != null) {
-			if (nSubReacts == 0)
-				nSubReacts = locs.length;
-			else
-				assert(nSubReacts == locs.length);
+		if (!reactants.containsKey(pop)) {
+			HashMap<Integer, Integer> locMap = new HashMap<Integer, Integer>();
+			locMap.put(0, 1);
+			reactants.put(pop, locMap);
+		} else {
+			int oldVal = reactants.get(pop).get(0);
+			reactants.get(pop).put(0, oldVal+1);
 		}
 	}
 
 	/**
-	 * Add scalar product to reaction spec.
+	 * Add product to reaction spec.
+	 * 
+	 * @param pop Product population.
+	 * @param locs Specific reactant sub-populations.
+	 */
+	public void addProduct(Population pop, int[][] locs) {
+
+		// Ensure number of sub-reactions is consistent:
+		if (nSubReacts>0)
+			assert(nSubReacts==locs.length);
+		else
+			nSubReacts = locs.length;
+
+		// Check for multiple occurrences of product populations:
+		if (!products.containsKey(pop)) {
+			HashMap<Integer, Integer> locMap = new HashMap<Integer, Integer>();
+			
+			for (int i=0; i<locs.length; i++)
+				locMap.put(pop.locToOffset(locs[i]), 1);
+
+			products.put(pop, locMap);
+
+		} else {
+
+			for (int i=0; i<locs.length; i++) {
+
+				int offset = pop.locToOffset(locs[i]);
+				
+				if (products.get(pop).containsKey(offset)) {
+					int oldVal = products.get(pop).get(offset);
+					products.get(pop).put(offset, oldVal+1);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Add scalar reactant to reaction spec.
 	 * 
 	 * @param pop
 	 */
 	public void addProduct(Population pop) {
-		addProduct(pop, null);
+
+		if (!products.containsKey(pop)) {
+			HashMap<Integer, Integer> locMap = new HashMap<Integer, Integer>();
+			locMap.put(0, 1);
+			products.put(pop, locMap);
+		} else {
+			int oldVal = products.get(pop).get(0);
+			products.get(pop).put(0, oldVal+1);
+		}
 	}
 
 	/**
@@ -106,9 +158,7 @@ public class Reaction {
 	 * @param state State vector used to calculate propensities.
 	 */
 	public void calcPropensities(State state) {
-		
-		for (int r=0; r<nSubReacts; r++) {
-		}
+
 	}
 
 	/**

@@ -250,7 +250,10 @@ public class Reaction {
 		for (int r=0; r<nSubReacts; r++) {
 			
 			double n = poissonian.nextInt(propensities[r]*dt);
-			
+			for (Population pop : deltas.keySet()) {
+				for (int offset : deltas.get(pop).get(r).keySet())
+					state.add(pop, offset, n*deltas.get(pop).get(r).get(offset));
+			}
 			
 		}
 		

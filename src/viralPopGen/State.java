@@ -116,6 +116,18 @@ public class State {
 	public void set(Population p, double value) {
 		popSizes.get(p)[0] = value;
 	}
+	
+	/**
+	 * Add value to size of particular sub-population specified
+	 * using a pre-calculated offset.
+	 * 
+	 * @param p
+	 * @param offset
+	 * @param increment
+	 */
+	public void add(Population p, int offset, double increment) {
+		popSizes.get(p)[offset] += increment;
+	}
 
 	/**
 	 * Dump representation of state to stdout.

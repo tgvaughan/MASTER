@@ -15,8 +15,13 @@ import cern.jet.random.Poisson;
 public class Reaction {
 	
 	ArrayList <Population> reactants, products;
-	ArrayList <Integer[]> reactantLocs, productLocs;
+	ArrayList <Integer[][]> reactantLocs, productLocs;
 	double[] rates, propensities;
+	
+	HashMap <Population, Integer[]> cReactantOffsets, cProductOffsets;
+	HashMap <Population, Integer[]> cReactantN, cProductN;
+	
+	int nSubReacts;
 
 	/**
 	 * Constructor.
@@ -25,41 +30,60 @@ public class Reaction {
 		reactants = new ArrayList<Population>();
 		products = new ArrayList<Population>();
 		
-		reactantLocs = new ArrayList<Integer[]>();
-		productLocs = new ArrayList<Integer[]>();
+		reactantLocs = new ArrayList<Integer[][]>();
+		productLocs = new ArrayList<Integer[][]>();
+		
+		// Use zero to indicate a scalar reaction:
+		nSubReacts = 0;
 	}
 
 	/**
 	 * Add reactant to reaction spec.
 	 * 
 	 * @param pop Reactant population.
-	 * @param loc Specific reactant sub-population.
+	 * @param locs Specific reactant sub-populations.
 	 */
-	public void addReactant(Population pop, Integer[] loc) {
+	public void addReactant(Population pop, Integer[][] locs) {
 		reactants.add(pop);
-		reactantLocs.add(loc);
+		reactantLocs.add(locs);
+		
+		if (locs != null) {
+			if (nSubReacts == 0)
+				nSubReacts = locs.length;
+			else
+				assert(nSubReacts == locs.length);
+		}
+		
+		if (cReactantOffsets.containsKey(pop)) {
+			
+		}
 	}
-	
+
 	/**
 	 * Add scalar reactant to reaction spec.
 	 * 
 	 * @param pop
 	 */
 	public void addReactant(Population pop) {
-		Integer[] loc = new Integer[1];
-		loc[0] = 0;
-		addReactant(pop, loc);
+		addReactant(pop, null);
 	}
 
 	/**
 	 * Add reactant product to reaction spec.
 	 * 
 	 * @param pop Product population.
-	 * @param loc Specific product sub-population.
+	 * @param locs Specific product sub-populations.
 	 */
-	public void addProduct(Population pop, Integer[] loc) {
+	public void addProduct(Population pop, Integer[][] locs) {
 		products.add(pop);
-		productLocs.add(loc);
+		productLocs.add(locs);
+		
+		if (locs != null) {
+			if (nSubReacts == 0)
+				nSubReacts = locs.length;
+			else
+				assert(nSubReacts == locs.length);
+		}
 	}
 
 	/**
@@ -68,21 +92,21 @@ public class Reaction {
 	 * @param pop
 	 */
 	public void addProduct(Population pop) {
-		Integer[] loc = new Integer[1];
-		loc[0] = 0;
-		addProduct(pop, loc);
+		addProduct(pop, null);
 	}
 
 	/**
 	 * Set average rate that reaction will occur at.
 	 * 
-	 * @param rate
+	 * @param rates
 	 */
-	public void setRate(double[] rate) {
-		this.rates = rate;
+	public void setRate(double[] rates) {
+		
+		assert(rates.length == nSubReacts);
+		this.rates = rates.clone();
 
 		// Same number of propensities as rates:
-		propensities = new double[rate.length];
+		propensities = new double[rates.length];
 	}
 
 	/**
@@ -93,6 +117,8 @@ public class Reaction {
 	 */
 	public void calcPropensities(State state) {
 		
+		for (int r=0; r<nSubReacts; r++) {
+		}
 	}
 
 	/**

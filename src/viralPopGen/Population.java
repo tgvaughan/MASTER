@@ -22,7 +22,7 @@ public class Population {
 		this.name = name;
 		this.dims = dims.clone();
 	}
-	
+
 	/**
 	 * Define scalar population.
 	 * 

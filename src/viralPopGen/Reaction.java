@@ -42,12 +42,22 @@ public class Reaction {
 	 */
 	public void addReactant(Population pop, int[][] locs) {
 
-		// Ensure number of sub-reactions is consistent:
-		if (nSubReacts>0)
-			assert(nSubReacts==locs.length);
-		else
-			nSubReacts = locs.length;
+		if (locs == null) {
+			
+			// If location unspecified, assume scalar reactant:
+			locs = new int[1][1];
+			locs[0][0] = 0;
+			
+		} else {
 
+			// Ensure number of sub-reactions is consistent:
+			if (nSubReacts > 0) {
+				if (nSubReacts !=locs.length)
+					throw new IllegalArgumentException ("Inconsistent number of sub-reactions specified.");
+			} else
+				nSubReacts = locs.length;
+		}
+		
 		// Check for multiple occurrences of reactant populations:
 		if (!reactants.containsKey(pop)) {
 			ArrayList<HashMap<Integer, Integer>> locVec = new ArrayList<HashMap<Integer, Integer>>();
@@ -72,39 +82,38 @@ public class Reaction {
 			}
 		}
 	}
-
-	/**
-	 * Add scalar reactant to reaction spec.
-	 * 
-	 * @param pop
-	 */
-	public void addReactant(Population pop) {
-
-		if (!reactants.containsKey(pop)) {
-			ArrayList<HashMap<Integer, Integer>> locVec = new ArrayList<HashMap<Integer,Integer>>();
-			HashMap<Integer, Integer> locMap = new HashMap<Integer, Integer>();
-			locMap.put(0, 1);
-			locVec.add(locMap);
-			reactants.put(pop, locVec);
-		} else {
-			int oldVal = reactants.get(pop).get(0).get(0);
-			reactants.get(pop).get(0).put(0, oldVal+1);
-		}
-	}
 	
 	/**
-	 * Add reactant to reaction spec.
-	 * 
+	 * Add unstructured reactant to reaction spec.
+	 *  
 	 * @param pop Reactant population.
-	 * @param locs Specific reactant sub-populations.
+	 */
+	public void addReactant(Population pop) {
+		addReactant(pop, null);
+	}
+
+	/**
+	 * Add product to reaction spec.
+	 * 
+	 * @param pop Product population.
+	 * @param locs Specific product sub-populations.
 	 */
 	public void addProduct(Population pop, int[][] locs) {
 
-		// Ensure number of sub-reactions is consistent:
-		if (nSubReacts>0)
-			assert(nSubReacts==locs.length);
-		else
-			nSubReacts = locs.length;
+		if (locs == null) {
+
+			// Use first location if no location vector supplied:
+			locs = new int[1][1];
+			locs[0][0] = 0;
+		} else {
+
+			// Ensure number of sub-reactions is consistent:
+			if (nSubReacts>0) {
+				if (nSubReacts !=locs.length)
+					throw new IllegalArgumentException ("Inconsistent number of sub-reactions specified.");
+			} else
+				nSubReacts = locs.length;
+		}
 
 		// Check for multiple occurrences of reactant populations:
 		if (!products.containsKey(pop)) {
@@ -130,26 +139,15 @@ public class Reaction {
 			}
 		}
 	}
-
+	
 	/**
-	 * Add scalar reactant to reaction spec.
+	 * Add unstructured product to reaction spec.
 	 * 
-	 * @param pop
+	 * @param pop Product population to add.
 	 */
 	public void addProduct(Population pop) {
-
-		if (!products.containsKey(pop)) {
-			ArrayList<HashMap<Integer, Integer>> locVec = new ArrayList<HashMap<Integer,Integer>>();
-			HashMap<Integer, Integer> locMap = new HashMap<Integer, Integer>();
-			locMap.put(0, 1);
-			locVec.add(locMap);
-			products.put(pop, locVec);
-		} else {
-			int oldVal = products.get(pop).get(0).get(0);
-			products.get(pop).get(0).put(0, oldVal+1);
-		}
+		addProduct(pop, null);
 	}
-
 
 	/**
 	 * Set average rate that reaction will occur at.
@@ -158,7 +156,6 @@ public class Reaction {
 	 */
 	public void setRate(double[] rates) {
 		
-		assert(rates.length == nSubReacts);
 		this.rates = rates.clone();
 
 		// Same number of propensities as rates:
@@ -166,9 +163,31 @@ public class Reaction {
 	}
 	
 	/**
+	 * Set average rate for scalar reaction.
+	 * 
+	 * @param rate
+	 */
+	public void setRate(double rate) {
+		assert(nSubReacts==0);
+		
+		rates = new double[1];
+		rates[0] = rate;
+		
+		propensities = new double[1];
+	}
+
+	/**
 	 * Pre-calculate changes in each sub-population due to reactions.
 	 */
-	public void getDeltas() {
+	public void calcDeltas() {
+		
+		// Set nSubReacts in the case of a completely scalar reaction:
+		if (nSubReacts==0)
+			nSubReacts = 1;
+		
+		// Check for internal consistency:
+		if (rates.length != nSubReacts)
+			throw new IllegalArgumentException("Inconsistent number of reaction rates specified.");
 		
 		for (Population pop : reactants.keySet()) {
 			
@@ -229,8 +248,12 @@ public class Reaction {
 		for (int r=0; r<nSubReacts; r++) {
 			propensities[r] = rates[r];
 			for (Population pop : reactants.keySet()) {
-				for (int offset : reactants.get(pop).get(r).keySet()) {
-					for (int m=0; m<reactants.get(pop).get(r).get(offset); m++)
+				
+				// Deal with unstructured reactants:
+				int rmod = r%reactants.get(pop).size();
+				
+				for (int offset : reactants.get(pop).get(rmod).keySet()) {
+					for (int m=0; m<reactants.get(pop).get(rmod).get(offset); m++)
 						propensities[r] *= state.get(pop, offset)-m;
 				}
 			}
@@ -251,8 +274,12 @@ public class Reaction {
 			
 			double n = poissonian.nextInt(propensities[r]*dt);
 			for (Population pop : deltas.keySet()) {
-				for (int offset : deltas.get(pop).get(r).keySet())
-					state.add(pop, offset, n*deltas.get(pop).get(r).get(offset));
+				
+				// Deal with unstructured populations:
+				int rmod = r%deltas.get(pop).size();
+				
+				for (int offset : deltas.get(pop).get(rmod).keySet())
+					state.add(pop, offset, n*deltas.get(pop).get(rmod).get(offset));
 			}
 			
 		}

@@ -27,7 +27,7 @@ public class State {
 		// Initialise sub-population sizes:
 		popSizes = new HashMap<Population, Double[]>(model.pops.size());
 		for (Population p : model.pops)
-			popSizes.put(p, new Double[model.typeNum]);
+			popSizes.put(p, new Double[p.nSubPops]);
 		
 	}
 	
@@ -42,8 +42,8 @@ public class State {
 		// Copy sub-population sizes:
 		this.popSizes = new HashMap<Population, Double[]>(model.pops.size());
 		for (Population p : model.pops) {
-				popSizes.put(p, new Double[model.typeNum]);
-				for (int i=0; i<model.typeNum; i++)
+				popSizes.put(p, new Double[p.nSubPops]);
+				for (int i=0; i<p.nSubPops; i++)
 					popSizes.get(p)[i] = oldState.popSizes.get(p)[i];
 		}
 		
@@ -58,7 +58,7 @@ public class State {
 		
 		// Copy sub-population sizes:
 		for (Population p : model.pops) {
-			for (int i=0; i<model.typeNum; i++)
+			for (int i=0; i<p.nSubPops; i++)
 				popSizes.get(p)[i] = oldState.popSizes.get(p)[i];
 		}
 		

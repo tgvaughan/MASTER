@@ -18,18 +18,12 @@ public class Model {
 	// Reactions to model:
 	ArrayList<Reaction> reactions;
 	
-	// Total number of included types:
-	int typeNum;
-	
 	/**
 	 * Model constructor.
 	 */
 	public Model () {
 		pops = new ArrayList<Population>();
 		reactions = new ArrayList<Reaction>();
-		
-		// Count reduced volume of sequence space:
-		typeNum = 1;
 	}
 
 	/**
@@ -47,6 +41,7 @@ public class Model {
 	 * @param react Reaction to add.
 	 */
 	public void addReaction(Reaction react) {
+		react.calcDeltas();
 		reactions.add(react);
 	}
 

@@ -99,8 +99,7 @@ public class Ensemble {
 		birth.addReactant(X);
 		birth.addProduct(X);
 		birth.addProduct(X);
-		double[] birthRate = {1.0};
-		birth.setRate(birthRate);
+		birth.setRate(1.0);
 		model.addReaction(birth);
 
 		// 2X -> X
@@ -108,8 +107,7 @@ public class Ensemble {
 		death.addReactant(X);
 		death.addReactant(X);
 		death.addProduct(X);
-		double[] deathRate = {0.01};
-		death.setRate(deathRate);
+		death.setRate(0.01);
 		model.addReaction(death);
 
 		/*
@@ -121,7 +119,7 @@ public class Ensemble {
 		/*
 		 * Generate ensemble
 		 */
-		Ensemble ensemble = new Ensemble(model, initState, T, Nt, Nsamples, Ntraj, 42);
+		Ensemble ensemble = new Ensemble(model, initState, T, Nt, Nsamples, Ntraj, 53);
 
 		/*
 		 * Dump first trajectory to stdout:

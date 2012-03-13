@@ -236,7 +236,7 @@ public class Reaction {
 			}
 		}
 	}
-	
+
 	/**
 	 * Calculate instantaneous transition rates (propensities)
 	 * for the given state.

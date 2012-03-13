@@ -74,7 +74,7 @@ public class State {
 	public double get(Population p, int[] loc) {
 		return popSizes.get(p)[p.locToOffset(loc)];
 	}
-	
+
 	/**
 	 * Get size of a population using pre-calculated offset.
 	 * 
@@ -95,7 +95,7 @@ public class State {
 	public double get(Population p) {
 		return popSizes.get(p)[0];
 	}
-	
+
 	/**
 	 * Set size of a particular sub-population.
 	 * 
@@ -106,7 +106,7 @@ public class State {
 	public void set(Population p, int[] loc, double value) {
 		popSizes.get(p)[p.locToOffset(loc)] = value;
 	}
-	
+
 	/**
 	 * Set size of structureless population.
 	 * 
@@ -116,7 +116,7 @@ public class State {
 	public void set(Population p, double value) {
 		popSizes.get(p)[0] = value;
 	}
-	
+
 	/**
 	 * Add value to size of particular sub-population specified
 	 * using a pre-calculated offset.
@@ -152,8 +152,7 @@ public class State {
 			for (int i=0; i<popSizes.get(p).length; i++)
 				System.out.print(" " + p.name + String.valueOf(i));
 		}
-		
+
 		System.out.println();
-		
 	}
 }

@@ -5,6 +5,7 @@ import java.util.*;
 // COLT RNG classes:
 import cern.jet.random.engine.RandomEngine;
 import cern.jet.random.engine.MersenneTwister;
+import cern.jet.random.Poisson;
 
 /**
  * A class representing a collection of results obtained by
@@ -27,6 +28,9 @@ public class EnsembleSummary {
 
 	// Moments to record:
 	ArrayList<Moment> moments;
+	
+	// Ensemble-averaged state summaries:
+	StateSummary[] stateSummaries;
 
 	/**
 	 * Constructor.  Assigns simulation parameters and moment list
@@ -43,7 +47,7 @@ public class EnsembleSummary {
 	 */
 	public EnsembleSummary(Model model, State initState, double T, int nTimeSteps,
 			int nSamples, int nTraj, int seed, ArrayList<Moment> moments) {
-		super();
+
 		this.model = model;
 		this.initState = initState;
 		this.T = T;
@@ -51,11 +55,51 @@ public class EnsembleSummary {
 		this.nSamples = nSamples;
 		this.nTraj = nTraj;
 		this.seed = seed;
+		
+		// Derived simulation parameters:
+		double dt = T/(nTimeSteps-1);
+		int stepsPerSample = (nTimeSteps-1)/(nSamples-1);
 
 		// Initialise RNG:
 		RandomEngine engine = new MersenneTwister(seed);
+		Poisson poissonian = new Poisson(1, engine);
 		
-		// Initialise trajectory list:
+		// Initialise state summaries:
+		stateSummaries = new StateSummary[nSamples];
+		for (int sidx=0; sidx<nSamples; sidx++)
+			stateSummaries[sidx] = new StateSummary(moments);
+		
+		// Loop over trajectories:
+		for (int traj=0; traj<nTraj; traj++) {
+			
+			// Initialise system state:
+			State currentState = new State(initState);
+			
+			// Integration loop:
+			int sidx = 0;
+			for (int tidx=0; tidx<nTimeSteps; tidx++) {
+				
+				if (tidx % stepsPerSample == 0) {
+					stateSummaries[sidx].record(currentState);
+					sidx++;
+				}
+				
+				// Calculate transition rates:
+				for (Reaction reaction : model.reactions) {
+					reaction.calcPropensities(currentState);
+				}
+				
+				// Update state with required changes:
+				for (Reaction reaction : model.reactions) {
+					reaction.leap(currentState, dt, poissonian);
+				}
+				
+			}
+		}
+		
+		// Normalise state summaries:
+		for (StateSummary summary : stateSummaries)
+			summary.normalise();
 
 	}
 

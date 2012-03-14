@@ -1,7 +1,6 @@
 package viralPopGen;
 
 import java.util.*;
-import java.math.*;
 
 /**
  * Class of objects representing moments to be estimated from
@@ -40,14 +39,8 @@ public class Moment {
 		this.nSamples = nSamples;
 		this.popSchema = popOrder;
 		schemaSize = popSchema.length;
-		
-		mean = new double[nSamples][schemaSize];
-		std = new double[nSamples][schemaSize];
-		
+
 		locSchema = new ArrayList<HashMap<Population,HashMap<Integer,Integer>>>();
-		
-		// Zero trajectory count.
-		nTraj = 0;
 	}
 	
 	/**
@@ -82,6 +75,21 @@ public class Moment {
 		}
 		
 		locSchema.add(popMap);
+	}
+	
+	/**
+	 * Prepare moment object. Call after last location schema has been
+	 * added and before calling record().
+	 */
+	public void initialise () {
+		
+		// Allocate memory for storing moment estimates:
+		mean = new double[nSamples][schemaSize];
+		std = new double[nSamples][schemaSize];
+		
+		// Zero trajectory count:
+		nTraj = 0;
+		
 	}
 
 	/**

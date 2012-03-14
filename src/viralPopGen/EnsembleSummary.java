@@ -54,6 +54,8 @@ public class EnsembleSummary {
 
 		// Initialise RNG:
 		RandomEngine engine = new MersenneTwister(seed);
+		
+		// Initialise trajectory list:
 
 	}
 

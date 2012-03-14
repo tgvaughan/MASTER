@@ -21,7 +21,7 @@ public class Trajectory {
 
 	// Simulation parameters:
 	double T;
-	int Nt, Nsamples;
+	int nTimeSteps, nSamples;
 	Model model;
 
 	// Poissonian RNG:
@@ -30,38 +30,38 @@ public class Trajectory {
 	/**
 	 * Generate trajectory of birth-death process.
 	 * 
-	 * @param model		Model to implement.
-	 * @param initState	Initial system state.
-	 * @param T			Length of simulation.
-	 * @param Nt		Number of time steps to evaluate.
-	 * @param Nsamples	Number of samples to record.
-	 * @param engine	RNG engine to use.
+	 * @param model			Model to implement.
+	 * @param initState		Initial system state.
+	 * @param T				Length of simulation.
+	 * @param nTimeSteps	Number of time steps to evaluate.
+	 * @param nSamples		Number of samples to record.
+	 * @param engine		RNG engine to use.
 	 */
 	public Trajectory(Model model, State initState,
-			double T, int Nt, int Nsamples, RandomEngine engine) {
+			double T, int nTimeSteps, int nSamples, RandomEngine engine) {
 
 		// Keep copy of simulation parameters with trajectory:
 		this.model = model;
 		this.T = T;
-		this.Nt = Nt;
-		this.Nsamples = Nsamples;
+		this.nTimeSteps = nTimeSteps;
+		this.nSamples = nSamples;
 
 		// Initialise Poissonian RNG:
 		poissonian = new Poisson(1, engine);
 
 		// Initialise state list:
-		sampledStates = new State[Nsamples];
+		sampledStates = new State[nSamples];
 
 		// Initialise system state:
 		currentState = new State(initState);
 
 		// Derived simulation parameters:
-		double dt = T/(Nt-1);
-		int stepsPerSample = (Nt-1)/(Nsamples-1);
+		double dt = T/(nTimeSteps-1);
+		int stepsPerSample = (nTimeSteps-1)/(nSamples-1);
 
 		// Integration loop:
 		int sidx = 0;
-		for (int tidx=0; tidx<Nt; tidx++) {
+		for (int tidx=0; tidx<nTimeSteps; tidx++) {
 
 			// Sample state if necessary:
 			if (tidx % stepsPerSample == 0)
@@ -83,14 +83,12 @@ public class Trajectory {
 	private void step(double dt, Poisson poissonian) {
 		
 		// Calculate transition rates:
-
 		for (int r=0; r<model.reactions.size(); r++)
 			model.reactions.get(r).calcPropensities(currentState);
 		
 		// Update state with required changes:
 		for (int r=0; r<model.reactions.size(); r++)
 			model.reactions.get(r).leap(currentState, dt, poissonian);
-		
 	}
 
 	/**
@@ -98,7 +96,7 @@ public class Trajectory {
 	 */
 	public void dump() {
 		
-		double dt = T/(Nsamples-1);
+		double dt = T/(nSamples-1);
 		
 		System.out.print("t");
 		sampledStates[0].dumpNames();

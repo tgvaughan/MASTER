@@ -1,6 +1,7 @@
 package viralPopGen;
 
 import java.util.*;
+import java.math.*;
 
 /**
  * Class of objects representing moments to be estimated from
@@ -10,84 +11,115 @@ import java.util.*;
  *
  */
 public class Moment {
-	
+
 	// Name of moment - used in output file:
 	String name;
-	
+
 	// Specification of moment:
-	HashMap<Population,ArrayList<HashMap<Integer,Integer>>> components;
-	
+	Population[] popSchema;
+	ArrayList<HashMap<Population,HashMap<Integer,Integer>>> locSchema;
+	int schemaSize;
+
 	// Number of samples to record in time series:
 	int nSamples;
 	
+	// Number of trajectories incorporated into estimate:
+	int nTraj;
+
 	// Estimates:
-	double[][] mean, var;
+	double[][] mean, std;
+	double[] temp;
 	
 	/**
 	 * Constructor.
 	 * 
 	 * @param nSamples	Number of samples to record in time series.
 	 */
-	public Moment(String name, int nSamples) {
+	public Moment(String name, int nSamples, Population ... popOrder) {
 		this.name = name;
 		this.nSamples = nSamples;
+		this.popSchema = popOrder;
+		schemaSize = popSchema.length;
 		
-		mean = new double[nSamples][];
-		var = new double[nSamples][];
+		mean = new double[nSamples][schemaSize];
+		std = new double[nSamples][schemaSize];
 		
-		components = new HashMap<Population,ArrayList<HashMap<Integer,Integer>>>();
+		locSchema = new ArrayList<HashMap<Population,HashMap<Integer,Integer>>>();
+		
+		// Zero trajectory count.
+		nTraj = 0;
 	}
 	
 	/**
-	 * Add component population to moment specification.
+	 * Add specific sub-population resolution moment schema to moment object.
 	 * 
-	 * @param pop		Population to add.
-	 * @param locArray	Array of sub-populations.
+	 * @param locs	Sub-population locations corresponding to populations
+	 * 				given in constructor.
 	 */
-	public void addComponent (Population pop, int[][] locs) {
+	public void addLocSchema (int[] ... locs) {
 		
-		if (!components.containsKey(pop)) {
+		if (locs.length != popSchema.length)
+			throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
+		
+		HashMap<Population, HashMap<Integer,Integer>> popMap =
+				new HashMap<Population,HashMap<Integer,Integer>>();
+		
+		for (int pidx=0; pidx<popSchema.length; pidx++) {
+			int offset = popSchema[pidx].locToOffset(locs[pidx]);
 			
-			ArrayList<HashMap<Integer,Integer>> locVec = new ArrayList<HashMap<Integer,Integer>>();
-			for (int i=0; i<locs.length; i++) {
-				HashMap<Integer,Integer> locMap = new HashMap<Integer,Integer>();
-				locMap.put(pop.locToOffset(locs[i]), 1);
-				locVec.add(locMap);
-			}
-			components.put(pop, locVec);
-			
-		} else {
-			
-			if (locs.length != components.get(pop).size())
-				throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
-			
-			for (int i=0; i<locs.length; i++) {
-				int offset = pop.locToOffset(locs[i]);
-				if (components.get(pop).get(i).containsKey(offset)) {
-					int oldVal = components.get(pop).get(i).get(offset);
-					components.get(pop).get(i).put(offset, oldVal+1);
+			if (!popMap.containsKey(popSchema[pidx])) {
+				HashMap<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+				offsetMap.put(offset, 1);
+				popMap.put(popSchema[pidx], offsetMap);
+			} else {
+				if (popMap.get(popSchema[pidx]).containsKey(locs[pidx])) {
+					int oldVal = popMap.get(popSchema[pidx]).get(locs[pidx]);
+					popMap.get(popSchema[pidx]).put(offset, oldVal+1);
 				} else {
-					components.get(pop).get(i).put(offset, 1);
+					popMap.get(popSchema[pidx]).put(offset, 1);
 				}
 			}
-			
 		}
+		
+		locSchema.add(popMap);
 	}
-	
+
 	/**
 	 * Record sample of moment calculated from state.
 	 * 
-	 * @param state			State to record.
-	 * @param sampleIndex	Index of estimate to contribute to.
+	 * @param state	State to record.
+	 * @param sidx	Index of estimate to contribute to.
 	 */
-	public void record (State state, int sampleIndex) {
+	public void record (State state, int sidx) {
 		
+		for (int i=0; i<schemaSize; i++) {
+			double estimate = 1;
+			for (Population pop : locSchema.get(i).keySet()) {
+				for (int offset : locSchema.get(i).get(pop).keySet()) {
+					for (int m=0; m<locSchema.get(i).get(pop).get(offset); m++) {
+						estimate *= state.get(pop, offset)-m;
+					}
+				}
+			}
+			mean[sidx][i] += estimate;
+			std[sidx][i] += estimate*estimate;
+		}
+		
+		// Increment trajectory count:
+		nTraj++;
 	}
 	
 	/**
-	 * Normalise
+	 * Normalise moment estimates.
 	 */
 	public void normalise() {
 		
+		for (int sidx = 0; sidx<nSamples; sidx++) {
+			for (int i=0; i<schemaSize; i++) {
+				mean[sidx][i] /= (double)nTraj;
+				std[sidx][i] /= (double)nTraj;
+				std[sidx][i] = Math.sqrt(std[sidx][i] - mean[sidx][i]*mean[sidx][i]);
+			}
+		}
 	}
 }

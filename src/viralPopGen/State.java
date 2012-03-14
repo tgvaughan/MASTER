@@ -48,21 +48,6 @@ public class State {
 		}
 		
 	}
-	
-	/**
-	 * Copy make this (pre-initialised) state a copy of another state.
-	 * 
-	 * @param oldState State to make a copy of.
-	 */
-	public void makeCopy (State oldState) {
-		
-		// Copy sub-population sizes:
-		for (Population p : model.pops) {
-			for (int i=0; i<p.nSubPops; i++)
-				popSizes.get(p)[i] = oldState.popSizes.get(p)[i];
-		}
-		
-	}
 
 	/**
 	 * Get size of a particular sub-population.

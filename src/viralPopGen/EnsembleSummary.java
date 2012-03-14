@@ -22,7 +22,7 @@ public class EnsembleSummary {
 	Model model;
 	State initState;
 	double T;
-	int Nt, Nsamples, Ntraj;
+	int nTimeSteps, nSamples, nTraj;
 	int seed;
 
 	// Moments to record:
@@ -36,20 +36,20 @@ public class EnsembleSummary {
 	 * @param model
 	 * @param initState
 	 * @param t
-	 * @param Nt
-	 * @param Nsamples
-	 * @param Ntraj
+	 * @param nTimeSteps
+	 * @param nSamples
+	 * @param nTraj
 	 * @param seed
 	 */
-	public EnsembleSummary(Model model, State initState, double T, int Nt,
-			int Nsamples, int Ntraj, int seed, ArrayList<Moment> moments) {
+	public EnsembleSummary(Model model, State initState, double T, int nTimeSteps,
+			int nSamples, int nTraj, int seed, ArrayList<Moment> moments) {
 		super();
 		this.model = model;
 		this.initState = initState;
 		this.T = T;
-		this.Nt = Nt;
-		this.Nsamples = Nsamples;
-		this.Ntraj = Ntraj;
+		this.nTimeSteps = nTimeSteps;
+		this.nSamples = nSamples;
+		this.nTraj = nTraj;
 		this.seed = seed;
 
 		// Initialise RNG:

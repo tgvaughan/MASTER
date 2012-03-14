@@ -19,24 +19,13 @@ public class Moment {
 	ArrayList<HashMap<Population,HashMap<Integer,Integer>>> locSchema;
 	int schemaSize;
 
-	// Number of samples to record in time series:
-	int nSamples;
-	
-	// Number of trajectories incorporated into estimate:
-	int nTraj;
-
-	// Estimates:
-	double[][] mean, std;
-	double[] temp;
-	
 	/**
 	 * Constructor.
 	 * 
 	 * @param nSamples	Number of samples to record in time series.
 	 */
-	public Moment(String name, int nSamples, Population ... popOrder) {
+	public Moment(String name, Population ... popOrder) {
 		this.name = name;
-		this.nSamples = nSamples;
 		this.popSchema = popOrder;
 		schemaSize = popSchema.length;
 
@@ -76,29 +65,15 @@ public class Moment {
 		
 		locSchema.add(popMap);
 	}
-	
-	/**
-	 * Prepare moment object. Call after last location schema has been
-	 * added and before calling record().
-	 */
-	public void initialise () {
-		
-		// Allocate memory for storing moment estimates:
-		mean = new double[nSamples][schemaSize];
-		std = new double[nSamples][schemaSize];
-		
-		// Zero trajectory count:
-		nTraj = 0;
-		
-	}
 
 	/**
-	 * Record sample of moment calculated from state.
+	 * Obtain estimate of moment for given state.
 	 * 
-	 * @param state	State to record.
-	 * @param sidx	Index of estimate to contribute to.
+	 * @param state	State to summarise.
+	 * @param mean	Array to which to add moment estimates.
+	 * @param std	Array to which to add squares of moment estimates.
 	 */
-	public void record (State state, int sidx) {
+	public void getEstimate (State state, double[] mean, double[] std) {
 		
 		for (int i=0; i<schemaSize; i++) {
 			double estimate = 1;
@@ -109,25 +84,8 @@ public class Moment {
 					}
 				}
 			}
-			mean[sidx][i] += estimate;
-			std[sidx][i] += estimate*estimate;
-		}
-		
-		// Increment trajectory count:
-		nTraj++;
-	}
-	
-	/**
-	 * Normalise moment estimates.
-	 */
-	public void normalise() {
-		
-		for (int sidx = 0; sidx<nSamples; sidx++) {
-			for (int i=0; i<schemaSize; i++) {
-				mean[sidx][i] /= (double)nTraj;
-				std[sidx][i] /= (double)nTraj;
-				std[sidx][i] = Math.sqrt(std[sidx][i] - mean[sidx][i]*mean[sidx][i]);
-			}
+			mean[i] += estimate;
+			std[i] += estimate*estimate;
 		}
 	}
 }

@@ -79,6 +79,7 @@ public class EnsembleSummary {
 			int sidx = 0;
 			for (int tidx=0; tidx<nTimeSteps; tidx++) {
 				
+				// Sample if necessary:
 				if (tidx % stepsPerSample == 0) {
 					stateSummaries[sidx].record(currentState);
 					sidx++;
@@ -93,7 +94,6 @@ public class EnsembleSummary {
 				for (Reaction reaction : model.reactions) {
 					reaction.leap(currentState, dt, poissonian);
 				}
-				
 			}
 		}
 		
@@ -102,14 +102,4 @@ public class EnsembleSummary {
 			summary.normalise();
 
 	}
-
-	/**
-	 * For debugging only.
-	 * 
-	 * @param argv
-	 */
-	public static void main(String[] argv) {
-
-	}
-
 }

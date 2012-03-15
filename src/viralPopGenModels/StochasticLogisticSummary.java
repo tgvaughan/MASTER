@@ -55,7 +55,7 @@ public class StochasticLogisticSummary {
 		// Define moments:
 		
 		Moment mX = new Moment("X",X);
-		int[] locSchema = {0};
+		int[] locSchema = {0}; // Need to get rid of this somehow: ugly!
 		mX.addLocSchema(locSchema);
 		model.addMoment(mX);
 

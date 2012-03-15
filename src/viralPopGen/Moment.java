@@ -65,6 +65,14 @@ public class Moment {
 		
 		locSchema.add(popMap);
 	}
+	
+	/**
+	 * Ensure sub-population moment schema exists, defaulting to
+	 * scalar schema.
+	 */
+	public void init () {
+		
+	}
 
 	/**
 	 * Obtain estimate of moment for given state.

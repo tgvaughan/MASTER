@@ -55,6 +55,7 @@ public class Model {
 	 * @param moment Moment to add.
 	 */
 	public void addMoment(Moment moment) {
+		moment.init();
 		moments.add(moment);
 	}
 }

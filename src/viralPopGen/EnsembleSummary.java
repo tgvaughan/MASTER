@@ -100,6 +100,12 @@ public class EnsembleSummary {
 		// Normalise state summaries:
 		for (StateSummary summary : stateSummaries)
 			summary.normalise();
-
+	}
+	
+	/**
+	 * Dump ensemble summary to standard out.
+	 */
+	public void dump() {
+		
 	}
 }

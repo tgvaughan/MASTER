@@ -67,8 +67,8 @@ public class Moment {
 	}
 	
 	/**
-	 * Ensure sub-population moment schema exists, defaulting to
-	 * scalar schema.
+	 * Ensure sub-population moment schema exists,
+	 * defaulting to a single scalar schema.
 	 */
 	public void init () {
 		

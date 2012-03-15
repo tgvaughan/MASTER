@@ -1,4 +1,4 @@
-package viralPopGenModels;
+package viralPopGen.models;
 
 import viralPopGen.*;
 

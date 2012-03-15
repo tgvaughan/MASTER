@@ -1,4 +1,4 @@
-package viralPopGenDebug;
+package viralPopGen.debug;
 
 import java.util.*;
 import java.io.IOException;

@@ -16,7 +16,7 @@ public class Moment {
 
 	// Specification of moment:
 	Population[] popSchema;
-	ArrayList<HashMap<Population,HashMap<Integer,Integer>>> locSchema;
+	ArrayList<Map<Population,Map<Integer,Integer>>> locSchema;
 	int schemaSize;
 
 	/**
@@ -29,7 +29,7 @@ public class Moment {
 		this.popSchema = popOrder;
 		schemaSize = popSchema.length;
 
-		locSchema = new ArrayList<HashMap<Population,HashMap<Integer,Integer>>>();
+		locSchema = new ArrayList<Map<Population,Map<Integer,Integer>>>();
 	}
 	
 	/**
@@ -43,8 +43,8 @@ public class Moment {
 		if (locs.length != popSchema.length)
 			throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
 		
-		HashMap<Population, HashMap<Integer,Integer>> popMap =
-				new HashMap<Population,HashMap<Integer,Integer>>();
+		Map<Population, Map<Integer,Integer>> popMap =
+				new HashMap<Population,Map<Integer,Integer>>();
 		
 		for (int pidx=0; pidx<popSchema.length; pidx++) {
 			int offset = popSchema[pidx].locToOffset(locs[pidx]);
@@ -72,6 +72,20 @@ public class Moment {
 	 */
 	public void init () {
 		
+		if (locSchema.size() == 0) {
+			Map<Population, Map<Integer,Integer>> popMap = new HashMap<Population, Map<Integer,Integer>>();
+			for (int pidx=0; pidx<popSchema.length; pidx++) {
+				if (!popMap.containsKey(popSchema[pidx])) {
+					Map<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+					offsetMap.put(0,1);
+					popMap.put(popSchema[pidx], offsetMap);
+				} else {
+					int oldVal = popMap.get(popSchema[pidx]).get(0);
+					popMap.get(popSchema[pidx]).put(0, oldVal+1);
+				}
+			}
+			locSchema.add(popMap);
+		}
 	}
 
 	/**

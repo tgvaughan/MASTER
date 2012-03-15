@@ -65,11 +65,16 @@ public class StochasticLogisticSummary {
 		initState.set(X, 1.0);
 		
 		/*
-		 * Generate summarized ensemble:
+		 * Generate summarised ensemble:
 		 */
 		
 		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
 				T, Nt, Nsamples, Ntraj, 53);
+		
+		/*
+		 * Dump results (JSON):
+		 */
+		
+		ensemble.dump();
 	}
-
 }

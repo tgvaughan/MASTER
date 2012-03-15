@@ -1,11 +1,17 @@
 package viralPopGen;
 
+import java.io.IOException;
 import java.util.*;
 
 // COLT RNG classes:
 import cern.jet.random.engine.RandomEngine;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.Poisson;
+
+// JSON classes:
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * A class representing a collection of results obtained by
@@ -96,16 +102,56 @@ public class EnsembleSummary {
 				}
 			}
 		}
-		
+
 		// Normalise state summaries:
 		for (StateSummary summary : stateSummaries)
 			summary.normalise();
 	}
-	
+
 	/**
-	 * Dump ensemble summary to standard out.
+	 *  Dump ensemble summary to standard out using JSON.
 	 */
 	public void dump() {
 		
+		HashMap<String, Object> outputData = new HashMap<String, Object>();
+		
+		// Construct a sensibly-structured object containing the summarized
+		// data.  Heirarchy is moment->[mean/std]->schema->estimate.
+		
+		for (Moment moment : model.moments) {
+			HashMap<String,Object> momentData = new HashMap<String,Object>();
+			
+			ArrayList<Object> meanData = new ArrayList<Object>();
+			for (int schema=0; schema<stateSummaries[0].mean.get(moment).length; schema++) {
+				ArrayList<Double> schemaData = new ArrayList<Double>();
+				for (int sidx=0; sidx<stateSummaries.length; sidx++)
+					schemaData.add(stateSummaries[sidx].mean.get(moment)[schema]);
+				meanData.add(schemaData);
+			}
+			momentData.put("mean", meanData);
+
+			ArrayList<Object> stdData = new ArrayList<Object>();
+			for (int schema=0; schema<stateSummaries[0].std.get(moment).length; schema++) {
+				ArrayList<Double> schemaData = new ArrayList<Double>();
+				for (int sidx=0; sidx<stateSummaries.length; sidx++)
+					schemaData.add(stateSummaries[sidx].std.get(moment)[schema]);
+				stdData.add(schemaData);
+			}
+			momentData.put("std", stdData);
+			
+			outputData.put(moment.name, momentData);
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			System.out.println(mapper.writeValueAsString(outputData));
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 }

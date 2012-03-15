@@ -27,6 +27,7 @@ public class Model {
 	public Model () {
 		pops = new ArrayList<Population>();
 		reactions = new ArrayList<Reaction>();
+		moments = new ArrayList<Moment>();
 	}
 
 	/**

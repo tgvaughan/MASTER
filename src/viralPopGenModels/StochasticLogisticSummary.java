@@ -21,7 +21,7 @@ public class StochasticLogisticSummary {
 		double T = 100.0;
 		int Nt = 10001;
 		int Nsamples = 1001;
-		int Ntraj = 1;
+		int Ntraj = 1000;
 		
 		/*
 		 * Assemble model:
@@ -55,6 +55,8 @@ public class StochasticLogisticSummary {
 		// Define moments:
 		
 		Moment mX = new Moment("X",X);
+		int[] locSchema = {0};
+		mX.addLocSchema(locSchema);
 		model.addMoment(mX);
 
 		/*

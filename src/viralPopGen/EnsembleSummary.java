@@ -115,7 +115,7 @@ public class EnsembleSummary {
 		
 		HashMap<String, Object> outputData = new HashMap<String, Object>();
 		
-		// Construct a sensibly-structured object containing the summarized
+		// Construct an object containing the summarized
 		// data.  Heirarchy is moment->[mean/std]->schema->estimate.
 		
 		for (Moment moment : model.moments) {
@@ -141,6 +141,13 @@ public class EnsembleSummary {
 			
 			outputData.put(moment.name, momentData);
 		}
+		
+		// Add list of sampling times to output object:
+		ArrayList<Double> tData = new ArrayList<Double>();
+		double dT = T/(nSamples-1);
+		for (int sidx=0; sidx<stateSummaries.length; sidx++)
+			tData.add(dT*sidx);
+		outputData.put("t", tData);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		try {

@@ -21,6 +21,9 @@ public class StateSummary {
 	 */
 	public StateSummary (ArrayList<Moment> moments) {
 		
+		mean = new HashMap<Moment, double[]>();
+		std = new HashMap<Moment, double[]>();
+		
 		for (Moment moment : moments) {
 			mean.put(moment, new double[moment.schemaSize]);
 			std.put(moment, new double[moment.schemaSize]);

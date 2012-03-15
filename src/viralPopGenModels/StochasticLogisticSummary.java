@@ -3,14 +3,16 @@ package viralPopGenModels;
 import viralPopGen.*;
 
 /**
- * Implements a stochastic logistic model of population dynamics.
+ * A stochastic logistic model of population dynamics.  Uses
+ * Moment objects to summarise an ensemble in terms of means
+ * and variances.
  * 
  * @author Tim Vaughan
  *
  */
-public class StochasticLogistic {
+public class StochasticLogisticSummary {
 	
-	public static void main(String[] argv) {
+	public static void main (String[] argv) {
 		
 		/*
 		 *  Simulation parameters:
@@ -49,23 +51,25 @@ public class StochasticLogistic {
 		death.addProduct(X);
 		death.setRate(0.01);
 		model.addReaction(death);
+		
+		// Define moments:
+		
+		Moment mX = new Moment("X",X);
+		model.addMoment(mX);
 
 		/*
 		 * Set initial state:
 		 */
+		
 		State initState = new State(model);
 		initState.set(X, 1.0);
-
-		/*
-		 * Generate ensemble
-		 */
-		Ensemble ensemble = new Ensemble(model, initState, T, Nt, Nsamples, Ntraj, 53);
-
-		/*
-		 * Dump first trajectory to stdout:
-		 */
-		ensemble.dump();
 		
+		/*
+		 * Generate summarized ensemble:
+		 */
+		
+		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
+				T, Nt, Nsamples, Ntraj, 53);
 	}
 
 }

@@ -46,7 +46,7 @@ public class EnsembleSummary {
 	 * @param seed
 	 */
 	public EnsembleSummary(Model model, State initState, double T, int nTimeSteps,
-			int nSamples, int nTraj, int seed, ArrayList<Moment> moments) {
+			int nSamples, int nTraj, int seed) {
 
 		this.model = model;
 		this.initState = initState;
@@ -67,7 +67,7 @@ public class EnsembleSummary {
 		// Initialise state summaries:
 		stateSummaries = new StateSummary[nSamples];
 		for (int sidx=0; sidx<nSamples; sidx++)
-			stateSummaries[sidx] = new StateSummary(moments);
+			stateSummaries[sidx] = new StateSummary(model.moments);
 		
 		// Loop over trajectories:
 		for (int traj=0; traj<nTraj; traj++) {

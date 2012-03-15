@@ -11,3 +11,6 @@ doc
 
 # Subversion directories:
 .svn
+
+# Output files:
+*.txt

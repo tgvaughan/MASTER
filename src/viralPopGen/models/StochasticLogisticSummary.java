@@ -19,9 +19,9 @@ public class StochasticLogisticSummary {
 		 */
 		
 		double T = 100.0;
-		int Nt = 10001;
-		int Nsamples = 1001;
-		int Ntraj = 1000;
+		int nTimeSteps = 10001;
+		int nSamples = 1001;
+		int nTraj = 1000;
 		
 		/*
 		 * Assemble model:
@@ -69,7 +69,7 @@ public class StochasticLogisticSummary {
 		 */
 		
 		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
-				T, Nt, Nsamples, Ntraj, 53);
+				T, nTimeSteps, nSamples, nTraj, 53);
 		
 		/*
 		 * Dump results (JSON):

@@ -1,0 +1,8 @@
+<!-- Test stochastic simulation specification -->
+
+<beast version='2.0'>
+       <run spec='viralPopGen.beast.StochasticSimulation'
+		simulationTime='100'
+		nTimeSteps='10001'
+		nSamples="1001"/>
+</beast>

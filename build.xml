@@ -12,6 +12,8 @@
     <path id="viralPopGen.classpath">
         <pathelement location="bin"/>
         <pathelement location="lib/colt.jar"/>
+        <pathelement location="lib/jackson.jar"/>
+        <pathelement location="lib/beast.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
@@ -47,6 +49,21 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
+    </target>
+    <target name="StochasticLogisticSummary">
+        <java classname="viralPopGenModels.StochasticLogisticSummary" failonerror="true" fork="yes">
+            <classpath refid="viralPopGen.classpath"/>
+        </java>
+    </target>
+    <target name="StochasticLogistic">
+        <java classname="viralPopGenModels.StochasticLogistic" failonerror="true" fork="yes">
+            <classpath refid="viralPopGen.classpath"/>
+        </java>
+    </target>
+    <target name="JsonTest">
+        <java classname="viralPopGenDebug.JsonTest" failonerror="true" fork="yes">
+            <classpath refid="viralPopGen.classpath"/>
+        </java>
     </target>
     <target name="Ensemble">
         <java classname="viralPopGen.Ensemble" failonerror="true" fork="yes">

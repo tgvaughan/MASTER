@@ -4,5 +4,12 @@
        <run spec='viralPopGen.beast.StochasticSimulation'
 		simulationTime='100'
 		nTimeSteps='10001'
-		nSamples="1001"/>
+		nSamples='1001'
+		ntraj='10'>
+
+		<model spec='viralPopGen.beast.Model'>
+			<population spec='viralPopGen.beast.Population' name='X'/>
+		</model>
+
+	</run>
 </beast>

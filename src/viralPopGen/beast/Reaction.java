@@ -21,5 +21,24 @@ public class Reaction extends Plugin {
 			"Product population.");
 	
 	public Input<Double> rateInput = new Input<Double>("rate", "Reaction rate.");
+	
+	// True reaction object:
+	viralPopGen.Reaction reaction;
+	
+	public Reaction() {};
+	
+	@Override
+	public void initAndValidate() throws Exception {
+		
+		reaction = new viralPopGen.Reaction();
+		
+		for (Population reactantInput : reactantsInput.get())
+			reaction.addReactant(reactantInput.pop);
+		
+		for (Population productInput : productsInput.get())
+			reaction.addProduct(productInput.pop);
+		
+		reaction.setRate(rateInput.get());
+	}
 
 }

@@ -21,28 +21,28 @@ public class StochasticSimulation extends Runnable {
 			"Number of time points to sample state at.");
 	public Input<Integer> nTrajInput = new Input<Integer>("nTraj",
 			"Number of trajectories to generate.");
-	
+
 	// Model:
 	public Input<Model> modelInput = new Input<Model>("model",
 			"The specific model to simulate.");
-	
+
 	// Initial state:
 	public Input<InitState> initialStateInput = new Input<InitState>("initialState",
 			"Initial state of system.");
-	
+
 	/**
 	 * Empty default constructor required.
 	 */
 	public StochasticSimulation() {}
-	
+
 	@Override
 	public void initAndValidate() throws Exception {
-		
+
 		System.out.println("Hello, world!");
 		System.out.println("simulationTime = " + String.valueOf(simulationTimeInput.get()));
 		
 	}
-	
+
 	@Override
 	public void run() throws Exception {
 		System.out.println("Off and running!");

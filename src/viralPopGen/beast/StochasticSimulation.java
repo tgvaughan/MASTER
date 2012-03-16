@@ -1,5 +1,6 @@
 package viralPopGen.beast;
 
+import viralPopGen.EnsembleSummary;
 import beast.core.*;
 import beast.core.Runnable;
 
@@ -11,6 +12,10 @@ import beast.core.Runnable;
  */
 @Description("A stochastic simulation of a birth-death population dynamics model.")
 public class StochasticSimulation extends Runnable {
+	
+	/*
+	 * XML inputs:
+	 */
 
 	// Simulation parameters:
 	public Input<Double> simulationTimeInput = new Input<Double>("simulationTime",
@@ -21,6 +26,8 @@ public class StochasticSimulation extends Runnable {
 			"Number of time points to sample state at.");
 	public Input<Integer> nTrajInput = new Input<Integer>("nTraj",
 			"Number of trajectories to generate.");
+	public Input<Integer> seedInput = new Input<Integer>("seed",
+			"Seed for RNG.");
 
 	// Model:
 	public Input<Model> modelInput = new Input<Model>("model",
@@ -29,22 +36,45 @@ public class StochasticSimulation extends Runnable {
 	// Initial state:
 	public Input<InitState> initialStateInput = new Input<InitState>("initialState",
 			"Initial state of system.");
-
-	/**
-	 * Empty default constructor required.
+	
+	/*
+	 * Fields to populate with true parameters:
 	 */
+	
+	double simulationTime;
+	int nTimeSteps, nSamples, nTraj;
+	int seed;
+	
+	viralPopGen.Model model;
+	viralPopGen.State initState;
+	
 	public StochasticSimulation() {}
 
 	@Override
 	public void initAndValidate() throws Exception {
-
-		System.out.println("Hello, world!");
-		System.out.println("simulationTime = " + String.valueOf(simulationTimeInput.get()));
+		
+		// Read parameters from XML:
+		simulationTime = simulationTimeInput.get();
+		nTimeSteps = nTimeStepsInput.get();
+		nSamples = nSamplesInput.get();
+		nTraj = nTrajInput.get();
+		seed = seedInput.get();
+		
+		// Read model and state specification from XML:
+		model = modelInput.get().model;
+		initState = initialStateInput.get().initState;
 		
 	}
 
 	@Override
 	public void run() throws Exception {
-		System.out.println("Off and running!");
+		
+		// Generate ensemble of stochastic trajectories and estimate
+		// specified moments:
+		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
+				simulationTime, nTimeSteps, nSamples, nTraj, seed);
+		
+		// Dump results to stdout using JSON:
+		ensemble.dump();
 	}
 }

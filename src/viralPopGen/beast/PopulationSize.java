@@ -16,8 +16,22 @@ public class PopulationSize extends Plugin {
 	public Input<Double> sizeInput = new Input<Double>("size",
 			"Size of population.");
 	
+	viralPopGen.Population pop;
+	Double size;
+	
 	// Note that viralPopGen uses doubles rather than integers
 	// to represent population sizes.
 	
 	// TODO: Allow specification of structured population sizes.
+	
+	public PopulationSize() {};
+	
+	@Override
+	public void initAndValidate() throws Exception {
+		
+		pop = populationInput.get().pop;
+		size = sizeInput.get();
+		
+	}
+	
 }

@@ -45,6 +45,10 @@ public class Model extends Plugin {
 		for (Reaction reactInput : reactionsInput.get())
 			model.addReaction(reactInput.reaction);
 		
+		// Add moments to model:
+		for (Moment momentInput : momentsInput.get())
+			model.addMoment(momentInput.moment);
+		
 	}
 
 }

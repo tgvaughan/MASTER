@@ -29,7 +29,14 @@ public class Moment extends Plugin {
 	@Override
 	public void initAndValidate() throws Exception {
 		
-		moment = new viralPopGen.Moment()
+		// Assemble population schema:
+		int schemaSize = popSchemaInput.get().size();
+		viralPopGen.Population[] popSchema = new viralPopGen.Population[schemaSize];
+		for (int pidx=0; pidx<schemaSize; pidx++)
+			popSchema[pidx] = popSchemaInput.get().get(pidx).pop;
+		
+		// Assign schema to true moment object:
+		moment = new viralPopGen.Moment(nameInput.get(), popSchema);
 		
 	}
 

@@ -14,11 +14,13 @@ public class Reaction extends Plugin {
 	
 	public Input<List<Population>> reactantsInput = new Input<List<Population>>(
 			"reactant",
-			"Reactant population.");
+			"Reactant population.",
+			new ArrayList<Population>());
 	
 	public Input<List<Population>> productsInput = new Input<List<Population>>(
 			"product",
-			"Product population.");
+			"Product population.",
+			new ArrayList<Population>());
 	
 	public Input<Double> rateInput = new Input<Double>("rate", "Reaction rate.");
 	

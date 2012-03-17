@@ -5,11 +5,32 @@
 		simulationTime='100'
 		nTimeSteps='10001'
 		nSamples='1001'
-		ntraj='10'>
+		nTraj="10"
+		seed="53">
 
-		<model spec='viralPopGen.beast.Model'>
-			<population spec='viralPopGen.beast.Population' name='X'/>
+		<model spec='viralPopGen.beast.Model' id="model">
+			<population spec='viralPopGen.beast.Population' id="X" popName="X"/>
+			<reaction spec="viralPopGen.beast.Reaction" rate="1.0">
+				<reactant idref="X"/>
+				<product idref="X"/>
+				<product idref="X"/>
+			</reaction>
+			<reaction spec="viralPopGen.beast.Reaction" rate="0.01">
+				<reactant idref="X"/>
+				<reactant idref="X"/>
+				<product idref="X"/>
+			</reaction>
+			<moment spec="viralPopGen.beast.Moment" momentName="X">
+				<population idref="X"/>
+			</moment>
 		</model>
+
+		<initialState spec="viralPopGen.beast.InitState">
+			<populationSize size="10" spec="viralPopGen.beast.PopulationSize">
+				<population idref="X"/>
+			</populationSize>
+			<model idref="model"/>
+		</initialState>
 
 	</run>
 </beast>

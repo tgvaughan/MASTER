@@ -12,7 +12,7 @@ import beast.core.*;
 @Description("Specification of a summary statistic to calculate.")
 public class Moment extends Plugin {
 
-	public Input<String> nameInput = new Input<String>("name", "Population name.");
+	public Input<String> nameInput = new Input<String>("momentName", "Moment name.");
 
 	public Input<List<Population>> popSchemaInput = new Input<List<Population>>(
 			"population",

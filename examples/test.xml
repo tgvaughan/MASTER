@@ -6,7 +6,8 @@
 		nTimeSteps='10001'
 		nSamples='1001'
 		nTraj="10"
-		seed="53">
+		seed="53"
+		outFileName="out.txt">
 
 		<model spec='viralPopGen.beast.Model' id="model">
 			<population spec='viralPopGen.beast.Population' id="X" popName="X"/>

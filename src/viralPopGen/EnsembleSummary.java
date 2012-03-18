@@ -1,6 +1,7 @@
 package viralPopGen;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.*;
 
 // COLT RNG classes:
@@ -109,9 +110,11 @@ public class EnsembleSummary {
 	}
 
 	/**
-	 *  Dump ensemble summary to standard out using JSON.
+	 *  Dump ensemble summary to a given PrintStream object out using JSON.
+	 *  
+	 * @param pstream PrintStream where output is sent.
 	 */
-	public void dump() {
+	public void dump(PrintStream pstream) {
 		
 		HashMap<String, Object> outputData = new HashMap<String, Object>();
 		
@@ -151,7 +154,7 @@ public class EnsembleSummary {
 		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			System.out.println(mapper.writeValueAsString(outputData));
+			pstream.println(mapper.writeValueAsString(outputData));
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {

@@ -1,5 +1,7 @@
 package viralPopGen.beast;
 
+import java.io.PrintStream;
+
 import viralPopGen.EnsembleSummary;
 import beast.core.*;
 import beast.core.Runnable;
@@ -37,13 +39,18 @@ public class StochasticSimulation extends Runnable {
 	public Input<InitState> initialStateInput = new Input<InitState>("initialState",
 			"Initial state of system.");
 	
+	// Output file name:
+	public Input<String> outFileNameInput = new Input<String>("outFileName",
+			"Name of output file.");
+	
 	/*
-	 * Fields to populate with true parameters:
+	 * Fields to populate with parameter values:
 	 */
 	
 	double simulationTime;
 	int nTimeSteps, nSamples, nTraj;
 	int seed;
+	PrintStream outStream;
 	
 	viralPopGen.Model model;
 	viralPopGen.State initState;
@@ -64,6 +71,14 @@ public class StochasticSimulation extends Runnable {
 		model = modelInput.get().model;
 		initState = initialStateInput.get().initState;
 		
+		// Open specified file to use as output PrintStream
+		// for JSON-formated results.  If no file specified,
+		// dump to stdout.
+		String outFileName = outFileNameInput.get();
+		if (outFileName != null)
+			outStream = new PrintStream(outFileName);
+		else 
+			outStream = System.out;
 	}
 
 	@Override
@@ -74,7 +89,10 @@ public class StochasticSimulation extends Runnable {
 		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
 				simulationTime, nTimeSteps, nSamples, nTraj, seed);
 		
-		// Dump results to stdout using JSON:
-		ensemble.dump();
+		// Format results using JSON:
+		ensemble.dump(outStream);
+		
+		// Close output file:
+		outStream.close();
 	}
 }

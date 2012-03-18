@@ -164,4 +164,11 @@ public class EnsembleSummary {
 		}
 
 	}
+	
+	/**
+	 * Dump ensemble summary to stdout using JSON.
+	 */
+	public void dump() {
+		dump(System.out);
+	}
 }

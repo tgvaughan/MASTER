@@ -16,8 +16,7 @@ public class Moment {
 
 	// Specification of moment:
 	Population[] popSchema;
-	ArrayList<Map<Population,Map<Integer,Integer>>> locSchema;
-	int schemaSize;
+	ArrayList<Map<Population,Map<Integer,Integer>>> subSchemas;
 
 	/**
 	 * Constructor.
@@ -27,9 +26,8 @@ public class Moment {
 	public Moment(String name, Population ... popOrder) {
 		this.name = name;
 		this.popSchema = popOrder;
-		schemaSize = popSchema.length;
 
-		locSchema = new ArrayList<Map<Population,Map<Integer,Integer>>>();
+		subSchemas = new ArrayList<Map<Population,Map<Integer,Integer>>>();
 	}
 	
 	/**
@@ -38,7 +36,7 @@ public class Moment {
 	 * @param locs	Sub-population locations corresponding to populations
 	 * 				given in constructor.
 	 */
-	public void addLocSchema (int[] ... locs) {
+	public void addSubSchema (int[] ... locs) {
 		
 		if (locs.length != popSchema.length)
 			throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
@@ -63,7 +61,7 @@ public class Moment {
 			}
 		}
 		
-		locSchema.add(popMap);
+		subSchemas.add(popMap);
 	}
 	
 	/**
@@ -72,7 +70,7 @@ public class Moment {
 	 */
 	public void init () {
 		
-		if (locSchema.size() == 0) {
+		if (subSchemas.size() == 0) {
 			Map<Population, Map<Integer,Integer>> popMap = new HashMap<Population, Map<Integer,Integer>>();
 			for (int pidx=0; pidx<popSchema.length; pidx++) {
 				if (!popMap.containsKey(popSchema[pidx])) {
@@ -84,7 +82,7 @@ public class Moment {
 					popMap.get(popSchema[pidx]).put(0, oldVal+1);
 				}
 			}
-			locSchema.add(popMap);
+			subSchemas.add(popMap);
 		}
 	}
 
@@ -97,11 +95,11 @@ public class Moment {
 	 */
 	public void getEstimate (State state, double[] mean, double[] std) {
 		
-		for (int i=0; i<schemaSize; i++) {
+		for (int i=0; i<subSchemas.size(); i++) {
 			double estimate = 1;
-			for (Population pop : locSchema.get(i).keySet()) {
-				for (int offset : locSchema.get(i).get(pop).keySet()) {
-					for (int m=0; m<locSchema.get(i).get(pop).get(offset); m++) {
+			for (Population pop : subSchemas.get(i).keySet()) {
+				for (int offset : subSchemas.get(i).get(pop).keySet()) {
+					for (int m=0; m<subSchemas.get(i).get(pop).get(offset); m++) {
 						estimate *= state.get(pop, offset)-m;
 					}
 				}

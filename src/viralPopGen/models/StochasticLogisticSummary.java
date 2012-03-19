@@ -38,17 +38,15 @@ public class StochasticLogisticSummary {
 
 		// X -> 2X
 		Reaction birth = new Reaction();
-		birth.addReactant(X);
-		birth.addProduct(X);
-		birth.addProduct(X);
+		birth.setReactantSchema(X);
+		birth.setProductSchema(X,X);
 		birth.setRate(1.0);
 		model.addReaction(birth);
 
 		// 2X -> X
 		Reaction death = new Reaction();
-		death.addReactant(X);
-		death.addReactant(X);
-		death.addProduct(X);
+		death.setReactantSchema(X,X);
+		death.setProductSchema(X);
 		death.setRate(0.01);
 		model.addReaction(death);
 		

@@ -34,11 +34,19 @@ public class Reaction extends Plugin {
 		
 		reaction = new viralPopGen.Reaction();
 		
-		for (Population reactantInput : reactantsInput.get())
-			reaction.addReactant(reactantInput.pop);
+		viralPopGen.Population[] reactPopSchema =
+				new viralPopGen.Population[reactantsInput.get().size()];
+		for (int i=0; i<reactantsInput.get().size(); i++)
+			reactPopSchema[i] = reactantsInput.get().get(i).pop;
 		
-		for (Population productInput : productsInput.get())
-			reaction.addProduct(productInput.pop);
+		reaction.setReactantSchema(reactPopSchema);
+		
+		viralPopGen.Population[] prodPopSchema =
+				new viralPopGen.Population[productsInput.get().size()];
+		for (int i=0; i<productsInput.get().size(); i++)
+			prodPopSchema[i] = productsInput.get().get(i).pop;
+		
+		reaction.setProductSchema(prodPopSchema);
 		
 		reaction.setRate(rateInput.get());
 	}

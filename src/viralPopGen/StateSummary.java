@@ -25,8 +25,8 @@ public class StateSummary {
 		std = new HashMap<Moment, double[]>();
 		
 		for (Moment moment : moments) {
-			mean.put(moment, new double[moment.schemaSize]);
-			std.put(moment, new double[moment.schemaSize]);
+			mean.put(moment, new double[moment.subSchemas.size()]);
+			std.put(moment, new double[moment.subSchemas.size()]);
 		}
 		
 		nSamples = 0;

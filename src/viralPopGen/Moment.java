@@ -1,6 +1,7 @@
 package viralPopGen;
 
 import java.util.*;
+import com.google.common.collect.*;
 
 /**
  * Class of objects representing moments to be estimated from
@@ -16,7 +17,7 @@ public class Moment {
 
 	// Specification of moment:
 	Population[] popSchema;
-	ArrayList<Map<Population,Map<Integer,Integer>>> subSchemas;
+	List<Map<Population,Map<Integer,Integer>>> subSchemas;
 
 	/**
 	 * Constructor.
@@ -27,7 +28,7 @@ public class Moment {
 		this.name = name;
 		this.popSchema = popOrder;
 
-		subSchemas = new ArrayList<Map<Population,Map<Integer,Integer>>>();
+		subSchemas = Lists.newArrayList();
 	}
 	
 	/**
@@ -41,14 +42,13 @@ public class Moment {
 		if (locs.length != popSchema.length)
 			throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
 		
-		Map<Population, Map<Integer,Integer>> popMap =
-				new HashMap<Population,Map<Integer,Integer>>();
+		Map<Population, Map<Integer,Integer>> popMap = Maps.newHashMap();
 		
 		for (int pidx=0; pidx<popSchema.length; pidx++) {
 			int offset = popSchema[pidx].subToOffset(locs[pidx]);
 			
 			if (!popMap.containsKey(popSchema[pidx])) {
-				HashMap<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+				Map<Integer,Integer> offsetMap = Maps.newHashMap();
 				offsetMap.put(offset, 1);
 				popMap.put(popSchema[pidx], offsetMap);
 			} else {
@@ -71,10 +71,10 @@ public class Moment {
 	public void init () {
 		
 		if (subSchemas.size() == 0) {
-			Map<Population, Map<Integer,Integer>> popMap = new HashMap<Population, Map<Integer,Integer>>();
+			Map<Population, Map<Integer,Integer>> popMap = Maps.newHashMap();
 			for (int pidx=0; pidx<popSchema.length; pidx++) {
 				if (!popMap.containsKey(popSchema[pidx])) {
-					Map<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+					Map<Integer,Integer> offsetMap = Maps.newHashMap();
 					offsetMap.put(0,1);
 					popMap.put(popSchema[pidx], offsetMap);
 				} else {

@@ -1,8 +1,8 @@
 package viralPopGen;
 
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.*;
+import com.google.common.collect.*;
 
 // COLT RNG classes:
 import cern.jet.random.engine.RandomEngine;
@@ -34,7 +34,7 @@ public class EnsembleSummary {
 	int seed;
 
 	// Moments to record:
-	ArrayList<Moment> moments;
+	List<Moment> moments;
 	
 	// Ensemble-averaged state summaries:
 	StateSummary[] stateSummaries;
@@ -116,26 +116,26 @@ public class EnsembleSummary {
 	 */
 	public void dump(PrintStream pstream) {
 		
-		HashMap<String, Object> outputData = new HashMap<String, Object>();
+		HashMap<String, Object> outputData = Maps.newHashMap();
 		
 		// Construct an object containing the summarized
 		// data.  Heirarchy is moment->[mean/std]->schema->estimate.
 		
 		for (Moment moment : model.moments) {
-			HashMap<String,Object> momentData = new HashMap<String,Object>();
+			HashMap<String,Object> momentData = Maps.newHashMap();
 			
 			ArrayList<Object> meanData = new ArrayList<Object>();
 			for (int schema=0; schema<stateSummaries[0].mean.get(moment).length; schema++) {
-				ArrayList<Double> schemaData = new ArrayList<Double>();
+				ArrayList<Double> schemaData = Lists.newArrayList();
 				for (int sidx=0; sidx<stateSummaries.length; sidx++)
 					schemaData.add(stateSummaries[sidx].mean.get(moment)[schema]);
 				meanData.add(schemaData);
 			}
 			momentData.put("mean", meanData);
 
-			ArrayList<Object> stdData = new ArrayList<Object>();
+			ArrayList<Object> stdData = Lists.newArrayList();
 			for (int schema=0; schema<stateSummaries[0].std.get(moment).length; schema++) {
-				ArrayList<Double> schemaData = new ArrayList<Double>();
+				ArrayList<Double> schemaData = Lists.newArrayList();
 				for (int sidx=0; sidx<stateSummaries.length; sidx++)
 					schemaData.add(stateSummaries[sidx].std.get(moment)[schema]);
 				stdData.add(schemaData);
@@ -146,7 +146,7 @@ public class EnsembleSummary {
 		}
 		
 		// Add list of sampling times to output object:
-		ArrayList<Double> tData = new ArrayList<Double>();
+		ArrayList<Double> tData = Lists.newArrayList();
 		double dT = T/(nSamples-1);
 		for (int sidx=0; sidx<stateSummaries.length; sidx++)
 			tData.add(dT*sidx);

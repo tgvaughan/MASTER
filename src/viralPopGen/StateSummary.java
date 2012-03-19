@@ -1,6 +1,7 @@
 package viralPopGen;
 
 import java.util.*;
+import com.google.common.collect.*;
 
 /**
  * Class representing an ensemble of states summarised in
@@ -11,7 +12,7 @@ import java.util.*;
  */
 public class StateSummary {
 	
-	HashMap<Moment,double[]> mean, std;
+	Map<Moment,double[]> mean, std;
 	int nSamples;
 	
 	/**
@@ -19,10 +20,10 @@ public class StateSummary {
 	 * 
 	 * @param moments List of moments to use to summarise states.
 	 */
-	public StateSummary (ArrayList<Moment> moments) {
+	public StateSummary (List<Moment> moments) {
 		
-		mean = new HashMap<Moment, double[]>();
-		std = new HashMap<Moment, double[]>();
+		mean = Maps.newHashMap();
+		std = Maps.newHashMap();
 		
 		for (Moment moment : moments) {
 			mean.put(moment, new double[moment.subSchemas.size()]);

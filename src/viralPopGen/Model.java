@@ -13,13 +13,13 @@ import java.util.*;
 public class Model {
 
 	// Populations in model:
-	ArrayList<Population> pops;
+	List<Population> pops;
 
 	// Reactions to model:
-	ArrayList<Reaction> reactions;
+	List<Reaction> reactions;
 	
 	// Moments to calculate:
-	ArrayList<Moment> moments;
+	List<Moment> moments;
 	
 	/**
 	 * Model constructor.

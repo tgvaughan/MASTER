@@ -1,6 +1,8 @@
 package viralPopGen;
 
 import java.util.*;
+import com.google.common.collect.*;
+
 import cern.jet.random.Poisson;
 
 /**
@@ -23,8 +25,8 @@ public class Reaction {
 	 * Constructor.
 	 */
 	public Reaction() {
-		reactSubSchemas = new ArrayList<Map<Population,Map<Integer,Integer>>>();
-		prodSubSchemas = new ArrayList<Map<Population,Map<Integer,Integer>>>();
+		reactSubSchemas = Lists.newArrayList();
+		prodSubSchemas = Lists.newArrayList();
 	}
 	
 	/**
@@ -86,13 +88,13 @@ public class Reaction {
 		// Condense provided schema into a map of the form
 		// pop->offset->count, where count is the number of times
 		// that specific offset appears as a reactant in this schema.
-		Map<Population,Map<Integer,Integer>> subSchema = new HashMap<Population,Map<Integer,Integer>>();
+		Map<Population,Map<Integer,Integer>> subSchema = Maps.newHashMap();
 		for (int pidx=0; pidx<reactPopSchema.length; pidx++) {
 			
 			Population pop = reactPopSchema[pidx];
 			
 			if (!subSchema.containsKey(pop)) {
-				Map<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+				Map<Integer,Integer> offsetMap = Maps.newHashMap();
 				offsetMap.put(offsets[pidx], 1);
 				subSchema.put(pop, offsetMap);
 			} else {
@@ -147,13 +149,13 @@ public class Reaction {
 		// Condense provided schema into a map of the form
 		// pop->offset->count, where count is the number of times
 		// that specific offset appears as a product in this schema:
-		Map<Population,Map<Integer,Integer>> subSchema = new HashMap<Population,Map<Integer,Integer>>();
+		Map<Population,Map<Integer,Integer>> subSchema = Maps.newHashMap();
 		for (int pidx=0; pidx<prodPopSchema.length; pidx++) {
 
 			Population pop = prodPopSchema[pidx];
 
 			if (!subSchema.containsKey(pop)) {
-				Map<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+				Map<Integer,Integer> offsetMap = Maps.newHashMap();
 				offsetMap.put(offsets[pidx], 1);
 				subSchema.put(pop, offsetMap);
 			} else {
@@ -221,7 +223,7 @@ public class Reaction {
 	 */
 	public void calcDeltas() {
 		
-		deltas = new ArrayList<Map<Population,Map<Integer,Integer>>>();
+		deltas = Lists.newArrayList();
 		
 		// Determine the difference between each reactant and product
 		// sub-population level schema defined in reactLocSchema and
@@ -232,7 +234,7 @@ public class Reaction {
 					new HashMap<Population, Map<Integer,Integer>>();
 			
 			for (Population pop : reactSubSchemas.get(i).keySet()) {
-				Map<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+				Map<Integer,Integer> offsetMap = Maps.newHashMap();
 				for (int offset : reactSubSchemas.get(i).get(pop).keySet())
 					offsetMap.put(offset, -reactSubSchemas.get(i).get(pop).get(offset));
 				
@@ -241,7 +243,7 @@ public class Reaction {
 			
 			for (Population pop : prodSubSchemas.get(i).keySet()) {
 				if (!popMap.containsKey(pop)) {
-					Map<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+					Map<Integer,Integer> offsetMap = Maps.newHashMap();
 					for (int offset : prodSubSchemas.get(i).get(pop).keySet())
 						offsetMap.put(offset, prodSubSchemas.get(i).get(pop).get(offset));
 					

@@ -1,6 +1,6 @@
 package viralPopGen.beast;
 
-import java.io.PrintStream;
+import java.io.*;
 
 import viralPopGen.EnsembleSummary;
 import beast.core.*;

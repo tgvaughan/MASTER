@@ -1,6 +1,7 @@
 package viralPopGen;
 
 import java.util.*;
+import com.google.common.collect.*;
 
 /**
  * Class of objects describing distinct states of the
@@ -12,7 +13,7 @@ import java.util.*;
 public class State {
 	
 	Model model;
-	HashMap<Population,Double[]> popSizes;
+	Map<Population,Double[]> popSizes;
 	
 	
 	/**
@@ -25,7 +26,7 @@ public class State {
 		this.model = model;
 		
 		// Initialise sub-population sizes:
-		popSizes = new HashMap<Population, Double[]>(model.pops.size());
+		popSizes = Maps.newHashMap();
 		for (Population p : model.pops)
 			popSizes.put(p, new Double[p.nSubPops]);
 		
@@ -40,7 +41,7 @@ public class State {
 		this.model = oldState.model;
 		
 		// Copy sub-population sizes:
-		this.popSizes = new HashMap<Population, Double[]>(model.pops.size());
+		this.popSizes = Maps.newHashMap();
 		for (Population p : model.pops) {
 				popSizes.put(p, new Double[p.nSubPops]);
 				for (int i=0; i<p.nSubPops; i++)

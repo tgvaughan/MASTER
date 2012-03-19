@@ -53,17 +53,20 @@ public class StochasticLogistic {
 		/*
 		 * Set initial state:
 		 */
+
 		State initState = new State(model);
 		initState.set(X, 1.0);
 
 		/*
 		 * Generate ensemble
 		 */
+
 		Ensemble ensemble = new Ensemble(model, initState, T, Nt, Nsamples, Ntraj, 53);
 
 		/*
 		 * Dump first trajectory to stdout:
 		 */
+
 		ensemble.dump();
 		
 	}

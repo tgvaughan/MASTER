@@ -49,7 +49,7 @@ public class Population {
 	 * @param loc Location of sub-population.
 	 * @return Offset.
 	 */
-	public int locToOffset(int[] loc) {
+	public int subToOffset(int[] loc) {
 		int offset = 0;
 		
 		int m=1;

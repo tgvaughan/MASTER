@@ -6,156 +6,210 @@ import cern.jet.random.Poisson;
 /**
  * Class of objects describing the reactions which occur
  * between the various populations in the model.  Reactions
- * may involve both scalar and genetically-diverse
- * populations, and they may involve genetic mutation.
+ * may involve both scalar and structured populations.
  * 
  * @author Tim Vaughan
  *
  */
-/**
- * @author Tim Vaughan
- *
- */
 public class Reaction {
-
-	HashMap <Population, ArrayList<HashMap<Integer, Integer>>> reactants, products, deltas;
-	double[] rates, propensities;
 	
-	int nSubReacts;
+	Population [] reactPopSchema, prodPopSchema;
+	List<Map<Population,Map<Integer,Integer>>> reactSubSchemas, prodSubSchemas, deltas;
+	
+	double[] rates, propensities;
+	int nSubSchemas;
 	
 	/**
 	 * Constructor.
 	 */
 	public Reaction() {
-		reactants = new HashMap<Population, ArrayList<HashMap<Integer, Integer>>>();
-		products = new HashMap<Population, ArrayList<HashMap<Integer, Integer>>>();
-		deltas = new HashMap<Population, ArrayList<HashMap<Integer, Integer>>>();
-		
-		nSubReacts = 0;
-	}
-
-	/**
-	 * Add reactant to reaction spec.
-	 * 
-	 * @param pop Reactant population.
-	 * @param locs Specific reactant sub-populations.
-	 */
-	public void addReactant(Population pop, int[][] locs) {
-
-		if (locs == null) {
-			
-			// If location unspecified, assume scalar reactant:
-			locs = new int[1][1];
-			locs[0][0] = 0;
-			
-		} else {
-
-			// Ensure number of sub-reactions is consistent:
-			if (nSubReacts > 0) {
-				if (nSubReacts !=locs.length)
-					throw new IllegalArgumentException ("Inconsistent number of sub-reactions specified.");
-			} else
-				nSubReacts = locs.length;
-		}
-		
-		// Check for multiple occurrences of reactant populations:
-		if (!reactants.containsKey(pop)) {
-			ArrayList<HashMap<Integer, Integer>> locVec = new ArrayList<HashMap<Integer, Integer>>();
-			
-			for (int i=0; i<locs.length; i++) {
-				HashMap<Integer,Integer> locMap = new HashMap<Integer, Integer>();
-				locMap.put(pop.locToOffset(locs[i]), 1);
-				locVec.add(locMap);
-			}
-			reactants.put(pop, locVec);
-
-		} else {
-
-			for (int i=0; i<locs.length; i++) {
-
-				int offset = pop.locToOffset(locs[i]);
-				
-				if (reactants.get(pop).get(i).containsKey(offset)) {
-					int oldVal = reactants.get(pop).get(i).get(offset);
-					reactants.get(pop).get(i).put(offset, oldVal+1);
-				}
-			}
-		}
+		reactSubSchemas = new ArrayList<Map<Population,Map<Integer,Integer>>>();
+		prodSubSchemas = new ArrayList<Map<Population,Map<Integer,Integer>>>();
 	}
 	
 	/**
-	 * Add unstructured reactant to reaction spec.
-	 *  
-	 * @param pop Reactant population.
-	 */
-	public void addReactant(Population pop) {
-		addReactant(pop, null);
-	}
-
-	/**
-	 * Add product to reaction spec.
+	 * Define reactant population-level schema by choosing which populations
+	 * appear in subsequent calls to addReactantLocSchema and in which order
+	 * they appear.
 	 * 
-	 * @param pop Product population.
-	 * @param locs Specific product sub-populations.
+	 * @param reactantPopSchema	varargs list of reactant populations.
 	 */
-	public void addProduct(Population pop, int[][] locs) {
-
-		if (locs == null) {
-
-			// Use first location if no location vector supplied:
-			locs = new int[1][1];
-			locs[0][0] = 0;
-		} else {
-
-			// Ensure number of sub-reactions is consistent:
-			if (nSubReacts>0) {
-				if (nSubReacts !=locs.length)
-					throw new IllegalArgumentException ("Inconsistent number of sub-reactions specified.");
-			} else
-				nSubReacts = locs.length;
-		}
-
-		// Check for multiple occurrences of reactant populations:
-		if (!products.containsKey(pop)) {
-			ArrayList<HashMap<Integer, Integer>> locVec = new ArrayList<HashMap<Integer, Integer>>();
-			
-			for (int i=0; i<locs.length; i++) {
-				HashMap<Integer,Integer> locMap = new HashMap<Integer, Integer>();
-				locMap.put(pop.locToOffset(locs[i]), 1);
-				locVec.add(locMap);
-			}
-			products.put(pop, locVec);
-
-		} else {
-
-			for (int i=0; i<locs.length; i++) {
-
-				int offset = pop.locToOffset(locs[i]);
-				
-				if (products.get(pop).get(i).containsKey(offset)) {
-					int oldVal = products.get(pop).get(i).get(offset);
-					products.get(pop).get(i).put(offset, oldVal+1);
-				}
-			}
-		}
+	public void setReactantSchema(Population ... reactantPopSchema) {
+		this.reactPopSchema = reactantPopSchema;
 	}
 	
 	/**
-	 * Add unstructured product to reaction spec.
+	 * Define product population-level schema by choosing which populations
+	 * appear in subsequent calls to addProductLocSchema and in wihch order
+	 * those populations appear.
 	 * 
-	 * @param pop Product population to add.
+	 * @param productPopSchema	varargs list of product populations.
 	 */
-	public void addProduct(Population pop) {
-		addProduct(pop, null);
+	public void setProductSchema(Population ... productPopSchema) {
+		this.prodPopSchema = productPopSchema;
+	}
+	
+	/**
+	 * Define a particular sub-population-level schema by listing the
+	 * individual sub-population reactants involved in a reaction. Subsequent
+	 * calls to addReactantLocSchema() define an array of such schemas
+	 * that must be aligned with a similar array created by corresponding
+	 * calls to addProductLocSchema().
+	 * 
+	 * @param subs	varargs list of reactant sub-populations.
+	 */
+	public void addReactantSubSchema(int[] ... subs) {
+		
+		// Check for consistent number of sub-populations:
+		if (subs.length != reactPopSchema.length)
+			throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
+		
+		int[] offsets = new int[reactPopSchema.length];
+		for (int pidx=0; pidx<reactPopSchema.length; pidx++)
+			offsets[pidx] = reactPopSchema[pidx].subToOffset(subs[pidx]);
+		
+		// Call internal method to complete addition of schema:
+		addReactantSubSchema(offsets);
+		
+	}
+	
+	/**
+	 * Internal method which handles the task of adding the sub-population
+	 * level reaction reactant schema.  Takes a list of offsets into the
+	 * State sub-population size arrays rather than the sub-population
+	 * specification vectors.
+	 * 
+	 * @param offsets	list of product sub-population offsets.
+	 */
+	private void addReactantSubSchema(int ... offsets) {
+		
+		// Condense provided schema into a map of the form
+		// pop->offset->count, where count is the number of times
+		// that specific offset appears as a reactant in this schema.
+		Map<Population,Map<Integer,Integer>> subSchema = new HashMap<Population,Map<Integer,Integer>>();
+		for (int pidx=0; pidx<reactPopSchema.length; pidx++) {
+			
+			Population pop = reactPopSchema[pidx];
+			
+			if (!subSchema.containsKey(pop)) {
+				Map<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+				offsetMap.put(offsets[pidx], 1);
+				subSchema.put(pop, offsetMap);
+			} else {
+				if (!subSchema.get(pop).containsKey(offsets[pidx]))
+					subSchema.get(pop).put(offsets[pidx], 1);
+				else {
+					int val = subSchema.get(pop).get(offsets[pidx]);
+					subSchema.get(pop).put(offsets[pidx], val+1);
+				}
+			}
+		}
+		
+		// Add newly-condensed map to reactLocSchemas,
+		// which is a list of such maps:
+		reactSubSchemas.add(subSchema);
+	}
+
+	/**
+	 * Define a particular sub-population-level schema by listing the
+	 * individual sub-population products involved in a reaction. Subsequent
+	 * calls to addProductLocSchema() define an array of such schemas
+	 * that must be aligned with a similar array created by corresponding
+	 * calls to addReactantLocSchema().
+	 * 
+	 * @param subs	varargs list of product sub-populations.
+	 */
+	public void addProductSubSchema(int[] ... subs) {
+	
+		// Check for consistent number of sub-populations:
+		if (subs.length != prodPopSchema.length)
+			throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
+
+		// Calculate offsets from sub-population vectors:
+		int[] offsets = new int[subs.length];
+		for (int i=0; i<subs.length; i++)
+			offsets[i] = prodPopSchema[i].subToOffset(subs[i]);
+		
+		// Call internal method to complete addition of schema:
+		addProductSubSchema(offsets);
+	}
+	
+	/**
+	 * Internal method which handles the task of adding the sub-population
+	 * level reaction product schema.  Takes a list of offsets into the
+	 * State sub-population size arrays rather than the sub-population
+	 * specification vectors.
+	 * 
+	 * @param offsets	list of product sub-population offsets.
+	 */
+	private void addProductSubSchema(int ... offsets) {
+
+		// Condense provided schema into a map of the form
+		// pop->offset->count, where count is the number of times
+		// that specific offset appears as a product in this schema:
+		Map<Population,Map<Integer,Integer>> subSchema = new HashMap<Population,Map<Integer,Integer>>();
+		for (int pidx=0; pidx<prodPopSchema.length; pidx++) {
+
+			Population pop = prodPopSchema[pidx];
+
+			if (!subSchema.containsKey(pop)) {
+				Map<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+				offsetMap.put(offsets[pidx], 1);
+				subSchema.put(pop, offsetMap);
+			} else {
+				if (!subSchema.get(pop).containsKey(offsets[pidx]))
+					subSchema.get(pop).put(offsets[pidx], 1);
+				else {
+					int val = subSchema.get(pop).get(offsets[pidx]);
+					subSchema.get(pop).put(offsets[pidx], val+1);
+				}
+			}
+		}
+		
+		// Add newly-condensed map to prodLocSchemas,
+		// which is a list of such maps:
+		prodSubSchemas.add(subSchema);
+	}
+	
+	/**
+	 * Add default reactant and product sub-population schemas
+	 * which refer only to those sub-populations at zero offset
+	 * in the sub-population size arrays contained in the state
+	 * vector.  This allows for easy specification of reactions
+	 * involving structureless populations.
+	 */
+	private void addScalarSubSchemas() {
+		
+		int[] reactOffsets = new int[reactPopSchema.length];
+		for (int pidx=0; pidx<reactPopSchema.length; pidx++)
+			reactOffsets[pidx] = 0;
+		addReactantSubSchema(reactOffsets);
+		
+		int[] prodOffsets = new int[prodPopSchema.length];
+		for (int pidx=0; pidx<prodPopSchema.length; pidx++)
+			prodOffsets[pidx] = 0;
+		addProductSubSchema(prodOffsets);
 	}
 
 	/**
 	 * Set average rate that reaction will occur at.
 	 * 
-	 * @param rates
+	 * @param rates	varargs list of rates to use.
 	 */
-	public void setRate(double[] rates) {
+	public void setRate(double ... rates) {
 		
+		if (reactSubSchemas.size() != prodSubSchemas.size())
+			throw new IllegalArgumentException("Unequal numbers of reactant and product schemas.");
+		nSubSchemas = reactSubSchemas.size();
+		
+		if (nSubSchemas == 0) {
+			// Assume scalar reaction:
+			addScalarSubSchemas();
+			nSubSchemas++;
+		}
+		
+		if (nSubSchemas != rates.length)
+			throw new IllegalArgumentException("Inconsistent number of rates specified.");
 		this.rates = rates.clone();
 
 		// Same number of propensities as rates:
@@ -163,127 +217,98 @@ public class Reaction {
 	}
 	
 	/**
-	 * Set average rate for scalar reaction.
-	 * 
-	 * @param rate
-	 */
-	public void setRate(double rate) {
-		assert(nSubReacts==0);
-		
-		rates = new double[1];
-		rates[0] = rate;
-		
-		propensities = new double[1];
-	}
-
-	/**
-	 * Pre-calculate changes in each sub-population due to reactions.
+	 * Pre-calculate reaction-induced changes to sub-population sizes.
 	 */
 	public void calcDeltas() {
 		
-		// Set nSubReacts in the case of a completely scalar reaction:
-		if (nSubReacts==0)
-			nSubReacts = 1;
+		deltas = new ArrayList<Map<Population,Map<Integer,Integer>>>();
 		
-		// Check for internal consistency:
-		if (rates.length != nSubReacts)
-			throw new IllegalArgumentException("Inconsistent number of reaction rates specified.");
+		// Determine the difference between each reactant and product
+		// sub-population level schema defined in reactLocSchema and
+		// prodLocSchema.  (Loosely, deltas=prodLocSchema-reactLocSchema.)
 		
-		for (Population pop : reactants.keySet()) {
+		for (int i=0; i<nSubSchemas; i++) {
+			Map<Population,Map<Integer,Integer>> popMap =
+					new HashMap<Population, Map<Integer,Integer>>();
 			
-			ArrayList<HashMap<Integer,Integer>> locVec = new ArrayList<HashMap<Integer,Integer>>();
-			for (int r = 0; r<reactants.get(pop).size(); r++) {
+			for (Population pop : reactSubSchemas.get(i).keySet()) {
+				Map<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+				for (int offset : reactSubSchemas.get(i).get(pop).keySet())
+					offsetMap.put(offset, -reactSubSchemas.get(i).get(pop).get(offset));
 				
-				HashMap<Integer,Integer> locMap = new HashMap<Integer,Integer>();
-				for (int offset : reactants.get(pop).get(r).keySet())
-					locMap.put(offset, -reactants.get(pop).get(r).get(offset));
-				
-				locVec.add(locMap);
+				popMap.put(pop, offsetMap);
 			}
-			deltas.put(pop, locVec);
-		}
-		
-		for (Population pop : products.keySet()) {
 			
-			if (deltas.containsKey(pop)) {
-				
-				for (int r=0; r<products.get(pop).size(); r++) {
-					for (int offset : products.get(pop).get(r).keySet()) {
+			for (Population pop : prodSubSchemas.get(i).keySet()) {
+				if (!popMap.containsKey(pop)) {
+					Map<Integer,Integer> offsetMap = new HashMap<Integer,Integer>();
+					for (int offset : prodSubSchemas.get(i).get(pop).keySet())
+						offsetMap.put(offset, prodSubSchemas.get(i).get(pop).get(offset));
+					
+					popMap.put(pop, offsetMap);
 						
-						if (deltas.get(pop).get(r).containsKey(offset)) {
-							int oldVal = deltas.get(pop).get(r).get(offset);
-							int newVal = oldVal + products.get(pop).get(r).get(offset);
-							deltas.get(pop).get(r).put(offset, newVal);
+				} else {
+					
+					for (int offset : prodSubSchemas.get(i).get(pop).keySet()) {
+						if (!popMap.get(pop).containsKey(offset)) {
+							int val = prodSubSchemas.get(i).get(pop).get(offset);
+							popMap.get(pop).put(offset, val);
 						} else {
-							deltas.get(pop).get(r).put(offset, products.get(pop).get(r).get(offset));
+							int val = popMap.get(pop).get(offset);
+							val += prodSubSchemas.get(i).get(pop).get(offset);
+							popMap.get(pop).put(offset, val);
 						}
-						
 					}
 				}
-				
-			} else {
-				
-				ArrayList<HashMap<Integer,Integer>> locVec = new ArrayList<HashMap<Integer,Integer>>();
-				for (int r=0; r<products.get(pop).size(); r++) {
-					
-					HashMap<Integer,Integer> locMap = new HashMap<Integer,Integer>();
-					for (int offset : products.get(pop).get(r).keySet())
-						locMap.put(offset, products.get(pop).get(r).get(offset));
-					
-					locVec.add(locMap);
-				}
-				deltas.put(pop, locVec);
 			}
+			
+			
+			deltas.add(popMap);
 		}
 	}
-
+	
 	/**
-	 * Calculate instantaneous transition rates (propensities)
-	 * for the given state.
+	 * Calculate instantaneous reaction rates (propensities) from
+	 * a given system state.
 	 * 
-	 * @param state State vector used to calculate propensities.
+	 * @param state	State used to calculate propensities.
 	 */
 	public void calcPropensities(State state) {
 		
-		for (int r=0; r<nSubReacts; r++) {
-			propensities[r] = rates[r];
-			for (Population pop : reactants.keySet()) {
-				
-				// Deal with unstructured reactants:
-				int rmod = r%reactants.get(pop).size();
-				
-				for (int offset : reactants.get(pop).get(rmod).keySet()) {
-					for (int m=0; m<reactants.get(pop).get(rmod).get(offset); m++)
-						propensities[r] *= state.get(pop, offset)-m;
+		for (int i=0; i<nSubSchemas; i++) {
+			propensities[i] = rates[i];
+			
+			for (Population pop : reactSubSchemas.get(i).keySet()) {
+				for (int offset : reactSubSchemas.get(i).get(pop).keySet()) {
+					for (int m=0; m<reactSubSchemas.get(i).get(pop).get(offset); m++) {
+						propensities[i] *= state.get(pop, offset)-m;
+					}
 				}
 			}
 		}
 	}
-
+	
 	/**
-	 * Implement tau leap for specified dt.  Make sure that
-	 * calcPropensities() has been called first!
+	 * Generate appropriate random state change according to
+	 * Gillespie's tau-leaping algorithm.
 	 * 
-	 * @param state Current state with pre-calculated propensities.
-	 * @param dt Time increment over which to leap.
-	 * @param poissonian Poissonian RNG.
+	 * @param state 		State to modify.
+	 * @param tau			Time increment over which to leap.
+	 * @param poissonian	Poissonian RNG.
 	 */
-	public void leap(State state, double dt, Poisson poissonian) {
+	public void leap(State state, double tau, Poisson poissonian) {
 		
-		for (int r=0; r<nSubReacts; r++) {
+		for (int i=0; i<nSubSchemas; i++) {
 			
-			double n = poissonian.nextInt(propensities[r]*dt);
-			for (Population pop : deltas.keySet()) {
-				
-				// Deal with unstructured populations:
-				int rmod = r%deltas.get(pop).size();
-				
-				for (int offset : deltas.get(pop).get(rmod).keySet())
-					state.add(pop, offset, n*deltas.get(pop).get(rmod).get(offset));
+			// Draw number of reactions to fire within time tau:
+			double q = (double)poissonian.nextInt(propensities[i]*tau);
+			
+			// Implement reactions:
+			for (Population pop : deltas.get(i).keySet()) {
+				for (int offset : deltas.get(i).get(pop).keySet())
+					state.add(pop, offset, q*deltas.get(i).get(pop).get(offset));
 			}
-			
 		}
 		
 	}
-
 }

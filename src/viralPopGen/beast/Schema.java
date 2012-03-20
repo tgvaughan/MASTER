@@ -11,9 +11,9 @@ import beast.core.*;
 @Description("Schema specification used in the definition of reactions/moments.")
 public class Schema extends Plugin {
 	
-	Input<PopSchema> popSchemaInput = new Input<PopSchema>("popSchema", "Population level schema.");
+	public Input<PopSchema> popSchemaInput = new Input<PopSchema>("popSchema", "Population level schema.");
 	
-	Input<List<SubPopSchema>> subPopSchemasInput = new Input<List<SubPopSchema>>("subPopSchema",
+	public Input<List<SubPopSchema>> subPopSchemasInput = new Input<List<SubPopSchema>>("subPopSchema",
 			"A single sub-population-level schema.",
 			new ArrayList<SubPopSchema>());
 	

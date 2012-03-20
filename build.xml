@@ -14,6 +14,7 @@
         <pathelement location="lib/colt.jar"/>
         <pathelement location="lib/jackson.jar"/>
         <pathelement location="lib/beast.jar"/>
+        <pathelement location="lib/guava.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
@@ -55,6 +56,16 @@
             <classpath refid="viralPopGen.classpath"/>
         </java>
     </target>
+    <target name="StochasticLogisticSummary (1)">
+        <java classname="viralPopGen.models.StochasticLogisticSummary" failonerror="true" fork="yes">
+            <classpath refid="viralPopGen.classpath"/>
+        </java>
+    </target>
+    <target name="StochasticMigration">
+        <java classname="viralPopGen.models.StochasticMigration" failonerror="true" fork="yes">
+            <classpath refid="viralPopGen.classpath"/>
+        </java>
+    </target>
     <target name="StochasticLogistic">
         <java classname="viralPopGenModels.StochasticLogistic" failonerror="true" fork="yes">
             <classpath refid="viralPopGen.classpath"/>
@@ -62,6 +73,11 @@
     </target>
     <target name="JsonTest">
         <java classname="viralPopGenDebug.JsonTest" failonerror="true" fork="yes">
+            <classpath refid="viralPopGen.classpath"/>
+        </java>
+    </target>
+    <target name="StochasticLogistic (1)">
+        <java classname="viralPopGen.models.StochasticLogistic" failonerror="true" fork="yes">
             <classpath refid="viralPopGen.classpath"/>
         </java>
     </target>

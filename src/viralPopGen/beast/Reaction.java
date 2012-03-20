@@ -2,6 +2,7 @@ package viralPopGen.beast;
 
 import java.util.*;
 import beast.core.*;
+import beast.core.parameter.*;
 
 /**
  * Beast 2 plugin representing a single reaction.
@@ -15,9 +16,9 @@ public class Reaction extends Plugin {
 	public Input<Schema> reactantSchemaInput = new Input<Schema>("reactantSchema", "Reactant schema.");
 	public Input<Schema> productSchemaInput = new Input<Schema>("productSchema", "Product schema.");
 	
-	public Input<List<Double>> rateInput = new Input<List<Double>>("rate",
+	public Input<List<RealParameter>> ratesInput = new Input<List<RealParameter>>("rate",
 			"Reaction rate.",
-			new ArrayList<Double>());
+			new ArrayList<RealParameter>());
 	
 	// True reaction object:
 	viralPopGen.Reaction reaction;
@@ -37,10 +38,11 @@ public class Reaction extends Plugin {
 		
 		for (int[][] subPopSchema : productSchemaInput.get().subPopSchemas)
 			reaction.addProductSubSchema(subPopSchema);
-			
-		double[] rates = new double[rateInput.get().size()];
+		
+		double[] rates = new double[ratesInput.get().size()];
 		for (int i=0; i<rates.length; i++)
-			rates[i] = rateInput.get().get(i);
+			rates[i] = ratesInput.get().get(i).getValue();
+		
 		reaction.setRate(rates);
 	}
 

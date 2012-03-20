@@ -12,7 +12,7 @@ import beast.core.*;
 @Description("Specification of sub-population schema for defining reactions/moments.")
 public class SubPopSchema extends Plugin {
 	
-	Input<List<SubPopulation>> subPopsInput = new Input<List<SubPopulation>>("subPopulation",
+	public Input<List<SubPopulation>> subPopsInput = new Input<List<SubPopulation>>("subPopulation",
 			"Sub-population to include in schema.",
 			new ArrayList<SubPopulation>());
 	

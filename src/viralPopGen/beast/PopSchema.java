@@ -11,8 +11,8 @@ import beast.core.*;
  */
 @Description("Specification of population schema for defining reactions and moments.")
 public class PopSchema extends Plugin {
-	
-	Input<List<Population>> populationsInput = new Input<List<Population>>("population",
+
+	public Input<List<Population>> populationsInput = new Input<List<Population>>("population",
 			"Population in schema.", new ArrayList<Population>());
 	
 	// Population-level schema:

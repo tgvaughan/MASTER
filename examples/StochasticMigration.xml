@@ -1,0 +1,76 @@
+<!-- Test simulation of model with structured populations -->
+
+<beast version='2.0'>
+       <run spec='viralPopGen.beast.StochasticSimulation'
+		simulationTime='20'
+		nTimeSteps='1001'
+		nSamples='1001'
+		nTraj="1"
+		seed="53"
+		outFileName="out.txt">
+
+		<model spec='viralPopGen.beast.Model' id="model">
+			<population spec='viralPopGen.beast.Population' id="X" popName="X">
+				<dim>2</dim>
+			</population>
+			<reaction spec="viralPopGen.beast.Reaction" rate="0.1">
+				<reactants>
+					<popSchema>
+						<population idref="X">
+					</popSchema>
+					<subPopSchema>
+						<subPopulation>
+							<location>0</location>
+						</subPopulation>
+					</subPopSchema>
+					<subPopSchema>
+						<subPopulation>
+							<location>1</location>
+						</subPopulation>
+					</subPopSchema>
+				</reactants>
+				<products>
+					<popSchema>
+						<population idref="X">
+					</popSchema>
+					<subPopSchema>
+						<subPopulation>
+							<location>1</location>
+						</subPopulation>
+					</subPopSchema>
+					<subPopSchema>
+						<subPopulation>
+							<location>0</location>
+						</subPopulation>
+					</subPopSchema>
+				</products>
+			</reaction>
+			<moment spec="viralPopGen.beast.Moment" momentName="X">
+				<popSchema>
+					<population idref="X"/>
+				</popSchema>
+				<subPopSchema>
+					<subPopulation>
+						<location>0</location>
+					<subPopulation>
+				</subPopSchema>
+				<subPopSchema>
+					<subPopulation>
+						<location>1</location>
+					<subPopulation>
+				</subPopSchema>
+			</moment>
+		</model>
+
+		<initialState spec="viralPopGen.beast.InitState">
+			<populationSize spec="viralPopGen.beast.PopulationSize" size="100">
+				<population idref="X"/>
+				<subPopulation>
+					<location>0</location>
+				</subPopulation>
+			</populationSize>
+			<model idref="model"/>
+		</initialState>
+
+	</run>
+</beast>

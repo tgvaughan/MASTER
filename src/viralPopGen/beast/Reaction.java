@@ -12,17 +12,12 @@ import beast.core.*;
 @Description("Component reaction of a birth-death model.")
 public class Reaction extends Plugin {
 	
-	public Input<List<Population>> reactantsInput = new Input<List<Population>>(
-			"reactant",
-			"Reactant population.",
-			new ArrayList<Population>());
+	public Input<Schema> reactantSchemaInput = new Input<Schema>("reactantSchema", "Reactant schema.");
+	public Input<Schema> productSchemaInput = new Input<Schema>("productSchema", "Product schema.");
 	
-	public Input<List<Population>> productsInput = new Input<List<Population>>(
-			"product",
-			"Product population.",
-			new ArrayList<Population>());
-	
-	public Input<Double> rateInput = new Input<Double>("rate", "Reaction rate.");
+	public Input<List<Double>> rateInput = new Input<List<Double>>("rate",
+			"Reaction rate.",
+			new ArrayList<Double>());
 	
 	// True reaction object:
 	viralPopGen.Reaction reaction;

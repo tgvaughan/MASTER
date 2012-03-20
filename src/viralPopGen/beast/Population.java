@@ -1,6 +1,6 @@
 package viralPopGen.beast;
 
-//import java.util.*;
+import java.util.*;
 import beast.core.*;
 
 /**
@@ -14,23 +14,28 @@ public class Population extends Plugin {
 	
 	public Input<String> nameInput = new Input<String>("popName", "Name of population");
 	
-	// TODO: Dimensionality specification.
-	/*
 	public Input<List<Integer>> dimsInput = new Input<List<Integer>>("dim",
 			"Number of sub-populations in a single dimension.",
 			new ArrayList<Integer>());
-	*/
 	
 	// True population object:
 	viralPopGen.Population pop;
-
 	
 	public Population() {};
 	
 	@Override
 	public void initAndValidate() throws Exception {
 		
-		pop = new viralPopGen.Population(nameInput.get());
+		if (dimsInput.get() == null)
+			pop = new viralPopGen.Population(nameInput.get());
+		
+		else {
+			int[] dims = new int[dimsInput.get().size()];
+			for (int i=0; i<dims.length; i++)
+				dims[i] = dimsInput.get().get(i);
+			
+			pop = new viralPopGen.Population(nameInput.get(), dims);
+		}
 		
 	}
 }

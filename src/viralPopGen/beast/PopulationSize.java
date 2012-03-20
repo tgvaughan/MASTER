@@ -36,7 +36,8 @@ public class PopulationSize extends Plugin {
 	public void initAndValidate() throws Exception {
 		
 		pop = populationInput.get().pop;
-		sub = subPopulationInput.get().sub;
+		if (subPopulationInput.get() != null)
+			sub = subPopulationInput.get().sub;
 		size = sizeInput.get();
 	}
 }

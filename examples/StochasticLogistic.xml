@@ -1,36 +1,58 @@
 <!-- Test stochastic simulation specification -->
 
-<beast version='2.0'>
-       <run spec='viralPopGen.beast.StochasticSimulation'
+<beast version='2.0' namespace='viralPopGen.beast:beast.core.parameter'>
+       <run spec='StochasticSimulation'
 		simulationTime='100'
 		nTimeSteps='10001'
 		nSamples='1001'
-		nTraj="10"
-		seed="53"
-		outFileName="out.txt">
+		nTraj='100'
+		seed='53'
+		outFileName='out.txt'>
 
-		<model spec='viralPopGen.beast.Model' id="model">
-			<population spec='viralPopGen.beast.Population' id="X" popName="X"/>
-			<reaction spec="viralPopGen.beast.Reaction" rate="1.0">
-				<reactant idref="X"/>
-				<product idref="X"/>
-				<product idref="X"/>
+		<model spec='Model' id='model'>
+			<population spec='Population' id='X' popName='X'/>
+			<reaction spec='Reaction'>
+				<rate spec='RealParameter'>1.0</rate>
+				<reactantSchema spec='Schema'>
+					<popSchema spec='PopSchema'>
+						<population idref='X'/>
+					</popSchema>
+				</reactantSchema>
+				<productSchema spec='Schema'>
+					<popSchema spec='PopSchema'>
+						<population idref='X'/>
+						<population idref='X'/>
+					</popSchema>
+				</productSchema>
 			</reaction>
-			<reaction spec="viralPopGen.beast.Reaction" rate="0.01">
-				<reactant idref="X"/>
-				<reactant idref="X"/>
-				<product idref="X"/>
+			<reaction spec='Reaction'>
+				<rate spec='RealParameter'>0.01</rate>
+				<reactantSchema spec='Schema'>
+					<popSchema spec='PopSchema'>
+						<population idref='X'/>
+						<population idref='X'/>
+					</popSchema>
+				</reactantSchema>
+				<productSchema spec='Schema'>
+					<popSchema spec='PopSchema'>
+						<population idref='X'/>
+					</popSchema>
+				</productSchema>
 			</reaction>
-			<moment spec="viralPopGen.beast.Moment" momentName="X">
-				<population idref="X"/>
+			<moment spec='viralPopGen.beast.Moment' momentName='X'>
+				<momentSchema spec='Schema'>
+					<popSchema spec='PopSchema'>
+						<population idref='X'/>
+					</popSchema>
+				</momentSchema>
 			</moment>
 		</model>
 
-		<initialState spec="viralPopGen.beast.InitState">
-			<populationSize size="10" spec="viralPopGen.beast.PopulationSize">
-				<population idref="X"/>
+		<initialState spec='viralPopGen.beast.InitState'>
+			<populationSize spec='PopulationSize' size='10'>
+				<population idref='X'/>
 			</populationSize>
-			<model idref="model"/>
+			<model idref='model'/>
 		</initialState>
 
 	</run>

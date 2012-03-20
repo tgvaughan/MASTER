@@ -31,8 +31,18 @@ public class InitState extends Plugin {
 		initState = new viralPopGen.State(modelInput.get().model);
 		
 		// Assign sizes to state object:
-		for (PopulationSize popSizeInput : popSizesInput.get())
-			initState.set(popSizeInput.pop, popSizeInput.sub, popSizeInput.size);
+		for (PopulationSize popSizeInput : popSizesInput.get()) {
+			if (popSizeInput.sub != null) {
+				
+				// Assign sub-population size:
+				initState.set(popSizeInput.pop, popSizeInput.sub, popSizeInput.size);
+				
+			} else {
+				
+				// Assign unstructured population size:
+				initState.set(popSizeInput.pop, popSizeInput.size);
+			}
+		}
 		
 	}
 	

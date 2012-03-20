@@ -26,24 +26,22 @@ public class Reaction extends Plugin {
 	
 	@Override
 	public void initAndValidate() throws Exception {
-		
+
 		reaction = new viralPopGen.Reaction();
+
+		reaction.setReactantSchema(reactantSchemaInput.get().popSchema);
+		reaction.setProductSchema(productSchemaInput.get().popSchema);
+
+		for (int[][] subPopSchema : reactantSchemaInput.get().subPopSchemas)
+			reaction.addReactantSubSchema(subPopSchema);
 		
-		viralPopGen.Population[] reactPopSchema =
-				new viralPopGen.Population[reactantsInput.get().size()];
-		for (int i=0; i<reactantsInput.get().size(); i++)
-			reactPopSchema[i] = reactantsInput.get().get(i).pop;
-		
-		reaction.setReactantSchema(reactPopSchema);
-		
-		viralPopGen.Population[] prodPopSchema =
-				new viralPopGen.Population[productsInput.get().size()];
-		for (int i=0; i<productsInput.get().size(); i++)
-			prodPopSchema[i] = productsInput.get().get(i).pop;
-		
-		reaction.setProductSchema(prodPopSchema);
-		
-		reaction.setRate(rateInput.get());
+		for (int[][] subPopSchema : productSchemaInput.get().subPopSchemas)
+			reaction.addProductSubSchema(subPopSchema);
+			
+		double[] rates = new double[rateInput.get().size()];
+		for (int i=0; i<rates.length; i++)
+			rates[i] = rateInput.get().get(i);
+		reaction.setRate(rates);
 	}
 
 }

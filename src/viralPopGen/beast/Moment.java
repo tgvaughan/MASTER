@@ -1,6 +1,5 @@
 package viralPopGen.beast;
 
-import java.util.*;
 import beast.core.*;
 
 /**
@@ -13,31 +12,20 @@ import beast.core.*;
 public class Moment extends Plugin {
 
 	public Input<String> nameInput = new Input<String>("momentName", "Moment name.");
-
-	public Input<List<Population>> popSchemaInput = new Input<List<Population>>(
-			"population",
-			"Population to incorporate into moment.",
-			new ArrayList<Population>());
+	public Input<Schema> schemaInput = new Input<Schema>("momentSchema", "Moment schema.");
 	
 	// True moment object:
 	viralPopGen.Moment moment;
-
-	// TODO: Implement moments comprised of structured populations.
 
 	public Moment() {};
 
 	@Override
 	public void initAndValidate() throws Exception {
 		
-		// Assemble population schema:
-		int schemaSize = popSchemaInput.get().size();
-		viralPopGen.Population[] popSchema = new viralPopGen.Population[schemaSize];
-		for (int pidx=0; pidx<schemaSize; pidx++)
-			popSchema[pidx] = popSchemaInput.get().get(pidx).pop;
-		
-		// Assign schema to true moment object:
-		moment = new viralPopGen.Moment(nameInput.get(), popSchema);
-		
+		moment = new viralPopGen.Moment(nameInput.get(), schemaInput.get().popSchema);
+		for (int[][] subPopSchema : schemaInput.get().subPopSchemas)
+			moment.addSubSchema(subPopSchema);
+
 	}
 
 }

@@ -22,6 +22,7 @@ public class StochasticLogisticSummary {
 		int nTimeSteps = 10001;
 		int nSamples = 1001;
 		int nTraj = 1000;
+		int seed = 53;
 		
 		/*
 		 * Assemble model:
@@ -67,7 +68,7 @@ public class StochasticLogisticSummary {
 		 */
 		
 		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
-				T, nTimeSteps, nSamples, nTraj, 53);
+				T, nTimeSteps, nSamples, nTraj, seed);
 		
 		/*
 		 * Dump results (JSON):

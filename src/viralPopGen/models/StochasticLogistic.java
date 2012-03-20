@@ -20,6 +20,7 @@ public class StochasticLogistic {
 		int Nt = 10001;
 		int Nsamples = 1001;
 		int Ntraj = 1;
+		int seed = 42;
 		
 		/*
 		 * Assemble model:
@@ -59,7 +60,7 @@ public class StochasticLogistic {
 		 * Generate ensemble
 		 */
 
-		Ensemble ensemble = new Ensemble(model, initState, T, Nt, Nsamples, Ntraj, 53);
+		Ensemble ensemble = new Ensemble(model, initState, T, Nt, Nsamples, Ntraj, seed);
 
 		/*
 		 * Dump first trajectory to stdout:

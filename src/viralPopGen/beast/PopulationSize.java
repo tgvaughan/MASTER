@@ -13,16 +13,22 @@ public class PopulationSize extends Plugin {
 	
 	public Input<Population> populationInput = new Input<Population>("population",
 			"Population whose size to specify.");
-	public Input<Double> sizeInput = new Input<Double>("size",
-			"Size of population.");
+	public Input<SubPopulation> subPopulationInput = new Input<SubPopulation>(
+			"subPopulation", "Sub-population whose size to specify.");
+	public Input<Double> sizeInput = new Input<Double>(
+			"size", "Size of particular sub-population.");
 	
+	// True population object:
 	viralPopGen.Population pop;
+	
+	// Sub-population specifier:
+	int[] sub;
+	
+	// Size of particular sub-population:
 	Double size;
 	
 	// Note that viralPopGen uses doubles rather than integers
 	// to represent population sizes.
-	
-	// TODO: Allow specification of structured population sizes.
 	
 	public PopulationSize() {};
 	
@@ -30,8 +36,7 @@ public class PopulationSize extends Plugin {
 	public void initAndValidate() throws Exception {
 		
 		pop = populationInput.get().pop;
+		sub = subPopulationInput.get().sub;
 		size = sizeInput.get();
-		
 	}
-	
 }

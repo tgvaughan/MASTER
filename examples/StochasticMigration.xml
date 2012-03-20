@@ -13,61 +13,56 @@
 			<population spec='viralPopGen.beast.Population' id="X" popName="X">
 				<dim>2</dim>
 			</population>
+
 			<reaction spec="viralPopGen.beast.Reaction" rate="0.1">
-				<reactants>
-					<popSchema>
-						<population idref="X">
+				<reactantSchema spec="viralPopGen.beast.Schema">
+					<popSchema spec="viralPopGen.beast.PopSchema">
+						<population idref="X"/>
 					</popSchema>
-					<subPopSchema>
-						<subPopulation>
+					<subPopSchema spec="viralPopGen.beast.SubPopSchema">
+						<subPopulation spec="viralPopGen.beast.SubPopulation" id="demeA">
 							<location>0</location>
 						</subPopulation>
 					</subPopSchema>
-					<subPopSchema>
-						<subPopulation>
+					<subPopSchema spec="viralPopGen.beast.SubPopSchema">
+						<subPopulation spec="viralPopGen.beast.SubPopulation" id="demeB">
 							<location>1</location>
 						</subPopulation>
 					</subPopSchema>
-				</reactants>
-				<products>
-					<popSchema>
-						<population idref="X">
+				</reactantSchema>
+				<productSchema spec="viralPopGen.beast.Schema">
+					<popSchema spec="viralPopGen.beast.PopSchema">
+						<population idref="X"/>
 					</popSchema>
-					<subPopSchema>
-						<subPopulation>
-							<location>1</location>
-						</subPopulation>
+					<subPopSchema spec="viralPopGen.beast.SubPopSchema">
+						<subPopulation idref="demeB"/>
 					</subPopSchema>
 					<subPopSchema>
-						<subPopulation>
-							<location>0</location>
-						</subPopulation>
+						<subPopulation idref="demeA"/>
 					</subPopSchema>
-				</products>
+				</productSchema>
 			</reaction>
-			<moment spec="viralPopGen.beast.Moment" momentName="X">
-				<popSchema>
-					<population idref="X"/>
-				</popSchema>
-				<subPopSchema>
-					<subPopulation>
-						<location>0</location>
-					<subPopulation>
-				</subPopSchema>
-				<subPopSchema>
-					<subPopulation>
-						<location>1</location>
-					<subPopulation>
-				</subPopSchema>
+
+			<moment spec="viralPopGen.beast.Moment" name="X">
+				<momentSchema spec="viralPopGen.beast.Schema">
+					<popSchema spec="viralPopGen.beast.PopSchema">
+						<population idref="X"/>
+					</popSchema>
+					<subPopSchema spec="viralPopGen.beast.SubPopSchema">
+						<subPopulation idref="demeA"/>
+					</subPopSchema>
+					<subPopSchema spec="viralPopGen.beast.SubPopSchema">
+						<subPopulation idref="demeB"/>
+					</subPopSchema>
+				</momentSchema>
 			</moment>
+
 		</model>
 
 		<initialState spec="viralPopGen.beast.InitState">
 			<populationSize spec="viralPopGen.beast.PopulationSize" size="100">
 				<population idref="X"/>
-				<subPopulation>
-					<location>0</location>
-				</subPopulation>
+				<subPopulation idref="demeA"/>
 			</populationSize>
 			<model idref="model"/>
 		</initialState>

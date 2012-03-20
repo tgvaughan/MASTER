@@ -32,7 +32,7 @@ public class InitState extends Plugin {
 		
 		// Assign sizes to state object:
 		for (PopulationSize popSizeInput : popSizesInput.get())
-			initState.set(popSizeInput.pop, popSizeInput.size);
+			initState.set(popSizeInput.pop, popSizeInput.sub, popSizeInput.size);
 		
 	}
 	

@@ -303,7 +303,8 @@ public class Reaction {
 		for (int i=0; i<nSubSchemas; i++) {
 			
 			// Draw number of reactions to fire within time tau:
-			double q = (double)poissonian.nextInt(propensities[i]*tau);
+			poissonian.setMean(propensities[i]*tau);
+			double q = (double)poissonian.nextInt();
 			
 			// Implement reactions:
 			for (Population pop : deltas.get(i).keySet()) {

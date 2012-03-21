@@ -17,9 +17,9 @@ public class SimpleViralInfection {
 		 */
 		
 		double simulationTime = 10.0; // days
-		int nTimeSteps = 1000001;
+		int nTimeSteps = 200001;
 		int nSamples = 1001;
-		int nTraj = 1;
+		int nTraj = 10;
 		int seed = 42;
 		
 		/*

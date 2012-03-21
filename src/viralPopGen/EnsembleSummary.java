@@ -29,7 +29,7 @@ public class EnsembleSummary {
 	// Record of simulation parameters:
 	Model model;
 	State initState;
-	double T;
+	double simulationTime;
 	int nTimeSteps, nSamples, nTraj;
 	int seed;
 
@@ -52,19 +52,19 @@ public class EnsembleSummary {
 	 * @param nTraj
 	 * @param seed
 	 */
-	public EnsembleSummary(Model model, State initState, double T, int nTimeSteps,
+	public EnsembleSummary(Model model, State initState, double simulationTime, int nTimeSteps,
 			int nSamples, int nTraj, int seed) {
 
 		this.model = model;
 		this.initState = initState;
-		this.T = T;
+		this.simulationTime = simulationTime;
 		this.nTimeSteps = nTimeSteps;
 		this.nSamples = nSamples;
 		this.nTraj = nTraj;
 		this.seed = seed;
 		
 		// Derived simulation parameters:
-		double dt = T/(nTimeSteps-1);
+		double dt = simulationTime/(nTimeSteps-1);
 		int stepsPerSample = (nTimeSteps-1)/(nSamples-1);
 
 		// Initialise RNG:
@@ -147,7 +147,7 @@ public class EnsembleSummary {
 		
 		// Add list of sampling times to output object:
 		ArrayList<Double> tData = Lists.newArrayList();
-		double dT = T/(nSamples-1);
+		double dT = simulationTime/(nSamples-1);
 		for (int sidx=0; sidx<stateSummaries.length; sidx++)
 			tData.add(dT*sidx);
 		outputData.put("t", tData);

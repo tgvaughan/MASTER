@@ -17,10 +17,10 @@ public class SimpleViralInfection {
 		 */
 		
 		double simulationTime = 10.0; // days
-		int nTimeSteps = 10001;
+		int nTimeSteps = 1000001;
 		int nSamples = 1001;
 		int nTraj = 1;
-		int seed = 53;
+		int seed = 42;
 		
 		/*
 		 * Assemble model:
@@ -52,6 +52,7 @@ public class SimpleViralInfection {
 		model.addReaction(cellBirth);
 
 		// X + V -> Y
+		
 		Reaction infection = new Reaction();
 		infection.setReactantSchema(X,V);
 		infection.setProductSchema(Y);
@@ -83,7 +84,7 @@ public class SimpleViralInfection {
 		Reaction virionDeath = new Reaction();
 		virionDeath.setReactantSchema(V);
 		virionDeath.setProductSchema();
-		virionDeath.setRate(3);
+		virionDeath.setRate(3.0);
 		model.addReaction(virionDeath);
 		
 		// Define moments:

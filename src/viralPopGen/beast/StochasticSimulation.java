@@ -49,7 +49,7 @@ public class StochasticSimulation extends Runnable {
 	
 	double simulationTime;
 	int nTimeSteps, nSamples, nTraj;
-	int seed;
+	long seed;
 	PrintStream outStream;
 	
 	viralPopGen.Model model;
@@ -60,12 +60,18 @@ public class StochasticSimulation extends Runnable {
 	@Override
 	public void initAndValidate() throws Exception {
 		
-		// Read parameters from XML:
+		// Read simulation parameters from XML:
 		simulationTime = simulationTimeInput.get();
 		nTimeSteps = nTimeStepsInput.get();
 		nSamples = nSamplesInput.get();
 		nTraj = nTrajInput.get();
-		seed = seedInput.get();
+		
+		// Set seed to -1 if not explicitly provided
+		// (instructs integrator to use default BEAST seed):
+		if (seedInput.get() != null)
+			seed = seedInput.get();
+		else
+			seed = -1;
 		
 		// Read model and state specification from XML:
 		model = modelInput.get().model;

@@ -2,6 +2,9 @@ package viralPopGen;
 
 import java.io.*;
 import java.util.*;
+
+import beast.util.Randomizer;
+
 import com.google.common.collect.*;
 
 // JSON classes:
@@ -26,7 +29,7 @@ public class EnsembleSummary {
 	State initState;
 	double simulationTime;
 	int nTimeSteps, nSamples, nTraj;
-	int seed;
+	long seed;
 
 	// Moments to record:
 	List<Moment> moments;
@@ -39,16 +42,16 @@ public class EnsembleSummary {
 	 * to non-static fields, performs the simulation, recording the
 	 * required summary statistics.
 	 * 
-	 * @param model
-	 * @param initState
-	 * @param t
-	 * @param nTimeSteps
-	 * @param nSamples
-	 * @param nTraj
-	 * @param seed
+	 * @param model				Model to simulate.
+	 * @param initState			Initial state of system.
+	 * @param simulationTime	Length of time to simulate for.
+	 * @param nTimeSteps		Number of integration time steps to use.
+	 * @param nSamples			Number of samples to record.
+	 * @param nTraj				Number of trajectories to generate.
+	 * @param seed				Seed for RNG. (<0 means use default seed.)
 	 */
 	public EnsembleSummary(Model model, State initState, double simulationTime, int nTimeSteps,
-			int nSamples, int nTraj, int seed) {
+			int nSamples, int nTraj, long seed) {
 
 		this.model = model;
 		this.initState = initState;
@@ -57,6 +60,10 @@ public class EnsembleSummary {
 		this.nSamples = nSamples;
 		this.nTraj = nTraj;
 		this.seed = seed;
+		
+		// Set seed if defined:
+		if (seed < 0)
+			Randomizer.setSeed(seed);
 		
 		// Derived simulation parameters:
 		double dt = simulationTime/(nTimeSteps-1);
@@ -94,6 +101,24 @@ public class EnsembleSummary {
 		// Normalise state summaries:
 		for (StateSummary summary : stateSummaries)
 			summary.normalise();
+	}
+
+	/**
+	 * Alternate constructor which uses default seed value.
+	 *
+	 * @param model				Model to simulate.
+	 * @param initState			Initial state of system.
+	 * @param simulationTime	Length of time to simulate for.
+	 * @param nTimeSteps		Number of integration time steps to use.
+	 * @param nSamples			Number of samples to record.
+	 * @param nTraj				Number of trajectories to generate.
+	 */
+	public EnsembleSummary(Model model, State initState, double simulationTime,
+			int nTimeSteps, int nSamples, int nTraj) {
+		
+		// Call main constructor with seed=-1: instructs constructor
+		// not to use seed.
+		this(model, initState, simulationTime, nTimeSteps, nSamples, nTraj, -1);
 	}
 
 	/**

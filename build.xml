@@ -11,7 +11,6 @@
     <property name="source" value="1.6"/>
     <path id="viralPopGen.classpath">
         <pathelement location="bin"/>
-        <pathelement location="lib/colt.jar"/>
         <pathelement location="lib/jackson.jar"/>
         <pathelement location="lib/beast.jar"/>
         <pathelement location="lib/guava.jar"/>
@@ -20,6 +19,7 @@
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
+                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -83,6 +83,26 @@
     </target>
     <target name="Ensemble">
         <java classname="viralPopGen.Ensemble" failonerror="true" fork="yes">
+            <classpath refid="viralPopGen.classpath"/>
+        </java>
+    </target>
+    <target name="SimpleViralInfection">
+        <java classname="viralPopGen.models.SimpleViralInfection" failonerror="true" fork="yes">
+            <classpath refid="viralPopGen.classpath"/>
+        </java>
+    </target>
+    <target name="BreakPoisson">
+        <java classname="viralPopGen.debug.BreakPoisson" failonerror="true" fork="yes">
+            <classpath refid="viralPopGen.classpath"/>
+        </java>
+    </target>
+    <target name="ComparePoisson">
+        <java classname="viralPopGen.debug.ComparePoisson" failonerror="true" fork="yes">
+            <classpath refid="viralPopGen.classpath"/>
+        </java>
+    </target>
+    <target name="Poisson">
+        <java classname="viralPopGen.math.Poisson" failonerror="true" fork="yes">
             <classpath refid="viralPopGen.classpath"/>
         </java>
     </target>

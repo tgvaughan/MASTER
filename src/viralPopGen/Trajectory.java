@@ -1,8 +1,5 @@
 package viralPopGen;
 
-import cern.jet.random.Poisson;
-import cern.jet.random.engine.RandomEngine;
-
 /**
  * Class of objects representing trajectories through the
  * state space of the birth-death model. Will include
@@ -24,9 +21,6 @@ public class Trajectory {
 	int nTimeSteps, nSamples;
 	Model model;
 
-	// Poissonian RNG:
-	Poisson poissonian;
-
 	/**
 	 * Generate trajectory of birth-death process.
 	 * 
@@ -38,16 +32,13 @@ public class Trajectory {
 	 * @param engine		RNG engine to use.
 	 */
 	public Trajectory(Model model, State initState,
-			double T, int nTimeSteps, int nSamples, RandomEngine engine) {
+			double T, int nTimeSteps, int nSamples) {
 
 		// Keep copy of simulation parameters with trajectory:
 		this.model = model;
 		this.T = T;
 		this.nTimeSteps = nTimeSteps;
 		this.nSamples = nSamples;
-
-		// Initialise Poissonian RNG:
-		poissonian = new Poisson(1, engine);
 
 		// Initialise state list:
 		sampledStates = new State[nSamples];
@@ -68,7 +59,7 @@ public class Trajectory {
 				sampledStates[sidx++] = new State(currentState);
 		
 			// Perform single time step:
-			step(dt, poissonian);
+			step(dt);
 
 		}
 
@@ -80,7 +71,7 @@ public class Trajectory {
 	 * @param dt			Time step size.
 	 * @param poissonian	Poissonian RNG.
 	 */
-	private void step(double dt, Poisson poissonian) {
+	private void step(double dt) {
 		
 		// Calculate transition rates:
 		for (int r=0; r<model.reactions.size(); r++)
@@ -88,7 +79,7 @@ public class Trajectory {
 		
 		// Update state with required changes:
 		for (int r=0; r<model.reactions.size(); r++)
-			model.reactions.get(r).leap(currentState, dt, poissonian);
+			model.reactions.get(r).leap(currentState, dt);
 	}
 
 	/**

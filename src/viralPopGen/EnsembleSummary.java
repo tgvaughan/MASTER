@@ -4,11 +4,6 @@ import java.io.*;
 import java.util.*;
 import com.google.common.collect.*;
 
-// COLT RNG classes:
-import cern.jet.random.engine.RandomEngine;
-import cern.jet.random.engine.MersenneTwister;
-import cern.jet.random.Poisson;
-
 // JSON classes:
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -67,10 +62,6 @@ public class EnsembleSummary {
 		double dt = simulationTime/(nTimeSteps-1);
 		int stepsPerSample = (nTimeSteps-1)/(nSamples-1);
 
-		// Initialise RNG:
-		RandomEngine engine = new MersenneTwister(seed);
-		Poisson poissonian = new Poisson(1, engine);
-		
 		// Initialise state summaries:
 		stateSummaries = new StateSummary[nSamples];
 		for (int sidx=0; sidx<nSamples; sidx++)
@@ -87,20 +78,16 @@ public class EnsembleSummary {
 			for (int tidx=0; tidx<nTimeSteps; tidx++) {
 				
 				// Sample if necessary:
-				if (tidx % stepsPerSample == 0) {
-					stateSummaries[sidx].record(currentState);
-					sidx++;
-				}
+				if (tidx % stepsPerSample == 0)
+					stateSummaries[sidx++].record(currentState);
 				
 				// Calculate transition rates:
-				for (Reaction reaction : model.reactions) {
+				for (Reaction reaction : model.reactions)
 					reaction.calcPropensities(currentState);
-				}
 				
 				// Update state with required changes:
-				for (Reaction reaction : model.reactions) {
-					reaction.leap(currentState, dt, poissonian);
-				}
+				for (Reaction reaction : model.reactions)
+					reaction.leap(currentState, dt);
 			}
 		}
 

@@ -2,10 +2,6 @@ package viralPopGen;
 
 import java.util.*;
 
-// COLT RNG classes:
-import cern.jet.random.engine.RandomEngine;
-import cern.jet.random.engine.MersenneTwister;
-
 /**
  * A class representing an ensemble of stochastic trajectories
  * through the state space of a population genetics model of viral
@@ -47,10 +43,7 @@ public class Ensemble {
 		this.Nsamples = Nsamples;
 		this.Ntraj = Ntraj;
 		this.seed = seed;
-		
-		// Initialise RNG:
-		RandomEngine engine = new MersenneTwister(seed);
-		
+
 		// Initialise trajectory list:
 		trajectories = new ArrayList<Trajectory>(Ntraj);
 		
@@ -58,7 +51,7 @@ public class Ensemble {
 		for (int traj=0; traj<Ntraj; traj++) {
 			
 			Trajectory thisTraj = new Trajectory(model,
-					initState, T, Nt, Nsamples, engine);
+					initState, T, Nt, Nsamples);
 			trajectories.add(thisTraj);
 			
 		}

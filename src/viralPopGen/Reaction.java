@@ -3,7 +3,7 @@ package viralPopGen;
 import java.util.*;
 import com.google.common.collect.*;
 
-import cern.jet.random.Poisson;
+import viralPopGen.math.Poisson;
 
 /**
  * Class of objects describing the reactions which occur
@@ -298,13 +298,12 @@ public class Reaction {
 	 * @param tau			Time increment over which to leap.
 	 * @param poissonian	Poissonian RNG.
 	 */
-	public void leap(State state, double tau, Poisson poissonian) {
+	public void leap(State state, double tau) {
 		
 		for (int i=0; i<nSubSchemas; i++) {
 			
 			// Draw number of reactions to fire within time tau:
-			poissonian.setMean(propensities[i]*tau);
-			double q = (double)poissonian.nextInt();
+			double q = Poisson.nextDouble(propensities[i]*tau);
 			
 			// Implement reactions:
 			for (Population pop : deltas.get(i).keySet()) {

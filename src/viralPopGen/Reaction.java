@@ -42,7 +42,7 @@ public class Reaction {
 	
 	/**
 	 * Define product population-level schema by choosing which populations
-	 * appear in subsequent calls to addProductLocSchema and in wihch order
+	 * appear in subsequent calls to addProductLocSchema and in which order
 	 * those populations appear.
 	 * 
 	 * @param productPopSchema	varargs list of product populations.

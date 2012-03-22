@@ -1,10 +1,15 @@
+# Netbeans cruft:
+nbproject
+manifest.mf
+
 # Eclipse cruft:
 .project
 .classpath
 .settings
 
-# Build directory:
+# Build directories:
 bin
+build
 
 # JavaDoc:
 doc

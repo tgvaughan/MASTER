@@ -71,7 +71,7 @@ public class Reaction {
 			offsets[pidx] = reactPopSchema[pidx].subToOffset(subs[pidx]);
 		
 		// Call internal method to complete addition of schema:
-		addReactantSubSchema(offsets);
+		addReactantSubSchemaOffsets(offsets);
 		
 	}
 	
@@ -83,7 +83,7 @@ public class Reaction {
 	 * 
 	 * @param offsets	list of product sub-population offsets.
 	 */
-	private void addReactantSubSchema(int ... offsets) {
+	private void addReactantSubSchemaOffsets(int ... offsets) {
 		
 		// Condense provided schema into a map of the form
 		// pop->offset->count, where count is the number of times
@@ -133,7 +133,7 @@ public class Reaction {
 			offsets[i] = prodPopSchema[i].subToOffset(subs[i]);
 		
 		// Call internal method to complete addition of schema:
-		addProductSubSchema(offsets);
+		addProductSubSchemaOffsets(offsets);
 	}
 	
 	/**
@@ -144,7 +144,7 @@ public class Reaction {
 	 * 
 	 * @param offsets	list of product sub-population offsets.
 	 */
-	private void addProductSubSchema(int ... offsets) {
+	private void addProductSubSchemaOffsets(int ... offsets) {
 
 		// Condense provided schema into a map of the form
 		// pop->offset->count, where count is the number of times
@@ -185,12 +185,12 @@ public class Reaction {
 		int[] reactOffsets = new int[reactPopSchema.length];
 		for (int pidx=0; pidx<reactPopSchema.length; pidx++)
 			reactOffsets[pidx] = 0;
-		addReactantSubSchema(reactOffsets);
+		addReactantSubSchemaOffsets(reactOffsets);
 		
 		int[] prodOffsets = new int[prodPopSchema.length];
 		for (int pidx=0; pidx<prodPopSchema.length; pidx++)
 			prodOffsets[pidx] = 0;
-		addProductSubSchema(prodOffsets);
+		addProductSubSchemaOffsets(prodOffsets);
 	}
 
 	/**

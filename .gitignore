@@ -12,6 +12,9 @@ bin
 build
 dist
 
+# ANT build file:
+build.xml
+
 # JavaDoc:
 doc
 

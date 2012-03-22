@@ -10,6 +10,7 @@ manifest.mf
 # Build directories:
 bin
 build
+dist
 
 # JavaDoc:
 doc
@@ -19,3 +20,4 @@ doc
 
 # Output files:
 *.txt
+/dist/

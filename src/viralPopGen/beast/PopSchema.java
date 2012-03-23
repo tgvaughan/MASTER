@@ -14,15 +14,15 @@ public class PopSchema extends Plugin {
 
 	public Input<List<Population>> populationsInput = new Input<List<Population>>("population",
 			"Population in schema.", new ArrayList<Population>());
-	
+
 	// Population-level schema:
 	viralPopGen.Population[] popSchema; 
-	
+
 	public PopSchema() {};
-	
+
 	@Override
 	public void initAndValidate() throws Exception {
-		
+
 		popSchema = new viralPopGen.Population[populationsInput.get().size()];
 		for (int i=0; i<populationsInput.get().size(); i++)
 			popSchema[i] = populationsInput.get().get(i).pop;

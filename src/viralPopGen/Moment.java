@@ -30,7 +30,7 @@ public class Moment {
 
 		subSchemas = Lists.newArrayList();
 	}
-	
+
 	/**
 	 * Add specific sub-population resolution moment schema to moment object.
 	 * 
@@ -38,15 +38,15 @@ public class Moment {
 	 * 				given in constructor.
 	 */
 	public void addSubSchema (int[] ... locs) {
-		
+
 		if (locs.length != popSchema.length)
 			throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
-		
+
 		Map<Population, Map<Integer,Integer>> popMap = Maps.newHashMap();
-		
+
 		for (int pidx=0; pidx<popSchema.length; pidx++) {
 			int offset = popSchema[pidx].subToOffset(locs[pidx]);
-			
+
 			if (!popMap.containsKey(popSchema[pidx])) {
 				Map<Integer,Integer> offsetMap = Maps.newHashMap();
 				offsetMap.put(offset, 1);
@@ -60,16 +60,16 @@ public class Moment {
 				}
 			}
 		}
-		
+
 		subSchemas.add(popMap);
 	}
-	
+
 	/**
 	 * Ensure sub-population moment schema exists,
 	 * defaulting to a single scalar schema.
 	 */
 	public void init () {
-		
+
 		if (subSchemas.size() == 0) {
 			Map<Population, Map<Integer,Integer>> popMap = Maps.newHashMap();
 			for (int pidx=0; pidx<popSchema.length; pidx++) {
@@ -94,7 +94,7 @@ public class Moment {
 	 * @param std	Array to which to add squares of moment estimates.
 	 */
 	public void getEstimate (State state, double[] mean, double[] std) {
-		
+
 		for (int i=0; i<subSchemas.size(); i++) {
 			double estimate = 1;
 			for (Population pop : subSchemas.get(i).keySet()) {

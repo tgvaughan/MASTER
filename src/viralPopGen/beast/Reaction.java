@@ -12,19 +12,19 @@ import beast.core.parameter.*;
  */
 @Description("Component reaction of a birth-death model.")
 public class Reaction extends Plugin {
-	
+
 	public Input<Schema> reactantSchemaInput = new Input<Schema>("reactantSchema", "Reactant schema.");
 	public Input<Schema> productSchemaInput = new Input<Schema>("productSchema", "Product schema.");
-	
+
 	public Input<List<RealParameter>> ratesInput = new Input<List<RealParameter>>("rate",
 			"Reaction rate.",
 			new ArrayList<RealParameter>());
-	
+
 	// True reaction object:
 	viralPopGen.Reaction reaction;
-	
+
 	public Reaction() {};
-	
+
 	@Override
 	public void initAndValidate() throws Exception {
 
@@ -35,14 +35,14 @@ public class Reaction extends Plugin {
 
 		for (int[][] subPopSchema : reactantSchemaInput.get().subPopSchemas)
 			reaction.addReactantSubSchema(subPopSchema);
-		
+
 		for (int[][] subPopSchema : productSchemaInput.get().subPopSchemas)
 			reaction.addProductSubSchema(subPopSchema);
-		
+
 		double[] rates = new double[ratesInput.get().size()];
 		for (int i=0; i<rates.length; i++)
 			rates[i] = ratesInput.get().get(i).getValue();
-		
+
 		reaction.setRate(rates);
 	}
 

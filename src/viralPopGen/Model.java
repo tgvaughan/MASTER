@@ -17,10 +17,10 @@ public class Model {
 
 	// Reactions to model:
 	List<Reaction> reactions;
-	
+
 	// Moments to calculate:
 	List<Moment> moments;
-	
+
 	/**
 	 * Model constructor.
 	 */
@@ -48,7 +48,7 @@ public class Model {
 		react.calcDeltas();
 		reactions.add(react);
 	}
-	
+
 	/**
 	 * Add moment to model.
 	 * 

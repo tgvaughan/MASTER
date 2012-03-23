@@ -11,37 +11,37 @@ import com.google.common.collect.*;
  *
  */
 public class State {
-	
+
 	Model model;
 	Map<Population,Double[]> popSizes;
-	
-	
+
+
 	/**
 	 * Constructor
 	 * 
 	 * @param model Model defining the state space.
 	 */
 	public State (Model model) {
-		
+
 		this.model = model;
-		
+
 		// Initialise sub-population sizes:
 		popSizes = Maps.newHashMap();
 		for (Population p : model.pops) {
-			
+
 			// Allocate sub-population size array:
 			Double[] subPopSizes = new Double[p.nSubPops];
-			
+
 			// Initialise elements to zero:
 			for (int i=0; i<subPopSizes.length; i++)
 				subPopSizes[i] = 0.0;
-			
+
 			// Assign to popSizes map:
 			popSizes.put(p, subPopSizes);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Copy constructor
 	 * 
@@ -49,7 +49,7 @@ public class State {
 	 */
 	public State (State oldState) {
 		this.model = oldState.model;
-		
+
 		// Copy sub-population sizes:
 		this.popSizes = Maps.newHashMap();
 		for (Population p : model.pops) {
@@ -57,7 +57,7 @@ public class State {
 				for (int i=0; i<p.nSubPops; i++)
 					popSizes.get(p)[i] = oldState.popSizes.get(p)[i];
 		}
-		
+
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class State {
 	public void set(Population p, int[] loc, double value) {
 		popSizes.get(p)[p.subToOffset(loc)] = value;
 	}
-	
+
 	/**
 	 * Set size of a population using pre-calculated offset.
 	 * 
@@ -149,12 +149,12 @@ public class State {
 		System.out.println();
 
 	}
-	
+
 	/**
 	 * Dump names of constituent populations to stdout.
 	 */
 	public void dumpNames() {
-		
+
 		for (Population p : popSizes.keySet()) {
 			for (int i=0; i<popSizes.get(p).length; i++)
 				System.out.print(" " + p.name + String.valueOf(i));

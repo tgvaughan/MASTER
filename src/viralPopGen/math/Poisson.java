@@ -12,7 +12,7 @@ import beast.util.Randomizer;
  *
  */
 public class Poisson {
-	
+
 	private static double PI = 3.141592653589793238;
 
 	// If you believe NR, returns the value ln[Gamma(xx)] for xx>0. Pure black magick.
@@ -70,7 +70,7 @@ public class Poisson {
 		double L = Math.exp(-lambda);
 		double p;
 		int k;
-		
+
 		for (k=0, p=1; p >= L; k++)
 			p = p*Randomizer.nextDouble();
 

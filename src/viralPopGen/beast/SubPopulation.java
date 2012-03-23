@@ -12,12 +12,12 @@ import beast.core.parameter.*;
  */
 @Description("Specific sub-population of a structured population.")
 public class SubPopulation extends Plugin {
-	
+
 	public Input<List<IntegerParameter>> locationInput = new Input<List<IntegerParameter>>(
 			"location",
 			"Location of sub-population along a single dimention",
 			new ArrayList<IntegerParameter>());
-	
+
 	// Sub-population specification:
 	int[] sub;
 

@@ -33,7 +33,7 @@ public class EnsembleSummary {
 
 	// Moments to record:
 	List<Moment> moments;
-	
+
 	// Ensemble-averaged state summaries:
 	StateSummary[] stateSummaries;
 
@@ -60,11 +60,11 @@ public class EnsembleSummary {
 		this.nSamples = nSamples;
 		this.nTraj = nTraj;
 		this.seed = seed;
-		
+
 		// Set seed if defined:
 		if (seed < 0)
 			Randomizer.setSeed(seed);
-		
+
 		// Derived simulation parameters:
 		double dt = simulationTime/(nTimeSteps-1);
 		int stepsPerSample = (nTimeSteps-1)/(nSamples-1);
@@ -73,25 +73,25 @@ public class EnsembleSummary {
 		stateSummaries = new StateSummary[nSamples];
 		for (int sidx=0; sidx<nSamples; sidx++)
 			stateSummaries[sidx] = new StateSummary(model.moments);
-		
+
 		// Loop over trajectories:
 		for (int traj=0; traj<nTraj; traj++) {
-			
+
 			// Initialise system state:
 			State currentState = new State(initState);
-			
+
 			// Integration loop:
 			int sidx = 0;
 			for (int tidx=0; tidx<nTimeSteps; tidx++) {
-				
+
 				// Sample if necessary:
 				if (tidx % stepsPerSample == 0)
 					stateSummaries[sidx++].record(currentState);
-				
+
 				// Calculate transition rates:
 				for (Reaction reaction : model.reactions)
 					reaction.calcPropensities(currentState);
-				
+
 				// Update state with required changes:
 				for (Reaction reaction : model.reactions)
 					reaction.leap(currentState, dt);
@@ -115,7 +115,7 @@ public class EnsembleSummary {
 	 */
 	public EnsembleSummary(Model model, State initState, double simulationTime,
 			int nTimeSteps, int nSamples, int nTraj) {
-		
+
 		// Call main constructor with seed=-1: instructs constructor
 		// not to use seed.
 		this(model, initState, simulationTime, nTimeSteps, nSamples, nTraj, -1);
@@ -127,15 +127,15 @@ public class EnsembleSummary {
 	 * @param pstream PrintStream where output is sent.
 	 */
 	public void dump(PrintStream pstream) {
-		
+
 		HashMap<String, Object> outputData = Maps.newHashMap();
-		
+
 		// Construct an object containing the summarized
 		// data.  Heirarchy is moment->[mean/std]->schema->estimate.
-		
+
 		for (Moment moment : model.moments) {
 			HashMap<String,Object> momentData = Maps.newHashMap();
-			
+
 			ArrayList<Object> meanData = new ArrayList<Object>();
 			for (int schema=0; schema<stateSummaries[0].mean.get(moment).length; schema++) {
 				ArrayList<Double> schemaData = Lists.newArrayList();
@@ -153,17 +153,17 @@ public class EnsembleSummary {
 				stdData.add(schemaData);
 			}
 			momentData.put("std", stdData);
-			
+
 			outputData.put(moment.name, momentData);
 		}
-		
+
 		// Add list of sampling times to output object:
 		ArrayList<Double> tData = Lists.newArrayList();
 		double dT = simulationTime/(nSamples-1);
 		for (int sidx=0; sidx<stateSummaries.length; sidx++)
 			tData.add(dT*sidx);
 		outputData.put("t", tData);
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			pstream.println(mapper.writeValueAsString(outputData));
@@ -176,7 +176,7 @@ public class EnsembleSummary {
 		}
 
 	}
-	
+
 	/**
 	 * Dump ensemble summary to stdout using JSON.
 	 */

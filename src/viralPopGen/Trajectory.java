@@ -57,7 +57,7 @@ public class Trajectory {
 			// Sample state if necessary:
 			if (tidx % stepsPerSample == 0)
 				sampledStates[sidx++] = new State(currentState);
-		
+
 			// Perform single time step:
 			step(dt);
 
@@ -72,11 +72,11 @@ public class Trajectory {
 	 * @param poissonian	Poissonian RNG.
 	 */
 	private void step(double dt) {
-		
+
 		// Calculate transition rates:
 		for (int r=0; r<model.reactions.size(); r++)
 			model.reactions.get(r).calcPropensities(currentState);
-		
+
 		// Update state with required changes:
 		for (int r=0; r<model.reactions.size(); r++)
 			model.reactions.get(r).leap(currentState, dt);
@@ -86,9 +86,9 @@ public class Trajectory {
 	 * Dump trajectory data to stdout. (Mostly for debugging.)
 	 */
 	public void dump() {
-		
+
 		double dt = T/(nSamples-1);
-		
+
 		System.out.print("t");
 		sampledStates[0].dumpNames();
 		int sidx = 0;

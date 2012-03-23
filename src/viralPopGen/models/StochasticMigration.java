@@ -10,9 +10,9 @@ import viralPopGen.*;
  *
  */
 public class StochasticMigration {
-	
+
 	public static void main(String[] argv) {
-		
+
 		/*
 		 * Simulation parameters:
 		 */
@@ -22,7 +22,7 @@ public class StochasticMigration {
 		int nSamples = 1001;
 		int nTraj = 10;
 		int seed = 42;
-		
+
 		/*
 		 * Assemble model:
 		 */
@@ -34,28 +34,28 @@ public class StochasticMigration {
 		dims[0] = 2;
 		Population X = new Population("X", dims);
 		model.addPopulation(X);
-		
+
 		// Define migration reaction:
 		Reaction migrate = new Reaction();
 		migrate.setReactantSchema(X);
 		migrate.setProductSchema(X);
-		
+
 		// Set up vectors to refer to sub-populations A and B:
 		int[] subA = new int[1];
 		int[] subB = new int[1];
 		subA[0] = 0; subB[0] = 1;
-		
+
 		// subA -> subB
 		migrate.addReactantSubSchema(subA);
 		migrate.addProductSubSchema(subB);
-		
+
 		// subB -> subA
 		migrate.addReactantSubSchema(subB);
 		migrate.addProductSubSchema(subA);
-		
+
 		// Fix migration rates:
 		migrate.setRate(0.1, 0.1);
-		
+
 		// Add migration reaction to model:
 		model.addReaction(migrate);
 
@@ -69,20 +69,20 @@ public class StochasticMigration {
 		State initState = new State(model);
 		initState.set(X, subA, 100);
 		initState.set(X, subB, 0);
-		
+
 		/*
 		 * Generate ensemble:
 		 */
 
 		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
 				simulationTime, nTimeSteps, nSamples, nTraj, seed);
-		
+
 		/*
 		 * Dump results to stdout:
 		 */
-		
+
 		ensemble.dump();
-		
+
 	}
 
 }

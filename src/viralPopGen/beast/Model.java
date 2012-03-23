@@ -26,29 +26,29 @@ public class Model extends Plugin {
 			"moment",
 			"Moment to sample from birth-death process.",
 			new ArrayList<Moment>());
-	
+
 	// True model object:
 	viralPopGen.Model model;
-	
+
 	public Model() {};
-	
+
 	@Override
 	public void initAndValidate() throws Exception {
-		
+
 		model = new viralPopGen.Model();
-		
+
 		// Add populations to model:
 		for (Population popInput : populationsInput.get())
 			model.addPopulation(popInput.pop);
-		
+
 		// Add reactions to model:
 		for (Reaction reactInput : reactionsInput.get())
 			model.addReaction(reactInput.reaction);
-		
+
 		// Add moments to model:
 		for (Moment momentInput : momentsInput.get())
 			model.addMoment(momentInput.moment);
-		
+
 	}
 
 }

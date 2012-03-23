@@ -13,7 +13,7 @@ public class Moment extends Plugin {
 
 	public Input<String> nameInput = new Input<String>("momentName", "Moment name.");
 	public Input<Schema> schemaInput = new Input<Schema>("momentSchema", "Moment schema.");
-	
+
 	// True moment object:
 	viralPopGen.Moment moment;
 
@@ -21,7 +21,7 @@ public class Moment extends Plugin {
 
 	@Override
 	public void initAndValidate() throws Exception {
-		
+
 		moment = new viralPopGen.Moment(nameInput.get(), schemaInput.get().popSchema);
 		for (int[][] subPopSchema : schemaInput.get().subPopSchemas)
 			moment.addSubSchema(subPopSchema);

@@ -9,19 +9,19 @@ import viralPopGen.*;
  *
  */
 public class StochasticLogistic {
-	
+
 	public static void main(String[] argv) {
-		
+
 		/*
 		 *  Simulation parameters:
 		 */
-		
+
 		double T = 100.0;
 		int Nt = 10001;
 		int Nsamples = 1001;
 		int Ntraj = 1;
 		int seed = 42;
-		
+
 		/*
 		 * Assemble model:
 		 */
@@ -67,7 +67,7 @@ public class StochasticLogistic {
 		 */
 
 		ensemble.dump();
-		
+
 	}
 
 }

@@ -9,10 +9,10 @@ package viralPopGen;
  *
  */
 public class Population {
-	
+
 	String name; // Population name
 	int[] dims; // Structural space dimensions
-	
+
 	int nSubPops; // Total number of sub-populations
 
 	/**
@@ -23,7 +23,7 @@ public class Population {
 	public Population(String name, int[] dims) {
 		this.name = name;
 		this.dims = dims.clone();
-		
+
 		nSubPops = 1;
 		for (int i=0; i<dims.length; i++)
 			nSubPops *= dims[i];
@@ -38,7 +38,7 @@ public class Population {
 		this.name = name;
 		dims = new int[1];
 		dims[0] = 1;
-		
+
 		nSubPops = 1;
 	}
 
@@ -51,13 +51,13 @@ public class Population {
 	 */
 	public int subToOffset(int[] loc) {
 		int offset = 0;
-		
+
 		int m=1;
 		for (int i=0; i<loc.length; i++) {
 			offset += m*loc[i];
 			m *= dims[i];
 		}
-		
+
 		return offset;
 	}
 }

@@ -11,19 +11,19 @@ import viralPopGen.*;
  *
  */
 public class StochasticLogisticSummary {
-	
+
 	public static void main (String[] argv) {
-		
+
 		/*
 		 *  Simulation parameters:
 		 */
-		
+
 		double T = 100.0;
 		int nTimeSteps = 10001;
 		int nSamples = 1001;
 		int nTraj = 1000;
 		int seed = 53;
-		
+
 		/*
 		 * Assemble model:
 		 */
@@ -50,30 +50,30 @@ public class StochasticLogisticSummary {
 		death.setProductSchema(X);
 		death.setRate(0.01);
 		model.addReaction(death);
-		
+
 		// Define moments:
-		
+
 		Moment mX = new Moment("X",X);
 		model.addMoment(mX);
 
 		/*
 		 * Set initial state:
 		 */
-		
+
 		State initState = new State(model);
 		initState.set(X, 1.0);
-		
+
 		/*
 		 * Generate summarised ensemble:
 		 */
-		
+
 		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
 				T, nTimeSteps, nSamples, nTraj, seed);
-		
+
 		/*
 		 * Dump results (JSON):
 		 */
-		
+
 		ensemble.dump();
 	}
 }

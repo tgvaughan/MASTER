@@ -12,17 +12,17 @@ import beast.util.Randomizer;
  *
  */
 public class Ensemble {
-	
+
 	// The ensemble is a large number of trajectories:
 	ArrayList<Trajectory> trajectories;
-	
+
 	// Record of simulation parameters:
 	Model model;
 	State initState;
 	double simulationTime;
 	int nTimeSteps, nSamples, nTraj;
 	long seed;
-	
+
 	/**
 	 * Generate trajectory ensemble.
 	 * 
@@ -36,7 +36,7 @@ public class Ensemble {
 	 */
 	public Ensemble (Model model, State initState, double simulationTime,
 			int nTimeSteps, int nSamples, int nTraj, int seed) {
-		
+
 		// Keep copy of simulation parameters with ensemble:
 		this.model = model;
 		this.initState = initState;
@@ -45,23 +45,23 @@ public class Ensemble {
 		this.nSamples = nSamples;
 		this.nTraj = nTraj;
 		this.seed = seed;
-		
+
 		// Set RNG seed unless seed<0:
 		if (seed>=0)
 			Randomizer.setSeed(seed);
 
 		// Initialise trajectory list:
 		trajectories = new ArrayList<Trajectory>(nTraj);
-		
+
 		// Generate trajectories:
 		for (int traj=0; traj<nTraj; traj++) {
-			
+
 			Trajectory thisTraj = new Trajectory(model,
 					initState, simulationTime, nTimeSteps, nSamples);
 			trajectories.add(thisTraj);
-			
+
 		}
-		
+
 	}
 
 	/**
@@ -76,13 +76,13 @@ public class Ensemble {
 	 */
 	public Ensemble (Model model, State initState, double simulationTime,
 			int nTimeSteps, int nSamples, int nTraj) {
-		
+
 		// Call main constructor with seed=-1: instructs constructor
 		// not to use seed.
 		this(model, initState, simulationTime,
 				nTimeSteps, nSamples, nTraj, -1);
 	}
-	
+
 	/**
 	 * Raw dump of the ensemble contents.  For debugging.
 	 */

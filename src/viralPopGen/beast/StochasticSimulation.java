@@ -14,7 +14,7 @@ import beast.core.Runnable;
  */
 @Description("A stochastic simulation of a birth-death population dynamics model.")
 public class StochasticSimulation extends Runnable {
-	
+
 	/*
 	 * XML inputs:
 	 */
@@ -38,45 +38,45 @@ public class StochasticSimulation extends Runnable {
 	// Initial state:
 	public Input<InitState> initialStateInput = new Input<InitState>("initialState",
 			"Initial state of system.");
-	
+
 	// Output file name:
 	public Input<String> outFileNameInput = new Input<String>("outFileName",
 			"Name of output file.");
-	
+
 	/*
 	 * Fields to populate with parameter values:
 	 */
-	
+
 	double simulationTime;
 	int nTimeSteps, nSamples, nTraj;
 	long seed;
 	PrintStream outStream;
-	
+
 	viralPopGen.Model model;
 	viralPopGen.State initState;
-	
+
 	public StochasticSimulation() {}
 
 	@Override
 	public void initAndValidate() throws Exception {
-		
+
 		// Read simulation parameters from XML:
 		simulationTime = simulationTimeInput.get();
 		nTimeSteps = nTimeStepsInput.get();
 		nSamples = nSamplesInput.get();
 		nTraj = nTrajInput.get();
-		
+
 		// Set seed to -1 if not explicitly provided
 		// (instructs integrator to use default BEAST seed):
 		if (seedInput.get() != null)
 			seed = seedInput.get();
 		else
 			seed = -1;
-		
+
 		// Read model and state specification from XML:
 		model = modelInput.get().model;
 		initState = initialStateInput.get().initState;
-		
+
 		// Open specified file to use as output PrintStream
 		// for JSON-formated results.  If no file specified,
 		// dump to stdout.
@@ -89,15 +89,15 @@ public class StochasticSimulation extends Runnable {
 
 	@Override
 	public void run() throws Exception {
-		
+
 		// Generate ensemble of stochastic trajectories and estimate
 		// specified moments:
 		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
 				simulationTime, nTimeSteps, nSamples, nTraj, seed);
-		
+
 		// Format results using JSON:
 		ensemble.dump(outStream);
-		
+
 		// Close output file:
 		outStream.close();
 	}

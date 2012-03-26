@@ -69,7 +69,8 @@ public class Reaction {
 
 		// Check for consistent number of sub-populations:
 		if (subs.length != reactPopSchema.length)
-			throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
+			throw new IllegalArgumentException
+					("Inconsistent number of sub-populations specified.");
 
 		int[] offsets = new int[reactPopSchema.length];
 		for (int pidx=0; pidx<reactPopSchema.length; pidx++) {
@@ -255,7 +256,7 @@ public class Reaction {
 		nSubSchemas = rates.size();
 
 		// Pre-allocate memory for propensity list:
-		propensities = Lists.newArrayListWithCapacity(rates.size());
+		propensities = Lists.newArrayList(rates);
 
 		// Pre-calculate reaction-induced changes to sub-population sizes:
 		calcDeltas();

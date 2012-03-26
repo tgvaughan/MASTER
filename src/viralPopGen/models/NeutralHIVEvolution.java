@@ -17,7 +17,7 @@ public class NeutralHIVEvolution {
 		 * Simulation parameters:
 		 */
 
-		double simulationTime = 100;
+		double simulationTime = 10;
 		int nTimeSteps = 1001;
 		int nSamples = 1001;
 		int nTraj = 1;
@@ -26,7 +26,7 @@ public class NeutralHIVEvolution {
 		// Sequence length:
 		int L = 105;
 		int hTrunc = 20;
-		int[] dims = new int[hTrunc];
+		int[] dims = {hTrunc};
 
 		/*
 		 * Assemble model:
@@ -57,10 +57,12 @@ public class NeutralHIVEvolution {
 		cellBirth.setRate(2.5e8);
 		model.addReaction(cellBirth);
 
-		// X + V -> Y
+		// X + V -> Y (with mutation)
 		Reaction infection = new Reaction();
 		infection.setReactantSchema(X,V);
 		infection.setProductSchema(Y);
+
+		double mu = 2e-5*L; // Mutation probabability per infection event.
 
 		int[] Vsub = new int[1];
 		int[] Ysub = new int[1];
@@ -75,10 +77,92 @@ public class NeutralHIVEvolution {
 
 				Ysub[0] = hp;
 
+				// Transition rate to hp from a given sequence in h:
+				double rate = mu*gcond(h,hp,L);
+
+				// Mutation-free contribution:
+				if (h == hp)
+					rate += (1-mu);
+
+				// Account for degeneracy of error class h:
+				rate *= g(h, L);
+
 				infection.addReactantSubSchema(null, Vsub);
 				infection.addProductSubSchema(Ysub);
+				infection.addSubRate(rate);
 			}
 		}
+
+		model.addReaction(infection);
+
+		// Y -> Y + V
+		Reaction budding = new Reaction();
+		budding.setReactantSchema(Y);
+		budding.setProductSchema(Y,V);
+		for (int h=0; h<=hTrunc; h++) {
+			Ysub[0] = h;
+			Vsub[0] = h;
+			budding.addReactantSubSchema(Ysub);
+			budding.addProductSubSchema(Ysub,Vsub);
+		}
+		budding.setRate(1e3);
+		model.addReaction(budding);
+
+		// X -> 0
+		Reaction cellDeath = new Reaction();
+		cellDeath.setReactantSchema(X);
+		cellDeath.setProductSchema();
+		cellDeath.setRate(1e-3);
+		model.addReaction(cellDeath);
+
+		// Y -> 0
+		Reaction infectedDeath = new Reaction();
+		infectedDeath.setReactantSchema(Y);
+		infectedDeath.setProductSchema();
+
+		for (int h=0; h<hTrunc; h++) {
+			Ysub[0] = h;
+
+			infectedDeath.addReactantSubSchema(Ysub);
+			infectedDeath.addProductSubSchema();
+		}
+		infectedDeath.setRate(1.0);
+		model.addReaction(cellDeath);
+
+		// V -> 0
+		Reaction virionDeath = new Reaction();
+		virionDeath.setReactantSchema(V);
+		virionDeath.setProductSchema();
+
+		for (int h=0; h<hTrunc; h++) {
+			Vsub[0] = h;
+
+			virionDeath.addReactantSubSchema(Vsub);
+			virionDeath.addProductSubSchema();
+		}
+		virionDeath.setRate(3.0);
+		model.addReaction(virionDeath);
+
+		/*
+		 * Define moments:
+		 */
+
+		Moment mX = new Moment("X", X);
+		model.addMoment(mX);
+
+		Moment mY = new Moment("Y", Y);
+		Moment mV = new Moment("V", V);
+
+		for (int h=0; h<=hTrunc; h++) {
+			Ysub[0] = h;
+			mY.addSubSchema(Ysub);
+
+			Vsub[0] = h;
+			mV.addSubSchema(Vsub);
+		}
+
+		model.addMoment(mY);
+		model.addMoment(mV);
 
 		/*
 		 * Set initial state:
@@ -86,8 +170,11 @@ public class NeutralHIVEvolution {
 
 		State initState = new State(model);
 		initState.set(X, 2.5e11);
-		initState.set(Y, 0.0);
+
+		Vsub[0] = 0;
 		initState.set(V, 100.0);
+
+		// Note: unspecified population sizes default to zero.
 
 		/*
 		 * Generate ensemble:

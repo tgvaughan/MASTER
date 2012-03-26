@@ -57,9 +57,12 @@ public class Reaction {
 	/**
 	 * Define a particular sub-population-level schema by listing the
 	 * individual sub-population reactants involved in a reaction. Subsequent
-	 * calls to addReactantLocSchema() define an array of such schemas
-	 * that must be aligned with a similar array created by corresponding
+	 * calls to addReactantLocSchema() define a list of such schemas
+	 * that must be aligned with a similar list created by corresponding
 	 * calls to addProductLocSchema().
+	 * 
+	 * Note that the "sub-population" corresponding to an unstructured
+	 * population in the reactant schema should be set to null.
 	 * 
 	 * @param subs	varargs list of reactant sub-populations.
 	 */
@@ -70,8 +73,12 @@ public class Reaction {
 			throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
 
 		int[] offsets = new int[reactPopSchema.length];
-		for (int pidx=0; pidx<reactPopSchema.length; pidx++)
-			offsets[pidx] = reactPopSchema[pidx].subToOffset(subs[pidx]);
+		for (int pidx=0; pidx<reactPopSchema.length; pidx++) {
+			if (subs[pidx] != null)
+				offsets[pidx] = reactPopSchema[pidx].subToOffset(subs[pidx]);
+			else
+				offsets[pidx] = 0;
+		}
 
 		// Call internal method to complete addition of schema:
 		addReactantSubSchemaOffsets(offsets);
@@ -122,6 +129,9 @@ public class Reaction {
 	 * that must be aligned with a similar array created by corresponding
 	 * calls to addReactantLocSchema().
 	 * 
+	 * Note that the "sub-population" corresponding to an unstructured
+	 * population in the product schema should be set to null.
+	 * 
 	 * @param subs	varargs list of product sub-populations.
 	 */
 	public void addProductSubSchema(int[] ... subs) {
@@ -132,8 +142,12 @@ public class Reaction {
 
 		// Calculate offsets from sub-population vectors:
 		int[] offsets = new int[subs.length];
-		for (int i=0; i<subs.length; i++)
-			offsets[i] = prodPopSchema[i].subToOffset(subs[i]);
+		for (int i=0; i<subs.length; i++) {
+			if (subs[i] != null)
+				offsets[i] = prodPopSchema[i].subToOffset(subs[i]);
+			else
+				offsets[i] = 0;
+		}
 
 		// Call internal method to complete addition of schema:
 		addProductSubSchemaOffsets(offsets);

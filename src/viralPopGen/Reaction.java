@@ -18,7 +18,7 @@ public class Reaction {
 	Population [] reactPopSchema, prodPopSchema;
 	List<Map<Population,Map<Integer,Integer>>> reactSubSchemas, prodSubSchemas, deltas;
 
-	double[] rates, propensities;
+	List<Double> rates, propensities;
 	int nSubSchemas;
 
 	/**
@@ -27,6 +27,9 @@ public class Reaction {
 	public Reaction() {
 		reactSubSchemas = Lists.newArrayList();
 		prodSubSchemas = Lists.newArrayList();
+
+		rates = Lists.newArrayList();
+		propensities = Lists.newArrayList();
 	}
 
 	/**
@@ -194,40 +197,49 @@ public class Reaction {
 	}
 
 	/**
-	 * Set average rate that reaction will occur at.
+	 * Adds rate of sub-population-specific reaction.
 	 * 
-	 * @param rates	varargs list of rates to use.
+	 * @param rate 
 	 */
-	public void setRate(double ... rates) {
+	public void addSubRate(double rate) {
+		rates.add(rate);
+	}
 
-		if (reactSubSchemas.size() != prodSubSchemas.size())
-			throw new IllegalArgumentException("Unequal numbers of reactant and product schemas.");
-		nSubSchemas = reactSubSchemas.size();
+	/**
+	 * Uses a single value to populate the rate list.
+	 *
+	 * Useful for defining collections of sub-population reactions which
+	 * occur at the same rate, or for specifying the rate of reactions
+	 * involving un-structured populations only.
+	 *
+	 * @param rate
+	 */
+	public void setRate(double rate) {
 
-		if (nSubSchemas == 0) {
-			// Assume scalar reaction:
-			addScalarSubSchemas();
-			nSubSchemas++;
-		}
-
-		if (nSubSchemas != rates.length)
-			throw new IllegalArgumentException("Inconsistent number of rates specified.");
-		this.rates = rates.clone();
-
-		// Same number of propensities as rates:
-		propensities = new double[rates.length];
+		for (int i=0; i<reactSubSchemas.size(); i++)
+			rates.add(rate);
 	}
 
 	/**
 	 * Pre-calculate reaction-induced changes to sub-population sizes.
+	 * 
+	 * Determines the difference between each reactant and product
+	 * sub-population level schema defined in reactSubSchema and
+	 * prodSubSchema.
 	 */
 	public void calcDeltas() {
 
+		// As calcDeltas can only be called after all reaction
+		// schemas are in place, perform sanity check now:
+		if ((reactSubSchemas.size() != prodSubSchemas.size())
+				|| (reactSubSchemas.size() != rates.size())) {
+			throw new IllegalArgumentException
+					("Inconsistent number of schemas and/or rates.");
+		}
+
 		deltas = Lists.newArrayList();
 
-		// Determine the difference between each reactant and product
-		// sub-population level schema defined in reactLocSchema and
-		// prodLocSchema.  (Loosely, deltas=prodLocSchema-reactLocSchema.)
+		// (Loosely, calculate deltas=prodLocSchema-reactLocSchema.)
 
 		for (int i=0; i<nSubSchemas; i++) {
 			Map<Population,Map<Integer,Integer>> popMap =
@@ -278,15 +290,17 @@ public class Reaction {
 	public void calcPropensities(State state) {
 
 		for (int i=0; i<nSubSchemas; i++) {
-			propensities[i] = rates[i];
+			double thisProp = rates.get(i);
 
 			for (Population pop : reactSubSchemas.get(i).keySet()) {
 				for (int offset : reactSubSchemas.get(i).get(pop).keySet()) {
 					for (int m=0; m<reactSubSchemas.get(i).get(pop).get(offset); m++) {
-						propensities[i] *= state.get(pop, offset)-m;
+						thisProp *= state.get(pop, offset)-m;
 					}
 				}
 			}
+
+			propensities.set(i, thisProp);
 		}
 	}
 
@@ -303,7 +317,7 @@ public class Reaction {
 		for (int i=0; i<nSubSchemas; i++) {
 
 			// Draw number of reactions to fire within time tau:
-			double q = Poisson.nextDouble(propensities[i]*tau);
+			double q = Poisson.nextDouble(propensities.get(i)*tau);
 
 			// Implement reactions:
 			for (Population pop : deltas.get(i).keySet()) {

@@ -48,13 +48,12 @@ public class StochasticMigration {
 		// subA -> subB
 		migrate.addReactantSubSchema(subA);
 		migrate.addProductSubSchema(subB);
+		migrate.addSubRate(0.1);
 
 		// subB -> subA
 		migrate.addReactantSubSchema(subB);
 		migrate.addProductSubSchema(subA);
-
-		// Fix migration rates:
-		migrate.setRate(0.1, 0.1);
+		migrate.addSubRate(0.1);
 
 		// Add migration reaction to model:
 		model.addReaction(migrate);

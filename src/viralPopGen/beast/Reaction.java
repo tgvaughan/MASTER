@@ -41,9 +41,7 @@ public class Reaction extends Plugin {
 
 		double[] rates = new double[ratesInput.get().size()];
 		for (int i=0; i<rates.length; i++)
-			rates[i] = ratesInput.get().get(i).getValue();
-
-		reaction.setRate(rates);
+			reaction.addSubRate(ratesInput.get().get(i).getValue());
 	}
 
 }

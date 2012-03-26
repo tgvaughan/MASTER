@@ -20,7 +20,7 @@ public class NeutralHIVEvolution {
 		double simulationTime = 10;
 		int nTimeSteps = 1001;
 		int nSamples = 1001;
-		int nTraj = 1;
+		int nTraj = 100;
 		int seed = 53;
 
 		// Sequence length:
@@ -63,6 +63,7 @@ public class NeutralHIVEvolution {
 		infection.setProductSchema(Y);
 
 		double mu = 2e-5*L; // Mutation probabability per infection event.
+		double beta = 5e-13; // Total infection rate.
 
 		int[] Vsub = new int[1];
 		int[] Ysub = new int[1];
@@ -78,14 +79,15 @@ public class NeutralHIVEvolution {
 				Ysub[0] = hp;
 
 				// Transition rate to hp from a given sequence in h:
-				double rate = mu*gcond(h,hp,L);
+				double rate = mu*gcond(h,hp,L)/(3.0*L);
 
 				// Mutation-free contribution:
 				if (h == hp)
 					rate += (1-mu);
 
-				// Account for degeneracy of error class h:
-				rate *= g(h, L);
+				// Incorporate base infection rate:
+				rate *= beta;
+
 
 				infection.addReactantSubSchema(null, Vsub);
 				infection.addProductSubSchema(Ysub);
@@ -127,7 +129,7 @@ public class NeutralHIVEvolution {
 			infectedDeath.addProductSubSchema();
 		}
 		infectedDeath.setRate(1.0);
-		model.addReaction(cellDeath);
+		model.addReaction(infectedDeath);
 
 		// V -> 0
 		Reaction virionDeath = new Reaction();

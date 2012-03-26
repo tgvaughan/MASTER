@@ -70,7 +70,7 @@ public class Moment {
 	 */
 	public void init () {
 
-		if (subSchemas.size() == 0) {
+		if (subSchemas.isEmpty()) {
 			Map<Population, Map<Integer,Integer>> popMap = Maps.newHashMap();
 			for (int pidx=0; pidx<popSchema.length; pidx++) {
 				if (!popMap.containsKey(popSchema[pidx])) {

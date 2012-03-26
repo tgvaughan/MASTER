@@ -29,7 +29,6 @@ public class Reaction {
 		prodSubSchemas = Lists.newArrayList();
 
 		rates = Lists.newArrayList();
-		propensities = Lists.newArrayList();
 	}
 
 	/**
@@ -230,8 +229,37 @@ public class Reaction {
 	 */
 	public void setRate(double rate) {
 
+		if (reactSubSchemas.isEmpty())
+			addScalarSubSchemas();
+
 		for (int i=0; i<reactSubSchemas.size(); i++)
 			rates.add(rate);
+	}
+
+	/**
+	 * Perform that part of the initialization process which can
+	 * only be completed once the reaction schema is in place.
+	 * 
+	 * Also performs validation of the specified schema.
+	 */
+	public void postSpecInit() {
+
+		// Perform sanity check on schema:
+		if ((reactSubSchemas.size() != prodSubSchemas.size())
+				|| (reactSubSchemas.size() != rates.size())) {
+			throw new IllegalArgumentException
+					("Inconsistent number of schemas and/or rates.");
+		}
+
+		// Central record of number of sub-population reaction schemas:
+		nSubSchemas = rates.size();
+
+		// Pre-allocate memory for propensity list:
+		propensities = Lists.newArrayListWithCapacity(rates.size());
+
+		// Pre-calculate reaction-induced changes to sub-population sizes:
+		calcDeltas();
+
 	}
 
 	/**
@@ -241,15 +269,7 @@ public class Reaction {
 	 * sub-population level schema defined in reactSubSchema and
 	 * prodSubSchema.
 	 */
-	public void calcDeltas() {
-
-		// As calcDeltas can only be called after all reaction
-		// schemas are in place, perform sanity check now:
-		if ((reactSubSchemas.size() != prodSubSchemas.size())
-				|| (reactSubSchemas.size() != rates.size())) {
-			throw new IllegalArgumentException
-					("Inconsistent number of schemas and/or rates.");
-		}
+	private void calcDeltas() {
 
 		deltas = Lists.newArrayList();
 
@@ -289,7 +309,6 @@ public class Reaction {
 					}
 				}
 			}
-
 
 			deltas.add(popMap);
 		}
@@ -332,6 +351,10 @@ public class Reaction {
 
 			// Draw number of reactions to fire within time tau:
 			double q = Poisson.nextDouble(propensities.get(i)*tau);
+
+			if (q>0) {
+				int do_something = 1;
+			}
 
 			// Implement reactions:
 			for (Population pop : deltas.get(i).keySet()) {

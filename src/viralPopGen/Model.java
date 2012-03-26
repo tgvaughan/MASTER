@@ -45,7 +45,7 @@ public class Model {
 	 * @param react Reaction to add.
 	 */
 	public void addReaction(Reaction react) {
-		react.calcDeltas();
+		react.postSpecInit();
 		reactions.add(react);
 	}
 

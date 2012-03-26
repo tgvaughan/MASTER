@@ -4,12 +4,9 @@ import java.io.*;
 import java.util.*;
 
 import beast.util.Randomizer;
-
 import com.google.common.collect.*;
 
 // JSON classes:
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -50,7 +47,8 @@ public class EnsembleSummary {
 	 * @param nTraj				Number of trajectories to generate.
 	 * @param seed				Seed for RNG. (<0 means use default seed.)
 	 */
-	public EnsembleSummary(Model model, State initState, double simulationTime, int nTimeSteps,
+	public EnsembleSummary(Model model, State initState,
+			double simulationTime, int nTimeSteps,
 			int nSamples, int nTraj, long seed) {
 
 		this.model = model;
@@ -167,12 +165,8 @@ public class EnsembleSummary {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			pstream.println(mapper.writeValueAsString(outputData));
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ex) {
+			System.err.println(ex);
 		}
 
 	}

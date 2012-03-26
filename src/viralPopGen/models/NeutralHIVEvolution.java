@@ -26,7 +26,7 @@ public class NeutralHIVEvolution {
 		// Sequence length:
 		int L = 105;
 		int hTrunc = 20;
-		int[] dims = {hTrunc};
+		int[] dims = {hTrunc+1};
 
 		/*
 		 * Assemble model:
@@ -120,7 +120,7 @@ public class NeutralHIVEvolution {
 		infectedDeath.setReactantSchema(Y);
 		infectedDeath.setProductSchema();
 
-		for (int h=0; h<hTrunc; h++) {
+		for (int h=0; h<=hTrunc; h++) {
 			Ysub[0] = h;
 
 			infectedDeath.addReactantSubSchema(Ysub);
@@ -134,7 +134,7 @@ public class NeutralHIVEvolution {
 		virionDeath.setReactantSchema(V);
 		virionDeath.setProductSchema();
 
-		for (int h=0; h<hTrunc; h++) {
+		for (int h=0; h<=hTrunc; h++) {
 			Vsub[0] = h;
 
 			virionDeath.addReactantSubSchema(Vsub);

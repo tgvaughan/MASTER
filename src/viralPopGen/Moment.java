@@ -34,26 +34,26 @@ public class Moment {
 	/**
 	 * Add specific sub-population resolution moment schema to moment object.
 	 * 
-	 * @param locs	Sub-population locations corresponding to populations
+	 * @param subs	Sub-population locations corresponding to populations
 	 * 				given in constructor.
 	 */
-	public void addSubSchema (int[] ... locs) {
+	public void addSubSchema (int[] ... subs) {
 
-		if (locs.length != popSchema.length)
+		if (subs.length != popSchema.length)
 			throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
 
 		Map<Population, Map<Integer,Integer>> popMap = Maps.newHashMap();
 
 		for (int pidx=0; pidx<popSchema.length; pidx++) {
-			int offset = popSchema[pidx].subToOffset(locs[pidx]);
+			int offset = popSchema[pidx].subToOffset(subs[pidx]);
 
 			if (!popMap.containsKey(popSchema[pidx])) {
 				Map<Integer,Integer> offsetMap = Maps.newHashMap();
 				offsetMap.put(offset, 1);
 				popMap.put(popSchema[pidx], offsetMap);
 			} else {
-				if (popMap.get(popSchema[pidx]).containsKey(locs[pidx])) {
-					int oldVal = popMap.get(popSchema[pidx]).get(locs[pidx]);
+				if (popMap.get(popSchema[pidx]).containsKey(offset)) {
+					int oldVal = popMap.get(popSchema[pidx]).get(offset);
 					popMap.get(popSchema[pidx]).put(offset, oldVal+1);
 				} else {
 					popMap.get(popSchema[pidx]).put(offset, 1);

@@ -27,7 +27,7 @@ public class HypermutHIV {
 		int La3 = 20;
 
 		// Truncation Hamming distance:
-		int hTrunc = 10;
+		int hTrunc = 20;
 
 		// Reduced sequence space dimension:
 		int[] dims = {hTrunc+1, La3+1};
@@ -196,9 +196,9 @@ public class HypermutHIV {
 			mY.newSum();
 			mV.newSum();
 
-			for (int h=0; h<=totMut; h++) {
+			for (int h=0; h<=hTrunc; h++) {
 				int ha = totMut-h;
-				if (ha>=0) {
+				if (ha>=0 && ha<=La3) {
 					Ysub[0] = h;
 					Ysub[1] = ha;
 					mY.addSubSchemaToSum(Ysub);

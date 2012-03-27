@@ -12,17 +12,25 @@ public class HypermutHIV {
 
 	public static void main (String[] argv) {
 
-		
-		int L = 1000; // Sequence length
-		int La3 = 20; // Number of in-context Gs
-		int hTrunc = 10; // Truncation HD
-		int[] dims = {hTrunc+1, La3+1};
-
 		/*
 		 * Assemble model:
 		 */
 
 		Model model = new Model();
+		
+		// Sequence space parameters:
+
+		// Sequence length excluding sites belonging to hypermutable motifs:
+		int L = 1000;
+
+		// Total number of hypermutable motifs:
+		int La3 = 20;
+
+		// Truncation Hamming distance:
+		int hTrunc = 10;
+
+		// Reduced sequence space dimension:
+		int[] dims = {hTrunc+1, La3+1};
 
 		// Define populations:
 
@@ -47,7 +55,7 @@ public class HypermutHIV {
 		cellBirth.setRate(2.5e8);
 		model.addReaction(cellBirth);
 
-		// X + V -> Y (with mutation)
+		// X + V -> Y (with RT mutation)
 		Reaction infection = new Reaction();
 		infection.setReactantSchema(X,V);
 		infection.setProductSchema(Y);
@@ -57,35 +65,70 @@ public class HypermutHIV {
 
 		int[] Vsub = new int[2];
 		int[] Ysub = new int[2];
-		for (int h=0; h<=hTrunc; h++) {
+		for (int ha=0; ha<=La3; ha++) {
 
-			Vsub[0] = h;
+			Vsub[1] = ha;
+			Ysub[1] = ha;
 
-			int hpmin = h>1 ? h-1 : 0;
-			int hpmax = h<hTrunc ? h+1 : hTrunc;
+			for (int h=0; h<=hTrunc; h++) {
 
-			for (int hp=hpmin; hp<=hpmax; hp++) {
+				Vsub[0] = h;
 
-				Ysub[0] = hp;
+				int hpmin = h>1 ? h-1 : 0;
+				int hpmax = h<hTrunc ? h+1 : hTrunc;
 
-				// Transition rate to hp from a given sequence in h:
-				double rate = mu*gcond(h,hp,L)/(3.0*L);
+				for (int hp=hpmin; hp<=hpmax; hp++) {
 
-				// Mutation-free contribution:
-				if (h == hp)
-					rate += (1-mu);
+					Ysub[0] = hp;
 
-				// Incorporate base infection rate:
-				rate *= beta;
+					// Transition rate to hp from a given sequence in h:
+					double rate = mu*gcond(h,hp,L)/(3.0*L);
 
+					// Mutation-free contribution:
+					if (h == hp)
+						rate += (1-mu);
 
-				infection.addReactantSubSchema(null, Vsub);
-				infection.addProductSubSchema(Ysub);
-				infection.addSubRate(rate);
+					// Incorporate base infection rate:
+					rate *= beta;
+
+					infection.addReactantSubSchema(null, Vsub);
+					infection.addProductSubSchema(Ysub);
+					infection.addSubRate(rate);
+				}
 			}
 		}
 
 		model.addReaction(infection);
+
+		// X + V -> Y (with hypermutation)
+		Reaction infectionHyper = new Reaction();
+		infectionHyper.setReactantSchema(X,V);
+		infectionHyper.setProductSchema(Y);
+
+		// Hypermutation probablility per motif per infection event:
+		double muH = 0.01;
+
+		for (int h=0; h<=hTrunc; h++) {
+
+			Vsub[0] = h;
+			Ysub[0] = h;
+
+			for (int ha=0; ha<La3; ha++) {
+
+				Vsub[1] = ha;
+				Ysub[1] = ha+1;
+
+				// Transition rate to ha+1 from given motif mutation
+				// configuration:
+				double rate = muH*(La3-ha);
+
+				infectionHyper.addReactantSubSchema(null, Vsub);
+				infectionHyper.addProductSubSchema(Ysub);
+				infection.addSubRate(rate);
+			}
+		}
+
+		model.addReaction(infectionHyper);
 
 		// Y -> Y + V
 		Reaction budding = new Reaction();
@@ -113,10 +156,12 @@ public class HypermutHIV {
 		infectedDeath.setProductSchema();
 
 		for (int h=0; h<=hTrunc; h++) {
-			Ysub[0] = h;
+			for (int ha=0; ha<=La3; ha++) {
+				Ysub[0] = h;
 
-			infectedDeath.addReactantSubSchema(Ysub);
-			infectedDeath.addProductSubSchema();
+				infectedDeath.addReactantSubSchema(Ysub);
+				infectedDeath.addProductSubSchema();
+			}
 		}
 		infectedDeath.setRate(1.0);
 		model.addReaction(infectedDeath);
@@ -127,10 +172,12 @@ public class HypermutHIV {
 		virionDeath.setProductSchema();
 
 		for (int h=0; h<=hTrunc; h++) {
-			Vsub[0] = h;
+			for (int ha=0; ha<=La3; ha++) {
+				Vsub[0] = h;
 
-			virionDeath.addReactantSubSchema(Vsub);
-			virionDeath.addProductSubSchema();
+				virionDeath.addReactantSubSchema(Vsub);
+				virionDeath.addProductSubSchema();
+			}
 		}
 		virionDeath.setRate(3.0);
 		model.addReaction(virionDeath);
@@ -225,6 +272,19 @@ public class HypermutHIV {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Returns the number of hypermutable motif mutations
+	 * available for a configuration having undergone
+	 * ha hypermutations already.
+	 * 
+	 * @param ha Number of hypermutatable motifs already fired.
+	 * @param La3 Total number of hypermutable motifs.
+	 * @return 
+	 */
+	static int gcondA3(int ha, int La3) {
+			return La3-ha;
 	}
 	
 }

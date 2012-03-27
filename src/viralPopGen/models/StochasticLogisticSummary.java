@@ -67,6 +67,9 @@ public class StochasticLogisticSummary {
 		simulation.setSeed(53);
 		simulation.setInitState(initState);
 
+		// Verbose reportage:
+		simulation.setVerbose(true);
+
 		/*
 		 * Generate summarised ensemble:
 		 */

@@ -58,6 +58,13 @@ public class StochasticMigration {
 		momentX.addSubSchema(subB);
 		model.addMoment(momentX);
 
+		// <Xa + Xb>
+		Moment momentN = new Moment("N", X);
+		momentN.newSum();
+		momentN.addSubSchemaToSum(subA);
+		momentN.addSubSchemaToSum(subB);
+		model.addMoment(momentN);
+
 		/*
 		 * Define initial state:
 		 */

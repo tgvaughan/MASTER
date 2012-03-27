@@ -192,12 +192,22 @@ public class HypermutHIV {
 		Moment mY = new Moment("Y", Y);
 		Moment mV = new Moment("V", V);
 
-		for (int h=0; h<=hTrunc; h++) {
-			Ysub[0] = h;
-			mY.addSubSchema(Ysub);
+		for (int totMut=0; totMut<=hTrunc+La3; totMut++) {
+			mY.newSum();
+			mV.newSum();
 
-			Vsub[0] = h;
-			mV.addSubSchema(Vsub);
+			for (int h=0; h<=totMut; h++) {
+				int ha = totMut-h;
+				if (ha>=0) {
+					Ysub[0] = h;
+					Ysub[1] = ha;
+					mY.addSubSchemaToSum(Ysub);
+
+					Vsub[0] = h;
+					Vsub[1] = ha;
+					mV.addSubSchemaToSum(Vsub);
+				}
+			}
 		}
 
 		model.addMoment(mY);
@@ -225,7 +235,7 @@ public class HypermutHIV {
 		simulation.setSimulationTime(10);
 		simulation.setnTimeSteps(1001);
 		simulation.setnSamples(1001);
-		simulation.setnTraj(100);
+		simulation.setnTraj(1);
 		simulation.setSeed(53);
 		simulation.setInitState(initState);
 

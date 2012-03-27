@@ -15,16 +15,6 @@ public class StochasticLogisticSummary {
 	public static void main (String[] argv) {
 
 		/*
-		 *  Simulation parameters:
-		 */
-
-		double T = 100.0;
-		int nTimeSteps = 10001;
-		int nSamples = 1001;
-		int nTraj = 1000;
-		int seed = 53;
-
-		/*
 		 * Assemble model:
 		 */
 
@@ -64,11 +54,24 @@ public class StochasticLogisticSummary {
 		initState.set(X, 1.0);
 
 		/*
+		 * Define simulation:
+		 */
+
+		Simulation simulation = new Simulation();
+
+		simulation.setModel(model);
+		simulation.setSimulationTime(100.0);
+		simulation.setnTimeSteps(10001);
+		simulation.setnSamples(1001);
+		simulation.setnTraj(1000);
+		simulation.setSeed(53);
+		simulation.setInitState(initState);
+
+		/*
 		 * Generate summarised ensemble:
 		 */
 
-		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
-				T, nTimeSteps, nSamples, nTraj, seed);
+		EnsembleSummary ensemble = new EnsembleSummary(simulation);
 
 		/*
 		 * Dump results (JSON):

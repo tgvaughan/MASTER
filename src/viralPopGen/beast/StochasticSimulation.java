@@ -2,7 +2,7 @@ package viralPopGen.beast;
 
 import java.io.*;
 
-import viralPopGen.EnsembleSummary;
+import viralPopGen.*;
 import beast.core.*;
 import beast.core.Runnable;
 
@@ -47,35 +47,31 @@ public class StochasticSimulation extends Runnable {
 	 * Fields to populate with parameter values:
 	 */
 
-	double simulationTime;
-	int nTimeSteps, nSamples, nTraj;
-	long seed;
-	PrintStream outStream;
+	// Simulation specification:
+	Simulation simulation;
 
-	viralPopGen.Model model;
-	viralPopGen.State initState;
+	// Stream object to write JSON output to:
+	PrintStream outStream;
 
 	public StochasticSimulation() {}
 
 	@Override
 	public void initAndValidate() throws Exception {
 
-		// Read simulation parameters from XML:
-		simulationTime = simulationTimeInput.get();
-		nTimeSteps = nTimeStepsInput.get();
-		nSamples = nSamplesInput.get();
-		nTraj = nTrajInput.get();
+		// Assemble simulation object from XML parameters:
 
-		// Set seed to -1 if not explicitly provided
-		// (instructs integrator to use default BEAST seed):
+		this.simulation = new Simulation();
+
+		simulation.setModel(modelInput.get().model);
+		simulation.setSimulationTime(simulationTimeInput.get());
+		simulation.setnTimeSteps(nTimeStepsInput.get());
+		simulation.setnSamples(nSamplesInput.get());
+		simulation.setnTraj(nTrajInput.get());
+		simulation.setInitState(initialStateInput.get().initState);
+
+		// Set seed if provided, otherwise use default BEAST seed:
 		if (seedInput.get() != null)
-			seed = seedInput.get();
-		else
-			seed = -1;
-
-		// Read model and state specification from XML:
-		model = modelInput.get().model;
-		initState = initialStateInput.get().initState;
+			simulation.setSeed(seedInput.get());
 
 		// Open specified file to use as output PrintStream
 		// for JSON-formated results.  If no file specified,
@@ -92,8 +88,7 @@ public class StochasticSimulation extends Runnable {
 
 		// Generate ensemble of stochastic trajectories and estimate
 		// specified moments:
-		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
-				simulationTime, nTimeSteps, nSamples, nTraj, seed);
+		EnsembleSummary ensemble = new EnsembleSummary(simulation);
 
 		// Format results using JSON:
 		ensemble.dump(outStream);

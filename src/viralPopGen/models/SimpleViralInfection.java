@@ -13,16 +13,6 @@ public class SimpleViralInfection {
 	public static void main (String[] argv) {
 
 		/*
-		 *  Simulation parameters:
-		 */
-
-		double simulationTime = 10.0; // days
-		int nTimeSteps = 1001;
-		int nSamples = 1001;
-		int nTraj = 100;
-		int seed = 42;
-
-		/*
 		 * Assemble model:
 		 */
 
@@ -111,11 +101,24 @@ public class SimpleViralInfection {
 		initState.set(V, 100.0);
 
 		/*
+		 * Define simulation:
+		 */
+
+		Simulation simulation = new Simulation();
+
+		simulation.setModel(model);
+		simulation.setSimulationTime(10.0); // days
+		simulation.setnTimeSteps(1001);
+		simulation.setnSamples(1001);
+		simulation.setnTraj(100);
+		simulation.setSeed(42);
+		simulation.setInitState(initState);
+
+		/*
 		 * Generate summarised ensemble:
 		 */
 
-		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
-				simulationTime, nTimeSteps, nSamples, nTraj, seed);
+		EnsembleSummary ensemble = new EnsembleSummary(simulation);
 
 		/*
 		 * Dump results (JSON):

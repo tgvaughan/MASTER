@@ -12,16 +12,6 @@ public class HypermutHIV {
 
 	public static void main (String[] argv) {
 
-		/*
-		 * Simulation parameters:
-		 */
-
-		double simulationTime = 10;
-		int nTimeSteps = 1001;
-		int nSamples = 1001;
-		int nTraj = 100;
-		int seed = 53;
-
 		
 		int L = 1000; // Sequence length
 		int La3 = 20; // Number of in-context Gs
@@ -179,12 +169,24 @@ public class HypermutHIV {
 		// Note: unspecified population sizes default to zero.
 
 		/*
+		 * Define simulation:
+		 */
+
+		Simulation simulation = new Simulation();
+
+		simulation.setModel(model);
+		simulation.setSimulationTime(10);
+		simulation.setnTimeSteps(1001);
+		simulation.setnSamples(1001);
+		simulation.setnTraj(100);
+		simulation.setSeed(53);
+		simulation.setInitState(initState);
+
+		/*
 		 * Generate ensemble:
 		 */
 
-		EnsembleSummary ensemble = new EnsembleSummary(model,
-			initState, simulationTime, nTimeSteps, nSamples,
-			nTraj, seed);
+		EnsembleSummary ensemble = new EnsembleSummary(simulation);
 
 		/*
 		 * Dump results to stdout (JSON):

@@ -36,7 +36,12 @@ public class Simulation {
 	 * Constructor:
 	 */
 	public Simulation () {
+
+		// Verbose reportage off by default:
 		this.verbose = false;
+
+		// Use BEAST RNG seed unless specified:
+		this.seed = -1;
 	}
 
 	/*

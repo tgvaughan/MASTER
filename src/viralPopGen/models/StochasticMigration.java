@@ -14,16 +14,6 @@ public class StochasticMigration {
 	public static void main(String[] argv) {
 
 		/*
-		 * Simulation parameters:
-		 */
-
-		double simulationTime = 20.0;
-		int nTimeSteps = 10001;
-		int nSamples = 1001;
-		int nTraj = 10;
-		int seed = 42;
-
-		/*
 		 * Assemble model:
 		 */
 
@@ -58,23 +48,42 @@ public class StochasticMigration {
 		// Add migration reaction to model:
 		model.addReaction(migrate);
 
-		// Define moments to record:
+		/*
+		 * Define moments:
+		 */
+
+		// <X>
 		Moment momentX = new Moment("X", X);
 		momentX.addSubSchema(subA);
 		momentX.addSubSchema(subB);
 		model.addMoment(momentX);
 
-		// Set initial state:
+		/*
+		 * Define initial state:
+		 */
+
 		State initState = new State(model);
 		initState.set(X, subA, 100);
 		initState.set(X, subB, 0);
 
 		/*
+		 * Define simulation:
+		 */
+
+		Simulation simulation = new Simulation();
+		simulation.setModel(model);
+		simulation.setSimulationTime(20.0);
+		simulation.setnTimeSteps(10001);
+		simulation.setnSamples(1001);
+		simulation.setnTraj(100);
+		simulation.setSeed(42);
+		simulation.setInitState(initState);
+
+		/*
 		 * Generate ensemble:
 		 */
 
-		EnsembleSummary ensemble = new EnsembleSummary(model, initState,
-				simulationTime, nTimeSteps, nSamples, nTraj, seed);
+		EnsembleSummary ensemble = new EnsembleSummary(simulation);
 
 		/*
 		 * Dump results to stdout:

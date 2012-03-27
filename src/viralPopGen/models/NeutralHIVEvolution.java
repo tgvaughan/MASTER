@@ -1,7 +1,6 @@
 package viralPopGen.models;
 
 import viralPopGen.*;
-import beast.math.GammaFunction;
 
 /**
  * Simple model of HIV infection with neutral
@@ -13,18 +12,8 @@ public class NeutralHIVEvolution {
 
 	public static void main (String[] argv) {
 
-		/*
-		 * Simulation parameters:
-		 */
-
-		double simulationTime = 10;
-		int nTimeSteps = 1001;
-		int nSamples = 1001;
-		int nTraj = 100;
-		int seed = 53;
-
 		// Sequence length:
-		int L = 105;
+		int L = 1000;
 		int hTrunc = 20;
 		int[] dims = {hTrunc+1};
 
@@ -171,46 +160,42 @@ public class NeutralHIVEvolution {
 		 */
 
 		State initState = new State(model);
-		initState.set(X, 2.5e11);
+		initState.set(X, 6.1e9);
+
+		Ysub[0] = 0;
+		initState.set(Y, Ysub, 2.5e8);
 
 		Vsub[0] = 0;
-		initState.set(V, 100.0);
+		initState.set(V, Vsub, 8.2e10);
 
-		// Note: unspecified population sizes default to zero.
+		/*
+		 * Define simulation:
+		 */
+
+		Simulation simulation = new Simulation();
+
+		simulation.setModel(model);
+		simulation.setSimulationTime(365);
+		simulation.setnTimeSteps(10001);
+		simulation.setnSamples(1001);
+		simulation.setnTraj(10);
+		simulation.setSeed(53);
+		simulation.setInitState(initState);
+
+		// Turn on verbose reportage:
+		simulation.setVerbose(true);
 
 		/*
 		 * Generate ensemble:
 		 */
 
-		EnsembleSummary ensemble = new EnsembleSummary(model,
-			initState, simulationTime, nTimeSteps, nSamples,
-			nTraj, seed);
+		EnsembleSummary ensemble = new EnsembleSummary(simulation);
 
 		/*
 		 * Dump results to stdout (JSON):
 		 */
 
 		ensemble.dump();
-	}
-
-	/**
-	 * Return the number of sequences s of length L
-	 * satisfying d(s,0)=h.
-	 * 
-	 * @param h Hamming distance.
-	 * @param L Length of sequences to count.
-	 * @return  The number of sequences of length L with d(s,0)=h.
-	 */
-	static double g(int h, int L) {
-
-		double logResult =
-			h*Math.log(3.0)
-			+ GammaFunction.lnGamma(L+1)
-			- GammaFunction.lnGamma(h+1)
-			- GammaFunction.lnGamma(L-h+1);
-
-		return Math.exp(logResult);
-
 	}
 
 	/**

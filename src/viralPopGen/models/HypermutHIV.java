@@ -1,7 +1,6 @@
 package viralPopGen.models;
 
 import viralPopGen.*;
-import beast.math.GammaFunction;
 
 /**
  * Model of within-host HIV evolution, including APOBEC3*-driven
@@ -25,8 +24,8 @@ public class HypermutHIV {
 
 		
 		int L = 1000; // Sequence length
-		int La3 = 10; // Number of in-context Gs
-		int hTrunc = 20; // Truncation HD
+		int La3 = 20; // Number of in-context Gs
+		int hTrunc = 10; // Truncation HD
 		int[] dims = {hTrunc+1, La3+1};
 
 		/*
@@ -66,8 +65,8 @@ public class HypermutHIV {
 		double mu = 2e-5*L; // Mutation probabability per infection event.
 		double beta = 5e-13; // Total infection rate.
 
-		int[] Vsub = new int[1];
-		int[] Ysub = new int[1];
+		int[] Vsub = new int[2];
+		int[] Ysub = new int[2];
 		for (int h=0; h<=hTrunc; h++) {
 
 			Vsub[0] = h;
@@ -192,26 +191,6 @@ public class HypermutHIV {
 		 */
 
 		ensemble.dump();
-
-	}
-
-	/**
-	 * Return the number of sequences s of length L
-	 * satisfying d(s,0)=h.
-	 * 
-	 * @param h Hamming distance.
-	 * @param L Length of sequences to count.
-	 * @return  The number of sequences of length L with d(s,0)=h.
-	 */
-	static double g(int h, int L) {
-
-		double logResult =
-			h*Math.log(3.0)
-			+ GammaFunction.lnGamma(L+1)
-			- GammaFunction.lnGamma(h+1)
-			- GammaFunction.lnGamma(L-h+1);
-
-		return Math.exp(logResult);
 
 	}
 

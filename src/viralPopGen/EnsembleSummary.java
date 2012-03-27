@@ -21,12 +21,11 @@ import org.codehaus.jackson.map.ObjectMapper;
  */
 public class EnsembleSummary {
 
-	// Record of simulation parameters:
+	// Simulation specification:
+	Simulation simulation;
+
+	// Birth death model to simulate:
 	Model model;
-	State initState;
-	double simulationTime;
-	int nTimeSteps, nSamples, nTraj;
-	long seed;
 
 	// Moments to record:
 	List<Moment> moments;
@@ -39,48 +38,42 @@ public class EnsembleSummary {
 	 * to non-static fields, performs the simulation, recording the
 	 * required summary statistics.
 	 * 
-	 * @param model				Model to simulate.
-	 * @param initState			Initial state of system.
-	 * @param simulationTime	Length of time to simulate for.
-	 * @param nTimeSteps		Number of integration time steps to use.
-	 * @param nSamples			Number of samples to record.
-	 * @param nTraj				Number of trajectories to generate.
-	 * @param seed				Seed for RNG. (<0 means use default seed.)
+	 * @param simulation Simulation specification.
 	 */
-	public EnsembleSummary(Model model, State initState,
-			double simulationTime, int nTimeSteps,
-			int nSamples, int nTraj, long seed) {
+	public EnsembleSummary(Simulation simulation) {
 
-		this.model = model;
-		this.initState = initState;
-		this.simulationTime = simulationTime;
-		this.nTimeSteps = nTimeSteps;
-		this.nSamples = nSamples;
-		this.nTraj = nTraj;
-		this.seed = seed;
+		this.model = simulation.model;
+		this.simulation = simulation;
 
 		// Set seed if defined:
-		if (seed < 0)
-			Randomizer.setSeed(seed);
+		if (simulation.seed < 0)
+			Randomizer.setSeed(simulation.seed);
 
 		// Derived simulation parameters:
-		double dt = simulationTime/(nTimeSteps-1);
-		int stepsPerSample = (nTimeSteps-1)/(nSamples-1);
+		double dt = simulation.getDt();
+		int stepsPerSample = simulation.getStepsPerSample();
 
 		// Initialise state summaries:
-		stateSummaries = new StateSummary[nSamples];
-		for (int sidx=0; sidx<nSamples; sidx++)
+		stateSummaries = new StateSummary[simulation.nSamples];
+		for (int sidx=0; sidx<simulation.nSamples; sidx++)
 			stateSummaries[sidx] = new StateSummary(model.moments);
 
 		// Loop over trajectories:
-		for (int traj=0; traj<nTraj; traj++) {
+		for (int traj=0; traj<simulation.nTraj; traj++) {
+
+			// Emit verbose reportage to stderr:
+			if (simulation.verbose) {
+				System.err.println("Integrating trajectory " +
+						String.valueOf(traj+1) + " of " +
+						String.valueOf(simulation.nTraj));
+			}
 
 			// Initialise system state:
-			State currentState = new State(initState);
+			State currentState = new State(simulation.initState);
 
 			// Integration loop:
 			int sidx = 0;
-			for (int tidx=0; tidx<nTimeSteps; tidx++) {
+			for (int tidx=0; tidx<simulation.nTimeSteps; tidx++) {
 
 				// Sample if necessary:
 				if (tidx % stepsPerSample == 0)
@@ -99,24 +92,6 @@ public class EnsembleSummary {
 		// Normalise state summaries:
 		for (StateSummary summary : stateSummaries)
 			summary.normalise();
-	}
-
-	/**
-	 * Alternate constructor which uses default seed value.
-	 *
-	 * @param model				Model to simulate.
-	 * @param initState			Initial state of system.
-	 * @param simulationTime	Length of time to simulate for.
-	 * @param nTimeSteps		Number of integration time steps to use.
-	 * @param nSamples			Number of samples to record.
-	 * @param nTraj				Number of trajectories to generate.
-	 */
-	public EnsembleSummary(Model model, State initState, double simulationTime,
-			int nTimeSteps, int nSamples, int nTraj) {
-
-		// Call main constructor with seed=-1: instructs constructor
-		// not to use seed.
-		this(model, initState, simulationTime, nTimeSteps, nSamples, nTraj, -1);
 	}
 
 	/**
@@ -157,10 +132,13 @@ public class EnsembleSummary {
 
 		// Add list of sampling times to output object:
 		ArrayList<Double> tData = Lists.newArrayList();
-		double dT = simulationTime/(nSamples-1);
+		double dT = simulation.getSampleDt();
 		for (int sidx=0; sidx<stateSummaries.length; sidx++)
 			tData.add(dT*sidx);
 		outputData.put("t", tData);
+
+		// Record simulation parameters to object output:
+		outputData.put("sim", simulation);
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {

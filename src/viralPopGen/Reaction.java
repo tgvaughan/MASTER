@@ -230,6 +230,8 @@ public class Reaction {
 	 */
 	public void setRate(double rate) {
 
+		// Ensure at least a single sub-population schema is present,
+		// even if only unstructured populations are involved.
 		if (reactSubSchemas.isEmpty())
 			addScalarSubSchemas();
 
@@ -244,6 +246,11 @@ public class Reaction {
 	 * Also performs validation of the specified schema.
 	 */
 	public void postSpecInit() {
+
+		// Ensure at least a single sub-population schema is present,
+		// even if only unstructured populations are involved.
+		if (reactSubSchemas.isEmpty())
+			addScalarSubSchemas();
 
 		// Perform sanity check on schema:
 		if ((reactSubSchemas.size() != prodSubSchemas.size())

@@ -13,7 +13,7 @@ import com.google.common.collect.*;
 public class StateSummary {
 
 	Map<Moment,double[]> mean, std;
-	int nSamples;
+	int sampleNum;
 
 	/**
 	 * Create new state summary using a given list of moments.
@@ -26,11 +26,11 @@ public class StateSummary {
 		std = Maps.newHashMap();
 
 		for (Moment moment : moments) {
-			mean.put(moment, new double[moment.subSchemas.size()]);
-			std.put(moment, new double[moment.subSchemas.size()]);
+			mean.put(moment, new double[moment.summationGroups.size()]);
+			std.put(moment, new double[moment.summationGroups.size()]);
 		}
 
-		nSamples = 0;
+		sampleNum = 0;
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class StateSummary {
 			moment.getEstimate(state, mean.get(moment), std.get(moment));
 		}
 
-		nSamples++;
+		sampleNum++;
 
 	}
 
@@ -56,8 +56,8 @@ public class StateSummary {
 			double[] thisMean = mean.get(moment);
 			double[] thisStd = std.get(moment);
 			for (int i=0; i<thisMean.length; i++) {
-				thisMean[i] /= nSamples;
-				thisStd[i] /= nSamples;
+				thisMean[i] /= sampleNum;
+				thisStd[i] /= sampleNum;
 				thisStd[i] = Math.sqrt(thisStd[i] - thisMean[i]*thisMean[i]);
 			}
 		}

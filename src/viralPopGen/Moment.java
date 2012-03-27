@@ -18,6 +18,7 @@ public class Moment {
 	// Specification of moment:
 	Population[] popSchema;
 	List<Map<Population,Map<Integer,Integer>>> subSchemas;
+	List<List<Integer>> summationGroups;
 
 	/**
 	 * Constructor.
@@ -29,18 +30,39 @@ public class Moment {
 		this.popSchema = popOrder;
 
 		subSchemas = Lists.newArrayList();
+		summationGroups = Lists.newArrayList();
 	}
 
 	/**
-	 * Add specific sub-population resolution moment schema to moment object.
+	 * Add sub-population level moment specification schema.
+	 * 
+	 * @param subs  Sub-population locations corresponding to populations
+	 * 				given in constructor.
+	 */
+	public void addSubSchema(int[] ... subs) {
+		newSum();
+		addSubSchemaToSum(subs);
+	}
+
+	/**
+	 * Create new summation group.
+	 */
+	public void newSum() {
+		summationGroups.add(new ArrayList<Integer>());
+	}
+
+	/**
+	 * Add sub-population-level moment specification schema to
+	 * current summation group.
 	 * 
 	 * @param subs	Sub-population locations corresponding to populations
 	 * 				given in constructor.
 	 */
-	public void addSubSchema (int[] ... subs) {
+	public void addSubSchemaToSum (int[] ... subs) {
 
 		if (subs.length != popSchema.length)
-			throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
+			throw new IllegalArgumentException
+					("Inconsistent number of sub-populations specified.");
 
 		Map<Population, Map<Integer,Integer>> popMap = Maps.newHashMap();
 
@@ -62,28 +84,44 @@ public class Moment {
 		}
 
 		subSchemas.add(popMap);
+
+		// Add sub-population schema index to summation group list:
+		summationGroups.get(summationGroups.size()-1).add(subSchemas.size()-1);
 	}
 
 	/**
-	 * Ensure sub-population moment schema exists,
-	 * defaulting to a single scalar schema.
+	 * Add default sub-population level schema involving only
+	 * those sub-populations which exist in "unstructured" populations.
 	 */
-	public void init () {
+	public void addScalarSubSchema() {
 
-		if (subSchemas.isEmpty()) {
-			Map<Population, Map<Integer,Integer>> popMap = Maps.newHashMap();
-			for (int pidx=0; pidx<popSchema.length; pidx++) {
-				if (!popMap.containsKey(popSchema[pidx])) {
-					Map<Integer,Integer> offsetMap = Maps.newHashMap();
-					offsetMap.put(0,1);
-					popMap.put(popSchema[pidx], offsetMap);
-				} else {
-					int oldVal = popMap.get(popSchema[pidx]).get(0);
-					popMap.get(popSchema[pidx]).put(0, oldVal+1);
-				}
+		newSum();
+
+		Map<Population, Map<Integer,Integer>> popMap = Maps.newHashMap();
+		for (int pidx=0; pidx<popSchema.length; pidx++) {
+			if (!popMap.containsKey(popSchema[pidx])) {
+				Map<Integer,Integer> offsetMap = Maps.newHashMap();
+				offsetMap.put(0,1);
+				popMap.put(popSchema[pidx], offsetMap);
+			} else {
+				int oldVal = popMap.get(popSchema[pidx]).get(0);
+				popMap.get(popSchema[pidx]).put(0, oldVal+1);
 			}
-			subSchemas.add(popMap);
 		}
+		subSchemas.add(popMap);
+
+		// Add sub-population schema index to summation group list:
+		summationGroups.get(summationGroups.size()-1).add(subSchemas.size()-1);
+	}
+
+	/**
+	 * Initialisation which can only be accomplished after the moment
+	 * schema is specified.  Called by Model::addMoment().
+	 */
+	public void postSpecInit () {
+
+		if (subSchemas.isEmpty()) 
+			addScalarSubSchema();
 	}
 
 	/**
@@ -95,17 +133,22 @@ public class Moment {
 	 */
 	public void getEstimate (State state, double[] mean, double[] std) {
 
-		for (int i=0; i<subSchemas.size(); i++) {
-			double estimate = 1;
-			for (Population pop : subSchemas.get(i).keySet()) {
-				for (int offset : subSchemas.get(i).get(pop).keySet()) {
-					for (int m=0; m<subSchemas.get(i).get(pop).get(offset); m++) {
-						estimate *= state.get(pop, offset)-m;
+		for (int s=0; s<summationGroups.size(); s++) {
+			double estimate = 0;
+			for (int i : summationGroups.get(s)) {
+				double x = 1;
+				for (Population pop : subSchemas.get(i).keySet()) {
+					for (int offset : subSchemas.get(i).get(pop).keySet()) {
+						for (int m=0; m<subSchemas.get(i).get(pop).get(offset); m++) {
+							x *= state.get(pop, offset)-m;
+						}
 					}
 				}
+				estimate += x;
 			}
-			mean[i] += estimate;
-			std[i] += estimate*estimate;
+
+			mean[s] += estimate;
+			std[s] += estimate*estimate;
 		}
 	}
 }

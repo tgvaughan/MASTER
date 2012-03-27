@@ -124,7 +124,7 @@ public class HypermutHIV {
 
 				infectionHyper.addReactantSubSchema(null, Vsub);
 				infectionHyper.addProductSubSchema(Ysub);
-				infection.addSubRate(rate);
+				infectionHyper.addSubRate(rate);
 			}
 		}
 

@@ -106,7 +106,7 @@ public class HypermutHIV {
 		infectionHyper.setProductSchema(Y);
 
 		// Hypermutation probablility per motif per infection event:
-		double muH = 1000*2e-5*La3;
+		double muH = 25*2e-5*La3;
 
 		for (int h=0; h<=hTrunc; h++) {
 
@@ -237,15 +237,16 @@ public class HypermutHIV {
 		 */
 
 		State initState = new State(model);
-		initState.set(X, 6.1e9);
+
+		initState.set(X, 6.006e9); // Deterministic steady state values
 
 		Ysub[0] = 0;
 		Ysub[1] = 0;
-		initState.set(Y, 2.5e8);
+		initState.set(Y, 2.44e8);
 
 		Vsub[0] = 0;
 		Vsub[1] = 0;
-		initState.set(V, 8.2e10);
+		initState.set(V, 8.125e10);
 
 		// Note: unspecified population sizes default to zero.
 

@@ -41,10 +41,12 @@ public class HypermutHIV {
 		// Infected cell:
 		Population Y = new Population("Y", dims);
 		model.addPopulation(Y);
+		int[] Ysub = new int[2]; // Used to specify individual Y sub-populations
 
 		// Virion:
 		Population V = new Population("V", dims);
 		model.addPopulation(V);
+		int[] Vsub = new int[2]; // Used to specify individual V sub-populations
 
 		// Define reactions:
 
@@ -63,8 +65,6 @@ public class HypermutHIV {
 		double mu = 2e-5*L; // Mutation probabability per infection event.
 		double beta = 5e-13; // Total infection rate.
 
-		int[] Vsub = new int[2];
-		int[] Ysub = new int[2];
 		for (int ha=0; ha<=La3; ha++) {
 
 			Vsub[1] = ha;
@@ -122,6 +122,9 @@ public class HypermutHIV {
 				// configuration:
 				double rate = muH*(La3-ha);
 
+				// Incorporate base infection rate:
+				rate *= beta;
+
 				infectionHyper.addReactantSubSchema(null, Vsub);
 				infectionHyper.addProductSubSchema(Ysub);
 				infectionHyper.addSubRate(rate);
@@ -135,10 +138,18 @@ public class HypermutHIV {
 		budding.setReactantSchema(Y);
 		budding.setProductSchema(Y,V);
 		for (int h=0; h<=hTrunc; h++) {
+
 			Ysub[0] = h;
 			Vsub[0] = h;
-			budding.addReactantSubSchema(Ysub);
-			budding.addProductSubSchema(Ysub,Vsub);
+
+			for (int ha=0; ha<=La3; ha++) {
+
+				Ysub[1] = ha;
+				Vsub[1] = ha;
+
+				budding.addReactantSubSchema(Ysub);
+				budding.addProductSubSchema(Ysub,Vsub);
+			}
 		}
 		budding.setRate(1e3);
 		model.addReaction(budding);
@@ -156,8 +167,9 @@ public class HypermutHIV {
 		infectedDeath.setProductSchema();
 
 		for (int h=0; h<=hTrunc; h++) {
+			Ysub[0] = h;
 			for (int ha=0; ha<=La3; ha++) {
-				Ysub[0] = h;
+				Ysub[1] = ha;
 
 				infectedDeath.addReactantSubSchema(Ysub);
 				infectedDeath.addProductSubSchema();
@@ -172,8 +184,12 @@ public class HypermutHIV {
 		virionDeath.setProductSchema();
 
 		for (int h=0; h<=hTrunc; h++) {
+
+			Vsub[0] = h;
+
 			for (int ha=0; ha<=La3; ha++) {
-				Vsub[0] = h;
+
+				Vsub[1] = ha;
 
 				virionDeath.addReactantSubSchema(Vsub);
 				virionDeath.addProductSubSchema();
@@ -197,8 +213,11 @@ public class HypermutHIV {
 			mV.newSum();
 
 			for (int h=0; h<=hTrunc; h++) {
+
 				int ha = totMut-h;
+
 				if (ha>=0 && ha<=La3) {
+
 					Ysub[0] = h;
 					Ysub[1] = ha;
 					mY.addSubSchemaToSum(Ysub);
@@ -218,10 +237,15 @@ public class HypermutHIV {
 		 */
 
 		State initState = new State(model);
-		initState.set(X, 2.5e11);
+		initState.set(X, 6.1e9);
+
+		Ysub[0] = 0;
+		Ysub[1] = 0;
+		initState.set(Y, 2.5e8);
 
 		Vsub[0] = 0;
-		initState.set(V, 100.0);
+		Vsub[1] = 0;
+		initState.set(V, 8.2e10);
 
 		// Note: unspecified population sizes default to zero.
 
@@ -232,12 +256,15 @@ public class HypermutHIV {
 		Simulation simulation = new Simulation();
 
 		simulation.setModel(model);
-		simulation.setSimulationTime(10);
-		simulation.setnTimeSteps(1001);
+		simulation.setSimulationTime(365);
+		simulation.setnTimeSteps(10001);
 		simulation.setnSamples(1001);
 		simulation.setnTraj(1);
 		simulation.setSeed(53);
 		simulation.setInitState(initState);
+
+		// Turn on verbose reportage:
+		simulation.setVerbose(true);
 
 		/*
 		 * Generate ensemble:

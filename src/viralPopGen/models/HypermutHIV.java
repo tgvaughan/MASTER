@@ -106,7 +106,7 @@ public class HypermutHIV {
 		infectionHyper.setProductSchema(Y);
 
 		// Hypermutation probablility per motif per infection event:
-		double muH = 0.01;
+		double muH = 1000*2e-5*La3;
 
 		for (int h=0; h<=hTrunc; h++) {
 

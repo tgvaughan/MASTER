@@ -4,7 +4,7 @@ import beast.evolution.tree.*;
 
 /**
  * BEAST 2 plugin to enable trajectories to be represented
- * as ancestral trees.
+ * as trees.
  *
  * @author Tim Vaughan
  */

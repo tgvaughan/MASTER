@@ -1,6 +1,7 @@
 package viralPopGen.models;
 
 import viralPopGen.*;
+import beast.math.Binomial;
 
 /**
  * Model of within-host HIV evolution, including APOBEC3*-driven
@@ -105,29 +106,43 @@ public class HypermutHIV {
 		infectionHyper.setReactantSchema(X,V);
 		infectionHyper.setProductSchema(Y);
 
-		// Hypermutation probablility per motif per infection event:
-		double muH = 25*2e-5*La3;
+		// A3G incorporation probability:
+		double pIncorp = 1e-7;
+
+		// A3G hypermutable site mutation probability:
+		double pHypermutate = 0.5;
 
 		for (int h=0; h<=hTrunc; h++) {
 
 			Vsub[0] = h;
 			Ysub[0] = h;
 
-			for (int ha=0; ha<La3; ha++) {
+			for (int ha=0; ha<=La3; ha++) {
 
 				Vsub[1] = ha;
-				Ysub[1] = ha+1;
+				/* 
+				 * Once APOBEC attaches to a sequence with ha remaining
+				 * hypermutable sites, it has a finite probability of editing
+				 * each one of these sites. Thus the total number of edited
+				 * sites delta following any attachment of APOBEC is
+				 * binomially distributed.
+				 */
 
-				// Transition rate to ha+1 from given motif mutation
-				// configuration:
-				double rate = muH*(La3-ha);
+				for (int delta=0; delta<=La3-ha; delta++) {
 
-				// Incorporate base infection rate:
-				rate *= beta;
+					Ysub[1] = ha+delta;
 
-				infectionHyper.addReactantSubSchema(null, Vsub);
-				infectionHyper.addProductSubSchema(Ysub);
-				infectionHyper.addSubRate(rate);
+					double rate = beta*pIncorp
+							*Math.pow(Binomial.choose(La3-ha, delta), 2.0)
+							*Math.pow(pHypermutate, delta)
+							*Math.pow(1.0-pHypermutate, La3-ha-delta);
+
+					infectionHyper.addReactantSubSchema(null, Vsub);
+					infectionHyper.addProductSubSchema(Ysub);
+					infectionHyper.addSubRate(rate);
+
+				}
+
 			}
 		}
 
@@ -265,7 +280,7 @@ public class HypermutHIV {
 		simulation.setInitState(initState);
 
 		// Turn on verbose reportage:
-		simulation.setVerbose(true);
+		simulation.setVerbosity(1);
 
 		/*
 		 * Generate ensemble:

@@ -29,16 +29,16 @@ public class Simulation {
 	// Initial state of system:
 	State initState;
 
-	// Verbose reportage on progress of simulation:
-	boolean verbose;
+	// Verbosity level for reportage on progress of simulation:
+	int verbosity;
 
 	/*
 	 * Constructor:
 	 */
 	public Simulation () {
 
-		// Verbose reportage off by default:
-		this.verbose = false;
+		// Simulation progress reportage off by default:
+		this.verbosity = 0;
 
 		// Use BEAST RNG seed unless specified:
 		this.seed = -1;
@@ -76,8 +76,8 @@ public class Simulation {
 		this.initState = initState;
 	}
 
-	public void setVerbose(boolean verbose) {
-		this.verbose = verbose;
+	public void setVerbosity(int verbosity) {
+		this.verbosity = verbosity;
 	}
 
 	/*

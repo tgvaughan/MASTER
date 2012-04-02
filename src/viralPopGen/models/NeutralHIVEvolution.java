@@ -182,8 +182,8 @@ public class NeutralHIVEvolution {
 		simulation.setSeed(53);
 		simulation.setInitState(initState);
 
-		// Turn on verbose reportage:
-		simulation.setVerbose(true);
+		// Report on ensemble progress:
+		simulation.setVerbosity(1);
 
 		/*
 		 * Generate ensemble:

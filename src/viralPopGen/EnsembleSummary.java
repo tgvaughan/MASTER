@@ -61,8 +61,8 @@ public class EnsembleSummary {
 		// Loop over trajectories:
 		for (int traj=0; traj<simulation.nTraj; traj++) {
 
-			// Emit verbose reportage to stderr:
-			if (simulation.verbose) {
+			// Report ensemble progress if verbosity high enough:
+			if (simulation.verbosity>0) {
 				System.err.println("Integrating trajectory " +
 						String.valueOf(traj+1) + " of " +
 						String.valueOf(simulation.nTraj));
@@ -75,9 +75,24 @@ public class EnsembleSummary {
 			int sidx = 0;
 			for (int tidx=0; tidx<simulation.nTimeSteps; tidx++) {
 
+				// Report trajectory progress at all times:
+				if (simulation.verbosity==2) {
+					System.err.println("Computing time step " +
+							String.valueOf(tidx+1) + " of " +
+							String.valueOf(simulation.nTimeSteps));
+				}
+
 				// Sample if necessary:
-				if (tidx % stepsPerSample == 0)
+				if (tidx % stepsPerSample == 0) {
 					stateSummaries[sidx++].record(currentState);
+
+					// Report trajectory progress at sampling times only:
+					if (simulation.verbosity==1) {
+						System.err.println("Computing time step " +
+								String.valueOf(tidx+1) + " of " +
+								String.valueOf(simulation.nTimeSteps));
+					}
+				}
 
 				// Calculate transition rates:
 				for (Reaction reaction : model.reactions)

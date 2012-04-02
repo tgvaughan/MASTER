@@ -360,10 +360,6 @@ public class Reaction {
 			// Draw number of reactions to fire within time tau:
 			double q = Poisson.nextDouble(propensities.get(i)*tau);
 
-			if (q>0) {
-				int do_something = 1;
-			}
-
 			// Implement reactions:
 			for (Population pop : deltas.get(i).keySet()) {
 				for (int offset : deltas.get(i).get(pop).keySet())

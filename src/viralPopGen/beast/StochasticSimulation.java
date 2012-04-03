@@ -3,7 +3,6 @@ package viralPopGen.beast;
 import java.io.*;
 import java.util.*;
 
-import viralPopGen.*;
 import beast.core.*;
 import beast.core.Runnable;
 
@@ -55,7 +54,7 @@ public class StochasticSimulation extends Runnable {
 	 */
 
 	// Simulation specification:
-	Simulation simulation;
+	viralPopGen.Simulation simulation;
 
 	// Stream object to write JSON output to:
 	PrintStream outStream;
@@ -67,7 +66,7 @@ public class StochasticSimulation extends Runnable {
 
 		// Assemble simulation object from XML parameters:
 
-		this.simulation = new Simulation();
+		simulation = new viralPopGen.Simulation();
 
 		simulation.setModel(modelInput.get().model);
 		simulation.setSimulationTime(simulationTimeInput.get());
@@ -97,7 +96,8 @@ public class StochasticSimulation extends Runnable {
 
 		// Generate ensemble of stochastic trajectories and estimate
 		// specified moments:
-		EnsembleSummary ensemble = new EnsembleSummary(simulation);
+		viralPopGen.EnsembleSummary ensemble =
+				new viralPopGen.EnsembleSummary(simulation);
 
 		// Format results using JSON:
 		ensemble.dump(outStream);

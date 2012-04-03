@@ -1,5 +1,6 @@
 package viralPopGen.beast;
 
+import java.util.*;
 import beast.core.*;
 import beast.evolution.tree.*;
 
@@ -22,13 +23,26 @@ public class PopGenTree extends Tree {
 
 	public Input<Model> modelInput = new Input<Model>(
 			"model", "Birth death model to use.");
-	public Input<InitState> modelInitState = new Input<InitState>(
+	public Input<InitState> initState = new Input<InitState>(
 			"initState", "Initial state of system.");
 
 	public PopGenTree() {};
 
 	@Override
-	public void initAndValidate() {
+	public void initAndValidate() throws Exception {
+
+		viralPopGen.Simulation simulation = new viralPopGen.Simulation();
+
+		// Read in simulation parameters from XML:
+		simulation.setModel(modelInput.get().model);
+		simulation.setSimulationTime(simulationTimeInput.get());
+		simulation.setnTimeSteps(nTimeStepsInput.get());
+		simulation.setnSamples(nSamplesInput.get());
+		simulation.setInitState(initState.get().initState);
+
+		// Set seed explicitly if provided:
+		if (seedInput.get() != null)
+			simulation.setSeed(seedInput.get());
 
 	}
 	

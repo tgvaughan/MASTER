@@ -81,15 +81,12 @@ public class SimpleViralInfection {
 
 		// <N_X>
 		Moment mX = new Moment("X", X);
-		model.addMoment(mX);
 
 		// <N_Y>
 		Moment mY = new Moment("Y", Y);
-		model.addMoment(mY);
 
 		// <N_V>
 		Moment mV = new Moment("V", V);
-		model.addMoment(mV);
 
 		/*
 		 *  Set initial state:
@@ -113,6 +110,9 @@ public class SimpleViralInfection {
 		simulation.setnTraj(100);
 		simulation.setSeed(42);
 		simulation.setInitState(initState);
+		simulation.addMoment(mX);
+		simulation.addMoment(mY);
+		simulation.addMoment(mV);
 
 		/*
 		 * Generate summarised ensemble:

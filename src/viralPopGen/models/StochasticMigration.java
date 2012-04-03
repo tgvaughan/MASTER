@@ -56,14 +56,12 @@ public class StochasticMigration {
 		Moment momentX = new Moment("X", X);
 		momentX.addSubSchema(subA);
 		momentX.addSubSchema(subB);
-		model.addMoment(momentX);
 
 		// <Xa + Xb>
 		Moment momentN = new Moment("N", X);
 		momentN.newSum();
 		momentN.addSubSchemaToSum(subA);
 		momentN.addSubSchemaToSum(subB);
-		model.addMoment(momentN);
 
 		/*
 		 * Define initial state:
@@ -85,6 +83,8 @@ public class StochasticMigration {
 		simulation.setnTraj(100);
 		simulation.setSeed(42);
 		simulation.setInitState(initState);
+		simulation.addMoment(momentX);
+		simulation.addMoment(momentN);
 
 		/*
 		 * Generate ensemble:

@@ -39,13 +39,6 @@
 					</popSchema>
 				</productSchema>
 			</reaction>
-			<moment spec='viralPopGen.beast.Moment' momentName='X'>
-				<momentSchema spec='Schema'>
-					<popSchema spec='PopSchema'>
-						<population idref='X'/>
-					</popSchema>
-				</momentSchema>
-			</moment>
 		</model>
 
 		<initialState spec='viralPopGen.beast.InitState'>
@@ -55,5 +48,12 @@
 			<model idref='model'/>
 		</initialState>
 
+		<moment spec='viralPopGen.beast.Moment' momentName='X'>
+			<momentSchema spec='Schema'>
+				<popSchema spec='PopSchema'>
+					<population idref='X'/>
+				</popSchema>
+			</momentSchema>
+		</moment>
 	</run>
 </beast>

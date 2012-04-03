@@ -1,6 +1,7 @@
 package viralPopGen.beast;
 
 import java.io.*;
+import java.util.*;
 
 import viralPopGen.*;
 import beast.core.*;
@@ -39,6 +40,12 @@ public class StochasticSimulation extends Runnable {
 	public Input<InitState> initialStateInput = new Input<InitState>("initialState",
 			"Initial state of system.");
 
+	// Moments to estimate:
+	public Input<List<Moment>> momentsInput = new Input<List<Moment>>(
+			"moment",
+			"Moment to sample from birth-death process.",
+			new ArrayList<Moment>());
+
 	// Output file name:
 	public Input<String> outFileNameInput = new Input<String>("outFileName",
 			"Name of output file.");
@@ -68,6 +75,8 @@ public class StochasticSimulation extends Runnable {
 		simulation.setnSamples(nSamplesInput.get());
 		simulation.setnTraj(nTrajInput.get());
 		simulation.setInitState(initialStateInput.get().initState);
+		for (Moment momentInput : momentsInput.get())
+			simulation.addMoment(momentInput.moment);
 
 		// Set seed if provided, otherwise use default BEAST seed:
 		if (seedInput.get() != null)

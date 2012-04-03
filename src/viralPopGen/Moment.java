@@ -116,7 +116,7 @@ public class Moment {
 
 	/**
 	 * Initialisation which can only be accomplished after the moment
-	 * schema is specified.  Called by Model::addMoment().
+	 * schema is specified.  Called by Simulation::addMoment().
 	 */
 	public void postSpecInit () {
 

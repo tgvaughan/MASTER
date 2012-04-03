@@ -1,5 +1,7 @@
 package viralPopGen;
 
+import java.util.*;
+
 /**
  * Class of objects describing simulations.
  *
@@ -32,6 +34,9 @@ public class Simulation {
 	// Verbosity level for reportage on progress of simulation:
 	int verbosity;
 
+	// Moments estimates to record:
+	List<Moment> moments;
+
 	/*
 	 * Constructor:
 	 */
@@ -42,6 +47,9 @@ public class Simulation {
 
 		// Use BEAST RNG seed unless specified:
 		this.seed = -1;
+
+		// Create empty moment list:
+		moments = new ArrayList<Moment>();
 	}
 
 	/*
@@ -130,6 +138,16 @@ public class Simulation {
 	 */
 	public int getStepsPerSample() {
 		return (nTimeSteps-1)/(nSamples-1);
+	}
+
+	/**
+	 * Add moment to list of moments to estimate:
+	 * 
+	 * @param moment 
+	 */
+	public void addMoment(Moment moment) {
+		moment.postSpecInit();
+		moments.add(moment);
 	}
 	
 }

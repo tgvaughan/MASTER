@@ -44,7 +44,6 @@ public class StochasticLogisticSummary {
 		// Define moments:
 
 		Moment mX = new Moment("X",X);
-		model.addMoment(mX);
 
 		/*
 		 * Set initial state:
@@ -66,9 +65,10 @@ public class StochasticLogisticSummary {
 		simulation.setnTraj(1000);
 		simulation.setSeed(53);
 		simulation.setInitState(initState);
+		simulation.addMoment(mX);
 
 		// Report on ensemble calculation progress:
-		simulation.setVerbosity(1);
+		simulation.setVerbosity(0);
 
 		/*
 		 * Generate summarised ensemble:

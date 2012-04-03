@@ -218,8 +218,6 @@ public class HypermutHIV {
 		 */
 
 		Moment mX = new Moment("X", X);
-		model.addMoment(mX);
-
 		Moment mY = new Moment("Y", Y);
 		Moment mV = new Moment("V", V);
 
@@ -243,9 +241,6 @@ public class HypermutHIV {
 				}
 			}
 		}
-
-		model.addMoment(mY);
-		model.addMoment(mV);
 
 		/*
 		 * Set initial state:
@@ -278,6 +273,9 @@ public class HypermutHIV {
 		simulation.setnTraj(1);
 		simulation.setSeed(53);
 		simulation.setInitState(initState);
+		simulation.addMoment(mY);
+		simulation.addMoment(mV);
+		simulation.addMoment(mX);
 
 		// Turn on verbose reportage:
 		simulation.setVerbosity(1);

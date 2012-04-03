@@ -139,8 +139,6 @@ public class NeutralHIVEvolution {
 		 */
 
 		Moment mX = new Moment("X", X);
-		model.addMoment(mX);
-
 		Moment mY = new Moment("Y", Y);
 		Moment mV = new Moment("V", V);
 
@@ -151,9 +149,6 @@ public class NeutralHIVEvolution {
 			Vsub[0] = h;
 			mV.addSubSchema(Vsub);
 		}
-
-		model.addMoment(mY);
-		model.addMoment(mV);
 
 		/*
 		 * Set initial state:
@@ -181,6 +176,9 @@ public class NeutralHIVEvolution {
 		simulation.setnTraj(10);
 		simulation.setSeed(53);
 		simulation.setInitState(initState);
+		simulation.addMoment(mX);
+		simulation.addMoment(mY);
+		simulation.addMoment(mV);
 
 		// Report on ensemble progress:
 		simulation.setVerbosity(1);

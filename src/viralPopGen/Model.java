@@ -18,16 +18,12 @@ public class Model {
 	// Reactions to model:
 	List<Reaction> reactions;
 
-	// Moments to calculate:
-	List<Moment> moments;
-
 	/**
 	 * Model constructor.
 	 */
 	public Model () {
 		pops = new ArrayList<Population>();
 		reactions = new ArrayList<Reaction>();
-		moments = new ArrayList<Moment>();
 	}
 
 	/**
@@ -49,13 +45,4 @@ public class Model {
 		reactions.add(react);
 	}
 
-	/**
-	 * Add moment to model.
-	 * 
-	 * @param moment Moment to add.
-	 */
-	public void addMoment(Moment moment) {
-		moment.postSpecInit();
-		moments.add(moment);
-	}
 }

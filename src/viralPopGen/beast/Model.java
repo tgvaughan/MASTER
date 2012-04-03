@@ -22,10 +22,6 @@ public class Model extends Plugin {
 			"Reaction involved in the birth-death process.",
 			new ArrayList<Reaction>());
 
-	public Input<List<Moment>> momentsInput = new Input<List<Moment>>(
-			"moment",
-			"Moment to sample from birth-death process.",
-			new ArrayList<Moment>());
 
 	// True model object:
 	viralPopGen.Model model;
@@ -44,10 +40,6 @@ public class Model extends Plugin {
 		// Add reactions to model:
 		for (Reaction reactInput : reactionsInput.get())
 			model.addReaction(reactInput.reaction);
-
-		// Add moments to model:
-		for (Moment momentInput : momentsInput.get())
-			model.addMoment(momentInput.moment);
 
 	}
 

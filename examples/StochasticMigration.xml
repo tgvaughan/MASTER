@@ -1,7 +1,7 @@
 <!-- Test simulation of model with structured populations -->
 
-<beast version='2.0' namespace='viralPopGen.beast:beast.core.parameter'>
-       <run spec='StochasticSimulation'
+<beast version='2.0' namespace='popgen.beast:beast.core.parameter'>
+       <run spec='PopGenSimulation'
 		simulationTime='20'
 		nTimeSteps='1001'
 		nSamples='1001'
@@ -54,7 +54,7 @@
 			<model idref='model'/>
 		</initialState>
 
-		<moment spec='viralPopGen.beast.Moment' momentName='X'>
+		<moment spec='Moment' momentName='X'>
 			<momentSchema spec='Schema'>
 				<popSchema spec='PopSchema'>
 					<population idref='X'/>

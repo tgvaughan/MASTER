@@ -1,7 +1,7 @@
 <!-- Test stochastic simulation specification -->
 
-<beast version='2.0' namespace='viralPopGen.beast:beast.core.parameter'>
-       <run spec='StochasticSimulation'
+<beast version='2.0' namespace='popgen.beast:beast.core.parameter'>
+       <run spec='PopGenSimulation'
 		simulationTime='100'
 		nTimeSteps='10001'
 		nSamples='1001'
@@ -41,14 +41,14 @@
 			</reaction>
 		</model>
 
-		<initialState spec='viralPopGen.beast.InitState'>
+		<initialState spec='InitState'>
 			<populationSize spec='PopulationSize' size='10'>
 				<population idref='X'/>
 			</populationSize>
 			<model idref='model'/>
 		</initialState>
 
-		<moment spec='viralPopGen.beast.Moment' momentName='X'>
+		<moment spec='Moment' momentName='X'>
 			<momentSchema spec='Schema'>
 				<popSchema spec='PopSchema'>
 					<population idref='X'/>

@@ -13,7 +13,7 @@ import beast.core.Runnable;
  *
  */
 @Description("A stochastic simulation of a birth-death population dynamics model.")
-public class StochasticSimulation extends Runnable {
+public class PopGenSimulation extends Runnable {
 
 	/*
 	 * XML inputs:
@@ -59,7 +59,7 @@ public class StochasticSimulation extends Runnable {
 	// Stream object to write JSON output to:
 	PrintStream outStream;
 
-	public StochasticSimulation() {}
+	public PopGenSimulation() {}
 
 	@Override
 	public void initAndValidate() throws Exception {

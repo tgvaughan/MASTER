@@ -1,10 +1,6 @@
 package popgen.models;
 
-import popgen.Population;
-import popgen.Reaction;
-import popgen.State;
-import popgen.Ensemble;
-import popgen.Model;
+import popgen.*;
 
 /**
  * Implements a stochastic logistic model of population dynamics.
@@ -19,12 +15,6 @@ public class StochasticLogistic {
 		/*
 		 *  Simulation parameters:
 		 */
-
-		double T = 100.0;
-		int Nt = 10001;
-		int Nsamples = 1001;
-		int Ntraj = 1;
-		int seed = 42;
 
 		/*
 		 * Assemble model:
@@ -61,10 +51,24 @@ public class StochasticLogistic {
 		initState.set(X, 1.0);
 
 		/*
+		 * Assemble simulation spec:
+		 */
+
+		EnsembleSpec spec = new EnsembleSpec();
+
+		spec.setSimulationTime(100.0);
+		spec.setnTimeSteps(10001);
+		spec.setnSamples(1001);
+		spec.setnTraj(1);
+		spec.setSeed(42);
+		spec.setModel(model);
+		spec.setInitState(initState);
+
+		/*
 		 * Generate ensemble
 		 */
 
-		Ensemble ensemble = new Ensemble(model, initState, T, Nt, Nsamples, Ntraj, seed);
+		Ensemble ensemble = new Ensemble(spec);
 
 		/*
 		 * Dump first trajectory to stdout:

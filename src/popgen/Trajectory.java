@@ -2,9 +2,7 @@ package popgen;
 
 /**
  * Class of objects representing trajectories through the
- * state space of the birth-death model. Will include
- * methods to generate these trajectories using a variety
- * of stochastic integration algorithms.
+ * state space of the birth-death model.
  * 
  * @author Tim Vaughan
  *
@@ -16,43 +14,32 @@ public class Trajectory {
 	// Sampled states:
 	State[] sampledStates;
 
-	// Simulation parameters:
-	double T;
-	int nTimeSteps, nSamples;
-	Model model;
+	// Simulation specification:
+	EnsembleSpec spec;
 
 	/**
 	 * Generate trajectory of birth-death process.
 	 * 
-	 * @param model			Model to implement.
-	 * @param initState		Initial system state.
-	 * @param T				Length of simulation.
-	 * @param nTimeSteps	Number of time steps to evaluate.
-	 * @param nSamples		Number of samples to record.
-	 * @param engine		RNG engine to use.
+	 * @param spec Simulation specification.
 	 */
-	public Trajectory(Model model, State initState,
-			double T, int nTimeSteps, int nSamples) {
+	public Trajectory(EnsembleSpec spec) {
 
 		// Keep copy of simulation parameters with trajectory:
-		this.model = model;
-		this.T = T;
-		this.nTimeSteps = nTimeSteps;
-		this.nSamples = nSamples;
+		this.spec = spec;
 
 		// Initialise state list:
-		sampledStates = new State[nSamples];
+		sampledStates = new State[spec.nSamples];
 
 		// Initialise system state:
-		currentState = new State(initState);
+		currentState = new State(spec.initState);
 
 		// Derived simulation parameters:
-		double dt = T/(nTimeSteps-1);
-		int stepsPerSample = (nTimeSteps-1)/(nSamples-1);
+		double dt = spec.getDt();
+		int stepsPerSample = (spec.nTimeSteps-1)/(spec.nSamples-1);
 
 		// Integration loop:
 		int sidx = 0;
-		for (int tidx=0; tidx<nTimeSteps; tidx++) {
+		for (int tidx=0; tidx<spec.nTimeSteps; tidx++) {
 
 			// Sample state if necessary:
 			if (tidx % stepsPerSample == 0)
@@ -68,18 +55,17 @@ public class Trajectory {
 	/**
 	 * Generate single time step.
 	 * 
-	 * @param dt			Time step size.
-	 * @param poissonian	Poissonian RNG.
+	 * @param dt Time step size.
 	 */
 	private void step(double dt) {
 
 		// Calculate transition rates:
-		for (int r=0; r<model.reactions.size(); r++)
-			model.reactions.get(r).calcPropensities(currentState);
+		for (int r=0; r<spec.model.reactions.size(); r++)
+			spec.model.reactions.get(r).calcPropensities(currentState);
 
 		// Update state with required changes:
-		for (int r=0; r<model.reactions.size(); r++)
-			model.reactions.get(r).leap(currentState, dt);
+		for (int r=0; r<spec.model.reactions.size(); r++)
+			spec.model.reactions.get(r).leap(currentState, dt);
 	}
 
 	/**
@@ -87,7 +73,7 @@ public class Trajectory {
 	 */
 	public void dump() {
 
-		double dt = T/(nSamples-1);
+		double dt = spec.getSampleDt();
 
 		System.out.print("t");
 		sampledStates[0].dumpNames();

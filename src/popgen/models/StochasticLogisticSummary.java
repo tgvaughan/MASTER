@@ -1,12 +1,6 @@
 package popgen.models;
 
-import popgen.Moment;
-import popgen.EnsembleSummary;
-import popgen.Population;
-import popgen.Reaction;
-import popgen.State;
-import popgen.Simulation;
-import popgen.Model;
+import popgen.*;
 
 /**
  * A stochastic logistic model of population dynamics.  Uses
@@ -62,25 +56,25 @@ public class StochasticLogisticSummary {
 		 * Define simulation:
 		 */
 
-		Simulation simulation = new Simulation();
+		EnsembleSummarySpec spec = new EnsembleSummarySpec();
 
-		simulation.setModel(model);
-		simulation.setSimulationTime(100.0);
-		simulation.setnTimeSteps(10001);
-		simulation.setnSamples(1001);
-		simulation.setnTraj(1000);
-		simulation.setSeed(53);
-		simulation.setInitState(initState);
-		simulation.addMoment(mX);
+		spec.setModel(model);
+		spec.setSimulationTime(100.0);
+		spec.setnTimeSteps(10001);
+		spec.setnSamples(1001);
+		spec.setnTraj(1000);
+		spec.setSeed(53);
+		spec.setInitState(initState);
+		spec.addMoment(mX);
 
 		// Report on ensemble calculation progress:
-		simulation.setVerbosity(0);
+		spec.setVerbosity(0);
 
 		/*
 		 * Generate summarised ensemble:
 		 */
 
-		EnsembleSummary ensemble = new EnsembleSummary(simulation);
+		EnsembleSummary ensemble = new EnsembleSummary(spec);
 
 		/*
 		 * Dump results (JSON):

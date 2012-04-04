@@ -19,7 +19,7 @@ public class PopGenSimulation extends Runnable {
 	 * XML inputs:
 	 */
 
-	// Simulation parameters:
+	// Spec parameters:
 	public Input<Double> simulationTimeInput = new Input<Double>("simulationTime",
 			"The length of time to simulate.");
 	public Input<Integer> nTimeStepsInput = new Input<Integer>("nTimeSteps",
@@ -53,8 +53,8 @@ public class PopGenSimulation extends Runnable {
 	 * Fields to populate with parameter values:
 	 */
 
-	// Simulation specification:
-	popgen.Simulation simulation;
+	// Spec specification:
+	popgen.EnsembleSummarySpec spec;
 
 	// Stream object to write JSON output to:
 	PrintStream outStream;
@@ -64,22 +64,22 @@ public class PopGenSimulation extends Runnable {
 	@Override
 	public void initAndValidate() throws Exception {
 
-		// Assemble simulation object from XML parameters:
+		// Assemble spec object from XML parameters:
 
-		simulation = new popgen.Simulation();
+		spec = new popgen.EnsembleSummarySpec();
 
-		simulation.setModel(modelInput.get().model);
-		simulation.setSimulationTime(simulationTimeInput.get());
-		simulation.setnTimeSteps(nTimeStepsInput.get());
-		simulation.setnSamples(nSamplesInput.get());
-		simulation.setnTraj(nTrajInput.get());
-		simulation.setInitState(initialStateInput.get().initState);
+		spec.setModel(modelInput.get().model);
+		spec.setSimulationTime(simulationTimeInput.get());
+		spec.setnTimeSteps(nTimeStepsInput.get());
+		spec.setnSamples(nSamplesInput.get());
+		spec.setnTraj(nTrajInput.get());
+		spec.setInitState(initialStateInput.get().initState);
 		for (Moment momentInput : momentsInput.get())
-			simulation.addMoment(momentInput.moment);
+			spec.addMoment(momentInput.moment);
 
 		// Set seed if provided, otherwise use default BEAST seed:
 		if (seedInput.get() != null)
-			simulation.setSeed(seedInput.get());
+			spec.setSeed(seedInput.get());
 
 		// Open specified file to use as output PrintStream
 		// for JSON-formated results.  If no file specified,
@@ -97,7 +97,7 @@ public class PopGenSimulation extends Runnable {
 		// Generate ensemble of stochastic trajectories and estimate
 		// specified moments:
 		popgen.EnsembleSummary ensemble =
-				new popgen.EnsembleSummary(simulation);
+				new popgen.EnsembleSummary(spec);
 
 		// Format results using JSON:
 		ensemble.dump(outStream);

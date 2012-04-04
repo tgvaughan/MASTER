@@ -31,7 +31,7 @@ public class PopGenTree extends Tree {
 	@Override
 	public void initAndValidate() throws Exception {
 
-		popgen.Simulation simulation = new popgen.Simulation();
+		popgen.Spec simulation = new popgen.Spec();
 
 		// Read in simulation parameters from XML:
 		simulation.setModel(modelInput.get().model);

@@ -22,64 +22,56 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class EnsembleSummary {
 
 	// Simulation specification:
-	Simulation simulation;
-
-	// Birth death model to simulate:
-	Model model;
-
-	// Moments to record:
-	List<Moment> moments;
+	EnsembleSummarySpec spec;
 
 	// Ensemble-averaged state summaries:
 	StateSummary[] stateSummaries;
 
 	/**
-	 * Constructor.  Assigns simulation parameters and moment list
-	 * to non-static fields, performs the simulation, recording the
-	 * required summary statistics.
-	 * 
-	 * @param simulation Simulation specification.
+	 * Assign simulation parameters and moment list to non-static fields,
+	 * performs the spec, recording the required summary statistics.
+	 *
+	 * @param spec Simulation specification.
 	 */
-	public EnsembleSummary(Simulation simulation) {
+	public EnsembleSummary(EnsembleSummarySpec spec) {
 
-		this.model = simulation.model;
-		this.simulation = simulation;
+		this.spec = spec;
 
 		// Set seed if defined:
-		if (simulation.seed < 0)
-			Randomizer.setSeed(simulation.seed);
+		if (spec.seed < 0)
+			Randomizer.setSeed(spec.seed);
 
-		// Derived simulation parameters:
-		double dt = simulation.getDt();
-		int stepsPerSample = simulation.getStepsPerSample();
+		// Derived spec parameters:
+		double dt = spec.getDt();
+		int stepsPerSample = spec.getStepsPerSample();
 
 		// Initialise state summaries:
-		stateSummaries = new StateSummary[simulation.nSamples];
-		for (int sidx=0; sidx<simulation.nSamples; sidx++)
-			stateSummaries[sidx] = new StateSummary(simulation.moments);
+		stateSummaries = new StateSummary[spec.nSamples];
+		for (int sidx=0; sidx<spec.nSamples; sidx++)
+			stateSummaries[sidx] = new StateSummary(spec.moments);
 
 		// Loop over trajectories:
-		for (int traj=0; traj<simulation.nTraj; traj++) {
+		for (int traj=0; traj<spec.nTraj; traj++) {
 
 			// Report ensemble progress if verbosity high enough:
-			if (simulation.verbosity>0) {
+			if (spec.verbosity>0) {
 				System.err.println("Integrating trajectory " +
 						String.valueOf(traj+1) + " of " +
-						String.valueOf(simulation.nTraj));
+						String.valueOf(spec.nTraj));
 			}
 
 			// Initialise system state:
-			State currentState = new State(simulation.initState);
+			State currentState = new State(spec.initState);
 
 			// Integration loop:
 			int sidx = 0;
-			for (int tidx=0; tidx<simulation.nTimeSteps; tidx++) {
+			for (int tidx=0; tidx<spec.nTimeSteps; tidx++) {
 
 				// Report trajectory progress at all times:
-				if (simulation.verbosity==2) {
+				if (spec.verbosity==2) {
 					System.err.println("Computing time step " +
 							String.valueOf(tidx+1) + " of " +
-							String.valueOf(simulation.nTimeSteps));
+							String.valueOf(spec.nTimeSteps));
 				}
 
 				// Sample if necessary:
@@ -87,19 +79,19 @@ public class EnsembleSummary {
 					stateSummaries[sidx++].record(currentState);
 
 					// Report trajectory progress at sampling times only:
-					if (simulation.verbosity==1) {
+					if (spec.verbosity==1) {
 						System.err.println("Computing time step " +
 								String.valueOf(tidx+1) + " of " +
-								String.valueOf(simulation.nTimeSteps));
+								String.valueOf(spec.nTimeSteps));
 					}
 				}
 
 				// Calculate transition rates:
-				for (Reaction reaction : model.reactions)
+				for (Reaction reaction : spec.model.reactions)
 					reaction.calcPropensities(currentState);
 
 				// Update state with required changes:
-				for (Reaction reaction : model.reactions)
+				for (Reaction reaction : spec.model.reactions)
 					reaction.leap(currentState, dt);
 			}
 		}
@@ -121,7 +113,7 @@ public class EnsembleSummary {
 		// Construct an object containing the summarized
 		// data.  Heirarchy is moment->[mean/std]->schema->estimate.
 
-		for (Moment moment : simulation.moments) {
+		for (Moment moment : spec.moments) {
 			HashMap<String,Object> momentData = Maps.newHashMap();
 
 			ArrayList<Object> meanData = new ArrayList<Object>();
@@ -147,13 +139,13 @@ public class EnsembleSummary {
 
 		// Add list of sampling times to output object:
 		ArrayList<Double> tData = Lists.newArrayList();
-		double dT = simulation.getSampleDt();
+		double dT = spec.getSampleDt();
 		for (int sidx=0; sidx<stateSummaries.length; sidx++)
 			tData.add(dT*sidx);
 		outputData.put("t", tData);
 
-		// Record simulation parameters to object output:
-		outputData.put("sim", simulation);
+		// Record spec parameters to object output:
+		outputData.put("sim", spec);
 
 		ObjectMapper mapper = new ObjectMapper();
 		try {

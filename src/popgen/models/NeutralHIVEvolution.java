@@ -1,12 +1,6 @@
 package popgen.models;
 
-import popgen.Moment;
-import popgen.EnsembleSummary;
-import popgen.Population;
-import popgen.Reaction;
-import popgen.State;
-import popgen.Simulation;
-import popgen.Model;
+import popgen.*;
 
 /**
  * Simple model of HIV infection with neutral
@@ -173,27 +167,27 @@ public class NeutralHIVEvolution {
 		 * Define simulation:
 		 */
 
-		Simulation simulation = new Simulation();
+		EnsembleSummarySpec spec = new EnsembleSummarySpec();
 
-		simulation.setModel(model);
-		simulation.setSimulationTime(365);
-		simulation.setnTimeSteps(10001);
-		simulation.setnSamples(1001);
-		simulation.setnTraj(10);
-		simulation.setSeed(53);
-		simulation.setInitState(initState);
-		simulation.addMoment(mX);
-		simulation.addMoment(mY);
-		simulation.addMoment(mV);
+		spec.setModel(model);
+		spec.setSimulationTime(365);
+		spec.setnTimeSteps(10001);
+		spec.setnSamples(1001);
+		spec.setnTraj(10);
+		spec.setSeed(53);
+		spec.setInitState(initState);
+		spec.addMoment(mX);
+		spec.addMoment(mY);
+		spec.addMoment(mV);
 
 		// Report on ensemble progress:
-		simulation.setVerbosity(1);
+		spec.setVerbosity(1);
 
 		/*
 		 * Generate ensemble:
 		 */
 
-		EnsembleSummary ensemble = new EnsembleSummary(simulation);
+		EnsembleSummary ensemble = new EnsembleSummary(spec);
 
 		/*
 		 * Dump results to stdout (JSON):

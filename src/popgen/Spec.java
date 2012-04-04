@@ -7,7 +7,7 @@ import java.util.*;
  *
  * @author Tim Vaughan
  */
-public class Simulation {
+public class Spec {
 
 	// Birth-death model to simulate:
 	Model model;
@@ -40,9 +40,9 @@ public class Simulation {
 	/*
 	 * Constructor:
 	 */
-	public Simulation () {
+	public Spec () {
 
-		// Simulation progress reportage off by default:
+		// Spec progress reportage off by default:
 		this.verbosity = 0;
 
 		// Use BEAST RNG seed unless specified:

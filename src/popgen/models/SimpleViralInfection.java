@@ -1,12 +1,6 @@
 package popgen.models;
 
-import popgen.Moment;
-import popgen.EnsembleSummary;
-import popgen.Population;
-import popgen.Reaction;
-import popgen.State;
-import popgen.Simulation;
-import popgen.Model;
+import popgen.*;
 
 /**
  * A simple model of within-host viral infection dynamics.
@@ -107,24 +101,24 @@ public class SimpleViralInfection {
 		 * Define simulation:
 		 */
 
-		Simulation simulation = new Simulation();
+		EnsembleSummarySpec spec = new EnsembleSummarySpec();
 
-		simulation.setModel(model);
-		simulation.setSimulationTime(10.0); // days
-		simulation.setnTimeSteps(1001);
-		simulation.setnSamples(1001);
-		simulation.setnTraj(100);
-		simulation.setSeed(42);
-		simulation.setInitState(initState);
-		simulation.addMoment(mX);
-		simulation.addMoment(mY);
-		simulation.addMoment(mV);
+		spec.setModel(model);
+		spec.setSimulationTime(10.0); // days
+		spec.setnTimeSteps(1001);
+		spec.setnSamples(1001);
+		spec.setnTraj(100);
+		spec.setSeed(42);
+		spec.setInitState(initState);
+		spec.addMoment(mX);
+		spec.addMoment(mY);
+		spec.addMoment(mV);
 
 		/*
 		 * Generate summarised ensemble:
 		 */
 
-		EnsembleSummary ensemble = new EnsembleSummary(simulation);
+		EnsembleSummary ensemble = new EnsembleSummary(spec);
 
 		/*
 		 * Dump results (JSON):

@@ -1,12 +1,6 @@
 package popgen.models;
 
-import popgen.Moment;
-import popgen.EnsembleSummary;
-import popgen.Population;
-import popgen.Reaction;
-import popgen.State;
-import popgen.Simulation;
-import popgen.Model;
+import popgen.*;
 
 /**
  * Implements a basic stochastic migration model to test
@@ -81,22 +75,23 @@ public class StochasticMigration {
 		 * Define simulation:
 		 */
 
-		Simulation simulation = new Simulation();
-		simulation.setModel(model);
-		simulation.setSimulationTime(20.0);
-		simulation.setnTimeSteps(10001);
-		simulation.setnSamples(1001);
-		simulation.setnTraj(100);
-		simulation.setSeed(42);
-		simulation.setInitState(initState);
-		simulation.addMoment(momentX);
-		simulation.addMoment(momentN);
+		EnsembleSummarySpec spec = new EnsembleSummarySpec();
+
+		spec.setModel(model);
+		spec.setSimulationTime(20.0);
+		spec.setnTimeSteps(10001);
+		spec.setnSamples(1001);
+		spec.setnTraj(100);
+		spec.setSeed(42);
+		spec.setInitState(initState);
+		spec.addMoment(momentX);
+		spec.addMoment(momentN);
 
 		/*
 		 * Generate ensemble:
 		 */
 
-		EnsembleSummary ensemble = new EnsembleSummary(simulation);
+		EnsembleSummary ensemble = new EnsembleSummary(spec);
 
 		/*
 		 * Dump results to stdout:

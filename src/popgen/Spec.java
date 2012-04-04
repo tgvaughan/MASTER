@@ -3,7 +3,7 @@ package popgen;
 import java.util.*;
 
 /**
- * Class of objects describing simulations.
+ * A basic birth-death simulation specification.
  *
  * @author Tim Vaughan
  */
@@ -19,11 +19,7 @@ public class Spec {
 	int nTimeSteps;
 
 	// Number of evenly spaced samples times
-	// (relevant to EnsembleSummary only):
 	int nSamples;
-
-	// Number of stochastic trajectories to generate:
-	int nTraj;
 
 	// Seed for RNG (negative number means use default seed):
 	long seed;
@@ -33,9 +29,6 @@ public class Spec {
 
 	// Verbosity level for reportage on progress of simulation:
 	int verbosity;
-
-	// Moments estimates to record:
-	List<Moment> moments;
 
 	/*
 	 * Constructor:
@@ -48,8 +41,6 @@ public class Spec {
 		// Use BEAST RNG seed unless specified:
 		this.seed = -1;
 
-		// Create empty moment list:
-		moments = new ArrayList<Moment>();
 	}
 
 	/*
@@ -66,10 +57,6 @@ public class Spec {
 
 	public void setnTimeSteps(int nTimeSteps) {
 		this.nTimeSteps = nTimeSteps;
-	}
-
-	public void setnTraj(int nTraj) {
-		this.nTraj = nTraj;
 	}
 
 	public void setSeed(long seed) {
@@ -99,10 +86,6 @@ public class Spec {
 
 	public int getnTimeSteps() {
 		return nTimeSteps;
-	}
-
-	public int getnTraj() {
-		return nTraj;
 	}
 
 	public long getSeed() {
@@ -140,14 +123,4 @@ public class Spec {
 		return (nTimeSteps-1)/(nSamples-1);
 	}
 
-	/**
-	 * Add moment to list of moments to estimate:
-	 * 
-	 * @param moment 
-	 */
-	public void addMoment(Moment moment) {
-		moment.postSpecInit();
-		moments.add(moment);
-	}
-	
 }

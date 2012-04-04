@@ -15,14 +15,14 @@ public class Trajectory {
 	State[] sampledStates;
 
 	// Simulation specification:
-	EnsembleSpec spec;
+	Spec spec;
 
 	/**
 	 * Generate trajectory of birth-death process.
 	 * 
 	 * @param spec Simulation specification.
 	 */
-	public Trajectory(EnsembleSpec spec) {
+	public Trajectory(Spec spec) {
 
 		// Keep copy of simulation parameters with trajectory:
 		this.spec = spec;

@@ -347,18 +347,17 @@ public class Reaction {
 
 	/**
 	 * Generate appropriate random state change according to
-	 * Gillespie's tau-leaping algorithm, applying change to
-	 * provided state.
+	 * Gillespie's tau-leaping algorithm.
 	 * 
 	 * @param state 		State to modify.
-	 * @param tau			Time increment over which to leap.
+	 * @param spec			Simulation spec.
 	 */
-	public void leap(State state, double tau) {
+	public void leap(State state, Spec spec) {
 
 		for (int i=0; i<nSubSchemas; i++) {
 
 			// Draw number of reactions to fire within time tau:
-			double q = Poisson.nextDouble(propensities.get(i)*tau);
+			double q = Poisson.nextDouble(propensities.get(i)*spec.getDt());
 
 			// Implement reactions:
 			for (Population pop : deltas.get(i).keySet()) {
@@ -370,30 +369,40 @@ public class Reaction {
 	}
 
 	/**
-	 * Generate appropriate random state change according to
-	 * Gillespie's tau-leaping algorithm, returning change as
-	 * state vector.
+	 * Generate random modification to tree leaves according to
+	 * Gillespie's tau-leaping algorithm.
 	 * 
-	 * @param state State of system at start of leap.
-	 * @param tau	Time increment over which to leap.
-	 * @return State object containing population size differences.
+	 * @param leaves
+	 * @param state
+	 * @param spec 
 	 */
-	public State getLeap(State state, double tau) {
-
-		State diff = new State(state);
+	public void treeLeap(Map<Population,List<Set<Node>>> leaves,
+			State state,
+			TreeSpec spec) {
 
 		for (int i=0; i<nSubSchemas; i++) {
 
 			// Draw number of reactions to fire within time tau:
-			double q = Poisson.nextDouble(propensities.get(i)*tau);
+			double q = Poisson.nextDouble(propensities.get(i)*spec.getDt());
 
 			// Implement reactions:
-			for (Population pop : deltas.get(i).keySet()) {
-				for (int offset : deltas.get(i).get(pop).keySet())
-					diff.add(pop, offset, q*deltas.get(i).get(pop).get(offset));
+			for (int j=0; j<q; j++) {
+
+				for (Population pop : reactPopSchema) {
+
+					if (spec.treePops.contains(pop)) {
+
+
+					}
+
+					for (int offset : reactSubSchemas.get(i).get(pop).keySet()) {
+
+					}
+
+				}
+
 			}
 		}
 
-		return diff;
 	}
 }

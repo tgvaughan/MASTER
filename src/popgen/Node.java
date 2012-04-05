@@ -9,12 +9,22 @@ import java.util.*;
  */
 public class Node {
 
+	// Parent of this node.  (Null if root.)
 	Node parent;
+
+	double time;
+
 	List<Node> children;
 
 	Population population;
 	int subPopOffset;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param population	Population to which node belongs.
+	 * @param subPopOffset  Sub-population to which node belongs.
+	 */
 	Node(Population population, int subPopOffset) {
 
 		this.population = population;

@@ -65,7 +65,7 @@ public class Trajectory {
 
 		// Update state with required changes:
 		for (int r=0; r<spec.model.reactions.size(); r++)
-			spec.model.reactions.get(r).leap(currentState, dt);
+			spec.model.reactions.get(r).leap(currentState, spec);
 	}
 
 	/**

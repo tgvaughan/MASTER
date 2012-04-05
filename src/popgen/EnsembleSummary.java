@@ -92,7 +92,7 @@ public class EnsembleSummary {
 
 				// Update state with required changes:
 				for (Reaction reaction : spec.model.reactions)
-					reaction.leap(currentState, dt);
+					reaction.leap(currentState, spec);
 			}
 		}
 

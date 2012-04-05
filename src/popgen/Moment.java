@@ -23,11 +23,12 @@ public class Moment {
 	/**
 	 * Constructor.
 	 * 
-	 * @param nSamples	Number of samples to record in time series.
+	 * @param name Moment name to use for output.
+	 * @param popSchema Population-level moment schema. 
 	 */
-	public Moment(String name, Population ... popOrder) {
+	public Moment(String name, Population ... popSchema) {
 		this.name = name;
-		this.popSchema = popOrder;
+		this.popSchema = popSchema;
 
 		subSchemas = Lists.newArrayList();
 		summationGroups = Lists.newArrayList();

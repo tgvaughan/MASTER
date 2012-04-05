@@ -9,7 +9,7 @@ import java.util.*;
 public class TreeSpec extends Spec {
 
 	// Populations to exclude from tree:
-	List<Population> excludedPops;
+	List<Population> treePops;
 
 	public TreeSpec() {
 		super();
@@ -17,11 +17,11 @@ public class TreeSpec extends Spec {
 	}
 
 	public List<Population> getExcludedPops() {
-		return excludedPops;
+		return treePops;
 	}
 
 	public void setExcludedPops(Population ... excludedPopsArray) {
-		excludedPops = new ArrayList<Population>();
-		excludedPops.addAll(Arrays.asList(excludedPopsArray));
+		treePops = new ArrayList<Population>();
+		treePops.addAll(Arrays.asList(excludedPopsArray));
 	}
 }

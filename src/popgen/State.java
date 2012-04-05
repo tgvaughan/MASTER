@@ -64,11 +64,11 @@ public class State {
 	 * Get size of a particular sub-population.
 	 * 
 	 * @param p		Population to interrogate.
-	 * @param loc	Specific sub-population location.
+	 * @param sub	Specific sub-population location.
 	 * @return Size of sub-population.
 	 */
-	public double get(Population p, int[] loc) {
-		return popSizes.get(p)[p.subToOffset(loc)];
+	public double get(Population p, int[] sub) {
+		return popSizes.get(p)[p.subToOffset(sub)];
 	}
 
 	/**
@@ -134,6 +134,25 @@ public class State {
 	 */
 	public void add(Population p, int offset, double increment) {
 		popSizes.get(p)[offset] += increment;
+	}
+
+	/**
+	 * Calculate difference between population sizes in this
+	 * state and those in another state.  i.e. result = this-other.
+	 * 
+	 * @param otherState
+	 * @return  
+	 */
+	public State difference(State otherState) {
+		State diff = new State(this);
+
+		for (Population p : popSizes.keySet()) {
+			for (int i=0; i<popSizes.get(p).length; i++) {
+				diff.popSizes.get(p)[i] -= otherState.popSizes.get(p)[i];
+			}
+		}
+
+		return diff;
 	}
 
 	/**

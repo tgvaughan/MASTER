@@ -19,6 +19,7 @@ public class Population {
 	 * Define a structured population.
 	 * 
 	 * @param name		Population name.
+	 * @param dims  
 	 */
 	public Population(String name, int[] dims) {
 		this.name = name;
@@ -45,7 +46,6 @@ public class Population {
 	/**
 	 * Get offset into sub-population sizes vector.
 	 * 
-	 * @param p Population.
 	 * @param sub Location of sub-population.
 	 * @return Offset.
 	 */

@@ -347,11 +347,11 @@ public class Reaction {
 
 	/**
 	 * Generate appropriate random state change according to
-	 * Gillespie's tau-leaping algorithm.
+	 * Gillespie's tau-leaping algorithm, applying change to
+	 * provided state.
 	 * 
 	 * @param state 		State to modify.
 	 * @param tau			Time increment over which to leap.
-	 * @param poissonian	Poissonian RNG.
 	 */
 	public void leap(State state, double tau) {
 
@@ -367,5 +367,33 @@ public class Reaction {
 			}
 		}
 
+	}
+
+	/**
+	 * Generate appropriate random state change according to
+	 * Gillespie's tau-leaping algorithm, returning change as
+	 * state vector.
+	 * 
+	 * @param state State of system at start of leap.
+	 * @param tau	Time increment over which to leap.
+	 * @return State object containing population size differences.
+	 */
+	public State getLeap(State state, double tau) {
+
+		State diff = new State(state);
+
+		for (int i=0; i<nSubSchemas; i++) {
+
+			// Draw number of reactions to fire within time tau:
+			double q = Poisson.nextDouble(propensities.get(i)*tau);
+
+			// Implement reactions:
+			for (Population pop : deltas.get(i).keySet()) {
+				for (int offset : deltas.get(i).get(pop).keySet())
+					diff.add(pop, offset, q*deltas.get(i).get(pop).get(offset));
+			}
+		}
+
+		return diff;
 	}
 }

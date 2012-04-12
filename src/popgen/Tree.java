@@ -69,7 +69,6 @@ public class Tree {
 
 		// Update state with required changes:
 		for (int r=0; r<spec.model.reactions.size(); r++) {
-			State diff = spec.model.reactions.get(r).getLeap(state, spec.getDt());
 
 			for (Population pop : spec.treePops) {
 				

@@ -68,7 +68,7 @@ public class EnsembleSummary {
 			for (int tidx=0; tidx<spec.nTimeSteps; tidx++) {
 
 				// Report trajectory progress at all times:
-				if (spec.verbosity==2) {
+				if (spec.verbosity==3) {
 					System.err.println("Computing time step " +
 							String.valueOf(tidx+1) + " of " +
 							String.valueOf(spec.nTimeSteps));
@@ -79,7 +79,7 @@ public class EnsembleSummary {
 					stateSummaries[sidx++].record(currentState);
 
 					// Report trajectory progress at sampling times only:
-					if (spec.verbosity==1) {
+					if (spec.verbosity==2) {
 						System.err.println("Computing time step " +
 								String.valueOf(tidx+1) + " of " +
 								String.valueOf(spec.nTimeSteps));

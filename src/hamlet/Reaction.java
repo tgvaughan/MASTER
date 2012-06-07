@@ -362,7 +362,7 @@ public class Reaction {
 			// Implement reactions:
 			for (Population pop : deltas.get(i).keySet()) {
 				for (int offset : deltas.get(i).get(pop).keySet())
-					state.add(pop, offset, q*deltas.get(i).get(pop).get(offset));
+					state.addNoNeg(pop, offset, q*deltas.get(i).get(pop).get(offset));
 			}
 		}
 

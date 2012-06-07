@@ -137,6 +137,23 @@ public class State {
 	}
 
 	/**
+	 * Add value to size of particular sub-population specified
+	 * using a pre-calculated offset, truncating at zero if result
+	 * is negative.
+	 * 
+	 * @param p
+	 * @param offset
+	 * @param increment
+	 */
+	public void addNoNeg(Population p, int offset, double increment) {
+		double newPopSize = popSizes.get(p)[offset] + increment;
+		if (newPopSize<0.0)
+			popSizes.get(p)[offset] = 0.0;
+		else
+			popSizes.get(p)[offset] = newPopSize;
+	}
+
+	/**
 	 * Calculate difference between population sizes in this
 	 * state and those in another state.  i.e. result = this-other.
 	 * 

@@ -60,4 +60,16 @@ public class Population {
 
 		return offset;
 	}
+	
+	/*
+	 * Getters for JSON object mapper
+	 */
+	
+	public String getName() {
+		return name;
+	}
+	
+	public int[] getDims() {
+		return dims;
+	}
 }

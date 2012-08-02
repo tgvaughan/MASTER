@@ -19,6 +19,9 @@ public class Moment {
 	Population[] popSchema;
 	List<Map<Population,Map<Integer,Integer>>> subSchemas;
 	List<List<Integer>> summationGroups;
+	
+	// Flag to mark whether this is a factorial moment:
+	boolean factMoment;
 
 	/**
 	 * Constructor.
@@ -29,7 +32,24 @@ public class Moment {
 	public Moment(String name, Population ... popSchema) {
 		this.name = name;
 		this.popSchema = popSchema;
-
+		this.factMoment = true;
+		
+		subSchemas = Lists.newArrayList();
+		summationGroups = Lists.newArrayList();
+	}
+	
+	/**
+	 * Alternative constructor.
+	 * 
+	 * @param name Moment name to use for output.
+	 * @param factMoment True if this is a factorial moment.
+	 * @param popSchema Population-level moment schema. 
+	 */
+	public Moment(String name, boolean factMoment, Population ... popSchema) {
+		this.name = name;
+		this.popSchema = popSchema;
+		this.factMoment = factMoment;
+		
 		subSchemas = Lists.newArrayList();
 		summationGroups = Lists.newArrayList();
 	}
@@ -141,7 +161,10 @@ public class Moment {
 				for (Population pop : subSchemas.get(i).keySet()) {
 					for (int offset : subSchemas.get(i).get(pop).keySet()) {
 						for (int m=0; m<subSchemas.get(i).get(pop).get(offset); m++) {
-							x *= state.get(pop, offset)-m;
+							if (factMoment)
+								x *= state.get(pop, offset)-m;
+							else
+								x *= state.get(pop, offset);
 						}
 					}
 				}

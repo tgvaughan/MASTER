@@ -4,6 +4,7 @@ import java.util.*;
 import com.google.common.collect.*;
 
 import hamlet.math.Poisson;
+import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * Class of objects describing the reactions which occur
@@ -403,6 +404,81 @@ public class Reaction {
 
 			}
 		}
+
+	}
+	
+	/*
+	 * Methods for JSON object mapper
+	 */
+	
+	@JsonValue
+	@Override
+	public String toString() {
+
+		// Count occurrences of populations in reactant schema
+		Map<Population, Integer> reactants = Maps.newHashMap();
+		for (Population reactant : reactPopSchema) {
+			if (reactants.containsKey(reactant)) {
+				int oldVal = reactants.get(reactant);
+				reactants.put(reactant, oldVal+1);
+			} else {
+				reactants.put(reactant, 1);
+			}
+		}
+				
+		// Count occurrences of populations in product schema
+		Map<Population, Integer> products = Maps.newHashMap();
+		for (Population product : prodPopSchema) {
+			if (products.containsKey(product)) {
+				int oldVal = reactants.get(product);
+				products.put(product, oldVal+1);
+			} else {
+				products.put(product, 1);
+			}
+		}
+		
+
+
+		// Construct reaction string
+		StringBuilder sb = new StringBuilder();
+		
+		if (reactants.size()>0) {
+			boolean first = true;
+			for (Population reactant : reactants.keySet()) {
+				if (!first)
+					sb.append(" + ");
+				else
+					first = false;
+			
+				int count = reactants.get(reactant);
+				if (count>1)
+					sb.append(count);
+				sb.append(reactant.getName());
+			}
+		} else {
+			sb.append("0");
+		}
+		
+		sb.append(" -> ");
+		
+		if (products.size()>0) {
+			boolean first = true;
+			for (Population product : products.keySet()) {
+				if (!first)
+					sb.append(" + ");
+				else
+					first = false;
+			
+				int count = products.get(product);
+				if (count>1)
+					sb.append(count);
+				sb.append(product.getName());
+			}
+		} else {
+			sb.append("0");
+		}
+		
+		return sb.toString();
 
 	}
 }

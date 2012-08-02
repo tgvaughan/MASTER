@@ -79,6 +79,10 @@ public class Spec {
 	 * Getters:
 	 * (Really only provided for the benifit of the JSON object mapper.)
 	 */
+	
+	public Model getModel() {
+		return model;
+	}
 
 	public int getnSamples() {
 		return nSamples;

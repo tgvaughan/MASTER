@@ -1,6 +1,7 @@
 package hamlet;
 
 import java.util.*;
+import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * Class describing a birth-death viral population genetics model.
@@ -44,5 +45,16 @@ public class Model {
 		react.postSpecInit();
 		reactions.add(react);
 	}
-
+	
+	/*
+	 * Getters for JSON object mapper
+	 */
+	
+	public Population[] getPopulations() {
+		return pops.toArray(new Population[pops.size()]);
+	}
+	
+	public Reaction[] getReactions() {
+		return reactions.toArray(new Reaction[reactions.size()]);
+	}
 }

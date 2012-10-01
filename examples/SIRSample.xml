@@ -1,0 +1,91 @@
+<!-- Test stochastic simulation specification -->
+
+<beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
+    <run spec='PopGenSimulation'
+         simulationTime='100'
+         nTimeSteps='10001'
+         nSamples='1001'
+         nTraj='100'
+         seed='53'
+         outFileName='out.txt'>
+
+        <model spec='Model' id='model'>
+            <population spec='Population' id='S' popName='S'/>
+            <population spec='Population' id='I' popName='I'/>
+            <population spec='Population' id='R' popName='R'/>
+            <population spec='Population' id='I_sample' popName='I_sample'/>
+
+            <!-- infection reaction -->
+            <reaction spec='Reaction'>
+                <rate spec='RealParameter'>0.01</rate>
+                <reactantSchema spec='Schema'>
+                    <popSchema spec='PopSchema'>
+                        <population idref='S'/>
+                        <population idref='I'/>
+                    </popSchema>
+                </reactantSchema>
+                <productSchema spec='Schema'>
+                    <popSchema spec='PopSchema'>
+                        <population idref='I'/>
+                        <population idref='I'/>
+                    </popSchema>
+                </productSchema>
+            </reaction>
+            <!-- recovery reaction -->
+            <reaction spec='Reaction'>
+                <rate spec='RealParameter'>0.25</rate>
+                <reactantSchema spec='Schema'>
+                    <popSchema spec='PopSchema'>
+                        <population idref='I'/>
+                    </popSchema>
+                </reactantSchema>
+                <productSchema spec='Schema'>
+                    <popSchema spec='PopSchema'>
+                        <population idref='R'/>
+                    </popSchema>
+                </productSchema>
+            </reaction>
+            <!-- sampling reaction -->
+            <reaction spec='Reaction'>
+                <rate spec='RealParameter'>0.25</rate>
+                <reactantSchema spec='Schema'>
+                    <popSchema spec='PopSchema'>
+                        <population idref='I'/>
+                    </popSchema>
+                </reactantSchema>
+                <productSchema spec='Schema'>
+                    <popSchema spec='PopSchema'>
+                        <population idref='I_sample'/>
+                    </popSchema>
+                </productSchema>
+            </reaction>
+        </model>
+
+        <initialState spec='InitState'>
+            <populationSize spec='PopulationSize' size='999'>
+                <population idref='S'/>
+            </populationSize>
+            <populationSize spec='PopulationSize' size='1'>
+                <population idref='I'/>
+            </populationSize>
+            <populationSize spec='PopulationSize' size='0'>
+                <population idref='I_sample'/>
+            </populationSize>
+            <populationSize spec='PopulationSize' size='0'>
+                <population idref='R'/>
+            </populationSize>
+            <model idref='model'/>
+        </initialState>
+
+        <moment spec='Moment' momentName='I'>
+            <momentSchema spec='Schema'>
+                <popSchema spec='PopSchema'>
+                    <population idref='S'/>
+                    <population idref='I'/>
+                    <population idref='I_sample'/>
+                    <population idref='R'/>
+                </popSchema>
+            </momentSchema>
+        </moment>
+    </run>
+</beast>

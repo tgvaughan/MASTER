@@ -416,7 +416,7 @@ public class Reaction {
         Map<Population, Integer> products = Maps.newHashMap();
         for (Population product : prodPopSchema)
             if (products.containsKey(product)) {
-                int oldVal = reactants.get(product);
+                int oldVal = products.get(product);
                 products.put(product, oldVal+1);
             } else
                 products.put(product, 1);

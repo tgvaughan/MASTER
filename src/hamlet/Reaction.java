@@ -1,9 +1,8 @@
 package hamlet;
 
-import java.util.*;
 import com.google.common.collect.*;
-
 import hamlet.math.Poisson;
+import java.util.*;
 import org.codehaus.jackson.annotate.JsonValue;
 
 /**
@@ -92,44 +91,8 @@ public class Reaction {
                 offsets[pidx] = 0;
 
         // Call internal method to complete addition of schema:
-        addReactantSubSchemaOffsets(offsets);
+        addSubSchemaOffsets(reactPopSchema, reactSubSchemas, offsets);
 
-    }
-
-    /**
-     * Internal method which handles the task of adding the sub-population level
-     * reaction reactant schema. Takes a list of offsets into the State
-     * sub-population size arrays rather than the sub-population specification
-     * vectors.
-     *
-     * @param offsets	list of product sub-population offsets.
-     */
-    private void addReactantSubSchemaOffsets(int... offsets) {
-
-        // Condense provided schema into a map of the form
-        // pop->offset->count, where count is the number of times
-        // that specific offset appears as a reactant in this schema.
-        Map<Population, Map<Integer, Integer>> subSchema = Maps.newHashMap();
-        for (int pidx = 0; pidx<reactPopSchema.length; pidx++) {
-
-            Population pop = reactPopSchema[pidx];
-
-            if (!subSchema.containsKey(pop)) {
-                Map<Integer, Integer> offsetMap = Maps.newHashMap();
-                offsetMap.put(offsets[pidx], 1);
-                subSchema.put(pop, offsetMap);
-            } else
-                if (!subSchema.get(pop).containsKey(offsets[pidx]))
-                    subSchema.get(pop).put(offsets[pidx], 1);
-                else {
-                    int val = subSchema.get(pop).get(offsets[pidx]);
-                    subSchema.get(pop).put(offsets[pidx], val+1);
-                }
-        }
-
-        // Add newly-condensed map to reactLocSchemas,
-        // which is a list of such maps:
-        reactSubSchemas.add(subSchema);
     }
 
     /**
@@ -159,26 +122,31 @@ public class Reaction {
                 offsets[i] = 0;
 
         // Call internal method to complete addition of schema:
-        addProductSubSchemaOffsets(offsets);
+        addSubSchemaOffsets(prodPopSchema, prodSubSchemas,offsets);
     }
-
+    
     /**
      * Internal method which handles the task of adding the sub-population level
-     * reaction product schema. Takes a list of offsets into the State
+     * reaction reactant/product schema. Takes a list of offsets into the State
      * sub-population size arrays rather than the sub-population specification
      * vectors.
      *
-     * @param offsets	list of product sub-population offsets.
+     * @param popSchema Population-level reactant or product schema.
+     * @param subSchemaList List of sub-population-level schema.
+     * @param offsets list of product sub-population offsets.
      */
-    private void addProductSubSchemaOffsets(int... offsets) {
+    private void addSubSchemaOffsets(
+            Population[] popSchema,
+            List<Map<Population, Map<Integer, Integer>>> subSchemaList,
+            int... offsets) {
 
         // Condense provided schema into a map of the form
         // pop->offset->count, where count is the number of times
-        // that specific offset appears as a product in this schema:
+        // that specific offset appears as a reactant/product in this schema.
         Map<Population, Map<Integer, Integer>> subSchema = Maps.newHashMap();
-        for (int pidx = 0; pidx<prodPopSchema.length; pidx++) {
+        for (int pidx = 0; pidx<popSchema.length; pidx++) {
 
-            Population pop = prodPopSchema[pidx];
+            Population pop = popSchema[pidx];
 
             if (!subSchema.containsKey(pop)) {
                 Map<Integer, Integer> offsetMap = Maps.newHashMap();
@@ -193,9 +161,9 @@ public class Reaction {
                 }
         }
 
-        // Add newly-condensed map to prodLocSchemas,
+        // Add newly-condensed map to reactLocSchemas,
         // which is a list of such maps:
-        prodSubSchemas.add(subSchema);
+        subSchemaList.add(subSchema);
     }
 
     /**
@@ -209,12 +177,12 @@ public class Reaction {
         int[] reactOffsets = new int[reactPopSchema.length];
         for (int pidx = 0; pidx<reactPopSchema.length; pidx++)
             reactOffsets[pidx] = 0;
-        addReactantSubSchemaOffsets(reactOffsets);
+        addSubSchemaOffsets(reactPopSchema, reactSubSchemas, reactOffsets);
 
         int[] prodOffsets = new int[prodPopSchema.length];
         for (int pidx = 0; pidx<prodPopSchema.length; pidx++)
             prodOffsets[pidx] = 0;
-        addProductSubSchemaOffsets(prodOffsets);
+        addSubSchemaOffsets(prodPopSchema, prodSubSchemas, prodOffsets);
     }
 
     /**
@@ -273,6 +241,16 @@ public class Reaction {
         // Pre-calculate reaction-induced changes to sub-population sizes:
         calcDeltas();
 
+    }
+    
+    
+    /**
+     * Retrieve total number of sub schemas registered with this reaction.
+     * 
+     * @return nSubSchemas
+     */
+    public int getNSubSchemas() {
+        return nSubSchemas;
     }
 
     /**
@@ -341,7 +319,7 @@ public class Reaction {
             propensities.set(i, thisProp);
         }
     }
-
+    
     /**
      * Generate appropriate random state change according to Gillespie's
      * tau-leaping algorithm.
@@ -421,8 +399,6 @@ public class Reaction {
             } else
                 products.put(product, 1);
 
-
-
         // Construct reaction string
         StringBuilder sb = new StringBuilder();
         if (reactionName != null)
@@ -465,4 +441,5 @@ public class Reaction {
         return sb.toString();
 
     }
+
 }

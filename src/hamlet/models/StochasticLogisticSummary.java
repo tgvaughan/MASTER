@@ -7,7 +7,15 @@ import hamlet.Model;
 import hamlet.Moment;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.GillespieIntegrator;
 import hamlet.TauLeapingIntegrator;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 
 /**
  * A stochastic logistic model of population dynamics.  Uses
@@ -19,7 +27,7 @@ import hamlet.TauLeapingIntegrator;
  */
 public class StochasticLogisticSummary {
 
-	public static void main (String[] argv) {
+	public static void main (String[] argv) throws IOException {
 
 		/*
 		 * Assemble model:
@@ -67,14 +75,15 @@ public class StochasticLogisticSummary {
 
 		spec.setModel(model);
 		spec.setSimulationTime(100.0);
-		spec.setnTimeSteps(10001);
-		spec.setnSamples(1001);
+		spec.setnTimeSteps(11);
+		spec.setnSamples(11);
 		spec.setnTraj(1000);
 		spec.setSeed(53);
 		spec.setInitState(initState);
 		spec.addMoment(mX);
                 
-                spec.setIntegrator(new TauLeapingIntegrator());
+                //spec.setIntegrator(new TauLeapingIntegrator());
+                spec.setIntegrator(new GillespieIntegrator());
 
 		// Report on ensemble calculation progress:
 		spec.setVerbosity(1);
@@ -89,6 +98,6 @@ public class StochasticLogisticSummary {
 		 * Dump results (JSON):
 		 */
 
-		ensemble.dump();
+		ensemble.dump(new PrintStream("out_sparse.json"));
 	}
 }

@@ -1,0 +1,83 @@
+/*
+ * Copyright (C) 2012 Tim Vaughan <tgvaughan@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package hamlet;
+
+import beast.util.Randomizer;
+
+/**
+ * Implementation of Gillespie's foundational SSA.
+ *
+ * @author Tim Vaughan <tgvaughan@gmail.com>
+ */
+public class GillespieIntegrator extends Integrator {
+
+    @Override
+    public void step(State state, Spec spec) {
+        
+        double t = 0;
+        double tEnd = spec.getDt();
+        
+        while (true) {
+            
+            // Calculate propensities
+            double totalPropensity = 0.0;
+            for (Reaction reaction : spec.model.reactions) {
+                reaction.calcPropensities(state);
+                for (double propensity : reaction.propensities)
+                    totalPropensity += propensity;
+            }
+
+            // Draw time of next reaction
+            t += Randomizer.nextExponential(totalPropensity);
+            
+            // Break if new time > tEnd
+            if (t>tEnd)
+                break;
+            
+            // Choose reaction to implement
+            double u = Randomizer.nextDouble()*totalPropensity;
+            boolean found = false;
+            Reaction thisReact = null;
+            int thisSub = 0;
+            for (int ridx=0; ridx<spec.model.reactions.size(); ridx++) {
+                thisReact = spec.model.reactions.get(ridx);
+                
+                for (thisSub=0; thisSub<thisReact.propensities.size(); thisSub++) {
+                    u -= thisReact.propensities.get(thisSub);
+                    if (u<0) { 
+                        found = true;
+                        break;
+                    }
+                }
+                if (found)
+                    break;
+            }
+            
+            // Implement chosen reaction
+            for (Population pop : thisReact.deltas.get(thisSub).keySet())
+                for (int offset : thisReact.deltas.get(thisSub).get(pop).keySet())
+                    state.addNoNeg(pop, offset,
+                            thisReact.deltas.get(thisSub).get(pop).get(offset));
+        }
+    }
+
+    @Override
+    public String getAlgorithmName() {
+        return "Gillespie's stochastic simulation algorithm";
+    }
+    
+}

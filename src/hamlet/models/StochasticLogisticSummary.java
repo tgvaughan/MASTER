@@ -7,6 +7,7 @@ import hamlet.Model;
 import hamlet.Moment;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.TauLeapingIntegrator;
 
 /**
  * A stochastic logistic model of population dynamics.  Uses
@@ -34,14 +35,14 @@ public class StochasticLogisticSummary {
 		// Define reactions:
 
 		// X -> 2X
-		Reaction birth = new Reaction();
+		Reaction birth = new Reaction("Birth");
 		birth.setReactantSchema(X);
 		birth.setProductSchema(X,X);
 		birth.setRate(1.0);
 		model.addReaction(birth);
 
 		// 2X -> X
-		Reaction death = new Reaction();
+		Reaction death = new Reaction("Death");
 		death.setReactantSchema(X,X);
 		death.setProductSchema(X);
 		death.setRate(0.01);
@@ -72,9 +73,11 @@ public class StochasticLogisticSummary {
 		spec.setSeed(53);
 		spec.setInitState(initState);
 		spec.addMoment(mX);
+                
+                spec.setIntegrator(new TauLeapingIntegrator());
 
 		// Report on ensemble calculation progress:
-		spec.setVerbosity(0);
+		spec.setVerbosity(1);
 
 		/*
 		 * Generate summarised ensemble:

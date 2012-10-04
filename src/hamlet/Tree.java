@@ -54,25 +54,4 @@ public class Tree {
 		}
 
 	}
-
-	/**
-	 * Increment state of tree leaves.
-	 * 
-	 * @param activeNodes
-	 * @param state 
-	 */
-	private void stepTree(Map<Population,List<Set<Node>>> activeNodes,
-			State state) {
-
-		for (int r=0; r<spec.model.reactions.size(); r++)
-			spec.model.reactions.get(r).calcPropensities(state);
-
-		// Update state with required changes:
-		for (int r=0; r<spec.model.reactions.size(); r++) {
-
-			for (Population pop : spec.treePops) {
-				
-			}
-		}
-	}
 }

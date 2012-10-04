@@ -3,6 +3,7 @@ package hamlet;
 import com.google.common.collect.*;
 import hamlet.math.Poisson;
 import java.util.*;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonValue;
 
 /**
@@ -234,8 +235,8 @@ public class Reaction {
 
         // Central record of number of sub-population reaction schemas:
         nSubSchemas = rates.size();
-
-        // Pre-allocate memory for propensity list:
+        
+        // Preallocate memory for reaction propensities:
         propensities = Lists.newArrayList(rates);
 
         // Pre-calculate reaction-induced changes to sub-population sizes:
@@ -243,16 +244,6 @@ public class Reaction {
 
     }
     
-    
-    /**
-     * Retrieve total number of sub schemas registered with this reaction.
-     * 
-     * @return nSubSchemas
-     */
-    public int getNSubSchemas() {
-        return nSubSchemas;
-    }
-
     /**
      * Pre-calculate reaction-induced changes to sub-population sizes.
      *
@@ -301,13 +292,13 @@ public class Reaction {
     }
 
     /**
-     * Calculate instantaneous reaction rates (propensities) from a given system
+     * Calculate instantaneous reaction rates (propensities) for a given system
      * state.
      *
      * @param state	State used to calculate propensities.
      */
     public void calcPropensities(State state) {
-
+        
         for (int i = 0; i<nSubSchemas; i++) {
             double thisProp = rates.get(i);
 
@@ -317,63 +308,9 @@ public class Reaction {
                         thisProp *= state.get(pop, offset)-m;
 
             propensities.set(i, thisProp);
-        }
+        }        
     }
     
-    /**
-     * Generate appropriate random state change according to Gillespie's
-     * tau-leaping algorithm.
-     *
-     * @param state State to modify.
-     * @param spec	Simulation spec.
-     */
-    public void leap(State state, Spec spec) {
-
-        for (int i = 0; i<nSubSchemas; i++) {
-
-            // Draw number of reactions to fire within time tau:
-            double q = Poisson.nextDouble(propensities.get(i)*spec.getDt());
-
-            // Implement reactions:
-            for (Population pop : deltas.get(i).keySet())
-                for (int offset : deltas.get(i).get(pop).keySet())
-                    state.addNoNeg(pop, offset, q*deltas.get(i).get(pop).get(offset));
-        }
-
-    }
-
-    /**
-     * Generate random modification to tree leaves according to Gillespie's
-     * tau-leaping algorithm.
-     *
-     * @param leaves
-     * @param state
-     * @param spec
-     */
-    public void treeLeap(Map<Population, List<Set<Node>>> leaves,
-            State state,
-            TreeSpec spec) {
-
-        for (int i = 0; i<nSubSchemas; i++) {
-
-            // Draw number of reactions to fire within time tau:
-            double q = Poisson.nextDouble(propensities.get(i)*spec.getDt());
-
-            // Implement reactions:
-            for (int j = 0; j<q; j++)
-                for (Population pop : reactPopSchema) {
-
-                    if (spec.treePops.contains(pop)) {
-                    }
-
-                    for (int offset : reactSubSchemas.get(i).get(pop).keySet()) {
-                    }
-
-                }
-        }
-
-    }
-
     /*
      * Methods for JSON object mapper
      */

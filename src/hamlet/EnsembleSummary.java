@@ -85,14 +85,9 @@ public class EnsembleSummary {
 								String.valueOf(spec.nTimeSteps));
 					}
 				}
-
-				// Calculate transition rates:
-				for (Reaction reaction : spec.model.reactions)
-					reaction.calcPropensities(currentState);
-
-				// Update state with required changes:
-				for (Reaction reaction : spec.model.reactions)
-					reaction.leap(currentState, spec);
+                                
+                                // Perform integration step:
+                                spec.integrator.step(currentState, spec);
 			}
 		}
 

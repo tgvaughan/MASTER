@@ -34,7 +34,6 @@ public class Trajectory {
 		currentState = new State(spec.initState);
 
 		// Derived simulation parameters:
-		double dt = spec.getDt();
 		int stepsPerSample = (spec.nTimeSteps-1)/(spec.nSamples-1);
 
 		// Integration loop:
@@ -46,26 +45,9 @@ public class Trajectory {
 				sampledStates[sidx++] = new State(currentState);
 
 			// Perform single time step:
-			step(dt);
-
+			spec.integrator.step(currentState, spec);
 		}
 
-	}
-
-	/**
-	 * Generate single time step.
-	 * 
-	 * @param dt Time step size.
-	 */
-	private void step(double dt) {
-
-		// Calculate transition rates:
-		for (int r=0; r<spec.model.reactions.size(); r++)
-			spec.model.reactions.get(r).calcPropensities(currentState);
-
-		// Update state with required changes:
-		for (int r=0; r<spec.model.reactions.size(); r++)
-			spec.model.reactions.get(r).leap(currentState, spec);
 	}
 
 	/**

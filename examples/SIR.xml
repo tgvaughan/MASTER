@@ -1,13 +1,15 @@
 <!-- Test stochastic simulation specification -->
 
 <beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
-    <run spec='PopGenSimulation'
+    <run spec='HamletSimulation'
          simulationTime='100'
-         nTimeSteps='10001'
          nSamples='1001'
          nTraj='100'
          seed='53'
-         outFileName='out.txt'>
+         outFileName='out.json'>
+        
+        <integrator spec='TauLeapingIntegrator' stepSize="0.1"/>
+        <!-- <integrator spec='GillespieIntegrator' /> -->
 
         <model spec='Model' id='model'>
             <population spec='Population' id='S' popName='S'/>

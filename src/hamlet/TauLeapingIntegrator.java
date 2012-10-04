@@ -86,4 +86,13 @@ public class TauLeapingIntegrator extends Integrator {
         return "Gillespie's tau-leaping algorithm";
     }
     
+    /**
+     * Retrieve integration step size.
+     * 
+     * @return dt
+     */
+    public double getTimeStepSize() {
+        return dt;
+    }
+    
 }

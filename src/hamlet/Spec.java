@@ -71,6 +71,9 @@ public abstract class Spec {
     }
 
     public void setVerbosity(int verbosity) {
+        if (verbosity<0 || verbosity>3)
+            throw new IllegalArgumentException("Verbosity number must be between 0 and 3.");
+
         this.verbosity = verbosity;
     }
 

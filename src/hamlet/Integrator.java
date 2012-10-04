@@ -24,12 +24,15 @@ package hamlet;
 public abstract class Integrator {
 
     /**
-     * Generate a random state change consistent with the model.
+     * Use the stochastic integration algorithm to ove the state an
+     * amount T forward in time under the given model.
      * 
      * @param state
-     * @param spec 
+     * @param model
+     * @param T
+
      */
-    public abstract void step (State state, Spec spec);
+    public abstract void step (State state, Model model, double T);
     
     /**
      * Retrieve descriptive name of this integrator as a string.

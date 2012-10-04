@@ -26,16 +26,15 @@ import beast.util.Randomizer;
 public class GillespieIntegrator extends Integrator {
 
     @Override
-    public void step(State state, Spec spec) {
+    public void step(State state, Model model, double T) {
         
         double t = 0;
-        double tEnd = spec.getDt();
         
         while (true) {
             
             // Calculate propensities
             double totalPropensity = 0.0;
-            for (Reaction reaction : spec.model.reactions) {
+            for (Reaction reaction : model.reactions) {
                 reaction.calcPropensities(state);
                 for (double propensity : reaction.propensities)
                     totalPropensity += propensity;
@@ -45,7 +44,7 @@ public class GillespieIntegrator extends Integrator {
             t += Randomizer.nextExponential(totalPropensity);
             
             // Break if new time > tEnd
-            if (t>tEnd)
+            if (t>T)
                 break;
             
             // Choose reaction to implement
@@ -53,8 +52,8 @@ public class GillespieIntegrator extends Integrator {
             boolean found = false;
             Reaction thisReact = null;
             int thisSub = 0;
-            for (int ridx=0; ridx<spec.model.reactions.size(); ridx++) {
-                thisReact = spec.model.reactions.get(ridx);
+            for (int ridx=0; ridx<model.reactions.size(); ridx++) {
+                thisReact = model.reactions.get(ridx);
                 
                 for (thisSub=0; thisSub<thisReact.propensities.size(); thisSub++) {
                     u -= thisReact.propensities.get(thisSub);

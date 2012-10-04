@@ -1,6 +1,5 @@
 package hamlet;
 
-import java.util.*;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
@@ -8,7 +7,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  *
  * @author Tim Vaughan
  */
-public class Spec {
+public abstract class Spec {
 
     // Birth-death model to simulate:
     Model model;
@@ -18,9 +17,6 @@ public class Spec {
     
     // Integrator to use:
     Integrator integrator;
-    
-    // Number of integration steps:
-    int nTimeSteps;
     
     // Number of evenly spaced samples times
     int nSamples;
@@ -62,10 +58,6 @@ public class Spec {
         this.nSamples = nSamples;
     }
 
-    public void setnTimeSteps(int nTimeSteps) {
-        this.nTimeSteps = nTimeSteps;
-    }
-
     public void setSeed(long seed) {
         this.seed = seed;
     }
@@ -97,26 +89,12 @@ public class Spec {
         return nSamples;
     }
 
-    public int getnTimeSteps() {
-        return nTimeSteps;
-    }
-
     public long getSeed() {
         return seed;
     }
 
     public double getSimulationTime() {
         return simulationTime;
-    }
-
-    /**
-     * Get integration time step size.
-     *
-     * @return Time step size.
-     */
-    @JsonIgnore
-    public double getDt() {
-        return simulationTime/(nTimeSteps-1);
     }
 
     /**
@@ -129,13 +107,4 @@ public class Spec {
         return simulationTime/(nSamples-1);
     }
 
-    /**
-     * Get the number of time increments between samples.
-     *
-     * @return Integration steps per sample.
-     */
-    @JsonIgnore
-    public int getStepsPerSample() {
-        return (nTimeSteps-1)/(nSamples-1);
-    }
 }

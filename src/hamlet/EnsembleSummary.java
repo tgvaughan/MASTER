@@ -42,8 +42,7 @@ public class EnsembleSummary {
 			Randomizer.setSeed(spec.seed);
 
 		// Derived spec parameters:
-		double dt = spec.getDt();
-		int stepsPerSample = spec.getStepsPerSample();
+		double sampleDt = spec.getSampleDt();
 
 		// Initialise state summaries:
 		stateSummaries = new StateSummary[spec.nSamples];
@@ -64,30 +63,21 @@ public class EnsembleSummary {
 			State currentState = new State(spec.initState);
 
 			// Integration loop:
-			int sidx = 0;
-			for (int tidx=0; tidx<spec.nTimeSteps; tidx++) {
+			for (int sidx=0; sidx<spec.nSamples; sidx++) {
 
 				// Report trajectory progress at all times:
-				if (spec.verbosity==3) {
-					System.err.println("Computing time step " +
-							String.valueOf(tidx+1) + " of " +
-							String.valueOf(spec.nTimeSteps));
+				if (spec.verbosity==2) {
+					System.err.println("Recording sample time point " +
+							String.valueOf(sidx+1) + " of " +
+							String.valueOf(spec.nSamples));
 				}
 
-				// Sample if necessary:
-				if (tidx % stepsPerSample == 0) {
-					stateSummaries[sidx++].record(currentState);
+				// Record sample:
+                                stateSummaries[sidx].record(currentState);
 
-					// Report trajectory progress at sampling times only:
-					if (spec.verbosity==2) {
-						System.err.println("Computing time step " +
-								String.valueOf(tidx+1) + " of " +
-								String.valueOf(spec.nTimeSteps));
-					}
-				}
-                                
                                 // Perform integration step:
-                                spec.integrator.step(currentState, spec);
+                                spec.integrator.step(currentState,
+                                        spec.model, sampleDt);
 			}
 		}
 

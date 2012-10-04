@@ -1,7 +1,7 @@
 package hamlet;
 
-import java.util.*;
 import com.google.common.collect.*;
+import java.util.*;
 
 /**
  * Inheritance tree generated from a birth-death model.
@@ -49,7 +49,7 @@ public class Tree {
 			}
 		}
 
-		for (int tidx = 0; tidx<spec.nTimeSteps; tidx++) {
+		for (int sidx = 0; sidx<spec.nSamples; sidx++) {
 
 		}
 

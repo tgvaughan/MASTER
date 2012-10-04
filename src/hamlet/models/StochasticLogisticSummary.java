@@ -1,103 +1,95 @@
 package hamlet.models;
 
-import hamlet.State;
-import hamlet.Population;
-import hamlet.Reaction;
-import hamlet.Model;
-import hamlet.Moment;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
-import hamlet.GillespieIntegrator;
+import hamlet.Model;
+import hamlet.Moment;
+import hamlet.Population;
+import hamlet.Reaction;
+import hamlet.State;
 import hamlet.TauLeapingIntegrator;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 
 /**
- * A stochastic logistic model of population dynamics.  Uses
- * Moment objects to summarise an ensemble in terms of means
- * and variances.
- * 
+ * A stochastic logistic model of population dynamics. Uses Moment objects to
+ * summarise an ensemble in terms of means and variances.
+ *
  * @author Tim Vaughan
  *
  */
 public class StochasticLogisticSummary {
 
-	public static void main (String[] argv) throws IOException {
+    public static void main(String[] argv) throws IOException {
 
-		/*
-		 * Assemble model:
-		 */
+        /*
+         * Assemble model:
+         */
 
-		Model model = new Model();
+        Model model = new Model();
 
-		// Define populations:
+        // Define populations:
 
-		Population X = new Population("X");
-		model.addPopulation(X);
+        Population X = new Population("X");
+        model.addPopulation(X);
 
-		// Define reactions:
+        // Define reactions:
 
-		// X -> 2X
-		Reaction birth = new Reaction("Birth");
-		birth.setReactantSchema(X);
-		birth.setProductSchema(X,X);
-		birth.setRate(1.0);
-		model.addReaction(birth);
+        // X -> 2X
+        Reaction birth = new Reaction("Birth");
+        birth.setReactantSchema(X);
+        birth.setProductSchema(X, X);
+        birth.setRate(1.0);
+        model.addReaction(birth);
 
-		// 2X -> X
-		Reaction death = new Reaction("Death");
-		death.setReactantSchema(X,X);
-		death.setProductSchema(X);
-		death.setRate(0.01);
-		model.addReaction(death);
+        // 2X -> X
+        Reaction death = new Reaction("Death");
+        death.setReactantSchema(X, X);
+        death.setProductSchema(X);
+        death.setRate(0.01);
+        model.addReaction(death);
 
-		// Define moments:
+        // Define moments:
 
-		Moment mX = new Moment("X",X);
+        Moment mX = new Moment("X", X);
 
-		/*
-		 * Set initial state:
-		 */
+        /*
+         * Set initial state:
+         */
 
-		State initState = new State(model);
-		initState.set(X, 1.0);
+        State initState = new State(model);
+        initState.set(X, 1.0);
 
-		/*
-		 * Define simulation:
-		 */
+        /*
+         * Define simulation:
+         */
 
-		EnsembleSummarySpec spec = new EnsembleSummarySpec();
+        EnsembleSummarySpec spec = new EnsembleSummarySpec();
 
-		spec.setModel(model);
-		spec.setSimulationTime(100.0);
-		spec.setnTimeSteps(11);
-		spec.setnSamples(11);
-		spec.setnTraj(1000);
-		spec.setSeed(53);
-		spec.setInitState(initState);
-		spec.addMoment(mX);
-                
-                //spec.setIntegrator(new TauLeapingIntegrator());
-                spec.setIntegrator(new GillespieIntegrator());
+        spec.setModel(model);
+        spec.setSimulationTime(20.0);
+        spec.setnSamples(1001);
+        spec.setnTraj(1000);
+        spec.setSeed(53);
+        spec.setInitState(initState);
+        spec.addMoment(mX);
 
-		// Report on ensemble calculation progress:
-		spec.setVerbosity(1);
+        spec.setIntegrator(new TauLeapingIntegrator(0.01));
+        //spec.setIntegrator(new GillespieIntegrator());
 
-		/*
-		 * Generate summarised ensemble:
-		 */
+        // Report on ensemble calculation progress:
+        spec.setVerbosity(1);
 
-		EnsembleSummary ensemble = new EnsembleSummary(spec);
+        /*
+         * Generate summarised ensemble:
+         */
 
-		/*
-		 * Dump results (JSON):
-		 */
+        EnsembleSummary ensemble = new EnsembleSummary(spec);
 
-		ensemble.dump(new PrintStream("out_sparse.json"));
-	}
+        /*
+         * Dump results (JSON):
+         */
+
+        ensemble.dump(new PrintStream("out.json"));
+    }
 }

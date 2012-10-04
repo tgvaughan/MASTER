@@ -24,6 +24,18 @@ import hamlet.math.Poisson;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class TauLeapingIntegrator extends Integrator {
+    
+    private double dt;
+    
+    /**
+     * Construct a tau-leaping integrator
+     * 
+     * @param integrationTimeStep Size of time step to use in integration
+     * algorithm. (Doesn't need to be a multiple of the desired sampling rate.)
+     */
+    public TauLeapingIntegrator(double integrationTimeStep) {
+        dt = integrationTimeStep;
+    }
 
     /**
      * Generate appropriate random state change according to Gillespie's
@@ -32,12 +44,12 @@ public class TauLeapingIntegrator extends Integrator {
      * @param state State to modify.
      * @param spec	Simulation spec.
      */
-    public void leap(Reaction reaction, State state, Spec spec) {
+    public void leap(Reaction reaction, State state, Model model, double thisdt) {
         
         for (int i = 0; i<reaction.propensities.size(); i++) {
 
             // Draw number of reactions to fire within time tau:
-            double q = Poisson.nextDouble(reaction.propensities.get(i)*spec.getDt());
+            double q = Poisson.nextDouble(reaction.propensities.get(i)*thisdt);
 
             // Implement reactions:
             for (Population pop : reaction.deltas.get(i).keySet())
@@ -49,15 +61,24 @@ public class TauLeapingIntegrator extends Integrator {
     }
     
     @Override
-    public void step(State state, Spec spec) {
+    public void step(State state, Model model, double T) {
         
-        // Calculate transition rates based on starting state:
-        for (Reaction reaction : spec.model.reactions)
-            reaction.calcPropensities(state);
+        double t = 0.0;
+        while (t<T) {
+            
+            double thisdt = Math.min(dt, T-t);
+            
+            // Calculate transition rates based on starting state:
+            for (Reaction reaction : model.reactions)
+                reaction.calcPropensities(state);
 
-        // Update state according to these rates:
-        for (Reaction reaction : spec.model.reactions)
-            leap(reaction, state, spec);
+            // Update state according to these rates:
+            for (Reaction reaction : model.reactions)
+                leap(reaction, state, model, thisdt);
+            
+            t += dt;
+        }
+
     }
 
     @Override

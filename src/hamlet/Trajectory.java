@@ -34,18 +34,16 @@ public class Trajectory {
 		currentState = new State(spec.initState);
 
 		// Derived simulation parameters:
-		int stepsPerSample = (spec.nTimeSteps-1)/(spec.nSamples-1);
+                double sampleDt = spec.getSampleDt();
 
 		// Integration loop:
-		int sidx = 0;
-		for (int tidx=0; tidx<spec.nTimeSteps; tidx++) {
+		for (int sidx=0; sidx<spec.nSamples; sidx++) {
 
-			// Sample state if necessary:
-			if (tidx % stepsPerSample == 0)
-				sampledStates[sidx++] = new State(currentState);
+                    // Sample state if necessary:
+                    sampledStates[sidx] = new State(currentState);
 
-			// Perform single time step:
-			spec.integrator.step(currentState, spec);
+                    // Perform single time step:
+                    spec.integrator.step(currentState, spec.model, sampleDt);
 		}
 
 	}

@@ -19,6 +19,7 @@ package hamlet;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class for mapping combinations of population and sub-population identifiers
@@ -46,6 +47,24 @@ public class PopulationMap<T> {
             map.put(pop, new HashMap<Integer,T>());
         
         map.get(pop).put(subPopOffset, value);
+    }
+    
+    public boolean containsKey(Population pop, int subPopOffset) {
+        if (!map.containsKey(pop))
+            return false;
+        
+        if (!map.get(pop).containsKey(subPopOffset))
+            return false;
+        
+        return true;
+    }
+    
+    public Set<Population> getPopulationKeySet() {
+        return map.keySet();
+    }
+    
+    public Set<Integer> getOffsetKeySet(Population population) {
+        return map.get(population).keySet();
     }
     
     /**

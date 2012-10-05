@@ -16,7 +16,7 @@ public class Reaction {
 
     String reactionName;
     List<Population> reactPopSchema, prodPopSchema;
-    List<Map<Population, Map<Integer, Integer>>> reactSubSchemas, prodSubSchemas, deltas;
+    List<PopulationMap<Integer>> reactSubSchemas, prodSubSchemas, deltas;
     List<Double> rates, propensities;
     int nSubSchemas;
 
@@ -136,28 +136,23 @@ public class Reaction {
      */
     private void addSubSchemaOffsets(
             List<Population> popSchema,
-            List<Map<Population, Map<Integer, Integer>>> subSchemaList,
+            List<PopulationMap<Integer>> subSchemaList,
             int... offsets) {
 
         // Condense provided schema into a map of the form
         // pop->offset->count, where count is the number of times
         // that specific offset appears as a reactant/product in this schema.
-        Map<Population, Map<Integer, Integer>> subSchema = Maps.newHashMap();
+        PopulationMap<Integer> subSchema = new PopulationMap<Integer>();
+        
         for (int pidx = 0; pidx<popSchema.size(); pidx++) {
-
             Population pop = popSchema.get(pidx);
-
-            if (!subSchema.containsKey(pop)) {
-                Map<Integer, Integer> offsetMap = Maps.newHashMap();
-                offsetMap.put(offsets[pidx], 1);
-                subSchema.put(pop, offsetMap);
-            } else
-                if (!subSchema.get(pop).containsKey(offsets[pidx]))
-                    subSchema.get(pop).put(offsets[pidx], 1);
-                else {
-                    int val = subSchema.get(pop).get(offsets[pidx]);
-                    subSchema.get(pop).put(offsets[pidx], val+1);
-                }
+            
+            if (!subSchema.containsKey(pop, offsets[pidx]))
+                subSchema.put(pop, offsets[pidx], 1);
+            else {
+                int val = subSchema.get(pop, offsets[pidx]);
+                subSchema.put(pop, offsets[pidx], val+1);
+            }
         }
 
         // Add newly-condensed map to reactLocSchemas,
@@ -255,35 +250,26 @@ public class Reaction {
         // (Loosely, calculate deltas=prodLocSchema-reactLocSchema.)
 
         for (int i = 0; i<nSubSchemas; i++) {
-            Map<Population, Map<Integer, Integer>> popMap =
-                    new HashMap<Population, Map<Integer, Integer>>();
-
-            for (Population pop : reactSubSchemas.get(i).keySet()) {
-                Map<Integer, Integer> offsetMap = Maps.newHashMap();
-                for (int offset : reactSubSchemas.get(i).get(pop).keySet())
-                    offsetMap.put(offset, -reactSubSchemas.get(i).get(pop).get(offset));
-
-                popMap.put(pop, offsetMap);
+            PopulationMap<Integer> popMap = new PopulationMap<Integer>();
+            
+            for (Population pop : reactSubSchemas.get(i).getPopulationKeySet()) {
+                for (int offset : reactSubSchemas.get(i).getOffsetKeySet(pop)) {
+                    popMap.put(pop, offset, -reactSubSchemas.get(i).get(pop, offset));
+                }
             }
-
-            for (Population pop : prodSubSchemas.get(i).keySet())
-                if (!popMap.containsKey(pop)) {
-                    Map<Integer, Integer> offsetMap = Maps.newHashMap();
-                    for (int offset : prodSubSchemas.get(i).get(pop).keySet())
-                        offsetMap.put(offset, prodSubSchemas.get(i).get(pop).get(offset));
-
-                    popMap.put(pop, offsetMap);
-
-                } else
-                    for (int offset : prodSubSchemas.get(i).get(pop).keySet())
-                        if (!popMap.get(pop).containsKey(offset)) {
-                            int val = prodSubSchemas.get(i).get(pop).get(offset);
-                            popMap.get(pop).put(offset, val);
-                        } else {
-                            int val = popMap.get(pop).get(offset);
-                            val += prodSubSchemas.get(i).get(pop).get(offset);
-                            popMap.get(pop).put(offset, val);
-                        }
+            
+            for (Population pop : prodSubSchemas.get(i).getPopulationKeySet()) {
+                for (int offset : prodSubSchemas.get(i).getOffsetKeySet(pop)) {
+                    if (!popMap.containsKey(pop, offset))
+                        popMap.put(pop, offset, prodSubSchemas.get(i).get(pop, offset));
+                    else {
+                        int val = popMap.get(pop, offset);
+                        val += prodSubSchemas.get(i).get(pop, offset);
+                        popMap.put(pop, offset, val);
+                    }
+                        
+                }
+            }
 
             deltas.add(popMap);
         }
@@ -300,9 +286,9 @@ public class Reaction {
         for (int i = 0; i<nSubSchemas; i++) {
             double thisProp = rates.get(i);
 
-            for (Population pop : reactSubSchemas.get(i).keySet())
-                for (int offset : reactSubSchemas.get(i).get(pop).keySet())
-                    for (int m = 0; m<reactSubSchemas.get(i).get(pop).get(offset); m++)
+            for (Population pop : reactSubSchemas.get(i).getPopulationKeySet())
+                for (int offset : reactSubSchemas.get(i).getOffsetKeySet(pop))
+                    for (int m = 0; m<reactSubSchemas.get(i).get(pop, offset); m++)
                         thisProp *= state.get(pop, offset)-m;
 
             propensities.set(i, thisProp);

@@ -176,10 +176,10 @@ public class State {
      * @param q Number of times for reaction to fire.
      */
     public void implementReaction(Reaction reaction, int subReaction, double q) {
-        for (Population pop : reaction.deltas.get(subReaction).keySet())
-            for (int offset : reaction.deltas.get(subReaction).get(pop).keySet())
+        for (Population pop : reaction.deltas.get(subReaction).getPopulationKeySet())
+            for (int offset : reaction.deltas.get(subReaction).getOffsetKeySet(pop))
                 addNoNeg(pop, offset,
-                        q*reaction.deltas.get(subReaction).get(pop).get(offset));
+                        q*reaction.deltas.get(subReaction).get(pop, offset));
     }
 
     /**

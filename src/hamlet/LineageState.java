@@ -67,11 +67,6 @@ public class LineageState {
             if (!reaction.reactPopSchema.contains(node.population))
                 continue;
             
-            if (!reaction.reactSubSchemas.get(subReaction)
-                    .get(node.population).containsKey(node.subPopOffset))
-                continue;
-            
-            
         }
         
     }

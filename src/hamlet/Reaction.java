@@ -142,7 +142,7 @@ public class Reaction {
         // Condense provided schema into a map of the form
         // pop->offset->count, where count is the number of times
         // that specific offset appears as a reactant/product in this schema.
-        PopulationMap<Integer> subSchema = new PopulationMap<Integer>();
+        PopulationMap<Integer> subSchema = new PopulationMap<Integer>(0);
         
         for (int pidx = 0; pidx<popSchema.size(); pidx++) {
             Population pop = popSchema.get(pidx);
@@ -250,7 +250,7 @@ public class Reaction {
         // (Loosely, calculate deltas=prodLocSchema-reactLocSchema.)
 
         for (int i = 0; i<nSubSchemas; i++) {
-            PopulationMap<Integer> popMap = new PopulationMap<Integer>();
+            PopulationMap<Integer> popMap = new PopulationMap<Integer>(0);
             
             for (Population pop : reactSubSchemas.get(i).getPopulationKeySet()) {
                 for (int offset : reactSubSchemas.get(i).getOffsetKeySet(pop)) {

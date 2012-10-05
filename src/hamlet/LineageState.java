@@ -18,7 +18,6 @@ package hamlet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * State of lineages in tree.
@@ -57,11 +56,13 @@ public class LineageState {
      * @param subReaction
      * @param q Number of times for reaction to fire.
      */
-    public void implementReaction(Reaction reaction, int subReaction, double q) {
+    public void implementReaction(Reaction reaction, int subReaction, double q,
+            State state) {
         
         // Choose lineages to involve in reaction(s):
         List<Node> chosenLineages = new ArrayList<Node>();
-        Map<Population, Map<Integer,Integer>> reactivesRemaining;
+        PopulationMap<Integer> reactivesRemaining = reaction.reactSubSchemas
+                .get(subReaction).copy();
         
         for (Node node : activeNodes) {
             if (!reaction.reactPopSchema.contains(node.population))

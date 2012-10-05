@@ -31,18 +31,39 @@ public class PopulationMap<T> {
     
     Map<Population,Map<Integer,T>> map;
     
+    T emptyValue;
+    
     /**
      * Create a new population map.
      */
-    public PopulationMap() {
+    public PopulationMap(T emptyValue) {
+        this.emptyValue = emptyValue;
         map = Maps.newHashMap();
     }
     
     public T get(Population pop, int subPopOffset) {
-        return map.get(pop).get(subPopOffset);
+        if (!containsKey(pop, subPopOffset))
+            return emptyValue;
+        else
+            return map.get(pop).get(subPopOffset);
+    }
+    
+    public void remove(Population pop, int subPopOffset) {
+        map.get(pop).remove(subPopOffset);
+        if (map.get(pop).isEmpty())
+            map.remove(pop);
     }
     
     public void put(Population pop, int subPopOffset, T value) {
+        
+        // Setting to emtpyValue is the same as removing the entry:
+        if (value==emptyValue) {
+            if (containsKey(pop, subPopOffset))
+                remove(pop, subPopOffset);
+            
+            return;
+        }
+        
         if (!map.containsKey(pop))
             map.put(pop, new HashMap<Integer,T>());
         
@@ -73,7 +94,7 @@ public class PopulationMap<T> {
      * @return copy of map
      */
     public PopulationMap<T> copy() {
-        PopulationMap<T> newMap = new PopulationMap<T>();
+        PopulationMap<T> newMap = new PopulationMap<T>(emptyValue);
         
         for (Population pop : map.keySet()) {
             for (Integer offset : map.get(pop).keySet())

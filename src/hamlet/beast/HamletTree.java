@@ -2,6 +2,7 @@ package hamlet.beast;
 
 import beast.core.*;
 import beast.evolution.tree.*;
+import java.util.List;
 
 /**
  * BEAST 2 plugin to generate random trees from birth-death models.
@@ -9,12 +10,8 @@ import beast.evolution.tree.*;
  * @author Tim Vaughan
  */
 @Description("Plugin to generate random trees from birth-death models.")
-public class HamletTree extends Tree {
+public class HamletTree extends Tree implements StateNodeInitialiser {
 
-	public Input<Double> simulationTimeInput = new Input<Double>(
-			"simulationTime", "Length of time to run simulation for.");
-	public Input<Integer> nSamplesInput = new Input<Integer>(
-			"nSamples", "Number of time points to include in tree.");
 	public Input<Integer> seedInput = new Input<Integer>(
 			"seed", "Seed for RNG.");
 
@@ -28,12 +25,10 @@ public class HamletTree extends Tree {
 	@Override
 	public void initAndValidate() throws Exception {
 
-		hamlet.Spec simulation = new hamlet.TreeSpec();
+		hamlet.TreeSpec simulation = new hamlet.TreeSpec();
 
 		// Read in simulation parameters from XML:
 		simulation.setModel(modelInput.get().model);
-		simulation.setSimulationTime(simulationTimeInput.get());
-		simulation.setnSamples(nSamplesInput.get());
 		simulation.setInitState(initState.get().initState);
 
 		// Set seed explicitly if provided:
@@ -41,5 +36,15 @@ public class HamletTree extends Tree {
 			simulation.setSeed(seedInput.get());
 
 	}
+
+    @Override
+    public void initStateNodes() throws Exception {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<StateNode> getInitialisedStateNodes() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 	
 }

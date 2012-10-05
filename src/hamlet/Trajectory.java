@@ -15,14 +15,14 @@ public class Trajectory {
 	State[] sampledStates;
 
 	// Simulation specification:
-	Spec spec;
+	TrajectorySpec spec;
 
 	/**
 	 * Generate trajectory of birth-death process.
 	 * 
 	 * @param spec Simulation specification.
 	 */
-	public Trajectory(Spec spec) {
+	public Trajectory(TrajectorySpec spec) {
 
 		// Keep copy of simulation parameters with trajectory:
 		this.spec = spec;
@@ -55,12 +55,12 @@ public class Trajectory {
 
 		double dt = spec.getSampleDt();
 
-		System.out.print("t");
-		sampledStates[0].dumpNames();
+		System.out.print("t ");
+		System.out.print(sampledStates[0].getNames());
 		int sidx = 0;
 		for (State s : sampledStates) {
-			System.out.print(dt*(sidx++));
-			s.dump();
+			System.out.print(dt*(sidx++) + " ");
+			System.out.println(s);
 		}
 	}
 

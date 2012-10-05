@@ -5,7 +5,7 @@ package hamlet;
  *
  * @author Tim Vaughan
  */
-public class EnsembleSpec extends Spec {
+public class EnsembleSpec extends TrajectorySpec {
 
 	// Number of stochastic trajectories to generate:
 	int nTraj;

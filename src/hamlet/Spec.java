@@ -7,20 +7,11 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  *
  * @author Tim Vaughan
  */
-public abstract class Spec {
+public class Spec {
 
     // Birth-death model to simulate:
     Model model;
-    
-    // Length of time to propagate for:
-    double simulationTime;
-    
-    // Integrator to use:
-    Integrator integrator;
-    
-    // Number of evenly spaced samples times
-    int nSamples;
-    
+
     // Seed for RNG (negative number means use default seed):
     long seed;
     
@@ -50,20 +41,8 @@ public abstract class Spec {
         this.model = model;
     }
 
-    public void setIntegrator(Integrator integrator) {
-        this.integrator = integrator;
-    }
-
-    public void setnSamples(int nSamples) {
-        this.nSamples = nSamples;
-    }
-
     public void setSeed(long seed) {
         this.seed = seed;
-    }
-
-    public void setSimulationTime(double simulationTime) {
-        this.simulationTime = simulationTime;
     }
 
     public void setInitState(State initState) {
@@ -83,31 +62,9 @@ public abstract class Spec {
     public Model getModel() {
         return model;
     }
-    
-    public Integrator getIntegrator() {
-        return integrator;
-    }
-
-    public int getnSamples() {
-        return nSamples;
-    }
 
     public long getSeed() {
         return seed;
-    }
-
-    public double getSimulationTime() {
-        return simulationTime;
-    }
-
-    /**
-     * Get time between samples.
-     *
-     * @return Sampling period.
-     */
-    @JsonIgnore
-    public double getSampleDt() {
-        return simulationTime/(nSamples-1);
     }
 
 }

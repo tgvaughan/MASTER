@@ -52,10 +52,7 @@ public class TauLeapingIntegrator extends Integrator {
             double q = Poisson.nextDouble(reaction.propensities.get(i)*thisdt);
 
             // Implement reactions:
-            for (Population pop : reaction.deltas.get(i).keySet())
-                for (int offset : reaction.deltas.get(i).get(pop).keySet())
-                    state.addNoNeg(pop, offset,
-                            q*reaction.deltas.get(i).get(pop).get(offset));
+            state.implementReaction(reaction, i, q);
         }
 
     }

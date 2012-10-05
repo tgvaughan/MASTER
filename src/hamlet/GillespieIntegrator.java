@@ -66,11 +66,8 @@ public class GillespieIntegrator extends Integrator {
                     break;
             }
             
-            // Implement chosen reaction
-            for (Population pop : thisReact.deltas.get(thisSub).keySet())
-                for (int offset : thisReact.deltas.get(thisSub).get(pop).keySet())
-                    state.addNoNeg(pop, offset,
-                            thisReact.deltas.get(thisSub).get(pop).get(offset));
+            // Implement chosen reaction:
+            state.implementReaction(thisReact, thisSub, 1);
         }
     }
 

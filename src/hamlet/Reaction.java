@@ -1,9 +1,7 @@
 package hamlet;
 
 import com.google.common.collect.*;
-import hamlet.math.Poisson;
 import java.util.*;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonValue;
 
 /**
@@ -17,7 +15,7 @@ import org.codehaus.jackson.annotate.JsonValue;
 public class Reaction {
 
     String reactionName;
-    Population[] reactPopSchema, prodPopSchema;
+    List<Population> reactPopSchema, prodPopSchema;
     List<Map<Population, Map<Integer, Integer>>> reactSubSchemas, prodSubSchemas, deltas;
     List<Double> rates, propensities;
     int nSubSchemas;
@@ -52,7 +50,7 @@ public class Reaction {
      * @param reactantPopSchema	varargs list of reactant populations.
      */
     public void setReactantSchema(Population... reactantPopSchema) {
-        this.reactPopSchema = reactantPopSchema;
+        this.reactPopSchema = Lists.newArrayList(reactantPopSchema);
     }
 
     /**
@@ -63,7 +61,7 @@ public class Reaction {
      * @param productPopSchema	varargs list of product populations.
      */
     public void setProductSchema(Population... productPopSchema) {
-        this.prodPopSchema = productPopSchema;
+        this.prodPopSchema = Lists.newArrayList(productPopSchema);
     }
 
     /**
@@ -81,13 +79,13 @@ public class Reaction {
     public void addReactantSubSchema(int[]... subs) {
 
         // Check for consistent number of sub-populations:
-        if (subs.length!=reactPopSchema.length)
+        if (subs.length!=reactPopSchema.size())
             throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
 
-        int[] offsets = new int[reactPopSchema.length];
-        for (int pidx = 0; pidx<reactPopSchema.length; pidx++)
+        int[] offsets = new int[reactPopSchema.size()];
+        for (int pidx = 0; pidx<reactPopSchema.size(); pidx++)
             if (subs[pidx]!=null)
-                offsets[pidx] = reactPopSchema[pidx].subToOffset(subs[pidx]);
+                offsets[pidx] = reactPopSchema.get(pidx).subToOffset(subs[pidx]);
             else
                 offsets[pidx] = 0;
 
@@ -111,14 +109,14 @@ public class Reaction {
     public void addProductSubSchema(int[]... subs) {
 
         // Check for consistent number of sub-populations:
-        if (subs.length!=prodPopSchema.length)
+        if (subs.length!=prodPopSchema.size())
             throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
 
         // Calculate offsets from sub-population vectors:
         int[] offsets = new int[subs.length];
         for (int i = 0; i<subs.length; i++)
             if (subs[i]!=null)
-                offsets[i] = prodPopSchema[i].subToOffset(subs[i]);
+                offsets[i] = prodPopSchema.get(i).subToOffset(subs[i]);
             else
                 offsets[i] = 0;
 
@@ -137,7 +135,7 @@ public class Reaction {
      * @param offsets list of product sub-population offsets.
      */
     private void addSubSchemaOffsets(
-            Population[] popSchema,
+            List<Population> popSchema,
             List<Map<Population, Map<Integer, Integer>>> subSchemaList,
             int... offsets) {
 
@@ -145,9 +143,9 @@ public class Reaction {
         // pop->offset->count, where count is the number of times
         // that specific offset appears as a reactant/product in this schema.
         Map<Population, Map<Integer, Integer>> subSchema = Maps.newHashMap();
-        for (int pidx = 0; pidx<popSchema.length; pidx++) {
+        for (int pidx = 0; pidx<popSchema.size(); pidx++) {
 
-            Population pop = popSchema[pidx];
+            Population pop = popSchema.get(pidx);
 
             if (!subSchema.containsKey(pop)) {
                 Map<Integer, Integer> offsetMap = Maps.newHashMap();
@@ -175,13 +173,13 @@ public class Reaction {
      */
     private void addScalarSubSchemas() {
 
-        int[] reactOffsets = new int[reactPopSchema.length];
-        for (int pidx = 0; pidx<reactPopSchema.length; pidx++)
+        int[] reactOffsets = new int[reactPopSchema.size()];
+        for (int pidx = 0; pidx<reactPopSchema.size(); pidx++)
             reactOffsets[pidx] = 0;
         addSubSchemaOffsets(reactPopSchema, reactSubSchemas, reactOffsets);
 
-        int[] prodOffsets = new int[prodPopSchema.length];
-        for (int pidx = 0; pidx<prodPopSchema.length; pidx++)
+        int[] prodOffsets = new int[prodPopSchema.size()];
+        for (int pidx = 0; pidx<prodPopSchema.size(); pidx++)
             prodOffsets[pidx] = 0;
         addSubSchemaOffsets(prodPopSchema, prodSubSchemas, prodOffsets);
     }

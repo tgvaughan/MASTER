@@ -25,12 +25,22 @@ public class Node {
 	 * @param population	Population to which node belongs.
 	 * @param subPopOffset  Sub-population to which node belongs.
 	 */
-	Node(Population population, int subPopOffset) {
+	Node(Population population, int subPopOffset, double time) {
 
 		this.population = population;
 		this.subPopOffset = subPopOffset;
+                this.time = time;
 
+                parent = null;
 		children = new ArrayList<Node>();
 	}
-	
+
+        /**
+         * Determine whether node is root.
+         * 
+         * @return True if node has no parent.
+         */
+        boolean isRoot() {
+            return (parent == null);
+        }
 }

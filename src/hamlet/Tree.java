@@ -1,8 +1,5 @@
 package hamlet;
 
-import com.google.common.collect.*;
-import java.util.*;
-
 /**
  * Inheritance tree generated from a birth-death model.
  *
@@ -11,7 +8,7 @@ import java.util.*;
 public class Tree {
 
 	// Possible root nodes of tree.
-	List<Node> rootNodes;
+	Node rootNode;
 
 	// Spec specification.
 	TreeSpec spec;
@@ -27,31 +24,18 @@ public class Tree {
 
 		// Initialise system state:
 		State state = new State(spec.initState);
-
-		// Populate root and active nodes:
-		rootNodes = Lists.newArrayList();
-		Map<Population, List<Set<Node>>> activeNodes = Maps.newHashMap();
-		for (Population pop : spec.treePops) {
-
-			activeNodes.put(pop, new ArrayList<Set<Node>>());
-
-			// Add each individual of included populations as an active
-			// node, as well as a possible root node.
-			for (int offset=0; offset<state.popSizes.get(pop).length; offset++) {
-
-				activeNodes.get(pop).add(new HashSet<Node>());
-
-				for (int i=0; i<state.popSizes.get(pop)[i]; i++) {
-					Node thisNode = new Node(pop, offset);
-					rootNodes.add(thisNode);
-					activeNodes.get(pop).get(offset).add(thisNode);
-				}
-			}
-		}
-
-		for (int sidx = 0; sidx<spec.nSamples; sidx++) {
-
-		}
-
+                
+                // Create root node:
+                rootNode = new Node(spec.getRootPop(),
+                        spec.getRootSubPopOffset(),
+                        0.0);
+                
+                // Initialise lineage state:
+                LineageState lineageState = new LineageState(rootNode);
+                
+                // Generate tree:
+                while (lineageState.isAlive() && lineageState.time<spec.maxHeight)
+                    spec.getIntegrator().stepTree(spec.model, state, lineageState,
+                            spec.maxHeight);
 	}
 }

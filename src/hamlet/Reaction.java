@@ -19,13 +19,28 @@ public class Reaction {
     List<PopulationMap<Integer>> reactSubSchemas, prodSubSchemas, deltas;
     List<Double> rates, propensities;
     int nSubSchemas;
+    
+    /**
+     * Reactant inheritance labels
+     */
+    List<Integer> reactantInheritance;
+    
+    /**
+     * Product inheritance labels
+     */
+    List<Integer> productInheritance;
+    
 
     /**
      * Constructor (with name).
      */
     public Reaction(String reactionName) {
+        
+        // Ensure lists are defined:
         reactSubSchemas = Lists.newArrayList();
         prodSubSchemas = Lists.newArrayList();
+        reactantInheritance = Lists.newArrayList();
+        productInheritance = Lists.newArrayList();
 
         rates = Lists.newArrayList();
         
@@ -36,8 +51,12 @@ public class Reaction {
      * Constructor (no name).
      */
     public Reaction() {
+        
+        // Ensure lists are defined:
         reactSubSchemas = Lists.newArrayList();
         prodSubSchemas = Lists.newArrayList();
+        reactantInheritance = Lists.newArrayList();
+        productInheritance = Lists.newArrayList();
 
         rates = Lists.newArrayList();
     }
@@ -63,7 +82,48 @@ public class Reaction {
     public void setProductSchema(Population... productPopSchema) {
         this.prodPopSchema = Lists.newArrayList(productPopSchema);
     }
-
+    
+    /**
+     * Set parentage IDs used to determine inheritance relationships for
+     * reaction.
+     * 
+     * @param reactantInheritance 
+     */
+    public void setReactantInheritance(Integer... reactantInheritance) {
+        this.reactantInheritance = Lists.newArrayList(reactantInheritance);
+    }
+    
+    /**
+     * Set child IDs used to determine inheritance relationships for
+     * reaction.
+     * 
+     * @param productInheritance 
+     */
+    public void setProductInheritance(Integer... productInheritance) {
+        this.productInheritance = Lists.newArrayList(productInheritance);
+    }
+    
+    /**
+     * Generate a default inheritance relationship between reactants and
+     * products of the reaction.  The default is constructed by iterating
+     * over the reactant populations from left to right and greedily assigning
+     * matching populations (regardless of subpopulation) as children.
+     */
+    public void generateDefaultInheritance() {
+        
+        for (int i=0; i<reactPopSchema.size(); i++) {
+            reactantInheritance.add(i);
+            for (int j=0; j<prodPopSchema.size(); j++) {
+                if (j>=productInheritance.size())
+                    productInheritance.add(-1);
+                if (prodPopSchema.get(j) == reactPopSchema.get(i)) {
+                    if (productInheritance.get(j) == -1)
+                        productInheritance.set(j, i);
+                }
+            }
+        }
+    }
+    
     /**
      * Define a particular sub-population-level schema by listing the individual
      * sub-population reactants involved in a reaction. Subsequent calls to
@@ -121,7 +181,7 @@ public class Reaction {
                 offsets[i] = 0;
 
         // Call internal method to complete addition of schema:
-        addSubSchemaOffsets(prodPopSchema, prodSubSchemas,offsets);
+        addSubSchemaOffsets(prodPopSchema, prodSubSchemas, offsets);
     }
     
     /**
@@ -225,6 +285,17 @@ public class Reaction {
         if ((reactSubSchemas.size()!=prodSubSchemas.size())
                 ||(reactSubSchemas.size()!=rates.size()))
             throw new IllegalArgumentException("Inconsistent number of schemas and/or rates.");
+        
+        // Assign default inheritance relationships if not provided:
+        if ((reactantInheritance.isEmpty()) && (productInheritance.isEmpty())) {
+            generateDefaultInheritance();
+        }
+        
+        // Perform sanity check on inheritance maps:
+        if ((reactantInheritance.size() != reactPopSchema.size())
+                || (productInheritance.size() != prodPopSchema.size())) {
+            throw new IllegalArgumentException("Inconsistent inheritance map sizes");
+        }
 
         // Central record of number of sub-population reaction schemas:
         nSubSchemas = rates.size();

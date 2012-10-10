@@ -41,6 +41,15 @@ public class PopulationMap<T> {
         map = Maps.newHashMap();
     }
     
+    /**
+     * Obtain value of map at (pop, subPopOffset), returning
+     * the empty value in the case that the chosen key does not
+     * exist.
+     * 
+     * @param pop
+     * @param subPopOffset
+     * @return 
+     */
     public T get(Population pop, int subPopOffset) {
         if (!containsKey(pop, subPopOffset))
             return emptyValue;
@@ -48,12 +57,25 @@ public class PopulationMap<T> {
             return map.get(pop).get(subPopOffset);
     }
     
+    /**
+     * Remove map item at key (pop, subPopOffset).
+     * 
+     * @param pop
+     * @param subPopOffset 
+     */
     public void remove(Population pop, int subPopOffset) {
         map.get(pop).remove(subPopOffset);
         if (map.get(pop).isEmpty())
             map.remove(pop);
     }
     
+    /**
+     * Set the value of the map at (pop, subPopOffset).
+     * 
+     * @param pop
+     * @param subPopOffset
+     * @param value 
+     */
     public void put(Population pop, int subPopOffset, T value) {
         
         // Setting to emtpyValue is the same as removing the entry:
@@ -70,6 +92,14 @@ public class PopulationMap<T> {
         map.get(pop).put(subPopOffset, value);
     }
     
+    /**
+     * Determine whether map contains an element with
+     * the key (pop, subPopOffset).
+     * 
+     * @param pop
+     * @param subPopOffset
+     * @return True if map contains specified key.
+     */
     public boolean containsKey(Population pop, int subPopOffset) {
         if (!map.containsKey(pop))
             return false;
@@ -80,10 +110,21 @@ public class PopulationMap<T> {
         return true;
     }
     
+    /**
+     * Get set of population-level keys.
+     * 
+     * @return key set
+     */
     public Set<Population> getPopulationKeySet() {
         return map.keySet();
     }
     
+    /**
+     * Get set of sub-population-level keys (offset format).
+     * 
+     * @param population
+     * @return key set
+     */
     public Set<Integer> getOffsetKeySet(Population population) {
         return map.get(population).keySet();
     }

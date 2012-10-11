@@ -16,20 +16,13 @@ public class Reaction {
 
     String reactionName;
     List<Population> reactPopSchema, prodPopSchema;
+    List<List<Integer>> reactSubSchemaList, prodSubSchemaList;
     List<PopulationMap<Integer>> reactSubSchemas, prodSubSchemas, deltas;
     List<Double> rates, propensities;
     int nSubSchemas;
     
-    /**
-     * Reactant inheritance labels
-     */
-    List<Integer> reactantInheritance;
-    
-    /**
-     * Product inheritance labels
-     */
-    List<Integer> productInheritance;
-    
+    List<Integer> reactantInheritance, productInheritance;
+    List<InheritanceMap> inheritanceMaps;
 
     /**
      * Constructor (with name).
@@ -39,8 +32,11 @@ public class Reaction {
         // Ensure lists are defined:
         reactSubSchemas = Lists.newArrayList();
         prodSubSchemas = Lists.newArrayList();
+        reactSubSchemaList = Lists.newArrayList();
+        prodSubSchemaList = Lists.newArrayList();
         reactantInheritance = Lists.newArrayList();
         productInheritance = Lists.newArrayList();
+        inheritanceMaps = Lists.newArrayList();
 
         rates = Lists.newArrayList();
         
@@ -55,8 +51,11 @@ public class Reaction {
         // Ensure lists are defined:
         reactSubSchemas = Lists.newArrayList();
         prodSubSchemas = Lists.newArrayList();
+        reactSubSchemaList = Lists.newArrayList();
+        prodSubSchemaList = Lists.newArrayList();
         reactantInheritance = Lists.newArrayList();
         productInheritance = Lists.newArrayList();
+        inheritanceMaps = Lists.newArrayList();
 
         rates = Lists.newArrayList();
     }
@@ -125,6 +124,23 @@ public class Reaction {
     }
     
     /**
+     * Generate inheritance maps needed by TreeIntegrators.
+     * 
+     * Must be called AFTER sub-population reaction schemas are in place.
+     */
+    public void generateInheritanceMaps() {
+        for (int i=0; i<nSubSchemas; i++) {
+            InheritanceMap imap = new InheritanceMap(
+                    reactPopSchema, prodPopSchema,
+                    reactSubSchemaList.get(i),
+                    prodSubSchemaList.get(i),
+                    reactantInheritance, productInheritance);
+            
+            inheritanceMaps.add(imap);
+        }
+    }
+       
+    /**
      * Define a particular sub-population-level schema by listing the individual
      * sub-population reactants involved in a reaction. Subsequent calls to
      * addReactantLocSchema() define a list of such schemas that must be aligned
@@ -142,13 +158,16 @@ public class Reaction {
         if (subs.length!=reactPopSchema.size())
             throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
 
-        int[] offsets = new int[reactPopSchema.size()];
+        Integer[] offsets = new Integer[reactPopSchema.size()];
         for (int pidx = 0; pidx<reactPopSchema.size(); pidx++)
             if (subs[pidx]!=null)
                 offsets[pidx] = reactPopSchema.get(pidx).subToOffset(subs[pidx]);
             else
                 offsets[pidx] = 0;
 
+        // Record ordered list of offsets for inheretance map interpretation:
+        reactSubSchemaList.add(Lists.newArrayList(offsets));
+        
         // Call internal method to complete addition of schema:
         addSubSchemaOffsets(reactPopSchema, reactSubSchemas, offsets);
 
@@ -173,12 +192,15 @@ public class Reaction {
             throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
 
         // Calculate offsets from sub-population vectors:
-        int[] offsets = new int[subs.length];
+        Integer[] offsets = new Integer[subs.length];
         for (int i = 0; i<subs.length; i++)
             if (subs[i]!=null)
                 offsets[i] = prodPopSchema.get(i).subToOffset(subs[i]);
             else
                 offsets[i] = 0;
+        
+        // Record ordered list of offsets for inheretance map interpretation:
+        prodSubSchemaList.add(Lists.newArrayList(offsets));
 
         // Call internal method to complete addition of schema:
         addSubSchemaOffsets(prodPopSchema, prodSubSchemas, offsets);
@@ -197,7 +219,7 @@ public class Reaction {
     private void addSubSchemaOffsets(
             List<Population> popSchema,
             List<PopulationMap<Integer>> subSchemaList,
-            int... offsets) {
+            Integer... offsets) {
 
         // Condense provided schema into a map of the form
         // pop->offset->count, where count is the number of times
@@ -228,12 +250,12 @@ public class Reaction {
      */
     private void addScalarSubSchemas() {
 
-        int[] reactOffsets = new int[reactPopSchema.size()];
+        Integer[] reactOffsets = new Integer[reactPopSchema.size()];
         for (int pidx = 0; pidx<reactPopSchema.size(); pidx++)
             reactOffsets[pidx] = 0;
         addSubSchemaOffsets(reactPopSchema, reactSubSchemas, reactOffsets);
 
-        int[] prodOffsets = new int[prodPopSchema.size()];
+        Integer[] prodOffsets = new Integer[prodPopSchema.size()];
         for (int pidx = 0; pidx<prodPopSchema.size(); pidx++)
             prodOffsets[pidx] = 0;
         addSubSchemaOffsets(prodPopSchema, prodSubSchemas, prodOffsets);
@@ -291,11 +313,15 @@ public class Reaction {
             generateDefaultInheritance();
         }
         
-        // Perform sanity check on inheritance maps:
+        // Perform sanity check on inheritance relationships:
         if ((reactantInheritance.size() != reactPopSchema.size())
                 || (productInheritance.size() != prodPopSchema.size())) {
             throw new IllegalArgumentException("Inconsistent inheritance map sizes");
         }
+        
+        // Process inheritance relationships into inheritance maps for
+        // faster tree generation:
+        generateInheritanceMaps();
 
         // Central record of number of sub-population reaction schemas:
         nSubSchemas = rates.size();

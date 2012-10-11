@@ -63,8 +63,10 @@ public class GillespieTreeIntegrator extends TreeIntegrator {
                     break;
                 }
             }
+            
             if (found)
                 break;
+            
         }
         
         // Choose lineages to participate in reaction:
@@ -80,44 +82,10 @@ public class GillespieTreeIntegrator extends TreeIntegrator {
             }
         }
         
-        // Choose children of chosen lineages from available reactants:
-        PopulationMap<Integer> prodSubSchema = thisReact.prodSubSchemas.get(thisSub).copy();
-        int nRemainingProducts = thisReact.prodPopSchema.size();
-        for (Node node : participatingLineages) {
-            double v = Randomizer.nextDouble()*nRemainingProducts;
-            boolean productChosen = false;
-            Population newPop = null;
-            int newOffset = -1;
-            for (Population prodPop : prodSubSchema.getPopulationKeySet()) {
-                for (int prodOffset : prodSubSchema.getOffsetKeySet(prodPop)) {
-                    v -= prodSubSchema.get(prodPop, prodOffset);
-                    if (v<0) {
-                        newPop = prodPop;
-                        newOffset = prodOffset;
-                        productChosen = true;
-                        break;
-                    }
-                }
-                if (productChosen)
-                    break;
-            }
-            
-            if (productChosen) {
-                // Lineage continued by (newPop, newOffset):
-                if (node.population !=newPop || node.subPopOffset != newOffset) {
-                    node.time = lineageState.time;
-                    Node child = new Node(newPop, newOffset, -1);
-                }
-                    
-            } else {
-                // Lineage terminates here:
-                node.time = lineageState.time;
-                lineageState.activeNodes.remove(node);
-            }
-        }
+        // Decide what to do with each lineage:
+        
         
         // Alter system state according to chosen reaction
-        
         state.implementReaction(thisReact, thisSub, 1);
     }
     

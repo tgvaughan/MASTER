@@ -34,6 +34,20 @@ public class Node {
         parent = null;
         children = new ArrayList<Node>();
     }
+    
+    /**
+     * Constructor for inheritance map node. (No sub-population specification.)
+     * 
+     * @param population Population to which node belongs.
+     */
+    Node(Population population) {
+        this.population = population;
+        this.subPopOffset = -1;
+        this.time = -1;
+        
+        parent = null;
+        children = new ArrayList<Node>();
+    }
 
     /**
      * Determine whether node is root.

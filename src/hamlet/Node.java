@@ -48,6 +48,19 @@ public class Node {
         parent = null;
         children = new ArrayList<Node>();
     }
+    
+    /**
+     * Add a child node to the list of children.  Returns this node to
+     * allow method chaining.
+     * 
+     * @param child Child to add.
+     * @return this 
+     */
+    Node addChild(Node child) {
+        children.add(child);
+        
+        return this;
+    }
 
     /**
      * Determine whether node is root.

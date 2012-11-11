@@ -33,6 +33,11 @@ public class SubPopulation {
      */
     public SubPopulation(Population population, int ... location) {
         this.pop = population;
-        this.offset = population.locToOffset(location);
+        
+        if (population.nSubPops==1)
+            offset = 0;
+        else
+            this.offset = population.locToOffset(location);
     }
+    
 }

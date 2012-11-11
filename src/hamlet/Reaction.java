@@ -16,8 +16,8 @@ public class Reaction {
 
     String reactionName;
     List<Population> reactPopSchema, prodPopSchema;
-    List<List<Integer>> reactSubSchemaList, prodSubSchemaList;
-    List<PopulationMap<Integer>> reactSubSchemas, prodSubSchemas, deltas;
+    List<List<SubPopulation>> reactSubSchemaLists, prodSubSchemaLists;
+    List<Map<SubPopulation,Integer>> reactSubCounts, prodSubCounts, deltaCounts;
     List<Double> rates, propensities;
     int nSubSchemas;
     
@@ -27,10 +27,10 @@ public class Reaction {
     public Reaction(String reactionName) {
         
         // Ensure lists are defined:
-        reactSubSchemas = Lists.newArrayList();
-        prodSubSchemas = Lists.newArrayList();
-        reactSubSchemaList = Lists.newArrayList();
-        prodSubSchemaList = Lists.newArrayList();
+        reactSubCounts = Lists.newArrayList();
+        prodSubCounts = Lists.newArrayList();
+        reactSubSchemaLists = Lists.newArrayList();
+        prodSubSchemaLists = Lists.newArrayList();
 
         rates = Lists.newArrayList();
         
@@ -43,10 +43,10 @@ public class Reaction {
     public Reaction() {
         
         // Ensure lists are defined:
-        reactSubSchemas = Lists.newArrayList();
-        prodSubSchemas = Lists.newArrayList();
-        reactSubSchemaList = Lists.newArrayList();
-        prodSubSchemaList = Lists.newArrayList();
+        reactSubCounts = Lists.newArrayList();
+        prodSubCounts = Lists.newArrayList();
+        reactSubSchemaLists = Lists.newArrayList();
+        prodSubSchemaLists = Lists.newArrayList();
 
         rates = Lists.newArrayList();
     }
@@ -86,27 +86,22 @@ public class Reaction {
      *
      * @param subs	varargs list of reactant sub-populations.
      */
-    public void addReactantSubSchema(int[]... subs) {
+    public void addReactantSubSchema(SubPopulation ... subs) {
 
         // Check for consistent number of sub-populations:
         if (subs.length!=reactPopSchema.size())
             throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
-
-        Integer[] offsets = new Integer[reactPopSchema.size()];
-        for (int pidx = 0; pidx<reactPopSchema.size(); pidx++)
-            if (subs[pidx]!=null)
-                offsets[pidx] = reactPopSchema.get(pidx).locToOffset(subs[pidx]);
-            else
-                offsets[pidx] = 0;
+        
+        // Check that sub-populations are of the right population type:
+        for (int i=0; i<subs.length; i++) {
+            if (subs[i].pop != reactPopSchema.get(i))
+                throw new IllegalArgumentException("Incorrect subpopulation type in schema.");
+        }
 
         // Record ordered list of offsets for inheretance map interpretation:
-        reactSubSchemaList.add(Lists.newArrayList(offsets));
-        
-        // Call internal method to complete addition of schema:
-        addSubSchemaOffsets(reactPopSchema, reactSubSchemas, offsets);
-
+        reactSubSchemaLists.add(Lists.newArrayList(subs));
     }
-
+    
     /**
      * Define a particular sub-population-level schema by listing the individual
      * sub-population products involved in a reaction. Subsequent calls to
@@ -119,25 +114,23 @@ public class Reaction {
      *
      * @param subs	varargs list of product sub-populations.
      */
-    public void addProductSubSchema(int[]... subs) {
+    public void addProductSubSchema(SubPopulation ... subs) {
 
         // Check for consistent number of sub-populations:
         if (subs.length!=prodPopSchema.size())
             throw new IllegalArgumentException("Inconsistent number of sub-populations specified.");
-
-        // Calculate offsets from sub-population vectors:
-        Integer[] offsets = new Integer[subs.length];
-        for (int i = 0; i<subs.length; i++)
-            if (subs[i]!=null)
-                offsets[i] = prodPopSchema.get(i).locToOffset(subs[i]);
-            else
-                offsets[i] = 0;
         
-        // Record ordered list of offsets for inheretance map interpretation:
-        prodSubSchemaList.add(Lists.newArrayList(offsets));
+        // Check that sub-populations are of the right population type:
+        for (int i=0; i<subs.length; i++) {
+            if (subs[i].pop != prodPopSchema.get(i))
+                throw new IllegalArgumentException("Incorrect subpopulation type in schema.");
+        }
 
-        // Call internal method to complete addition of schema:
-        addSubSchemaOffsets(prodPopSchema, prodSubSchemas, offsets);
+        // Record ordered list of offsets for inheretance map interpretation:
+        prodSubSchemaLists.add(Lists.newArrayList(subs));
+        
+        // Record unique sub-population counts:
+        reactSubCounts.add(getSubCount(subs));
     }
     
     /**
@@ -146,53 +139,47 @@ public class Reaction {
      * sub-population size arrays rather than the sub-population specification
      * vectors.
      *
-     * @param popSchema Population-level reactant or product schema.
-     * @param subSchemaList List of sub-population-level schema.
-     * @param offsets list of product sub-population offsets.
+     * @param subCounts List of sub-population-level schema.
+     * @param subs vararg array of product sub-populations.
      */
-    private void addSubSchemaOffsets(
-            List<Population> popSchema,
-            List<PopulationMap<Integer>> subSchemaList,
-            Integer... offsets) {
+    private Map<SubPopulation, Integer> getSubCount(SubPopulation ... subs) {
 
         // Condense provided schema into a map of the form
-        // pop->offset->count, where count is the number of times
+        // SubPop->count, where count is the number of times
         // that specific offset appears as a reactant/product in this schema.
-        PopulationMap<Integer> subSchema = new PopulationMap<Integer>(0);
+        Map<SubPopulation, Integer> subCount = Maps.newHashMap();
         
-        for (int pidx = 0; pidx<popSchema.size(); pidx++) {
-            Population pop = popSchema.get(pidx);
+        for (SubPopulation sub : subs) {
+            Population pop = sub.pop;
             
-            if (!subSchema.containsKey(pop, offsets[pidx]))
-                subSchema.put(pop, offsets[pidx], 1);
+            if (!subCount.containsKey(sub))
+                subCount.put(sub, 1);
             else {
-                int val = subSchema.get(pop, offsets[pidx]);
-                subSchema.put(pop, offsets[pidx], val+1);
+                int val = subCount.get(sub);
+                subCount.put(sub, val+1);
             }
         }
 
-        // Add newly-condensed map to reactLocSchemas,
-        // which is a list of such maps:
-        subSchemaList.add(subSchema);
+        return subCount;
     }
 
     /**
      * Add default reactant and product sub-population schemas which refer only
      * to those sub-populations at zero offset in the sub-population size arrays
      * contained in the state vector. This allows for easy specification of
-     * reactions involving structureless populations.
+     * reactions involving only structureless populations.
      */
     private void addScalarSubSchemas() {
-
-        Integer[] reactOffsets = new Integer[reactPopSchema.size()];
-        for (int pidx = 0; pidx<reactPopSchema.size(); pidx++)
-            reactOffsets[pidx] = 0;
-        addSubSchemaOffsets(reactPopSchema, reactSubSchemas, reactOffsets);
-
-        Integer[] prodOffsets = new Integer[prodPopSchema.size()];
-        for (int pidx = 0; pidx<prodPopSchema.size(); pidx++)
-            prodOffsets[pidx] = 0;
-        addSubSchemaOffsets(prodPopSchema, prodSubSchemas, prodOffsets);
+        
+        SubPopulation [] reactSubs = new SubPopulation[reactPopSchema.size()];
+        for (int pidx=0; pidx<reactPopSchema.size(); pidx++)
+            reactSubs[pidx] = new SubPopulation(reactPopSchema.get(pidx));
+        reactSubCounts.add(getSubCount(reactSubs));
+        
+        SubPopulation [] prodSubs = new SubPopulation[prodPopSchema.size()];
+        for (int pidx=0; pidx<prodPopSchema.size(); pidx++)
+            prodSubs[pidx] = new SubPopulation(prodPopSchema.get(pidx));
+        prodSubCounts.add(getSubCount(prodSubs));
     }
 
     /**
@@ -217,10 +204,10 @@ public class Reaction {
 
         // Ensure at least a single sub-population schema is present,
         // even if only unstructured populations are involved.
-        if (reactSubSchemas.isEmpty())
+        if (reactSubCounts.isEmpty())
             addScalarSubSchemas();
 
-        for (int i = 0; i<reactSubSchemas.size(); i++)
+        for (int i = 0; i<reactSubCounts.size(); i++)
             rates.add(rate);
     }
 
@@ -234,12 +221,12 @@ public class Reaction {
 
         // Ensure at least a single sub-population schema is present,
         // even if only unstructured populations are involved.
-        if (reactSubSchemas.isEmpty())
+        if (reactSubCounts.isEmpty())
             addScalarSubSchemas();
 
         // Perform sanity check on schema:
-        if ((reactSubSchemas.size()!=prodSubSchemas.size())
-                ||(reactSubSchemas.size()!=rates.size()))
+        if ((reactSubCounts.size()!=prodSubCounts.size())
+                ||(reactSubCounts.size()!=rates.size()))
             throw new IllegalArgumentException("Inconsistent number of schemas and/or rates.");
 
         // Central record of number of sub-population reaction schemas:
@@ -261,33 +248,33 @@ public class Reaction {
      */
     private void calcDeltas() {
 
-        deltas = Lists.newArrayList();
+        deltaCounts = Lists.newArrayList();
 
         // (Loosely, calculate deltas=prodLocSchema-reactLocSchema.)
 
         for (int i = 0; i<nSubSchemas; i++) {
             PopulationMap<Integer> popMap = new PopulationMap<Integer>(0);
             
-            for (Population pop : reactSubSchemas.get(i).getPopulationKeySet()) {
-                for (int offset : reactSubSchemas.get(i).getOffsetKeySet(pop)) {
-                    popMap.put(pop, offset, -reactSubSchemas.get(i).get(pop, offset));
+            for (Population pop : reactSubCounts.get(i).getPopulationKeySet()) {
+                for (int offset : reactSubCounts.get(i).getOffsetKeySet(pop)) {
+                    popMap.put(pop, offset, -reactSubCounts.get(i).get(pop, offset));
                 }
             }
             
-            for (Population pop : prodSubSchemas.get(i).getPopulationKeySet()) {
-                for (int offset : prodSubSchemas.get(i).getOffsetKeySet(pop)) {
+            for (Population pop : prodSubCounts.get(i).getPopulationKeySet()) {
+                for (int offset : prodSubCounts.get(i).getOffsetKeySet(pop)) {
                     if (!popMap.containsKey(pop, offset))
-                        popMap.put(pop, offset, prodSubSchemas.get(i).get(pop, offset));
+                        popMap.put(pop, offset, prodSubCounts.get(i).get(pop, offset));
                     else {
                         int val = popMap.get(pop, offset);
-                        val += prodSubSchemas.get(i).get(pop, offset);
+                        val += prodSubCounts.get(i).get(pop, offset);
                         popMap.put(pop, offset, val);
                     }
                         
                 }
             }
 
-            deltas.add(popMap);
+            deltaCounts.add(popMap);
         }
     }
 
@@ -302,9 +289,9 @@ public class Reaction {
         for (int i = 0; i<nSubSchemas; i++) {
             double thisProp = rates.get(i);
 
-            for (Population pop : reactSubSchemas.get(i).getPopulationKeySet())
-                for (int offset : reactSubSchemas.get(i).getOffsetKeySet(pop))
-                    for (int m = 0; m<reactSubSchemas.get(i).get(pop, offset); m++)
+            for (Population pop : reactSubCounts.get(i).getPopulationKeySet())
+                for (int offset : reactSubCounts.get(i).getOffsetKeySet(pop))
+                    for (int m = 0; m<reactSubCounts.get(i).get(pop, offset); m++)
                         thisProp *= state.get(pop, offset)-m;
 
             propensities.set(i, thisProp);

@@ -61,7 +61,7 @@ public class LineageState {
         
         // Choose lineages to involve in reaction(s):
         List<Node> chosenLineages = new ArrayList<Node>();
-        PopulationMap<Integer> reactivesRemaining = reaction.reactSubSchemas
+        PopulationMap<Integer> reactivesRemaining = reaction.reactSubCounts
                 .get(subReaction).copy();
         
         for (Node node : activeNodes) {

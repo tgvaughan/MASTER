@@ -19,7 +19,7 @@
 
             <!-- infection reaction -->
             <reaction spec='Reaction'>
-                <rate spec='RealParameter'>0.01</rate>
+                <rate spec='RealParameter'>0.002</rate>
                 <reactantSchema spec='Schema'>
                     <popSchema spec='PopSchema'>
                         <population idref='S'/>

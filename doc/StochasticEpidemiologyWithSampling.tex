@@ -1,0 +1,37 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath, amsfonts}
+
+\begin{document}
+
+
+\title{Stochastic simulation of non-linear epidemiology with sampling}
+\author{Alexei Drummond}
+\date{}
+\maketitle
+
+
+\section{Nonlinear epidemiology with sampling}
+
+Consider the following coupled pair of processes:
+
+\begin{eqnarray}
+I + S & \overset{\beta} \longrightarrow & 2I \nonumber \\
+I & \overset{\gamma}\longrightarrow & R,
+\end{eqnarray}
+
+This is the reaction scheme for a continuous-time discrete-state analogue of the classic deterministic Kermack-McKendrick SIR (susceptible-infected-recovered) model of a closed epidemic.
+
+Lets add a third process to differentiate between observed and unobserved recoveries:
+
+\begin{eqnarray}
+I + S & \overset{\beta} \longrightarrow & 2I \nonumber \\
+I & \overset{(1-s)\gamma}\longrightarrow & R_h \\
+I & \overset{s\gamma}\longrightarrow & R_s,
+\end{eqnarray}
+
+We now distinguish between {\it hidden} or unobserved recoveries $R_h$ and {\it sampled} or observed recoveries $R_s$. This censored infection process, where only some recoveries are observed, is the basis for connecting non-linear epidemiological models to phylogenetic data. The new parameter $s$ is the {\it sampling proportion}, i.e. the probability of a recovery being observed, and thus the expected proportion of recoveries observed.
+
+
+
+\end{document}

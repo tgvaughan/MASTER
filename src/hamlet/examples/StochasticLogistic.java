@@ -1,4 +1,4 @@
-package hamlet.models;
+package hamlet.examples;
 
 import hamlet.EnsembleSpec;
 import hamlet.Ensemble;

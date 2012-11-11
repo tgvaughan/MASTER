@@ -66,7 +66,7 @@ public class State {
      * @return Size of sub-population.
      */
     public double get(Population p, int[] sub) {
-        return popSizes.get(p)[p.subToOffset(sub)];
+        return popSizes.get(p)[p.locToOffset(sub)];
     }
 
     /**
@@ -98,7 +98,7 @@ public class State {
      * @param value	Desired size.
      */
     public void set(Population p, int[] loc, double value) {
-        popSizes.get(p)[p.subToOffset(loc)] = value;
+        popSizes.get(p)[p.locToOffset(loc)] = value;
     }
 
     /**

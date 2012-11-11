@@ -7,7 +7,7 @@ package hamlet;
  */
 public class Tree {
 
-	// Possible root nodes of tree.
+	// Root nodes of tree.
 	Node rootNode;
 
 	// Spec specification.
@@ -33,9 +33,5 @@ public class Tree {
                 // Initialise lineage state:
                 LineageState lineageState = new LineageState(rootNode);
                 
-                // Generate tree:
-                while (lineageState.isAlive() && lineageState.time<spec.maxHeight)
-                    spec.getIntegrator().stepTree(spec.model, state, lineageState,
-                            spec.maxHeight);
 	}
 }

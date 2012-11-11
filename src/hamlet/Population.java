@@ -1,5 +1,7 @@
 package hamlet;
 
+import java.util.Iterator;
+
 /**
  * Class of objects describing distinct populations within the model.
  * These populations may be scalar or may involve genetically distinct
@@ -8,7 +10,7 @@ package hamlet;
  * @author Tim Vaughan
  *
  */
-public class Population {
+public class Population implements Iterable<SubPopulation> {
 
 	String name; // Population name
 	int[] dims; // Structural space dimensions
@@ -16,45 +18,38 @@ public class Population {
 	int nSubPops; // Total number of sub-populations
 
 	/**
-	 * Define a structured population.
+	 * Define a population.
 	 * 
-	 * @param name		Population name.
-	 * @param dims  
+         * @param name Population name.
+         * @param dims Sub-population structure.
 	 */
-	public Population(String name, int[] dims) {
+	public Population(String name, int ... dims) {
 		this.name = name;
-		this.dims = dims.clone();
 
-		nSubPops = 1;
-		for (int i=0; i<dims.length; i++)
-			nSubPops *= dims[i];
-	}
-
-	/**
-	 * Define an unstructured population.
-	 * 
-	 * @param name
-	 */
-	public Population(String name) {
-		this.name = name;
-		dims = new int[1];
-		dims[0] = 1;
-
-		nSubPops = 1;
+                if (dims.length==0) {
+                    this.dims = new int[1];
+                    dims[0] = 1;
+                    nSubPops = 1;
+                } else {
+                    this.dims = dims;
+                    nSubPops = 1;
+                    for (int i=0; i<dims.length; i++)
+                        nSubPops *= dims[i];
+                }
 	}
 
 	/**
 	 * Get offset into sub-population sizes vector.
 	 * 
-	 * @param sub Location of sub-population.
+	 * @param location Location of sub-population.
 	 * @return Offset.
 	 */
-	public int subToOffset(int[] sub) {
+	public int locToOffset(int[] location) {
 		int offset = 0;
 
 		int m=1;
-		for (int i=0; i<sub.length; i++) {
-			offset += m*sub[i];
+		for (int i=0; i<location.length; i++) {
+			offset += m*location[i];
 			m *= dims[i];
 		}
 
@@ -72,4 +67,9 @@ public class Population {
 	public int[] getDims() {
 		return dims;
 	}
+
+    @Override
+    public Iterator<SubPopulation> iterator() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

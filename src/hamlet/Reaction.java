@@ -21,9 +21,6 @@ public class Reaction {
     List<Double> rates, propensities;
     int nSubSchemas;
     
-    List<Integer> reactantInheritance, productInheritance;
-    List<InheritanceMap> inheritanceMaps;
-
     /**
      * Constructor (with name).
      */
@@ -34,9 +31,6 @@ public class Reaction {
         prodSubSchemas = Lists.newArrayList();
         reactSubSchemaList = Lists.newArrayList();
         prodSubSchemaList = Lists.newArrayList();
-        reactantInheritance = Lists.newArrayList();
-        productInheritance = Lists.newArrayList();
-        inheritanceMaps = Lists.newArrayList();
 
         rates = Lists.newArrayList();
         
@@ -53,9 +47,6 @@ public class Reaction {
         prodSubSchemas = Lists.newArrayList();
         reactSubSchemaList = Lists.newArrayList();
         prodSubSchemaList = Lists.newArrayList();
-        reactantInheritance = Lists.newArrayList();
-        productInheritance = Lists.newArrayList();
-        inheritanceMaps = Lists.newArrayList();
 
         rates = Lists.newArrayList();
     }
@@ -82,64 +73,7 @@ public class Reaction {
         this.prodPopSchema = Lists.newArrayList(productPopSchema);
     }
     
-    /**
-     * Set parentage IDs used to determine inheritance relationships for
-     * reaction.
-     * 
-     * @param reactantInheritance 
-     */
-    public void setReactantInheritance(Integer... reactantInheritance) {
-        this.reactantInheritance = Lists.newArrayList(reactantInheritance);
-    }
-    
-    /**
-     * Set child IDs used to determine inheritance relationships for
-     * reaction.
-     * 
-     * @param productInheritance 
-     */
-    public void setProductInheritance(Integer... productInheritance) {
-        this.productInheritance = Lists.newArrayList(productInheritance);
-    }
-    
-    /**
-     * Generate a default inheritance relationship between reactants and
-     * products of the reaction.  The default is constructed by iterating
-     * over the reactant populations from left to right and greedily assigning
-     * matching populations (regardless of subpopulation) as children.
-     */
-    public void generateDefaultInheritance() {
-        
-        for (int i=0; i<reactPopSchema.size(); i++) {
-            reactantInheritance.add(i);
-            for (int j=0; j<prodPopSchema.size(); j++) {
-                if (j>=productInheritance.size())
-                    productInheritance.add(-1);
-                if (prodPopSchema.get(j) == reactPopSchema.get(i)) {
-                    if (productInheritance.get(j) == -1)
-                        productInheritance.set(j, i);
-                }
-            }
-        }
-    }
-    
-    /**
-     * Generate inheritance maps needed by TreeIntegrators.
-     * 
-     * Must be called AFTER sub-population reaction schemas are in place.
-     */
-    public void generateInheritanceMaps() {
-        for (int i=0; i<nSubSchemas; i++) {
-            InheritanceMap imap = new InheritanceMap(
-                    reactPopSchema, prodPopSchema,
-                    reactSubSchemaList.get(i),
-                    prodSubSchemaList.get(i),
-                    reactantInheritance, productInheritance);
-            
-            inheritanceMaps.add(imap);
-        }
-    }
-       
+
     /**
      * Define a particular sub-population-level schema by listing the individual
      * sub-population reactants involved in a reaction. Subsequent calls to
@@ -161,7 +95,7 @@ public class Reaction {
         Integer[] offsets = new Integer[reactPopSchema.size()];
         for (int pidx = 0; pidx<reactPopSchema.size(); pidx++)
             if (subs[pidx]!=null)
-                offsets[pidx] = reactPopSchema.get(pidx).subToOffset(subs[pidx]);
+                offsets[pidx] = reactPopSchema.get(pidx).locToOffset(subs[pidx]);
             else
                 offsets[pidx] = 0;
 
@@ -195,7 +129,7 @@ public class Reaction {
         Integer[] offsets = new Integer[subs.length];
         for (int i = 0; i<subs.length; i++)
             if (subs[i]!=null)
-                offsets[i] = prodPopSchema.get(i).subToOffset(subs[i]);
+                offsets[i] = prodPopSchema.get(i).locToOffset(subs[i]);
             else
                 offsets[i] = 0;
         
@@ -307,21 +241,6 @@ public class Reaction {
         if ((reactSubSchemas.size()!=prodSubSchemas.size())
                 ||(reactSubSchemas.size()!=rates.size()))
             throw new IllegalArgumentException("Inconsistent number of schemas and/or rates.");
-        
-        // Assign default inheritance relationships if not provided:
-        if ((reactantInheritance.isEmpty()) && (productInheritance.isEmpty())) {
-            generateDefaultInheritance();
-        }
-        
-        // Perform sanity check on inheritance relationships:
-        if ((reactantInheritance.size() != reactPopSchema.size())
-                || (productInheritance.size() != prodPopSchema.size())) {
-            throw new IllegalArgumentException("Inconsistent inheritance map sizes");
-        }
-        
-        // Process inheritance relationships into inheritance maps for
-        // faster tree generation:
-        generateInheritanceMaps();
 
         // Central record of number of sub-population reaction schemas:
         nSubSchemas = rates.size();

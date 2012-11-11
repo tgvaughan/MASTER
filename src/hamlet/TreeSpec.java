@@ -12,9 +12,7 @@ public class TreeSpec extends Spec {
     Population rootPop;
     int [] rootSubPopLoc;
     int rootSubPopOffset;
-    
-    TreeIntegrator integrator;
-    
+
     double maxHeight;
 
     public TreeSpec() {
@@ -35,17 +33,8 @@ public class TreeSpec extends Spec {
     public void setRootPop(Population rootPop, int[] subPopLoc) {
         this.rootPop = rootPop;
         this.rootSubPopLoc = subPopLoc;
-        this.rootSubPopOffset = rootPop.subToOffset(subPopLoc);
-    }
-    
-    /**
-     * Select integration algorithm to use in tree generation.
-     * 
-     * @param integrator Tree-specific integrator.
-     */
-    public void setIntegrator(TreeIntegrator integrator) {
-        this.integrator = integrator;
-    }
+        this.rootSubPopOffset = rootPop.locToOffset(subPopLoc);
+    }    
     
     /**
      * Set maximum tree height.
@@ -86,15 +75,6 @@ public class TreeSpec extends Spec {
     @JsonIgnore
     public int getRootSubPopOffset() {
         return rootSubPopOffset;
-    }
-    
-    /**
-     * Obtain integrator to be used in constructing tree.
-     * 
-     * @return Tree integrator
-     */
-    public TreeIntegrator getIntegrator() {
-        return integrator;
     }
     
     /**

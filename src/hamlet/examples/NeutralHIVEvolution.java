@@ -20,8 +20,9 @@ public class NeutralHIVEvolution {
 
         // Sequence length:
         int L = 1000;
+        
+        // Maximum number of mutations to consider:
         int hTrunc = 20;
-        int[] dims = {hTrunc+1};
 
         /*
          * Assemble model:
@@ -36,11 +37,11 @@ public class NeutralHIVEvolution {
         model.addPopulation(X);
 
         // Infected cell:
-        Population Y = new Population("Y", dims);
+        Population Y = new Population("Y", hTrunc+1);
         model.addPopulation(Y);
 
         // Virion:
-        Population V = new Population("V", dims);
+        Population V = new Population("V", hTrunc+1);
         model.addPopulation(V);
 
         // Define reactions:

@@ -88,7 +88,7 @@ public class Moment {
 		Map<Population, Map<Integer,Integer>> popMap = Maps.newHashMap();
 
 		for (int pidx=0; pidx<popSchema.length; pidx++) {
-			int offset = popSchema[pidx].subToOffset(subs[pidx]);
+			int offset = popSchema[pidx].locToOffset(subs[pidx]);
 
 			if (!popMap.containsKey(popSchema[pidx])) {
 				Map<Integer,Integer> offsetMap = Maps.newHashMap();

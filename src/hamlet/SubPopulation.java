@@ -40,4 +40,24 @@ public class SubPopulation {
             this.offset = population.locToOffset(location);
     }
     
+    @Override
+    public boolean equals(Object other) {
+        boolean result = false;
+        
+        if (other instanceof SubPopulation) {
+            SubPopulation otherSub = (SubPopulation)other;
+            result = (pop == otherSub.pop) && (offset == otherSub.offset);
+        }
+        
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89*hash+(this.pop!=null ? this.pop.hashCode() : 0);
+        hash = 89*hash+this.offset;
+        return hash;
+    }
+    
 }

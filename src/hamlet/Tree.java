@@ -29,9 +29,5 @@ public class Tree {
                 rootNode = new Node(spec.getRootPop(),
                         spec.getRootSubPopOffset(),
                         0.0);
-                
-                // Initialise lineage state:
-                LineageState lineageState = new LineageState(rootNode);
-                
 	}
 }

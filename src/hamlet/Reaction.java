@@ -16,7 +16,6 @@ public class Reaction {
 
     String reactionName;
     List<Population> reactPopSchema, prodPopSchema;
-    List<List<SubPopulation>> reactSubSchemaLists, prodSubSchemaLists;
     List<Map<SubPopulation,Integer>> reactSubCounts, prodSubCounts, deltaCounts;
     List<Double> rates, propensities;
     int nSubSchemas;
@@ -29,8 +28,6 @@ public class Reaction {
         // Ensure lists are defined:
         reactSubCounts = Lists.newArrayList();
         prodSubCounts = Lists.newArrayList();
-        reactSubSchemaLists = Lists.newArrayList();
-        prodSubSchemaLists = Lists.newArrayList();
 
         rates = Lists.newArrayList();
         
@@ -45,8 +42,6 @@ public class Reaction {
         // Ensure lists are defined:
         reactSubCounts = Lists.newArrayList();
         prodSubCounts = Lists.newArrayList();
-        reactSubSchemaLists = Lists.newArrayList();
-        prodSubSchemaLists = Lists.newArrayList();
 
         rates = Lists.newArrayList();
     }
@@ -98,8 +93,6 @@ public class Reaction {
                 throw new IllegalArgumentException("Incorrect subpopulation type in schema.");
         }
 
-        // Record ordered list of offsets for inheretance map interpretation:
-        reactSubSchemaLists.add(Lists.newArrayList(subs));
     }
     
     /**
@@ -125,22 +118,17 @@ public class Reaction {
             if (subs[i].pop != prodPopSchema.get(i))
                 throw new IllegalArgumentException("Incorrect subpopulation type in schema.");
         }
-
-        // Record ordered list of offsets for inheretance map interpretation:
-        prodSubSchemaLists.add(Lists.newArrayList(subs));
         
         // Record unique sub-population counts:
         reactSubCounts.add(getSubCount(subs));
     }
     
     /**
-     * Internal method which handles the task of adding the sub-population level
-     * reaction reactant/product schema. Takes a list of offsets into the State
-     * sub-population size arrays rather than the sub-population specification
-     * vectors.
-     *
-     * @param subCounts List of sub-population-level schema.
-     * @param subs vararg array of product sub-populations.
+     * Internal method which takes a list of sub-populations and constructs
+     * a map from the sub-populations to their multiplicity in the list.
+     * 
+     * @param subs List of sub-populations.
+     * @return Map from subpopulations to their list multiplicity.
      */
     private Map<SubPopulation, Integer> getSubCount(SubPopulation ... subs) {
 
@@ -149,9 +137,7 @@ public class Reaction {
         // that specific offset appears as a reactant/product in this schema.
         Map<SubPopulation, Integer> subCount = Maps.newHashMap();
         
-        for (SubPopulation sub : subs) {
-            Population pop = sub.pop;
-            
+        for (SubPopulation sub : subs) {            
             if (!subCount.containsKey(sub))
                 subCount.put(sub, 1);
             else {
@@ -250,31 +236,25 @@ public class Reaction {
 
         deltaCounts = Lists.newArrayList();
 
-        // (Loosely, calculate deltas=prodLocSchema-reactLocSchema.)
+        // Loosely, calculate deltas=prodLocSchema-reactLocSchema.
 
         for (int i = 0; i<nSubSchemas; i++) {
-            PopulationMap<Integer> popMap = new PopulationMap<Integer>(0);
+            Map<SubPopulation, Integer> deltaCount = Maps.newHashMap();
             
-            for (Population pop : reactSubCounts.get(i).getPopulationKeySet()) {
-                for (int offset : reactSubCounts.get(i).getOffsetKeySet(pop)) {
-                    popMap.put(pop, offset, -reactSubCounts.get(i).get(pop, offset));
-                }
-            }
+            for (SubPopulation sub : reactSubCounts.get(i).keySet()) 
+                deltaCount.put(sub, -reactSubCounts.get(i).get(sub));
             
-            for (Population pop : prodSubCounts.get(i).getPopulationKeySet()) {
-                for (int offset : prodSubCounts.get(i).getOffsetKeySet(pop)) {
-                    if (!popMap.containsKey(pop, offset))
-                        popMap.put(pop, offset, prodSubCounts.get(i).get(pop, offset));
-                    else {
-                        int val = popMap.get(pop, offset);
-                        val += prodSubCounts.get(i).get(pop, offset);
-                        popMap.put(pop, offset, val);
-                    }
-                        
+            for (SubPopulation sub : prodSubCounts.get(i).keySet()) {
+                if (!deltaCount.containsKey(sub))
+                    deltaCount.put(sub, prodSubCounts.get(i).get(sub));
+                else {
+                    int val = deltaCount.get(sub);
+                    val += prodSubCounts.get(i).get(sub);
+                    deltaCount.put(sub, val);
                 }
             }
 
-            deltaCounts.add(popMap);
+            deltaCounts.add(deltaCount);
         }
     }
 
@@ -289,10 +269,10 @@ public class Reaction {
         for (int i = 0; i<nSubSchemas; i++) {
             double thisProp = rates.get(i);
 
-            for (Population pop : reactSubCounts.get(i).getPopulationKeySet())
-                for (int offset : reactSubCounts.get(i).getOffsetKeySet(pop))
-                    for (int m = 0; m<reactSubCounts.get(i).get(pop, offset); m++)
-                        thisProp *= state.get(pop, offset)-m;
+            for (SubPopulation sub : reactSubCounts.get(i).keySet()) {
+                for (int m = 0; m<reactSubCounts.get(i).get(sub); m++)
+                    thisProp *= state.get(sub)-m;
+            }
 
             propensities.set(i, thisProp);
         }        
@@ -326,7 +306,7 @@ public class Reaction {
         // Construct reaction string
         StringBuilder sb = new StringBuilder();
         if (reactionName != null)
-            sb.append(reactionName + ": ");
+            sb.append(reactionName).append(": ");
 
         if (reactants.size()>0) {
             boolean first = true;

@@ -12,7 +12,7 @@ import java.util.*;
 public class State {
 
     Model model;
-    Map<Population, Double[]> popSizes;
+    Map<SubPopulation, Double> popSizes;
 
     /**
      * Constructor
@@ -20,24 +20,10 @@ public class State {
      * @param model Model defining the state space.
      */
     public State(Model model) {
-
         this.model = model;
 
         // Initialise sub-population sizes:
         popSizes = Maps.newHashMap();
-        for (Population p : model.pops) {
-
-            // Allocate sub-population size array:
-            Double[] subPopSizes = new Double[p.nSubPops];
-
-            // Initialise elements to zero:
-            for (int i = 0; i<subPopSizes.length; i++)
-                subPopSizes[i] = 0.0;
-
-            // Assign to popSizes map:
-            popSizes.put(p, subPopSizes);
-        }
-
     }
 
     /**
@@ -50,66 +36,29 @@ public class State {
 
         // Copy sub-population sizes:
         this.popSizes = Maps.newHashMap();
-        for (Population p : model.pops) {
-            popSizes.put(p, new Double[p.nSubPops]);
-            for (int i = 0; i<p.nSubPops; i++)
-                popSizes.get(p)[i] = oldState.popSizes.get(p)[i];
+        for (SubPopulation sub : oldState.popSizes.keySet()) {
+            popSizes.put(sub, oldState.popSizes.get(sub));
         }
-
     }
 
     /**
      * Get size of a particular sub-population.
      *
-     * @param p	Population to interrogate.
-     * @param sub	Specific sub-population location.
+     * @param sub Specific sub-population.
      * @return Size of sub-population.
      */
-    public double get(Population p, int[] sub) {
-        return popSizes.get(p)[p.locToOffset(sub)];
-    }
-
-    /**
-     * Get size of a population using pre-calculated offset.
-     *
-     * @param p	Population to interrogate.
-     * @param offset	Offset into sub-population size array.
-     * @return Size of sub-population.
-     */
-    public double get(Population p, int offset) {
-        return popSizes.get(p)[offset];
-    }
-
-    /**
-     * Get size of structureless population.
-     *
-     * @param p	Population to interrogate.
-     * @return Size of sub-population.
-     */
-    public double get(Population p) {
-        return popSizes.get(p)[0];
+    public double get(SubPopulation sub) {
+        return popSizes.get(sub);
     }
 
     /**
      * Set size of a particular sub-population.
      *
-     * @param p	Population to modify.
-     * @param loc	Specific sub-population location.
-     * @param value	Desired size.
+     * @param sub SubPopulation to modify.
+     * @param value Desired size.
      */
-    public void set(Population p, int[] loc, double value) {
-        popSizes.get(p)[p.locToOffset(loc)] = value;
-    }
-
-    /**
-     * Set size of a population using pre-calculated offset.
-     *
-     * @param p	Population whose size to set.
-     * @param offset	Offset into sub-population size array.
-     * @param value	Desired size.
-     */
-    public void set(Population p, int offset, double value) {
-        popSizes.get(p)[offset] = value;
+    public void set(SubPopulation sub, double value) {
+        popSizes.put(sub, value);
     }
 
     /**
@@ -119,52 +68,32 @@ public class State {
      * @param value Desired size.
      */
     public void set(Population p, double value) {
-        popSizes.get(p)[0] = value;
+        popSizes.put(new SubPopulation(p), value);
     }
 
     /**
-     * Add value to size of particular sub-population specified using a
-     * pre-calculated offset.
+     * Add value to size of particular sub-population.
      *
-     * @param p
-     * @param offset
+     * @param sub
      * @param increment
      */
-    public void add(Population p, int offset, double increment) {
-        popSizes.get(p)[offset] += increment;
+    public void add(SubPopulation sub, double increment) {
+        popSizes.put(sub, popSizes.get(sub) + increment);
     }
 
     /**
      * Add value to size of particular sub-population specified using a
      * pre-calculated offset, truncating at zero if result is negative.
      *
-     * @param p
-     * @param offset
+     * @param sub
      * @param increment
      */
-    public void addNoNeg(Population p, int offset, double increment) {
-        double newPopSize = popSizes.get(p)[offset]+increment;
+    public void addNoNeg(SubPopulation sub, double increment) {
+        double newPopSize = popSizes.get(sub)+increment;
         if (newPopSize<0.0)
-            popSizes.get(p)[offset] = 0.0;
+            popSizes.put(sub, 0.0);
         else
-            popSizes.get(p)[offset] = newPopSize;
-    }
-
-    /**
-     * Calculate difference between population sizes in this state and those in
-     * another state. i.e. result = this-other.
-     *
-     * @param otherState
-     * @return
-     */
-    public State difference(State otherState) {
-        State diff = new State(this);
-
-        for (Population p : popSizes.keySet())
-            for (int i = 0; i<popSizes.get(p).length; i++)
-                diff.popSizes.get(p)[i] -= otherState.popSizes.get(p)[i];
-
-        return diff;
+            popSizes.put(sub, newPopSize);
     }
 
     /**
@@ -176,14 +105,12 @@ public class State {
      * @param q Number of times for reaction to fire.
      */
     public void implementReaction(Reaction reaction, int subReaction, double q) {
-        for (Population pop : reaction.deltaCounts.get(subReaction).getPopulationKeySet())
-            for (int offset : reaction.deltaCounts.get(subReaction).getOffsetKeySet(pop))
-                addNoNeg(pop, offset,
-                        q*reaction.deltaCounts.get(subReaction).get(pop, offset));
+        for (SubPopulation sub : reaction.deltaCounts.get(subReaction).keySet())
+            addNoNeg(sub, q*reaction.deltaCounts.get(subReaction).get(sub));
     }
 
     /**
-     * Obtain a string representation of state.
+     * Obtain a very raw string representation of state.
      * 
      * @return string
      */
@@ -192,9 +119,10 @@ public class State {
         
         StringBuilder sb = new StringBuilder();
 
-        for (Population p : popSizes.keySet())
-            for (int i = 0; i<popSizes.get(p).length; i++)
-                sb.append(" ").append(String.valueOf(popSizes.get(p)[i]));
+        for (Population pop : model.pops) {
+            for (SubPopulation sub : pop)
+                sb.append(" ").append(String.valueOf(popSizes.get(sub)));
+        }
 
         return sb.toString();
     }
@@ -208,9 +136,9 @@ public class State {
         
         StringBuilder sb = new StringBuilder();
 
-        for (Population p : popSizes.keySet())
-            for (int i = 0; i<popSizes.get(p).length; i++)
-                sb.append(p.name).append(String.valueOf(i));
+        for (Population pop : model.pops)
+            for (SubPopulation sub : pop)
+                sb.append(pop.name).append(String.valueOf(sub.offset));
 
         return sb.toString();
     }

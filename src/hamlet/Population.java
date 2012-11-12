@@ -1,5 +1,7 @@
 package hamlet;
 
+import java.util.Iterator;
+
 /**
  * Class of objects describing distinct populations within the model. These
  * populations may be scalar or may involve genetically distinct
@@ -8,7 +10,7 @@ package hamlet;
  * @author Tim Vaughan
  *
  */
-public class Population {
+public class Population implements Iterable<SubPopulation> {
 
     String name; // Population name
     int[] dims; // Structural space dimensions
@@ -65,5 +67,10 @@ public class Population {
 
     public int[] getDims() {
         return dims;
+    }
+
+    @Override
+    public Iterator<SubPopulation> iterator() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

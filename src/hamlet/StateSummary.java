@@ -40,11 +40,10 @@ public class StateSummary {
 	 */
 	public void record(State state) {
 
-		for (Moment moment : mean.keySet()) {
+		for (Moment moment : mean.keySet())
 			moment.getEstimate(state, mean.get(moment), std.get(moment));
-		}
 
-		sampleNum++;
+		sampleNum += 1;
 
 	}
 

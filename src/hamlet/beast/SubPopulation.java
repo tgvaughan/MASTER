@@ -18,18 +18,18 @@ public class SubPopulation extends Plugin {
 			"Location of sub-population along a single dimention",
 			new ArrayList<IntegerParameter>());
 
-	// Sub-population specification:
-	int[] sub;
+	// Sub-population location:
+	int[] location;
 
 	public SubPopulation() {};
 
 	@Override
 	public void initAndValidate() throws Exception {
 
-		sub = new int[locationInput.get().size()];
+		location = new int[locationInput.get().size()];
 
 		for (int i=0; i<locationInput.get().size(); i++)
-			sub[i] = locationInput.get().get(i).getValue();
+			location[i] = locationInput.get().get(i).getValue();
 	}
 
 }

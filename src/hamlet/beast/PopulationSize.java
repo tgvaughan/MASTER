@@ -22,7 +22,7 @@ public class PopulationSize extends Plugin {
 	hamlet.Population pop;
 
 	// Sub-population specifier:
-	int[] sub;
+	hamlet.SubPopulation sub;
 
 	// Size of particular sub-population:
 	Double size;
@@ -36,8 +36,11 @@ public class PopulationSize extends Plugin {
 	public void initAndValidate() throws Exception {
 
 		pop = populationInput.get().pop;
-		if (subPopulationInput.get() != null)
-			sub = subPopulationInput.get().sub;
+		if (subPopulationInput.get() != null) {
+                    sub = new hamlet.SubPopulation(pop, subPopulationInput.get().location);
+                } else {
+                    sub = new hamlet.SubPopulation(pop);
+                }
 		size = sizeInput.get();
 	}
 }

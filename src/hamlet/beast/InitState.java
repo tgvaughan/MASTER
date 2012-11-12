@@ -5,45 +5,37 @@ import beast.core.*;
 
 /**
  * Beast 2 plugin representing initial system state.
- * 
+ *
  * @author Tim Vaughan
  *
  */
 @Description("Specification of initial system state.")
 public class InitState extends Plugin {
 
-	public Input<List<PopulationSize>> popSizesInput = new Input<List<PopulationSize>>(
-			"populationSize",
-			"Initial population size.",
-			new ArrayList<PopulationSize>());
+    public Input<List<PopulationSize>> popSizesInput = new Input<List<PopulationSize>>(
+            "populationSize",
+            "Initial population size.",
+            new ArrayList<PopulationSize>());
+    public Input<Model> modelInput = new Input<Model>("model", "Model defining state space.");
+    // True state object:
+    hamlet.State initState;
 
-	public Input<Model> modelInput = new Input<Model>("model", "Model defining state space.");
-
-	// True state object:
-	hamlet.State initState;
-
-	public InitState() {};
+    public InitState() { };
 
 	@Override
-	public void initAndValidate() throws Exception {
+    public void initAndValidate() throws Exception {
 
-		// Instantiate true state object:
-		initState = new hamlet.State(modelInput.get().model);
+        // Instantiate true state object:
+        initState = new hamlet.State(modelInput.get().model);
 
-		// Assign sizes to state object:
-		for (PopulationSize popSizeInput : popSizesInput.get()) {
-			if (popSizeInput.sub != null) {
+        // Assign sizes to state object:
+        for (PopulationSize popSizeInput : popSizesInput.get())
+            if (popSizeInput.sub!=null)
+                // Assign sub-population size:
+                initState.set(popSizeInput.sub, popSizeInput.size);
+            else
+                // Assign unstructured population size:
+                initState.set(popSizeInput.pop, popSizeInput.size);
 
-				// Assign sub-population size:
-				initState.set(popSizeInput.pop, popSizeInput.sub, popSizeInput.size);
-
-			} else {
-
-				// Assign unstructured population size:
-				initState.set(popSizeInput.pop, popSizeInput.size);
-			}
-		}
-
-	}
-
+    }
 }

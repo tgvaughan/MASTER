@@ -25,11 +25,8 @@ public class Reaction extends Plugin {
     // True reaction object:
     hamlet.Reaction reaction;
 
-    public Reaction() {
-    }
-
-    ;
-
+    public Reaction() { };
+    
 	@Override
     public void initAndValidate() throws Exception {
 
@@ -38,14 +35,13 @@ public class Reaction extends Plugin {
         else
             reaction = new hamlet.Reaction(reactionNameInput.get());
 
-        reaction.setReactantSchema(reactantSchemaInput.get().popSchema);
-        reaction.setProductSchema(productSchemaInput.get().popSchema);
-
-        for (int[][] subPopSchema : reactantSchemaInput.get().subPopSchemas)
-            reaction.addReactantSubSchema(subPopSchema);
-
-        for (int[][] subPopSchema : productSchemaInput.get().subPopSchemas)
-            reaction.addProductSubSchema(subPopSchema);
+        reaction.setReactantSchema(reactantSchemaInput.get().popSchema);        
+        for (hamlet.SubPopulation[] subs : reactantSchemaInput.get().subPopSchemas)
+            reaction.addReactantSubSchema(subs);
+        
+        reaction.setProductSchema(productSchemaInput.get().popSchema);        
+        for (hamlet.SubPopulation[] subs : productSchemaInput.get().subPopSchemas)
+            reaction.addProductSubSchema(subs);
 
         double[] rates = new double[ratesInput.get().size()];
         for (int i = 0; i<rates.length; i++)

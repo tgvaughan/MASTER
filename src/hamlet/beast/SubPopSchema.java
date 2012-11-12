@@ -17,16 +17,16 @@ public class SubPopSchema extends Plugin {
 			new ArrayList<SubPopulation>());
 
 	// Array of sub-population specifications:
-	int[][] subPopSchema;
+	int[][] subPopLocations;
 
 	public SubPopSchema() {};
 
 	@Override
 	public void initAndValidate() throws Exception {
 
-		subPopSchema = new int[subPopsInput.get().size()][];
+		subPopLocations = new int[subPopsInput.get().size()][];
 		for (int i=0; i<subPopsInput.get().size(); i++)
-			subPopSchema[i] = subPopsInput.get().get(i).sub;
+			subPopLocations[i] = subPopsInput.get().get(i).location;
 	}
 
 }

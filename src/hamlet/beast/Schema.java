@@ -5,34 +5,40 @@ import beast.core.*;
 
 /**
  * Beast 2 plugin representing a combined population and sub-population schema.
+ *
  * @author Tim Vaughan
  *
  */
 @Description("Schema specification used in the definition of reactions/moments.")
 public class Schema extends Plugin {
 
-	public Input<PopSchema> popSchemaInput = new Input<PopSchema>("popSchema", "Population level schema.");
+    public Input<PopSchema> popSchemaInput = new Input<PopSchema>("popSchema", "Population level schema.");
+    public Input<List<SubPopSchema>> subPopSchemasInput = new Input<List<SubPopSchema>>("subPopSchema",
+            "A single sub-population-level schema.",
+            new ArrayList<SubPopSchema>());
 
-	public Input<List<SubPopSchema>> subPopSchemasInput = new Input<List<SubPopSchema>>("subPopSchema",
-			"A single sub-population-level schema.",
-			new ArrayList<SubPopSchema>());
+    // Population schema:
+    hamlet.Population[] popSchema;
+    
+    // Array of sub-population-level schemas:
+    List<hamlet.SubPopulation[]> subPopSchemas;
 
-	// Population schema:
-	hamlet.Population[] popSchema;
-
-	// Array of sub-population-level schemas:
-	List<int[][]> subPopSchemas;
-
-	public Schema() {};
+    public Schema() { };
 
 	@Override
-	public void initAndValidate() throws Exception {
+    public void initAndValidate() throws Exception {
 
-		popSchema = popSchemaInput.get().popSchema;
+        popSchema = popSchemaInput.get().popSchema;
 
-		subPopSchemas = new ArrayList<int[][]>();
-		for (SubPopSchema subPopSchemaInput : subPopSchemasInput.get())
-			subPopSchemas.add(subPopSchemaInput.subPopSchema);
+        subPopSchemas = new ArrayList<hamlet.SubPopulation[]>();
+        for (SubPopSchema subPopSchema : subPopSchemasInput.get()) {
+            hamlet.SubPopulation [] subs =
+                    new hamlet.SubPopulation[subPopSchema.subPopLocations.length];
+            for (int i=0; i<subs.length; i++) {
+                subs[i] = new hamlet.SubPopulation(popSchema[i], subPopSchema.subPopLocations[i]);
+            }
+            subPopSchemas.add(subs);
+        }
 
-	}
+    }
 }

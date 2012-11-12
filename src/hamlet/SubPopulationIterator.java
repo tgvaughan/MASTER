@@ -28,33 +28,42 @@ public class SubPopulationIterator implements Iterator<SubPopulation> {
     Population pop;
     int [] loc;
     
+    boolean finished;
+    
     public SubPopulationIterator(Population pop) {
+        this.pop = pop;
         loc = new int[pop.dims.length];
         for (int i=0; i<loc.length; i++)
             loc[i] = 0;
+        
+        finished = false;
     }
 
     @Override
     public boolean hasNext() {
-        for (int i=0; i<loc.length; i++)
-            if (loc[i]<pop.dims[i]-1)
-                return true;
-        
-        return false;
+        return !finished;
     }
 
     @Override
     public SubPopulation next() {
         
+        // Record subpopulation to return
+        SubPopulation sub = new SubPopulation(pop, loc);
+        
+        // Iterate location vector
+        boolean fellThrough = true;
         for (int i=0; i<loc.length; i++) {
             if (loc[i]<pop.dims[i]-1) {
                 loc[i] += 1;
+                fellThrough = false;
                 break;
             } else
                 loc[i] = 0;
         }
+        if (fellThrough)
+            finished = true;
         
-        return new SubPopulation(pop, loc);
+        return sub;
     }
 
     @Override

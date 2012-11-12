@@ -56,7 +56,7 @@ public class Trajectory {
 		double dt = spec.getSampleDt();
 
 		System.out.print("t ");
-		System.out.print(sampledStates[0].getNames());
+		System.out.print(sampledStates[0].getNames() + "\n");
 		int sidx = 0;
 		for (State s : sampledStates) {
 			System.out.print(dt*(sidx++) + " ");

@@ -48,7 +48,10 @@ public class State {
      * @return Size of sub-population.
      */
     public double get(SubPopulation sub) {
-        return popSizes.get(sub);
+        if (popSizes.containsKey(sub))
+            return popSizes.get(sub);
+        else
+            return 0.0;
     }
 
     /**
@@ -89,7 +92,7 @@ public class State {
      * @param increment
      */
     public void addNoNeg(SubPopulation sub, double increment) {
-        double newPopSize = popSizes.get(sub)+increment;
+        double newPopSize = get(sub)+increment;
         if (newPopSize<0.0)
             popSizes.put(sub, 0.0);
         else
@@ -121,7 +124,7 @@ public class State {
 
         for (Population pop : model.pops) {
             for (SubPopulation sub : pop)
-                sb.append(" ").append(String.valueOf(popSizes.get(sub)));
+                sb.append(" ").append(String.valueOf(get(sub)));
         }
 
         return sb.toString();

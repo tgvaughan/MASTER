@@ -27,7 +27,7 @@ public class Population implements Iterable<SubPopulation> {
 
         if (dims.length==0) {
             this.dims = new int[1];
-            dims[0] = 1;
+            this.dims[0] = 1;
             nSubPops = 1;
         } else {
             this.dims = dims;
@@ -71,6 +71,6 @@ public class Population implements Iterable<SubPopulation> {
 
     @Override
     public Iterator<SubPopulation> iterator() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new SubPopulationIterator(this);
     }
 }

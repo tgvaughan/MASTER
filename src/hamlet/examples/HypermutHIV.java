@@ -10,6 +10,8 @@ import hamlet.Reaction;
 import hamlet.State;
 import hamlet.SubPopulation;
 import hamlet.TauLeapingIntegrator;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 /**
  * Model of within-host HIV evolution, including APOBEC3*-driven hyper-mutation.
@@ -18,7 +20,7 @@ import hamlet.TauLeapingIntegrator;
  */
 public class HypermutHIV {
 
-    public static void main(String[] argv) {
+    public static void main(String[] argv) throws FileNotFoundException {
 
         /*
          * Assemble model:
@@ -260,7 +262,7 @@ public class HypermutHIV {
         spec.addMoment(mX);
 
         // Turn on verbose reportage:
-        spec.setVerbosity(1);
+        spec.setVerbosity(2);
 
         /*
          * Generate ensemble:
@@ -269,10 +271,10 @@ public class HypermutHIV {
         EnsembleSummary ensemble = new EnsembleSummary(spec);
 
         /*
-         * Dump results to stdout (JSON):
+         * Dump results to file (JSON):
          */
 
-        ensemble.dump();
+        ensemble.dump(new PrintStream("out.json"));
 
     }
 

@@ -36,7 +36,7 @@ public class EnsembleSummary {
         this.spec = spec;
 
         // Set seed if defined:
-        if (spec.seed<0)
+        if (spec.seed>=0)
             Randomizer.setSeed(spec.seed);
 
         // Derived spec parameters:

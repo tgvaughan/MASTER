@@ -174,7 +174,7 @@ public class NeutralHIVEvolution {
         EnsembleSummarySpec spec = new EnsembleSummarySpec();
 
         spec.setModel(model);
-        spec.setSimulationTime(365);
+        spec.setSimulationTime(365.0);
         spec.setIntegrator(new TauLeapingIntegrator(365.0/1e4));
         spec.setnSamples(1001);
         spec.setnTraj(10);
@@ -194,7 +194,7 @@ public class NeutralHIVEvolution {
         EnsembleSummary ensemble = new EnsembleSummary(spec);
 
         /*
-         * Dump results to stdout (JSON):
+         * Dump results to file (JSON):
          */
 
         ensemble.dump(new PrintStream("out.json"));

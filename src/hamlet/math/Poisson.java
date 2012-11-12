@@ -63,18 +63,13 @@ public class Poisson {
     }
 
     /**
-     * Speed test.
+     * Debugging.
      *
      * @param argv
      */
     public static void main(String[] argv) {
-
-        double res = 0;
-        for (int i = 0; i<100000; i++)
-            for (int j = 0; j<100; j++)
-                res = nextDouble(1e10);
-
-        System.out.println(res);
-
+        
+        for (int i = 0; i<10; i++)
+                System.out.println(nextDouble(100));
     }
 }

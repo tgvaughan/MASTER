@@ -44,6 +44,8 @@ public class Reaction {
         prodSubCounts = Lists.newArrayList();
 
         rates = Lists.newArrayList();
+        
+        this.reactionName = "Nameless Reaction";
     }
 
     /**
@@ -89,9 +91,19 @@ public class Reaction {
         
         // Check that sub-populations are of the right population type:
         for (int i=0; i<subs.length; i++) {
-            if (subs[i].pop != reactPopSchema.get(i))
-                throw new IllegalArgumentException("Incorrect subpopulation type in schema.");
+            if (subs[i] != null) {
+                if (subs[i].pop != reactPopSchema.get(i))
+                    throw new IllegalArgumentException("Incorrect subpopulation type in schema.");
+            } else {
+                if (reactPopSchema.get(i).nSubPops>1)
+                    throw new IllegalArgumentException("Null subpopulation given for non-scalar population in schema.");
+                
+                subs[i] = new SubPopulation(reactPopSchema.get(i));
+            }
         }
+        
+        // Record unique sub-population counts:
+        reactSubCounts.add(getSubCount(subs));
 
     }
     
@@ -115,12 +127,17 @@ public class Reaction {
         
         // Check that sub-populations are of the right population type:
         for (int i=0; i<subs.length; i++) {
-            if (subs[i].pop != prodPopSchema.get(i))
-                throw new IllegalArgumentException("Incorrect subpopulation type in schema.");
+            if (subs[i] != null) {
+                if (subs[i].pop != prodPopSchema.get(i))
+                    throw new IllegalArgumentException("Incorrect subpopulation type in schema.");
+            } else {
+                if (prodPopSchema.get(i).nSubPops>1)
+                    throw new IllegalArgumentException("Null subpopulation given for non-scalar population in schema.");
+            }
         }
         
         // Record unique sub-population counts:
-        reactSubCounts.add(getSubCount(subs));
+        prodSubCounts.add(getSubCount(subs));
     }
     
     /**
@@ -137,7 +154,8 @@ public class Reaction {
         // that specific offset appears as a reactant/product in this schema.
         Map<SubPopulation, Integer> subCount = Maps.newHashMap();
         
-        for (SubPopulation sub : subs) {            
+        for (SubPopulation sub : subs) {   
+            
             if (!subCount.containsKey(sub))
                 subCount.put(sub, 1);
             else {

@@ -9,6 +9,8 @@ import hamlet.Reaction;
 import hamlet.State;
 import hamlet.SubPopulation;
 import hamlet.TauLeapingIntegrator;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 /**
  * Simple model of HIV infection with neutral RT error-driven mutation.
@@ -17,7 +19,7 @@ import hamlet.TauLeapingIntegrator;
  */
 public class NeutralHIVEvolution {
 
-    public static void main(String[] argv) {
+    public static void main(String[] argv) throws FileNotFoundException {
 
         // Sequence length:
         int L = 1000;
@@ -195,7 +197,7 @@ public class NeutralHIVEvolution {
          * Dump results to stdout (JSON):
          */
 
-        ensemble.dump();
+        ensemble.dump(new PrintStream("out.json"));
     }
 
     /**

@@ -46,7 +46,7 @@ public class SubPopulation {
         
         if (other instanceof SubPopulation) {
             SubPopulation otherSub = (SubPopulation)other;
-            result = (pop == otherSub.pop) && (offset == otherSub.offset);
+            result = ((pop == otherSub.pop) && (offset == otherSub.offset));
         }
         
         return result;

@@ -9,6 +9,8 @@ import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
 import hamlet.SubPopulation;
 import hamlet.TauLeapingIntegrator;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 /**
  * Implements a basic stochastic migration model to test the ability of
@@ -19,7 +21,7 @@ import hamlet.TauLeapingIntegrator;
  */
 public class StochasticMigration {
 
-    public static void main(String[] argv) {
+    public static void main(String[] argv) throws FileNotFoundException {
 
         /*
          * Assemble model:
@@ -28,9 +30,7 @@ public class StochasticMigration {
         Model model = new Model();
 
         // Define populations:
-        int[] dims = new int[1];
-        dims[0] = 2;
-        Population X = new Population("X", dims);
+        Population X = new Population("X", 2);
         model.addPopulation(X);
 
         // Define migration reaction:
@@ -85,15 +85,18 @@ public class StochasticMigration {
         EnsembleSummarySpec spec = new EnsembleSummarySpec();
 
         spec.setModel(model);
-        spec.setSimulationTime(20.0);
-        spec.setIntegrator(new TauLeapingIntegrator(20.0/1e4));
+        spec.setSimulationTime(100.0);
+        spec.setIntegrator(new TauLeapingIntegrator(100.0/1e4));
         spec.setnSamples(1001);
-        spec.setnTraj(100);
+        spec.setnTraj(1000);
         spec.setSeed(42);
         spec.setInitState(initState);
         spec.addMoment(momentX);
         spec.addMoment(momentN);
 
+        // Report on ensemble calculation progress:
+        spec.setVerbosity(1);
+        
         /*
          * Generate ensemble:
          */
@@ -104,7 +107,7 @@ public class StochasticMigration {
          * Dump results to stdout:
          */
 
-        ensemble.dump();
+        ensemble.dump(new PrintStream("out.json"));
 
     }
 }

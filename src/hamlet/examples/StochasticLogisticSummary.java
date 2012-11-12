@@ -67,7 +67,7 @@ public class StochasticLogisticSummary {
         EnsembleSummarySpec spec = new EnsembleSummarySpec();
 
         spec.setModel(model);
-        spec.setSimulationTime(20.0);
+        spec.setSimulationTime(100.0);
         spec.setnSamples(1001);
         spec.setnTraj(1000);
         spec.setSeed(53);

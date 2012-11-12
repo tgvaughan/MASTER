@@ -8,6 +8,8 @@ import hamlet.Moment;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
 import hamlet.TauLeapingIntegrator;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 /**
  * A simple model of within-host viral infection dynamics.
@@ -17,7 +19,7 @@ import hamlet.TauLeapingIntegrator;
  */
 public class SimpleViralInfection {
 
-    public static void main(String[] argv) {
+    public static void main(String[] argv) throws FileNotFoundException {
 
         /*
          * Assemble model:
@@ -114,7 +116,7 @@ public class SimpleViralInfection {
         spec.setSimulationTime(10.0); // days
         spec.setIntegrator(new TauLeapingIntegrator(10.0/1e3));
         spec.setnSamples(1001);
-        spec.setnTraj(100);
+        spec.setnTraj(1000);
         spec.setSeed(42);
         spec.setInitState(initState);
         spec.addMoment(mX);
@@ -131,6 +133,6 @@ public class SimpleViralInfection {
          * Dump results (JSON):
          */
 
-        ensemble.dump();
+        ensemble.dump(new PrintStream("out.json"));
     }
 }

@@ -7,6 +7,7 @@ import hamlet.Model;
 import hamlet.Moment;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.SubPopulation;
 import hamlet.TauLeapingIntegrator;
 
 /**
@@ -38,10 +39,8 @@ public class StochasticMigration {
         migrate.setProductSchema(X);
 
         // Set up vectors to refer to sub-populations A and B:
-        int[] subA = new int[1];
-        int[] subB = new int[1];
-        subA[0] = 0;
-        subB[0] = 1;
+        SubPopulation subA = new SubPopulation(X, 0);
+        SubPopulation subB = new SubPopulation(X, 1);
 
         // subA -> subB
         migrate.addReactantSubSchema(subA);
@@ -76,8 +75,8 @@ public class StochasticMigration {
          */
 
         State initState = new State(model);
-        initState.set(X, subA, 100);
-        initState.set(X, subB, 0);
+        initState.set(subA, 100);
+        initState.set(subB, 0);
 
         /*
          * Define simulation:

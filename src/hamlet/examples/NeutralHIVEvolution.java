@@ -1,12 +1,13 @@
 package hamlet.examples;
 
-import hamlet.State;
-import hamlet.Population;
-import hamlet.Reaction;
-import hamlet.Model;
-import hamlet.Moment;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.Model;
+import hamlet.Moment;
+import hamlet.Population;
+import hamlet.Reaction;
+import hamlet.State;
+import hamlet.SubPopulation;
 import hamlet.TauLeapingIntegrator;
 
 /**
@@ -61,18 +62,16 @@ public class NeutralHIVEvolution {
         double mu = 2e-5*L; // Mutation probabability per infection event.
         double beta = 5e-13; // Total infection rate.
 
-        int[] Vsub = new int[1];
-        int[] Ysub = new int[1];
         for (int h = 0; h<=hTrunc; h++) {
 
-            Vsub[0] = h;
+            SubPopulation Vsub = new SubPopulation(V, h);
 
             int hpmin = h>1 ? h-1 : 0;
             int hpmax = h<hTrunc ? h+1 : hTrunc;
 
             for (int hp = hpmin; hp<=hpmax; hp++) {
 
-                Ysub[0] = hp;
+                SubPopulation Ysub = new SubPopulation(Y, hp);
 
                 // Transition rate to hp from a given sequence in h:
                 double rate = mu*gcond(h, hp, L)/(3.0*L);
@@ -83,7 +82,6 @@ public class NeutralHIVEvolution {
 
                 // Incorporate base infection rate:
                 rate *= beta;
-
 
                 infection.addReactantSubSchema(null, Vsub);
                 infection.addProductSubSchema(Ysub);
@@ -98,8 +96,8 @@ public class NeutralHIVEvolution {
         budding.setReactantSchema(Y);
         budding.setProductSchema(Y, V);
         for (int h = 0; h<=hTrunc; h++) {
-            Ysub[0] = h;
-            Vsub[0] = h;
+            SubPopulation Ysub = new SubPopulation(Y, h);
+            SubPopulation Vsub = new SubPopulation(V, h);
             budding.addReactantSubSchema(Ysub);
             budding.addProductSubSchema(Ysub, Vsub);
         }
@@ -119,7 +117,7 @@ public class NeutralHIVEvolution {
         infectedDeath.setProductSchema();
 
         for (int h = 0; h<=hTrunc; h++) {
-            Ysub[0] = h;
+            SubPopulation Ysub = new SubPopulation(Y, h);
 
             infectedDeath.addReactantSubSchema(Ysub);
             infectedDeath.addProductSubSchema();
@@ -133,7 +131,7 @@ public class NeutralHIVEvolution {
         virionDeath.setProductSchema();
 
         for (int h = 0; h<=hTrunc; h++) {
-            Vsub[0] = h;
+            SubPopulation Vsub = new SubPopulation(V, h);
 
             virionDeath.addReactantSubSchema(Vsub);
             virionDeath.addProductSubSchema();
@@ -150,10 +148,10 @@ public class NeutralHIVEvolution {
         Moment mV = new Moment("V", V);
 
         for (int h = 0; h<=hTrunc; h++) {
-            Ysub[0] = h;
+            SubPopulation Ysub = new SubPopulation(Y, h);
             mY.addSubSchema(Ysub);
 
-            Vsub[0] = h;
+            SubPopulation Vsub = new SubPopulation(V, h);
             mV.addSubSchema(Vsub);
         }
 
@@ -164,11 +162,8 @@ public class NeutralHIVEvolution {
         State initState = new State(model);
         initState.set(X, 6.1e9);
 
-        Ysub[0] = 0;
-        initState.set(Y, Ysub, 2.5e8);
-
-        Vsub[0] = 0;
-        initState.set(V, Vsub, 8.2e10);
+        initState.set(new SubPopulation(Y, 0), 2.5e8);
+        initState.set(new SubPopulation(V, 0), 8.2e10);
 
         /*
          * Define simulation:

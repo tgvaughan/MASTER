@@ -1,13 +1,14 @@
 package hamlet.examples;
 
-import hamlet.State;
-import hamlet.Population;
-import hamlet.Reaction;
-import hamlet.Model;
-import hamlet.Moment;
+import beast.math.Binomial;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
-import beast.math.Binomial;
+import hamlet.Model;
+import hamlet.Moment;
+import hamlet.Population;
+import hamlet.Reaction;
+import hamlet.State;
+import hamlet.SubPopulation;
 import hamlet.TauLeapingIntegrator;
 
 /**
@@ -48,12 +49,10 @@ public class HypermutHIV {
         // Infected cell:
         Population Y = new Population("Y", dims);
         model.addPopulation(Y);
-        int[] Ysub = new int[2]; // Used to specify individual Y sub-populations
 
         // Virion:
         Population V = new Population("V", dims);
         model.addPopulation(V);
-        int[] Vsub = new int[2]; // Used to specify individual V sub-populations
 
         // Define reactions:
 
@@ -74,19 +73,16 @@ public class HypermutHIV {
 
         for (int ha = 0; ha<=La3; ha++) {
 
-            Vsub[1] = ha;
-            Ysub[1] = ha;
-
             for (int h = 0; h<=hTrunc; h++) {
 
-                Vsub[0] = h;
+                SubPopulation Vsub = new SubPopulation(V, h, ha);
 
                 int hpmin = h>1 ? h-1 : 0;
                 int hpmax = h<hTrunc ? h+1 : hTrunc;
 
                 for (int hp = hpmin; hp<=hpmax; hp++) {
 
-                    Ysub[0] = hp;
+                    SubPopulation Ysub = new SubPopulation(Y, hp, ha);
 
                     // Transition rate to hp from a given sequence in h:
                     double rate = mu*gcond(h, hp, L)/(3.0*L);
@@ -120,12 +116,9 @@ public class HypermutHIV {
 
         for (int h = 0; h<=hTrunc; h++) {
 
-            Vsub[0] = h;
-            Ysub[0] = h;
-
             for (int ha = 0; ha<=La3; ha++) {
 
-                Vsub[1] = ha;
+                SubPopulation Vsub = new SubPopulation(V, h, ha);
                 /* 
                  * Once APOBEC attaches to a sequence with ha remaining
                  * hypermutable sites, it has a finite probability of editing
@@ -136,7 +129,7 @@ public class HypermutHIV {
 
                 for (int delta = 0; delta<=La3-ha; delta++) {
 
-                    Ysub[1] = ha+delta;
+                    SubPopulation Ysub = new SubPopulation(Y, h, ha+delta);
 
                     double rate = beta*pIncorp
                             *Math.pow(Binomial.choose(La3-ha, delta), 2.0)
@@ -159,14 +152,10 @@ public class HypermutHIV {
         budding.setReactantSchema(Y);
         budding.setProductSchema(Y, V);
         for (int h = 0; h<=hTrunc; h++) {
-
-            Ysub[0] = h;
-            Vsub[0] = h;
-
             for (int ha = 0; ha<=La3; ha++) {
 
-                Ysub[1] = ha;
-                Vsub[1] = ha;
+                SubPopulation Ysub = new SubPopulation(Y, h, ha);
+                SubPopulation Vsub = new SubPopulation(V, h, ha);
 
                 budding.addReactantSubSchema(Ysub);
                 budding.addProductSubSchema(Ysub, Vsub);
@@ -188,9 +177,8 @@ public class HypermutHIV {
         infectedDeath.setProductSchema();
 
         for (int h = 0; h<=hTrunc; h++) {
-            Ysub[0] = h;
             for (int ha = 0; ha<=La3; ha++) {
-                Ysub[1] = ha;
+                SubPopulation Ysub = new SubPopulation(Y, h, ha);
 
                 infectedDeath.addReactantSubSchema(Ysub);
                 infectedDeath.addProductSubSchema();
@@ -205,12 +193,8 @@ public class HypermutHIV {
         virionDeath.setProductSchema();
 
         for (int h = 0; h<=hTrunc; h++) {
-
-            Vsub[0] = h;
-
             for (int ha = 0; ha<=La3; ha++) {
-
-                Vsub[1] = ha;
+                SubPopulation Vsub = new SubPopulation (V, h, ha);
 
                 virionDeath.addReactantSubSchema(Vsub);
                 virionDeath.addProductSubSchema();
@@ -235,14 +219,12 @@ public class HypermutHIV {
 
                 int ha = totMut-h;
 
-                if (ha>=0&&ha<=La3) {
+                if (ha>=0 && ha<=La3) {
 
-                    Ysub[0] = h;
-                    Ysub[1] = ha;
+                    SubPopulation Ysub = new SubPopulation(Y, h, ha);
                     mY.addSubSchemaToSum(Ysub);
 
-                    Vsub[0] = h;
-                    Vsub[1] = ha;
+                    SubPopulation Vsub = new SubPopulation(V, h, ha);
                     mV.addSubSchemaToSum(Vsub);
                 }
             }
@@ -255,14 +237,8 @@ public class HypermutHIV {
         State initState = new State(model);
 
         initState.set(X, 6.006e9); // Deterministic steady state values
-
-        Ysub[0] = 0;
-        Ysub[1] = 0;
-        initState.set(Y, 2.44e8);
-
-        Vsub[0] = 0;
-        Vsub[1] = 0;
-        initState.set(V, 8.125e10);
+        initState.set(new SubPopulation(Y, 0, 0), 2.44e8);
+        initState.set(new SubPopulation(V, 0, 0), 8.125e10);
 
         // Note: unspecified population sizes default to zero.
 

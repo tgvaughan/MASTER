@@ -1,20 +1,20 @@
 package hamlet.examples;
 
-import hamlet.State;
-import hamlet.Population;
-import hamlet.Reaction;
-import hamlet.Model;
-import hamlet.Moment;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.Model;
+import hamlet.Moment;
+import hamlet.Population;
+import hamlet.Reaction;
+import hamlet.State;
 import hamlet.SubPopulation;
 import hamlet.TauLeapingIntegrator;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 /**
- * Implements a basic stochastic migration model to test the ability of
- * viralPopGen to handle structured populations.
+ * Implements a basic stochastic migration model to demonstrate the
+ * handling of structured populations.
  *
  * @author Tim Vaughan
  *
@@ -50,7 +50,7 @@ public class StochasticMigration {
         // subB -> subA
         migrate.addReactantSubSchema(subB);
         migrate.addProductSubSchema(subA);
-        migrate.addSubRate(0.1);
+        migrate.addSubRate(0.2);
 
         // Add migration reaction to model:
         model.addReaction(migrate);
@@ -85,10 +85,10 @@ public class StochasticMigration {
         EnsembleSummarySpec spec = new EnsembleSummarySpec();
 
         spec.setModel(model);
-        spec.setSimulationTime(100.0);
-        spec.setIntegrator(new TauLeapingIntegrator(100.0/1e4));
+        spec.setSimulationTime(20.0);
+        spec.setIntegrator(new TauLeapingIntegrator(0.01));
         spec.setnSamples(1001);
-        spec.setnTraj(1000);
+        spec.setnTraj(100);
         spec.setSeed(42);
         spec.setInitState(initState);
         spec.addMoment(momentX);

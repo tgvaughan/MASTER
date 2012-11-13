@@ -33,6 +33,16 @@ public class Model {
     public void addPopulation(Population pop) {
         pops.add(pop);
     }
+    
+    /**
+     * Add a number of populations to model.
+     * 
+     * @param pops vararg array of population objects
+     */
+    public void addPopulations(Population ... pops) {
+        for (Population pop : pops)
+            addPopulation(pop);
+    }
 
     /**
      * Add reaction to model.

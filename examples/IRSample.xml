@@ -4,11 +4,11 @@
     <run spec='HamletSimulation'
          simulationTime='100'
          nSamples='1001'
-         nTraj='100'
+         nTraj='1000'
          seed='53'
          outFileName='out.json'>
         
-        <integrator spec='TauLeapingIntegrator' stepSize="0.1"/>
+        <integrator spec='TauLeapingIntegrator' stepSize="0.01"/>
         <!-- <integrator spec='GillespieIntegrator' /> -->
 
         <model spec='Model' id='model'>
@@ -17,7 +17,7 @@
             <population spec='Population' id='I_sample' popName='I_sample'/>
 
             <!-- birth reaction -->
-            <reaction spec='Reaction'>
+            <reaction spec='Reaction' reactionName="Birth">
                 <rate spec='RealParameter'>1</rate>
                 <reactantSchema spec='Schema'>
                     <popSchema spec='PopSchema'>
@@ -31,8 +31,9 @@
                     </popSchema>
                 </productSchema>
             </reaction>
-            <!-- death reaction -->
-            <reaction spec='Reaction'>
+            
+            <!-- recovery reaction -->
+            <reaction spec='Reaction' reactionName="Recovery">
                 <rate spec='RealParameter'>0.25</rate>
                 <reactantSchema spec='Schema'>
                     <popSchema spec='PopSchema'>
@@ -45,8 +46,9 @@
                     </popSchema>
                 </productSchema>
             </reaction>
+            
             <!-- sampling reaction -->
-            <reaction spec='Reaction'>
+            <reaction spec='Reaction' reactionName="Sampling">
                 <rate spec='RealParameter'>0.25</rate>
                 <reactantSchema spec='Schema'>
                     <popSchema spec='PopSchema'>
@@ -78,8 +80,22 @@
             <momentSchema spec='Schema'>
                 <popSchema spec='PopSchema'>
                     <population idref='I'/>
-                    <population idref='I_sample'/>
+                </popSchema>
+            </momentSchema>
+        </moment>
+        
+        <moment spec='Moment' momentName='R'>
+            <momentSchema spec='Schema'>
+                <popSchema spec='PopSchema'>
                     <population idref='R'/>
+                </popSchema>
+            </momentSchema>
+        </moment>
+        
+        <moment spec='Moment' momentName='Isamp'>
+            <momentSchema spec='Schema'>
+                <popSchema spec='PopSchema'>
+                    <population idref='I_sample'/>
                 </popSchema>
             </momentSchema>
         </moment>

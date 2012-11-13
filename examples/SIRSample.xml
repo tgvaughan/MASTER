@@ -2,13 +2,13 @@
 
 <beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
     <run spec='HamletSimulation'
-         simulationTime='100'
+         simulationTime='50'
          nSamples='1001'
-         nTraj='100'
+         nTraj='1000'
          seed='53'
          outFileName='out.json'>
         
-        <integrator spec='TauLeapingIntegrator' stepSize="0.1"/>
+        <integrator spec='TauLeapingIntegrator' stepSize="0.01"/>
         <!-- <integrator spec='GillespieIntegrator' /> -->
 
         <model spec='Model' id='model'>
@@ -18,8 +18,8 @@
             <population spec='Population' id='I_sample' popName='I_sample'/>
 
             <!-- infection reaction -->
-            <reaction spec='Reaction'>
-                <rate spec='RealParameter'>0.002</rate>
+            <reaction spec='Reaction' reactionName="Infection">
+                <rate spec='RealParameter'>0.001</rate>
                 <reactantSchema spec='Schema'>
                     <popSchema spec='PopSchema'>
                         <population idref='S'/>
@@ -34,7 +34,7 @@
                 </productSchema>
             </reaction>
             <!-- recovery reaction -->
-            <reaction spec='Reaction'>
+            <reaction spec='Reaction' reactionName="Recovery">
                 <rate spec='RealParameter'>0.25</rate>
                 <reactantSchema spec='Schema'>
                     <popSchema spec='PopSchema'>
@@ -48,7 +48,7 @@
                 </productSchema>
             </reaction>
             <!-- sampling reaction -->
-            <reaction spec='Reaction'>
+            <reaction spec='Reaction' reactionName="Sampling">
                 <rate spec='RealParameter'>0.25</rate>
                 <reactantSchema spec='Schema'>
                     <popSchema spec='PopSchema'>
@@ -79,15 +79,37 @@
             <model idref='model'/>
         </initialState>
 
-        <moment spec='Moment' momentName='I'>
+        <moment spec='Moment' momentName='S'>
             <momentSchema spec='Schema'>
                 <popSchema spec='PopSchema'>
                     <population idref='S'/>
+                </popSchema>
+            </momentSchema>
+        </moment>
+
+        <moment spec='Moment' momentName='I'>
+            <momentSchema spec='Schema'>
+                <popSchema spec='PopSchema'>
                     <population idref='I'/>
+                </popSchema>
+            </momentSchema>
+        </moment>
+        
+        <moment spec='Moment' momentName='Isamp'>
+            <momentSchema spec='Schema'>
+                <popSchema spec='PopSchema'>
                     <population idref='I_sample'/>
+                </popSchema>
+            </momentSchema>
+        </moment>
+        
+        <moment spec='Moment' momentName='R'>
+            <momentSchema spec='Schema'>
+                <popSchema spec='PopSchema'>
                     <population idref='R'/>
                 </popSchema>
             </momentSchema>
         </moment>
+        
     </run>
 </beast>

@@ -2,6 +2,7 @@ package hamlet.examples;
 
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.GillespieIntegrator;
 import hamlet.Model;
 import hamlet.Moment;
 import hamlet.Population;
@@ -12,13 +13,12 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 /**
- * A stochastic logistic model of population dynamics. Uses Moment objects to
- * summarise an ensemble in terms of means and variances.
+ * SIR epidemic model.
  *
  * @author Tim Vaughan
  *
  */
-public class StochasticLogisticSummary {
+public class SIR {
 
     public static void main(String[] argv) throws IOException {
 
@@ -30,35 +30,41 @@ public class StochasticLogisticSummary {
 
         // Define populations:
 
-        Population X = new Population("X");
-        model.addPopulation(X);
+        Population S = new Population("S");
+        Population I = new Population("I");
+        Population R = new Population("R");
+        model.addPopulations(S, I, R);
 
         // Define reactions:
 
-        // X -> 2X
-        Reaction birth = new Reaction("Birth");
-        birth.setReactantSchema(X);
-        birth.setProductSchema(X, X);
-        birth.setRate(1.0);
-        model.addReaction(birth);
+        // S + I -> 2I
+        Reaction infection = new Reaction("Infection");
+        infection.setReactantSchema(S, I);
+        infection.setProductSchema(I, I);
+        infection.setRate(0.001);
+        model.addReaction(infection);
 
-        // 2X -> X
-        Reaction death = new Reaction("Death");
-        death.setReactantSchema(X, X);
-        death.setProductSchema(X);
-        death.setRate(0.01);
-        model.addReaction(death);
+        // I -> R
+        Reaction recovery = new Reaction("Recovery");
+        recovery.setReactantSchema(I);
+        recovery.setProductSchema(R);
+        recovery.setRate(0.5);
+        model.addReaction(recovery);
 
         // Define moments:
 
-        Moment mX = new Moment("X", X);
+        Moment mS = new Moment("S", S);
+        Moment mI = new Moment("I", I);
+        Moment mR = new Moment("R", R);
 
         /*
          * Set initial state:
          */
 
         State initState = new State(model);
-        initState.set(X, 1.0);
+        initState.set(S, 999.0);
+        initState.set(I, 1.0);
+        initState.set(R, 0.0);
 
         /*
          * Define simulation:
@@ -67,12 +73,14 @@ public class StochasticLogisticSummary {
         EnsembleSummarySpec spec = new EnsembleSummarySpec();
 
         spec.setModel(model);
-        spec.setSimulationTime(20.0);
+        spec.setSimulationTime(50.0);
         spec.setnSamples(1001);
         spec.setnTraj(1000);
         spec.setSeed(53);
         spec.setInitState(initState);
-        spec.addMoment(mX);
+        spec.addMoment(mS);
+        spec.addMoment(mI);
+        spec.addMoment(mR);
 
         spec.setIntegrator(new TauLeapingIntegrator(0.01));
         //spec.setIntegrator(new GillespieIntegrator());

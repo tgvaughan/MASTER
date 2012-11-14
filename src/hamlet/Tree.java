@@ -1,5 +1,8 @@
 package hamlet;
 
+import com.google.common.collect.Lists;
+import java.util.List;
+
 /**
  * Inheritance tree generated from a birth-death model.
  *
@@ -25,9 +28,15 @@ public class Tree {
 		// Initialise system state:
 		State state = new State(spec.initState);
                 
+                // Create list of active nodes:
+                List<Node> activeNodes = Lists.newArrayList();
+                
                 // Create root node:
-                rootNode = new Node(spec.getRootPop(),
-                        spec.getRootSubPopOffset(),
-                        0.0);
+                rootNode = new Node(spec.getRootSubPop(), 0.0);
+                
+                // Add to active node list:
+                activeNodes.add(rootNode);
+                
+                
 	}
 }

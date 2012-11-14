@@ -9,9 +9,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  */
 public class TreeSpec extends Spec {
 
-    Population rootPop;
-    int [] rootSubPopLoc;
-    int rootSubPopOffset;
+    Population rootSubPop;
 
     double maxHeight;
 
@@ -30,10 +28,8 @@ public class TreeSpec extends Spec {
      * @param rootPop Population containing root lineage.
      * @param subPopLoc Subpopulation containing root lineage.
      */
-    public void setRootPop(Population rootPop, int[] subPopLoc) {
-        this.rootPop = rootPop;
-        this.rootSubPopLoc = subPopLoc;
-        this.rootSubPopOffset = rootPop.locToOffset(subPopLoc);
+    public void setRootSubPop(Population rootSubPop) {
+        this.rootSubPop = rootSubPop;
     }    
     
     /**
@@ -54,27 +50,8 @@ public class TreeSpec extends Spec {
      * 
      * @return root population
      */
-    public Population getRootPop() {
-        return rootPop;
-    }
-    
-    /**
-     * Obtain sub-population to which root lineage belongs.
-     * 
-     * @return sub population specifier.
-     */
-    public int[] getRootSubPop() {
-        return rootSubPopLoc;
-    }
-    
-    /**
-     * Obtain offset of sub-population to which root lineage belongs.
-     * 
-     * @return sub population offset.
-     */
-    @JsonIgnore
-    public int getRootSubPopOffset() {
-        return rootSubPopOffset;
+    public Population getRootSubPop() {
+        return rootSubPop;
     }
     
     /**

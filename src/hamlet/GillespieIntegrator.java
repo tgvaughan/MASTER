@@ -34,7 +34,7 @@ public class GillespieIntegrator extends Integrator {
             
             // Calculate propensities
             double totalPropensity = 0.0;
-            for (Reaction reaction : model.reactions) {
+            for (ReactionGroup reaction : model.reactionGroups) {
                 reaction.calcPropensities(state);
                 for (double propensity : reaction.propensities)
                     totalPropensity += propensity;
@@ -50,10 +50,10 @@ public class GillespieIntegrator extends Integrator {
             // Choose reaction to implement
             double u = Randomizer.nextDouble()*totalPropensity;
             boolean found = false;
-            Reaction thisReact = null;
+            ReactionGroup thisReact = null;
             int thisSub = 0;
-            for (int ridx=0; ridx<model.reactions.size(); ridx++) {
-                thisReact = model.reactions.get(ridx);
+            for (int ridx=0; ridx<model.reactionGroups.size(); ridx++) {
+                thisReact = model.reactionGroups.get(ridx);
                 
                 for (thisSub=0; thisSub<thisReact.propensities.size(); thisSub++) {
                     u -= thisReact.propensities.get(thisSub);

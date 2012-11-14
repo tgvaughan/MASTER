@@ -12,7 +12,7 @@ import java.util.*;
 public class State {
 
     Model model;
-    Map<SubPopulation, Double> popSizes;
+    Map<Population, Double> popSizes;
 
     /**
      * Constructor
@@ -36,7 +36,7 @@ public class State {
 
         // Copy sub-population sizes:
         this.popSizes = Maps.newHashMap();
-        for (SubPopulation sub : oldState.popSizes.keySet()) {
+        for (Population sub : oldState.popSizes.keySet()) {
             popSizes.put(sub, oldState.popSizes.get(sub));
         }
     }
@@ -47,7 +47,7 @@ public class State {
      * @param sub Specific sub-population.
      * @return Size of sub-population.
      */
-    public double get(SubPopulation sub) {
+    public double get(Population sub) {
         if (popSizes.containsKey(sub))
             return popSizes.get(sub);
         else
@@ -55,61 +55,51 @@ public class State {
     }
 
     /**
-     * Set size of a particular sub-population.
+     * Set size of a particular population.
      *
-     * @param sub SubPopulation to modify.
+     * @param pop Population to modify.
      * @param value Desired size.
      */
-    public void set(SubPopulation sub, double value) {
-        popSizes.put(sub, value);
-    }
-
-    /**
-     * Set size of structureless population.
-     *
-     * @param p	Population to modify.
-     * @param value Desired size.
-     */
-    public void set(Population p, double value) {
-        popSizes.put(new SubPopulation(p), value);
+    public void set(Population pop, double value) {
+        popSizes.put(pop, value);
     }
 
     /**
      * Add value to size of particular sub-population.
      *
-     * @param sub
+     * @param pop
      * @param increment
      */
-    public void add(SubPopulation sub, double increment) {
-        popSizes.put(sub, popSizes.get(sub) + increment);
+    public void add(Population pop, double increment) {
+        popSizes.put(pop, popSizes.get(pop) + increment);
     }
 
     /**
      * Add value to size of particular sub-population specified using a
      * pre-calculated offset, truncating at zero if result is negative.
      *
-     * @param sub
+     * @param pop
      * @param increment
      */
-    public void addNoNeg(SubPopulation sub, double increment) {
-        double newPopSize = get(sub)+increment;
+    public void addNoNeg(Population pop, double increment) {
+        double newPopSize = get(pop)+increment;
         if (newPopSize<0.0)
-            popSizes.put(sub, 0.0);
+            popSizes.put(pop, 0.0);
         else
-            popSizes.put(sub, newPopSize);
+            popSizes.put(pop, newPopSize);
     }
 
     /**
      * Alter state according to one ore more occurrences of a particular
      * reaction and subReaction.
      * 
-     * @param reaction
-     * @param subReaction
+     * @param reactionGroup
+     * @param reactionIndex
      * @param q Number of times for reaction to fire.
      */
-    public void implementReaction(Reaction reaction, int subReaction, double q) {
-        for (SubPopulation sub : reaction.deltaCounts.get(subReaction).keySet())
-            addNoNeg(sub, q*reaction.deltaCounts.get(subReaction).get(sub));
+    public void implementReaction(ReactionGroup reactionGroup, int reactionIndex, double q) {
+        for (Population pop : reactionGroup.deltaCounts.get(reactionIndex).keySet())
+            addNoNeg(pop, q*reactionGroup.deltaCounts.get(reactionIndex).get(pop));
     }
 
     /**
@@ -122,8 +112,8 @@ public class State {
         
         StringBuilder sb = new StringBuilder();
 
-        for (Population pop : model.pops) {
-            for (SubPopulation sub : pop)
+        for (PopulationType pop : model.types) {
+            for (Population sub : pop)
                 sb.append(" ").append(String.valueOf(get(sub)));
         }
 
@@ -139,9 +129,9 @@ public class State {
         
         StringBuilder sb = new StringBuilder();
 
-        for (Population pop : model.pops)
-            for (SubPopulation sub : pop)
-                sb.append(pop.name).append(String.valueOf(sub.offset));
+        for (PopulationType popType : model.types)
+            for (Population pop : popType)
+                sb.append(popType.name).append(String.valueOf(pop.offset));
 
         return sb.toString();
     }

@@ -2,7 +2,6 @@ package hamlet.examples;
 
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
-import hamlet.GillespieIntegrator;
 import hamlet.Model;
 import hamlet.Moment;
 import hamlet.Population;
@@ -34,7 +33,7 @@ public class SIR {
         Population I = new Population("I");
         Population R = new Population("R");
         model.addPopulations(S, I, R);
-
+        
         // Define reactions:
 
         // S + I -> 2I

@@ -3,9 +3,11 @@ package hamlet.examples;
 import hamlet.EnsembleSpec;
 import hamlet.Ensemble;
 import hamlet.State;
+import hamlet.PopulationType;
+import hamlet.ReactionGroup;
+import hamlet.Model;
 import hamlet.Population;
 import hamlet.Reaction;
-import hamlet.Model;
 import hamlet.TauLeapingIntegrator;
 
 /**

@@ -3,11 +3,11 @@ package hamlet.examples;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
 import hamlet.Model;
-import hamlet.Moment;
-import hamlet.Population;
-import hamlet.Reaction;
+import hamlet.MomentGroup;
+import hamlet.PopulationType;
+import hamlet.ReactionGroup;
 import hamlet.State;
-import hamlet.SubPopulation;
+import hamlet.Population;
 import hamlet.TauLeapingIntegrator;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -30,42 +30,40 @@ public class StochasticMigration {
         Model model = new Model();
 
         // Define populations:
-        Population X = new Population("X", 2);
-        model.addPopulation(X);
+        PopulationType X = new PopulationType("X", 2);
+        model.addPopulationType(X);
 
         // Define migration reaction:
-        Reaction migrate = new Reaction();
-        migrate.setReactantSchema(X);
-        migrate.setProductSchema(X);
+        ReactionGroup migrate = new ReactionGroup();
 
         // Set up vectors to refer to sub-populations A and B:
-        SubPopulation subA = new SubPopulation(X, 0);
-        SubPopulation subB = new SubPopulation(X, 1);
+        Population subA = new Population(X, 0);
+        Population subB = new Population(X, 1);
 
         // subA -> subB
-        migrate.addReactantSubSchema(subA);
-        migrate.addProductSubSchema(subB);
-        migrate.addSubRate(0.1);
+        migrate.addReactantSchema(subA);
+        migrate.addProductSchema(subB);
+        migrate.addRate(0.1);
 
         // subB -> subA
-        migrate.addReactantSubSchema(subB);
-        migrate.addProductSubSchema(subA);
-        migrate.addSubRate(0.2);
+        migrate.addReactantSchema(subB);
+        migrate.addProductSchema(subA);
+        migrate.addRate(0.2);
 
         // Add migration reaction to model:
-        model.addReaction(migrate);
+        model.addReactionGroup(migrate);
 
         /*
          * Define moments:
          */
 
         // <X>
-        Moment momentX = new Moment("X", X);
-        momentX.addSubSchema(subA);
-        momentX.addSubSchema(subB);
+        MomentGroup momentX = new MomentGroup("X");
+        momentX.addSchema(subA);
+        momentX.addSchema(subB);
 
         // <Xa + Xb>
-        Moment momentN = new Moment("N", X);
+        MomentGroup momentN = new MomentGroup("N");
         momentN.newSum();
         momentN.addSubSchemaToSum(subA);
         momentN.addSubSchemaToSum(subB);
@@ -91,8 +89,8 @@ public class StochasticMigration {
         spec.setnTraj(100);
         spec.setSeed(42);
         spec.setInitState(initState);
-        spec.addMoment(momentX);
-        spec.addMoment(momentN);
+        spec.addMomentGroup(momentX);
+        spec.addMomentGroup(momentN);
 
         // Report on ensemble calculation progress:
         spec.setVerbosity(1);

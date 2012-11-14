@@ -16,8 +16,7 @@ public class Node {
     
     List<Node> children;
     
-    Population population;
-    int subPopOffset;
+    Population subPopulation;
 
     /**
      * Constructor.
@@ -25,10 +24,9 @@ public class Node {
      * @param population	Population to which node belongs.
      * @param subPopOffset Sub-population to which node belongs.
      */
-    Node(Population population, int subPopOffset, double time) {
+    Node(Population subPopulation, double time) {
 
-        this.population = population;
-        this.subPopOffset = subPopOffset;
+        this.subPopulation = subPopulation;
         this.time = time;
 
         parent = null;
@@ -40,9 +38,8 @@ public class Node {
      * 
      * @param population Population to which node belongs.
      */
-    Node(Population population) {
-        this.population = population;
-        this.subPopOffset = -1;
+    Node(Population subPopulation) {
+        this.subPopulation = subPopulation;
         this.time = -1;
         
         parent = null;

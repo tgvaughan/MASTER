@@ -2,16 +2,8 @@
 
 <beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
     
-    <population spec='Population' id='X' popName='X'>
-        <dim spec='IntegerParameter'>2</dim>
-    </population>
-    <subPopulation spec='SubPopulation' id='demeA'>
-        <location spec='IntegerParameter'>0</location>
-    </subPopulation>
-    <subPopulation spec='SubPopulation' id='demeB'>
-        <location spec='IntegerParameter'>1</location>
-    </subPopulation>
-    
+    <populationType spec='PopulationType' id='X' name='X' dim="2" />
+        
     <run spec='HamletSimulation'
          simulationTime='20'
          nSamples='1001'
@@ -23,69 +15,42 @@
         <!-- <integrator spec='GillespieIntegrator' /> -->
 
         <model spec='Model' id='model'>
-            <population idref='X'/>
-            <reaction spec='Reaction'>
-                <rate spec='RealParameter'>0.1</rate>
-                <rate spec='RealParameter'>0.2</rate>
-                <reactantSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='X'/>
-                    </popSchema>
-                    <subPopSchema spec='SubPopSchema'>
-                        <subPopulation idref='demeA'/>
-                    </subPopSchema>
-                    <subPopSchema spec='SubPopSchema'>
-                        <subPopulation idref='demeB'/>
-                    </subPopSchema>
-                </reactantSchema>
-                <productSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='X'/>
-                    </popSchema>
-                    <subPopSchema spec='SubPopSchema'>
-                        <subPopulation idref='demeB'/>
-                    </subPopSchema>
-                    <subPopSchema spec='SubPopSchema'>
-                        <subPopulation idref='demeA'/>
-                    </subPopSchema>
-                </productSchema>
-            </reaction>
+            <populationType idref='X'/>
+            <reactionGroup spec='ReactionGroup' name="Migration">
+                <reaction spec='Reaction' rate="0.1">
+                    <reactant spec='Population' type="@X" location="0"/>
+                    <product spec='Population' type="@X" location="1"/>
+                </reaction>
+                <reaction spec='Reaction' rate="0.2">
+                    <reactant spec='Population' type="@X" location="1"/>
+                    <reactant spec='Population' type="@X" location="0"/>
+                </reaction>
+            </reactionGroup>
         </model>
 
         <initialState spec='InitState'>
             <populationSize spec='PopulationSize' size='100'>
-                <population idref='X'/>
-                <subPopulation idref='demeA'/>
+                <population spec='Population' type='@X' location="0"/>
             </populationSize>
-            <model idref='model'/>
         </initialState>
 
-        <moment spec='Moment' momentName='X'>
-            <momentSchema spec='Schema'>
-                <popSchema spec='PopSchema'>
-                    <population idref='X'/>
-                </popSchema>
-                <subPopSchema spec='SubPopSchema'>
-                    <subPopulation idref='demeA'/>
-                </subPopSchema>
-                <subPopSchema spec='SubPopSchema'>
-                    <subPopulation idref='demeB'/>
-                </subPopSchema>
-            </momentSchema>
-        </moment>
+        <momentGroup spec='MomentGroup' name='X'>
+            <moment spec='Moment'>
+                <factor spec='Population' type="@X" location="0"/>
+            </moment>
+            <moment spec='Moment'>
+                <factor spec='Population' type="@X" location="1"/>
+            </moment>
+        </momentGroup>
         
-        <moment spec='Moment' momentName='N' sum="true">
-            <momentSchema spec='Schema'>
-                <popSchema spec='PopSchema'>
-                    <population idref='X'/>
-                </popSchema>
-                <subPopSchema spec='SubPopSchema'>
-                    <subPopulation idref='demeA'/>
-                </subPopSchema>
-                <subPopSchema spec='SubPopSchema'>
-                    <subPopulation idref='demeB'/>
-                </subPopSchema>
-            </momentSchema>
-        </moment>
+        <momentGroup spec='MomentGroup' name='N' sum="true">
+            <moment spec='Moment'>
+                <factor spec='Population' type="@X" location="0"/>
+            </moment>
+            <moment spec='Moment'>
+                <factor spec='Population' type="@X" location="1"/>
+            </moment>
+        </momentGroup>
+        
     </run>
 </beast>

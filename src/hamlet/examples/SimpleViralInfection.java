@@ -1,12 +1,15 @@
 package hamlet.examples;
 
 import hamlet.State;
-import hamlet.Population;
-import hamlet.Reaction;
+import hamlet.PopulationType;
+import hamlet.ReactionGroup;
 import hamlet.Model;
-import hamlet.Moment;
+import hamlet.MomentGroup;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.Moment;
+import hamlet.Population;
+import hamlet.Reaction;
 import hamlet.TauLeapingIntegrator;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;

@@ -11,59 +11,88 @@ import java.util.*;
  */
 public class Model {
 
-    // Populations in model:
-    List<Population> pops;
+    // Population types in model:
+    List<PopulationType> types;
     
-    // Reactions to model:
-    List<Reaction> reactions;
+    // Reaction groups:
+    List<ReactionGroup> reactionGroups;
 
     /**
      * Model constructor.
      */
     public Model() {
-        pops = new ArrayList<Population>();
-        reactions = new ArrayList<Reaction>();
+        types = new ArrayList<PopulationType>();
+        reactionGroups = new ArrayList<ReactionGroup>();
     }
 
     /**
-     * Add population to model.
+     * Add population type to model.
      *
-     * @param pop Population to add.
+     * @param popType Population type to add.
      */
-    public void addPopulation(Population pop) {
-        pops.add(pop);
+    public void addPopulationType(PopulationType popType) {
+        types.add(popType);
     }
     
     /**
-     * Add a number of populations to model.
+     * Add a number of population types to model.
      * 
-     * @param pops vararg array of population objects
+     * @param popTypes vararg array of population type objects
      */
-    public void addPopulations(Population ... pops) {
+    public void addPopulationTypes(PopulationType ... popTypes) {
+        for (PopulationType popType : popTypes)
+            addPopulationType(popType);
+    }
+    
+    /**
+     * Add a type corresponding to given population to model.
+     * 
+     * @param pop 
+     */
+    public void addPopulation(Population pop) {
+        types.add(pop.type);
+    }
+    
+    /**
+     * Add a types corresponding to given populations to model.
+     * 
+     * @param pops 
+     */
+    public void addPopulations(Population... pops) {
         for (Population pop : pops)
             addPopulation(pop);
     }
 
     /**
-     * Add reaction to model.
+     * Add reaction group to model.
      *
-     * @param react Reaction to add.
+     * @param reactGroup Reaction to add.
+     */
+    public void addReactionGroup(ReactionGroup reactGroup) {
+        reactGroup.postSpecInit();
+        reactionGroups.add(reactGroup);
+    }
+    
+    /**
+     * Add reaction to model.
+     * 
+     * @param react 
      */
     public void addReaction(Reaction react) {
         react.postSpecInit();
-        reactions.add(react);
+        reactionGroups.add(react);
     }
 
     /*
      * Getters for JSON object mapper
      */
-    public List<Population> getPopulations() {
+    public List<PopulationType> getPopulationTypes() {
         //return pops.toArray(new Population[pops.size()]);
-        return pops;
+        return types;
     }
 
-    public List<Reaction> getReactions() {
+    public List<ReactionGroup> getReactionGroups() {
         //return reactions.toArray(new Reaction[reactions.size()]);
-        return reactions;
+        return reactionGroups;
     }
 }

@@ -23,14 +23,14 @@ import java.util.Iterator;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class SubPopulationIterator implements Iterator<SubPopulation> {
+public class SubPopulationIterator implements Iterator<Population> {
     
-    Population pop;
+    PopulationType pop;
     int [] loc;
     
     boolean finished;
     
-    public SubPopulationIterator(Population pop) {
+    public SubPopulationIterator(PopulationType pop) {
         this.pop = pop;
         loc = new int[pop.dims.length];
         for (int i=0; i<loc.length; i++)
@@ -45,10 +45,10 @@ public class SubPopulationIterator implements Iterator<SubPopulation> {
     }
 
     @Override
-    public SubPopulation next() {
+    public Population next() {
         
         // Record subpopulation to return
-        SubPopulation sub = new SubPopulation(pop, loc);
+        Population sub = new Population(pop, loc);
         
         // Iterate location vector
         boolean fellThrough = true;

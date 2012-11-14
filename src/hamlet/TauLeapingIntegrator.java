@@ -44,7 +44,7 @@ public class TauLeapingIntegrator extends Integrator {
      * @param state State to modify.
      * @param spec	Simulation spec.
      */
-    public void leap(Reaction reaction, State state, Model model, double thisdt) {
+    public void leap(ReactionGroup reaction, State state, Model model, double thisdt) {
         
         for (int i = 0; i<reaction.propensities.size(); i++) {
 
@@ -66,11 +66,11 @@ public class TauLeapingIntegrator extends Integrator {
             double thisdt = Math.min(dt, T-t);
             
             // Calculate transition rates based on starting state:
-            for (Reaction reaction : model.reactions)
+            for (ReactionGroup reaction : model.reactionGroups)
                 reaction.calcPropensities(state);
 
             // Update state according to these rates:
-            for (Reaction reaction : model.reactions)
+            for (ReactionGroup reaction : model.reactionGroups)
                 leap(reaction, state, model, thisdt);
             
             t += dt;

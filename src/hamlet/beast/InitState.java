@@ -16,26 +16,11 @@ public class InitState extends Plugin {
             "populationSize",
             "Initial population size.",
             new ArrayList<PopulationSize>());
-    public Input<Model> modelInput = new Input<Model>("model", "Model defining state space.");
-    // True state object:
-    hamlet.State initState;
 
     public InitState() { };
 
-	@Override
-    public void initAndValidate() throws Exception {
-
-        // Instantiate true state object:
-        initState = new hamlet.State(modelInput.get().model);
-
-        // Assign sizes to state object:
-        for (PopulationSize popSizeInput : popSizesInput.get())
-            if (popSizeInput.sub!=null)
-                // Assign sub-population size:
-                initState.set(popSizeInput.sub, popSizeInput.size);
-            else
-                // Assign unstructured population size:
-                initState.set(popSizeInput.pop, popSizeInput.size);
-
+    @Override
+    public void initAndValidate() {
+        
     }
 }

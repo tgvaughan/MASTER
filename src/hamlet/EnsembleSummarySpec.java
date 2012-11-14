@@ -11,23 +11,31 @@ import java.util.*;
 public class EnsembleSummarySpec extends EnsembleSpec {
 
 	// Moments estimates to record:
-	List<Moment> moments;
+	List<MomentGroup> momentGroups;
 
 	public EnsembleSummarySpec() {
 		super();
 
 		// Create empty moment list:
-		moments = new ArrayList<Moment>();
+		momentGroups = new ArrayList<MomentGroup>();
 	}
 
 	/**
-	 * Add moment to list of moments to estimate:
+	 * Add group of moments to estimate.
 	 * 
-	 * @param moment 
+	 * @param momentGroup 
 	 */
-	public void addMoment(Moment moment) {
-		moment.postSpecInit();
-		moments.add(moment);
+	public void addMomentGroup(MomentGroup momentGroup) {
+		momentGroup.postSpecInit();
+		momentGroups.add(momentGroup);
 	}
 	
+        /**
+         * Add a single moment to estimate.
+         * @param moment 
+         */
+        public void addMoment(Moment moment) {
+            moment.postSpecInit();
+            momentGroups.add(moment);
+        }
 }

@@ -45,7 +45,7 @@ public class EnsembleSummary {
         // Initialise state summaries:
         stateSummaries = new StateSummary[spec.nSamples];
         for (int sidx = 0; sidx<spec.nSamples; sidx++)
-            stateSummaries[sidx] = new StateSummary(spec.moments);
+            stateSummaries[sidx] = new StateSummary(spec.momentGroups);
 
         // Loop over trajectories:
         for (int traj = 0; traj<spec.nTraj; traj++) {
@@ -94,7 +94,7 @@ public class EnsembleSummary {
         // Construct an object containing the summarized
         // data.  Heirarchy is moment->[mean/std]->schema->estimate.
 
-        for (Moment moment : spec.moments) {
+        for (MomentGroup moment : spec.momentGroups) {
             HashMap<String, Object> momentData = Maps.newHashMap();
 
             ArrayList<Object> meanData = new ArrayList<Object>();

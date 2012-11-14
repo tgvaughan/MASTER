@@ -5,38 +5,37 @@ import beast.core.*;
 import beast.core.parameter.*;
 
 /**
- * Beast 2 plugin representing a generic population.
- * 
+ * Beast 2 plugin representing a specific sub-population.
+ *
  * @author Tim Vaughan
  *
  */
-@Description("Population involved in a birth-death process.")
+@Description("Specific population of a chosen type.")
 public class Population extends Plugin {
 
-	public Input<String> nameInput = new Input<String>("popName", "Name of population");
+    public Input<PopulationType> typeInput = new Input<PopulationType>(
+            "type",
+            "Type to which this population belongs.", Input.Validate.REQUIRED);
+    public Input<IntegerParameter> locationInput = new Input<IntegerParameter>(
+            "location",
+            "Vector specifying location of specific population.");
+    
+    // Population object:
+    hamlet.Population pop;
 
-	public Input<List<IntegerParameter>> dimsInput = new Input<List<IntegerParameter>>("dim",
-			"Number of sub-populations in a single dimension.",
-			new ArrayList<IntegerParameter>());
+    public Population() { };
 
-	// True population object:
-	hamlet.Population pop;
+    @Override
+    public void initAndValidate() throws Exception {
+        
+        if (locationInput.get() != null) {
+            int [] location = new int[locationInput.get().getDimension()];
 
-	public Population() {};
-
-	@Override
-	public void initAndValidate() throws Exception {
-
-		if (dimsInput.get() == null)
-			pop = new hamlet.Population(nameInput.get());
-
-		else {
-			int[] dims = new int[dimsInput.get().size()];
-			for (int i=0; i<dims.length; i++)
-				dims[i] = dimsInput.get().get(i).getValue();
-
-			pop = new hamlet.Population(nameInput.get(), dims);
-		}
-
-	}
+            for (int i = 0; i<locationInput.get().getDimension(); i++)
+                location[i] = locationInput.get().getValue(i);
+            
+            pop = new hamlet.Population(typeInput.get().popType, location);
+        } else
+            pop = new hamlet.Population(typeInput.get().popType);
+    }
 }

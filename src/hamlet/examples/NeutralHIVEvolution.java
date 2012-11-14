@@ -4,10 +4,12 @@ import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
 import hamlet.Model;
 import hamlet.Moment;
+import hamlet.MomentGroup;
+import hamlet.PopulationType;
+import hamlet.ReactionGroup;
+import hamlet.State;
 import hamlet.Population;
 import hamlet.Reaction;
-import hamlet.State;
-import hamlet.SubPopulation;
 import hamlet.TauLeapingIntegrator;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -40,12 +42,12 @@ public class NeutralHIVEvolution {
         model.addPopulation(X);
 
         // Infected cell:
-        Population Y = new Population("Y", hTrunc+1);
-        model.addPopulation(Y);
+        PopulationType Ytype = new PopulationType("Y", hTrunc+1);
+        model.addPopulationType(Ytype);
 
         // Virion:
-        Population V = new Population("V", hTrunc+1);
-        model.addPopulation(V);
+        PopulationType Vtype = new PopulationType("V", hTrunc+1);
+        model.addPopulationType(Vtype);
 
         // Define reactions:
 
@@ -57,23 +59,21 @@ public class NeutralHIVEvolution {
         model.addReaction(cellBirth);
 
         // X + V -> Y (with mutation)
-        Reaction infection = new Reaction();
-        infection.setReactantSchema(X, V);
-        infection.setProductSchema(Y);
+        ReactionGroup infection = new ReactionGroup();
 
         double mu = 2e-5*L; // Mutation probabability per infection event.
         double beta = 5e-13; // Total infection rate.
 
         for (int h = 0; h<=hTrunc; h++) {
 
-            SubPopulation Vsub = new SubPopulation(V, h);
+            Population V = new Population(Vtype, h);
 
             int hpmin = h>1 ? h-1 : 0;
             int hpmax = h<hTrunc ? h+1 : hTrunc;
 
             for (int hp = hpmin; hp<=hpmax; hp++) {
 
-                SubPopulation Ysub = new SubPopulation(Y, hp);
+                Population Y = new Population(Ytype, hp);
 
                 // Transition rate to hp from a given sequence in h:
                 double rate = mu*gcond(h, hp, L)/(3.0*L);
@@ -85,26 +85,24 @@ public class NeutralHIVEvolution {
                 // Incorporate base infection rate:
                 rate *= beta;
 
-                infection.addReactantSubSchema(null, Vsub);
-                infection.addProductSubSchema(Ysub);
-                infection.addSubRate(rate);
+                infection.addReactantSchema(X, V);
+                infection.addProductSchema(Y);
+                infection.addRate(rate);
             }
         }
 
-        model.addReaction(infection);
+        model.addReactionGroup(infection);
 
         // Y -> Y + V
-        Reaction budding = new Reaction();
-        budding.setReactantSchema(Y);
-        budding.setProductSchema(Y, V);
+        ReactionGroup budding = new ReactionGroup();
         for (int h = 0; h<=hTrunc; h++) {
-            SubPopulation Ysub = new SubPopulation(Y, h);
-            SubPopulation Vsub = new SubPopulation(V, h);
-            budding.addReactantSubSchema(Ysub);
-            budding.addProductSubSchema(Ysub, Vsub);
+            Population Y = new Population(Ytype, h);
+            Population V = new Population(Vtype, h);
+            budding.addReactantSchema(Y);
+            budding.addProductSchema(Y, V);
         }
-        budding.setRate(1e3);
-        model.addReaction(budding);
+        budding.setGroupRate(1e3);
+        model.addReactionGroup(budding);
 
         // X -> 0
         Reaction cellDeath = new Reaction();
@@ -114,47 +112,43 @@ public class NeutralHIVEvolution {
         model.addReaction(cellDeath);
 
         // Y -> 0
-        Reaction infectedDeath = new Reaction();
-        infectedDeath.setReactantSchema(Y);
-        infectedDeath.setProductSchema();
+        ReactionGroup infectedDeath = new ReactionGroup();
 
         for (int h = 0; h<=hTrunc; h++) {
-            SubPopulation Ysub = new SubPopulation(Y, h);
+            Population Y = new Population(Ytype, h);
 
-            infectedDeath.addReactantSubSchema(Ysub);
-            infectedDeath.addProductSubSchema();
+            infectedDeath.addReactantSchema(Y);
+            infectedDeath.addProductSchema();
         }
-        infectedDeath.setRate(1.0);
-        model.addReaction(infectedDeath);
+        infectedDeath.setGroupRate(1.0);
+        model.addReactionGroup(infectedDeath);
 
         // V -> 0
-        Reaction virionDeath = new Reaction();
-        virionDeath.setReactantSchema(V);
-        virionDeath.setProductSchema();
+        ReactionGroup virionDeath = new ReactionGroup();
 
         for (int h = 0; h<=hTrunc; h++) {
-            SubPopulation Vsub = new SubPopulation(V, h);
+            Population V = new Population(Vtype, h);
 
-            virionDeath.addReactantSubSchema(Vsub);
-            virionDeath.addProductSubSchema();
+            virionDeath.addReactantSchema(V);
+            virionDeath.addProductSchema();
         }
-        virionDeath.setRate(3.0);
-        model.addReaction(virionDeath);
+        virionDeath.setGroupRate(3.0);
+        model.addReactionGroup(virionDeath);
 
         /*
          * Define moments:
          */
 
         Moment mX = new Moment("X", X);
-        Moment mY = new Moment("Y", Y);
-        Moment mV = new Moment("V", V);
+        MomentGroup mY = new MomentGroup("Y");
+        MomentGroup mV = new MomentGroup("V");
 
         for (int h = 0; h<=hTrunc; h++) {
-            SubPopulation Ysub = new SubPopulation(Y, h);
-            mY.addSubSchema(Ysub);
+            Population Y = new Population(Ytype, h);
+            mY.addSchema(Y);
 
-            SubPopulation Vsub = new SubPopulation(V, h);
-            mV.addSubSchema(Vsub);
+            Population V = new Population(Vtype, h);
+            mV.addSchema(V);
         }
 
         /*
@@ -163,9 +157,8 @@ public class NeutralHIVEvolution {
 
         State initState = new State(model);
         initState.set(X, 6.1e9);
-
-        initState.set(new SubPopulation(Y, 0), 2.5e8);
-        initState.set(new SubPopulation(V, 0), 8.2e10);
+        initState.set(new Population(Ytype, 0), 2.5e8);
+        initState.set(new Population(Vtype, 0), 8.2e10);
 
         /*
          * Define simulation:
@@ -181,8 +174,8 @@ public class NeutralHIVEvolution {
         spec.setSeed(53);
         spec.setInitState(initState);
         spec.addMoment(mX);
-        spec.addMoment(mY);
-        spec.addMoment(mV);
+        spec.addMomentGroup(mY);
+        spec.addMomentGroup(mV);
 
         // Report on ensemble progress:
         spec.setVerbosity(1);

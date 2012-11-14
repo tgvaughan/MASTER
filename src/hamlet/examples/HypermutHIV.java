@@ -5,10 +5,12 @@ import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
 import hamlet.Model;
 import hamlet.Moment;
+import hamlet.MomentGroup;
+import hamlet.PopulationType;
+import hamlet.ReactionGroup;
+import hamlet.State;
 import hamlet.Population;
 import hamlet.Reaction;
-import hamlet.State;
-import hamlet.SubPopulation;
 import hamlet.TauLeapingIntegrator;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -49,12 +51,12 @@ public class HypermutHIV {
         model.addPopulation(X);
 
         // Infected cell:
-        Population Y = new Population("Y", dims);
-        model.addPopulation(Y);
+        PopulationType Ytype = new PopulationType("Y", dims);
+        model.addPopulationType(Ytype);
 
         // Virion:
-        Population V = new Population("V", dims);
-        model.addPopulation(V);
+        PopulationType Vtype = new PopulationType("V", dims);
+        model.addPopulationType(Vtype);
 
         // Define reactions:
 
@@ -66,9 +68,7 @@ public class HypermutHIV {
         model.addReaction(cellBirth);
 
         // X + V -> Y (with RT mutation)
-        Reaction infection = new Reaction();
-        infection.setReactantSchema(X, V);
-        infection.setProductSchema(Y);
+        ReactionGroup infection = new ReactionGroup();
 
         double mu = 2e-5*L; // Mutation probabability per infection event.
         double beta = 5e-13; // Total infection rate.
@@ -77,14 +77,14 @@ public class HypermutHIV {
 
             for (int h = 0; h<=hTrunc; h++) {
 
-                SubPopulation Vsub = new SubPopulation(V, h, ha);
+                Population V = new Population(Vtype, h, ha);
 
                 int hpmin = h>1 ? h-1 : 0;
                 int hpmax = h<hTrunc ? h+1 : hTrunc;
 
                 for (int hp = hpmin; hp<=hpmax; hp++) {
 
-                    SubPopulation Ysub = new SubPopulation(Y, hp, ha);
+                    Population Y = new Population(Ytype, hp, ha);
 
                     // Transition rate to hp from a given sequence in h:
                     double rate = mu*gcond(h, hp, L)/(3.0*L);
@@ -96,19 +96,17 @@ public class HypermutHIV {
                     // Incorporate base infection rate:
                     rate *= beta;
 
-                    infection.addReactantSubSchema(null, Vsub);
-                    infection.addProductSubSchema(Ysub);
-                    infection.addSubRate(rate);
+                    infection.addReactantSchema(X, V);
+                    infection.addProductSchema(Y);
+                    infection.addRate(rate);
                 }
             }
         }
 
-        model.addReaction(infection);
+        model.addReactionGroup(infection);
 
         // X + V -> Y (with hypermutation)
-        Reaction infectionHyper = new Reaction();
-        infectionHyper.setReactantSchema(X, V);
-        infectionHyper.setProductSchema(Y);
+        ReactionGroup infectionHyper = new ReactionGroup();
 
         // A3G incorporation probability:
         double pIncorp = 1e-7;
@@ -120,7 +118,7 @@ public class HypermutHIV {
 
             for (int ha = 0; ha<=La3; ha++) {
 
-                SubPopulation Vsub = new SubPopulation(V, h, ha);
+                Population V = new Population(Vtype, h, ha);
                 /* 
                  * Once APOBEC attaches to a sequence with ha remaining
                  * hypermutable sites, it has a finite probability of editing
@@ -131,40 +129,38 @@ public class HypermutHIV {
 
                 for (int delta = 0; delta<=La3-ha; delta++) {
 
-                    SubPopulation Ysub = new SubPopulation(Y, h, ha+delta);
+                    Population Y = new Population(Ytype, h, ha+delta);
 
                     double rate = beta*pIncorp
                             *Math.pow(Binomial.choose(La3-ha, delta), 2.0)
                             *Math.pow(pHypermutate, delta)
                             *Math.pow(1.0-pHypermutate, La3-ha-delta);
 
-                    infectionHyper.addReactantSubSchema(null, Vsub);
-                    infectionHyper.addProductSubSchema(Ysub);
-                    infectionHyper.addSubRate(rate);
+                    infectionHyper.addReactantSchema(X, V);
+                    infectionHyper.addProductSchema(Y);
+                    infectionHyper.addRate(rate);
 
                 }
 
             }
         }
 
-        model.addReaction(infectionHyper);
+        model.addReactionGroup(infectionHyper);
 
         // Y -> Y + V
-        Reaction budding = new Reaction();
-        budding.setReactantSchema(Y);
-        budding.setProductSchema(Y, V);
+        ReactionGroup budding = new ReactionGroup();
         for (int h = 0; h<=hTrunc; h++) {
             for (int ha = 0; ha<=La3; ha++) {
 
-                SubPopulation Ysub = new SubPopulation(Y, h, ha);
-                SubPopulation Vsub = new SubPopulation(V, h, ha);
+                Population Y = new Population(Ytype, h, ha);
+                Population V = new Population(Vtype, h, ha);
 
-                budding.addReactantSubSchema(Ysub);
-                budding.addProductSubSchema(Ysub, Vsub);
+                budding.addReactantSchema(Y);
+                budding.addProductSchema(Y, V);
             }
         }
-        budding.setRate(1e3);
-        model.addReaction(budding);
+        budding.setGroupRate(1e3);
+        model.addReactionGroup(budding);
 
         // X -> 0
         Reaction cellDeath = new Reaction();
@@ -174,44 +170,40 @@ public class HypermutHIV {
         model.addReaction(cellDeath);
 
         // Y -> 0
-        Reaction infectedDeath = new Reaction();
-        infectedDeath.setReactantSchema(Y);
-        infectedDeath.setProductSchema();
+        ReactionGroup infectedDeath = new ReactionGroup();
 
         for (int h = 0; h<=hTrunc; h++) {
             for (int ha = 0; ha<=La3; ha++) {
-                SubPopulation Ysub = new SubPopulation(Y, h, ha);
+                Population Y = new Population(Ytype, h, ha);
 
-                infectedDeath.addReactantSubSchema(Ysub);
-                infectedDeath.addProductSubSchema();
+                infectedDeath.addReactantSchema(Y);
+                infectedDeath.addProductSchema();
             }
         }
-        infectedDeath.setRate(1.0);
-        model.addReaction(infectedDeath);
+        infectedDeath.setGroupRate(1.0);
+        model.addReactionGroup(infectedDeath);
 
         // V -> 0
-        Reaction virionDeath = new Reaction();
-        virionDeath.setReactantSchema(V);
-        virionDeath.setProductSchema();
+        ReactionGroup virionDeath = new ReactionGroup();
 
         for (int h = 0; h<=hTrunc; h++) {
             for (int ha = 0; ha<=La3; ha++) {
-                SubPopulation Vsub = new SubPopulation (V, h, ha);
+                Population V = new Population (Vtype, h, ha);
 
-                virionDeath.addReactantSubSchema(Vsub);
-                virionDeath.addProductSubSchema();
+                virionDeath.addReactantSchema(V);
+                virionDeath.addProductSchema();
             }
         }
-        virionDeath.setRate(3.0);
-        model.addReaction(virionDeath);
+        virionDeath.setGroupRate(3.0);
+        model.addReactionGroup(virionDeath);
 
         /*
          * Define moments:
          */
 
         Moment mX = new Moment("X", X);
-        Moment mY = new Moment("Y", Y);
-        Moment mV = new Moment("V", V);
+        MomentGroup mY = new MomentGroup("Y");
+        MomentGroup mV = new MomentGroup("V");
 
         for (int totMut = 0; totMut<=hTrunc+La3; totMut++) {
             mY.newSum();
@@ -223,11 +215,11 @@ public class HypermutHIV {
 
                 if (ha>=0 && ha<=La3) {
 
-                    SubPopulation Ysub = new SubPopulation(Y, h, ha);
-                    mY.addSubSchemaToSum(Ysub);
+                    Population Y = new Population(Ytype, h, ha);
+                    mY.addSubSchemaToSum(Y);
 
-                    SubPopulation Vsub = new SubPopulation(V, h, ha);
-                    mV.addSubSchemaToSum(Vsub);
+                    Population V = new Population(Vtype, h, ha);
+                    mV.addSubSchemaToSum(V);
                 }
             }
         }
@@ -239,8 +231,8 @@ public class HypermutHIV {
         State initState = new State(model);
 
         initState.set(X, 6.006e9); // Deterministic steady state values
-        initState.set(new SubPopulation(Y, 0, 0), 2.44e8);
-        initState.set(new SubPopulation(V, 0, 0), 8.125e10);
+        initState.set(new Population(Ytype, 0, 0), 2.44e8);
+        initState.set(new Population(Vtype, 0, 0), 8.125e10);
 
         // Note: unspecified population sizes default to zero.
 
@@ -257,9 +249,9 @@ public class HypermutHIV {
         spec.setnTraj(1);
         spec.setSeed(53);
         spec.setInitState(initState);
-        spec.addMoment(mY);
-        spec.addMoment(mV);
         spec.addMoment(mX);
+        spec.addMomentGroup(mY);
+        spec.addMomentGroup(mV);
 
         // Turn on verbose reportage:
         spec.setVerbosity(2);

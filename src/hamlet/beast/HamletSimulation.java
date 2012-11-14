@@ -87,10 +87,13 @@ public class HamletSimulation extends Runnable {
         spec.setnSamples(nSamplesInput.get());
         spec.setnTraj(nTrajInput.get());
         
-        spec.setInitState(initialStateInput.get().initState);
+        hamlet.State initState = new hamlet.State(modelInput.get().model);
+        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
+            initState.set(popSize.pop, popSize.size);
+        spec.setInitState(initState);
         
         for (Moment momentInput : momentsInput.get())
-            spec.addMoment(momentInput.moment);
+            spec.addMomentGroup(momentInput.moment);
 
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)

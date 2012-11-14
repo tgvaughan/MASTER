@@ -71,6 +71,6 @@ public class PopulationType implements Iterable<Population> {
 
     @Override
     public Iterator<Population> iterator() {
-        return new SubPopulationIterator(this);
+        return new PopulationIterator(this);
     }
 }

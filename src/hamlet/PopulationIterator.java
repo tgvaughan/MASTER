@@ -19,18 +19,18 @@ package hamlet;
 import java.util.Iterator;
 
 /**
- * Iterator to iterate over subpopulations of a chosen population.
+ * Iterator to iterate over populations of a chosen population type.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class SubPopulationIterator implements Iterator<Population> {
+public class PopulationIterator implements Iterator<Population> {
     
     PopulationType pop;
     int [] loc;
     
     boolean finished;
     
-    public SubPopulationIterator(PopulationType pop) {
+    public PopulationIterator(PopulationType pop) {
         this.pop = pop;
         loc = new int[pop.dims.length];
         for (int i=0; i<loc.length; i++)
@@ -47,7 +47,7 @@ public class SubPopulationIterator implements Iterator<Population> {
     @Override
     public Population next() {
         
-        // Record subpopulation to return
+        // Record population to return
         Population sub = new Population(pop, loc);
         
         // Iterate location vector

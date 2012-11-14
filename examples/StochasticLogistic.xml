@@ -13,34 +13,16 @@
         <!-- <integrator spec='GillespieIntegrator' /> -->
 
         <model spec='Model' id='model'>
-            <population spec='Population' id='X' popName='X'/>
-            <reaction spec='Reaction'>
-                <rate spec='RealParameter'>1.0</rate>
-                <reactantSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='X'/>
-                    </popSchema>
-                </reactantSchema>
-                <productSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='X'/>
-                        <population idref='X'/>
-                    </popSchema>
-                </productSchema>
+            <population spec='Population' populationName="X" id='X'/>
+            <reaction spec='Reaction' reactionName="Birth" rate="1.0">
+                <reactant idref='X'/>
+                <product idref='X'/>
+                <product idref='X'/>
             </reaction>
-            <reaction spec='Reaction'>
-                <rate spec='RealParameter'>0.01</rate>
-                <reactantSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='X'/>
-                        <population idref='X'/>
-                    </popSchema>
-                </reactantSchema>
-                <productSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='X'/>
-                    </popSchema>
-                </productSchema>
+            <reaction spec='Reaction' reactionName="Death" rate="0.01">
+                <reactant idref='X'/>
+                <reactant idref='X'/>
+                <product idref='X'/>
             </reaction>
         </model>
 
@@ -48,15 +30,10 @@
             <populationSize spec='PopulationSize' size='1'>
                 <population idref='X'/>
             </populationSize>
-            <model idref='model'/>
         </initialState>
 
         <moment spec='Moment' momentName='X'>
-            <momentSchema spec='Schema'>
-                <popSchema spec='PopSchema'>
-                    <population idref='X'/>
-                </popSchema>
-            </momentSchema>
+            <factor idref='X'/>
         </moment>
     </run>
 </beast>

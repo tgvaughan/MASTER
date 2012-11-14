@@ -17,6 +17,11 @@ public class Model extends Plugin {
             "Population type involved in the birth-death process.",
             new ArrayList<PopulationType>());
     
+    public Input<List<Population>> populationsInput = new Input<List<Population>>(
+            "population",
+            "Population involved in the birth-death process.",
+            new ArrayList<Population>());
+    
     public Input<List<ReactionGroup>> reactionGroupsInput = new Input<List<ReactionGroup>>(
             "reactionGroup",
             "Group of reactions involved in the birth-death process.",
@@ -32,14 +37,18 @@ public class Model extends Plugin {
 
     public Model() { };
 
-	@Override
+    @Override
     public void initAndValidate() throws Exception {
 
         model = new hamlet.Model();
 
-        // Add populations to model:
+        // Add population types to model:
         for (PopulationType popType : populationTypesInput.get())
             model.addPopulationType(popType.popType);
+        
+        // Add population types corresponding to individual populations to model:
+        for (Population pop : populationsInput.get())
+            model.addPopulation(pop.pop);
 
         // Add reaction groups to model:
         for (ReactionGroup reactGroup : reactionGroupsInput.get())

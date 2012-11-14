@@ -9,39 +9,23 @@
          outFileName='out.json'>
         
         <integrator spec='TauLeapingIntegrator' stepSize="0.01"/>
-        <!-- <integrator spec='GillespieIntegrator' /> -->
+        <!--<integrator spec='GillespieIntegrator' />-->
 
         <model spec='Model' id='model'>
-            <population spec='Population' id='S' popName='S'/>
-            <population spec='Population' id='I' popName='I'/>
-            <population spec='Population' id='R' popName='R'/>
-            <reaction spec='Reaction' reactionName="Infection">
-                <rate spec='RealParameter'>0.001</rate>
-                <reactantSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='S'/>
-                        <population idref='I'/>
-                    </popSchema>
-                </reactantSchema>
-                <productSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='I'/>
-                        <population idref='I'/>
-                    </popSchema>
-                </productSchema>
+            <population spec='Population' id='S' populationName='S'/>
+            <population spec='Population' id='I' populationName='I'/>
+            <population spec='Population' id='R' populationName='R'/>
+
+            <reaction spec='Reaction' reactionName="Infection" rate="0.001">
+                <reactant idref='S'/>
+                <reactant idref='I'/>
+                <product idref='I'/>
+                <product idref='I'/>
             </reaction>
-            <reaction spec='Reaction' reactionName="Recovery">
-                <rate spec='RealParameter'>0.5</rate>
-                <reactantSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='I'/>
-                    </popSchema>
-                </reactantSchema>
-                <productSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='R'/>
-                    </popSchema>
-                </productSchema>
+
+            <reaction spec='Reaction' reactionName="Recovery" rate="0.5">
+                <reactant idref='I'/>
+                <product idref='R'/>
             </reaction>
         </model>
 
@@ -55,31 +39,31 @@
             <populationSize spec='PopulationSize' size='0'>
                 <population idref='R'/>
             </populationSize>
-            <model idref='model'/>
         </initialState>
 
         <moment spec='Moment' momentName='S'>
-            <momentSchema spec='Schema'>
-                <popSchema spec='PopSchema'>
-                    <population idref='S'/>
-                </popSchema>
-            </momentSchema>
+            <factor idref='S'/>
         </moment>
 
         <moment spec='Moment' momentName='I'>
-            <momentSchema spec='Schema'>
-                <popSchema spec='PopSchema'>
-                    <population idref='I'/>
-                </popSchema>
-            </momentSchema>
+            <factor idref='I'/>
         </moment>
 
         <moment spec='Moment' momentName='R'>
-            <momentSchema spec='Schema'>
-                <popSchema spec='PopSchema'>
-                    <population idref='R'/>
-                </popSchema>
-            </momentSchema>
+            <factor idref='R'/>
         </moment>
+        
+        <momentGroup spec='MomentGroup' momentGroupName='N' sum="true">
+            <moment spec='Moment'>
+                <factor idref='S'/>
+            </moment>
+            <moment spec='Moment'>
+                <factor idref='I'/>
+            </moment>
+            <moment spec='Moment'>
+                <factor idref='R'/>
+            </moment>
+        </momentGroup>
+        
     </run>
 </beast>

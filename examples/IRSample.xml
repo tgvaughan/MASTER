@@ -12,54 +12,27 @@
         <!-- <integrator spec='GillespieIntegrator' /> -->
 
         <model spec='Model' id='model'>
-            <population spec='Population' id='I' popName='I'/>
-            <population spec='Population' id='R' popName='R'/>
-            <population spec='Population' id='I_sample' popName='I_sample'/>
+            <population spec='Population' id='I' populationName='I'/>
+            <population spec='Population' id='R' populationName='R'/>
+            <population spec='Population' id='I_sample' populationName='I_sample'/>
 
             <!-- birth reaction -->
-            <reaction spec='Reaction' reactionName="Birth">
-                <rate spec='RealParameter'>1</rate>
-                <reactantSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='I'/>
-                    </popSchema>
-                </reactantSchema>
-                <productSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='I'/>
-                        <population idref='I'/>
-                    </popSchema>
-                </productSchema>
+            <reaction spec='Reaction' reactionName="Birth" rate="1">
+                <reactant idref='I'/>
+                <product idref='I'/>
+                <product idref='I'/>
             </reaction>
             
             <!-- recovery reaction -->
-            <reaction spec='Reaction' reactionName="Recovery">
-                <rate spec='RealParameter'>0.25</rate>
-                <reactantSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='I'/>
-                    </popSchema>
-                </reactantSchema>
-                <productSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='R'/>
-                    </popSchema>
-                </productSchema>
+            <reaction spec='Reaction' reactionName="Recovery" rate="0.25">
+                <reactant idref='I'/>
+                <product idref='R'/>
             </reaction>
             
             <!-- sampling reaction -->
-            <reaction spec='Reaction' reactionName="Sampling">
-                <rate spec='RealParameter'>0.25</rate>
-                <reactantSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='I'/>
-                    </popSchema>
-                </reactantSchema>
-                <productSchema spec='Schema'>
-                    <popSchema spec='PopSchema'>
-                        <population idref='I_sample'/>
-                    </popSchema>
-                </productSchema>
+            <reaction spec='Reaction' reactionName="Sampling" rate="0.25">
+                <reactant idref='I'/>
+                <product idref='I_sample'/>
             </reaction>
         </model>
 
@@ -73,31 +46,18 @@
             <populationSize spec='PopulationSize' size='0'>
                 <population idref='R'/>
             </populationSize>
-            <model idref='model'/>
         </initialState>
 
         <moment spec='Moment' momentName='I'>
-            <momentSchema spec='Schema'>
-                <popSchema spec='PopSchema'>
-                    <population idref='I'/>
-                </popSchema>
-            </momentSchema>
+            <factor idref='I'/>
         </moment>
         
         <moment spec='Moment' momentName='R'>
-            <momentSchema spec='Schema'>
-                <popSchema spec='PopSchema'>
-                    <population idref='R'/>
-                </popSchema>
-            </momentSchema>
+            <factor idref='R'/>
         </moment>
         
         <moment spec='Moment' momentName='Isamp'>
-            <momentSchema spec='Schema'>
-                <popSchema spec='PopSchema'>
-                    <population idref='I_sample'/>
-                </popSchema>
-            </momentSchema>
+            <factor idref='I_sample'/>
         </moment>
     </run>
 </beast>

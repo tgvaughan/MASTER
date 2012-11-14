@@ -15,12 +15,17 @@ public class Population extends Plugin {
 
     public Input<PopulationType> typeInput = new Input<PopulationType>(
             "type",
-            "Type to which this population belongs.", Input.Validate.REQUIRED);
+            "Type to which this population belongs.");
+    
+    public Input<String> popNameInput = new Input<String>(
+            "populationName",
+            "Name of population.  Needed if no type given.");
+    
     public Input<IntegerParameter> locationInput = new Input<IntegerParameter>(
             "location",
             "Vector specifying location of specific population.");
     
-    // Population object:
+    // Hamlet population object:
     hamlet.Population pop;
 
     public Population() { };
@@ -28,14 +33,29 @@ public class Population extends Plugin {
     @Override
     public void initAndValidate() throws Exception {
         
+        // Ensure that one of either the population type or its name
+        // is specified:
+        if (typeInput.get() == null && popNameInput.get() == null)
+            throw new RuntimeException("Either the population type or a name"
+                    + "must be specified.");
+        
+        // Either read population type from input or create new type
+        // with chosen name:
+        hamlet.PopulationType popType;
+        if (typeInput.get() != null)
+            popType = typeInput.get().popType;
+        else
+            popType = new hamlet.PopulationType(popNameInput.get());
+        
+        // Use location if provided, else assume scalar:
         if (locationInput.get() != null) {
             int [] location = new int[locationInput.get().getDimension()];
 
             for (int i = 0; i<locationInput.get().getDimension(); i++)
                 location[i] = locationInput.get().getValue(i);
             
-            pop = new hamlet.Population(typeInput.get().popType, location);
+            pop = new hamlet.Population(popType, location);
         } else
-            pop = new hamlet.Population(typeInput.get().popType);
+            pop = new hamlet.Population(popType);
     }
 }

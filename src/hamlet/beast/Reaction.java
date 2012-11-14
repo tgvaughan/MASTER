@@ -28,7 +28,7 @@ import java.util.List;
 @Description("Individual reaction in a birth-death model.")
 public class Reaction extends Plugin {
     
-    public Input<String> nameInput = new Input<String>("name",
+    public Input<String> nameInput = new Input<String>("reactionName",
             "Name of reaction. (Not used for grouped reactions.)");
     
     public Input<Double> rateInput = new Input<Double>("rate",

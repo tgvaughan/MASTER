@@ -29,7 +29,7 @@ import java.util.List;
 @Description("Group of moments to estimate from the simulated trajectories.")
 public class MomentGroup extends Plugin {
     
-    public Input<String> nameInput = new Input<String>("name",
+    public Input<String> nameInput = new Input<String>("momentGroupName",
             "Name of moment group.", Input.Validate.REQUIRED);
     
     public Input<Boolean> factorialInput = new Input<Boolean>("factorial",
@@ -52,9 +52,12 @@ public class MomentGroup extends Plugin {
         momentGroup = new hamlet.MomentGroup(nameInput.get(), factorialInput.get());
         
         if (sumInput.get()) {
-
+            momentGroup.newSum();
+            for (Moment moment : momentsInput.get())
+                momentGroup.addSubSchemaToSum(moment.factors);
         } else {
-            
+            for (Moment moment : momentsInput.get())
+                momentGroup.addSchema(moment.factors);
         }
 
     }

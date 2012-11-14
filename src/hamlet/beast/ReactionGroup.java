@@ -26,7 +26,7 @@ import beast.core.parameter.*;
 @Description("Group of reactions in the birth-death model.")
 public class ReactionGroup extends Plugin {
 
-    public Input<String> nameInput = new Input<String>("name",
+    public Input<String> nameInput = new Input<String>("reactionGroupName",
             "Reaction group name");
     
     public Input<Double> rateInput = new Input<Double>("rate",

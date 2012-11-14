@@ -1,11 +1,26 @@
+/*
+ * Copyright (C) 2012 Tim Vaughan <tgvaughan@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package hamlet.beast;
-
-import java.io.*;
-import java.util.*;
 
 import beast.core.*;
 import beast.core.Input.Validate;
 import beast.core.Runnable;
+import java.io.*;
+import java.util.*;
 
 /**
  * BEAST 2 plugin representing a general stochastic simulation.
@@ -51,10 +66,16 @@ public class HamletSimulation extends Runnable {
     public Input<InitState> initialStateInput = new Input<InitState>("initialState",
             "Initial state of system.");
     
-    // Moments to estimate:
+    // Moments groups:
+    public Input<List<MomentGroup>> momentGroupsInput = new Input<List<MomentGroup>>(
+            "momentGroup",
+            "Moment group to estimate from birth-death process.",
+            new ArrayList<MomentGroup>());
+    
+    // Individual moments:
     public Input<List<Moment>> momentsInput = new Input<List<Moment>>(
             "moment",
-            "Moment to sample from birth-death process.",
+            "Individual moment to estimate from birth-death process.",
             new ArrayList<Moment>());
     
     // Output file name:
@@ -92,8 +113,16 @@ public class HamletSimulation extends Runnable {
             initState.set(popSize.pop, popSize.size);
         spec.setInitState(initState);
         
-        for (Moment momentInput : momentsInput.get())
-            spec.addMomentGroup(momentInput.moment);
+        for (MomentGroup momentGroup : momentGroupsInput.get())
+            spec.addMomentGroup(momentGroup.momentGroup);
+        
+        for (Moment moment : momentsInput.get()) {
+            if (moment.name == null)
+                throw new RuntimeException("Moment doesn't specify name.");
+            
+            spec.addMoment(new hamlet.Moment(moment.name,
+                    moment.factorial, moment.factors));
+        }
 
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)

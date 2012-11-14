@@ -2,7 +2,7 @@
 
 <beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
     
-    <populationType spec='PopulationType' id='X' name='X' dim="2" />
+    <populationType spec='PopulationType' id='X' typeName='X' dim="2" />
         
     <run spec='HamletSimulation'
          simulationTime='20'
@@ -12,18 +12,18 @@
          outFileName='out.json'>
         
         <integrator spec='TauLeapingIntegrator' stepSize="0.01"/>
-        <!-- <integrator spec='GillespieIntegrator' /> -->
+        <!--<integrator spec='GillespieIntegrator' />-->
 
         <model spec='Model' id='model'>
             <populationType idref='X'/>
-            <reactionGroup spec='ReactionGroup' name="Migration">
+            <reactionGroup spec='ReactionGroup' reactionGroupName="Migration">
                 <reaction spec='Reaction' rate="0.1">
                     <reactant spec='Population' type="@X" location="0"/>
                     <product spec='Population' type="@X" location="1"/>
                 </reaction>
                 <reaction spec='Reaction' rate="0.2">
                     <reactant spec='Population' type="@X" location="1"/>
-                    <reactant spec='Population' type="@X" location="0"/>
+                    <product spec='Population' type="@X" location="0"/>
                 </reaction>
             </reactionGroup>
         </model>
@@ -34,7 +34,7 @@
             </populationSize>
         </initialState>
 
-        <momentGroup spec='MomentGroup' name='X'>
+        <momentGroup spec='MomentGroup' momentGroupName='X'>
             <moment spec='Moment'>
                 <factor spec='Population' type="@X" location="0"/>
             </moment>
@@ -43,7 +43,7 @@
             </moment>
         </momentGroup>
         
-        <momentGroup spec='MomentGroup' name='N' sum="true">
+        <momentGroup spec='MomentGroup' momentGroupName='N' sum="true">
             <moment spec='Moment'>
                 <factor spec='Population' type="@X" location="0"/>
             </moment>

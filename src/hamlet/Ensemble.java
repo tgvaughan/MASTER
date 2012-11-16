@@ -1,7 +1,7 @@
 package hamlet;
 
-import java.util.*;
 import beast.util.Randomizer;
+import java.util.*;
 
 /**
  * A class representing an ensemble of stochastic trajectories

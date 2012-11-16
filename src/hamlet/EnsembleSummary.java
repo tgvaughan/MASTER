@@ -1,12 +1,9 @@
 package hamlet;
 
-import java.io.*;
-import java.util.*;
-
 import beast.util.Randomizer;
 import com.google.common.collect.*;
-
-// JSON classes:
+import java.io.*;
+import java.util.*;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**

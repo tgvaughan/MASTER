@@ -87,12 +87,10 @@ public class Model {
      * Getters for JSON object mapper
      */
     public List<PopulationType> getPopulationTypes() {
-        //return pops.toArray(new Population[pops.size()]);
         return types;
     }
 
     public List<ReactionGroup> getReactionGroups() {
-        //return reactions.toArray(new Reaction[reactions.size()]);
         return reactionGroups;
     }
 }

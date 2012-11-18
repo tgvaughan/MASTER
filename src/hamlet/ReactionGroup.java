@@ -20,9 +20,9 @@ public class ReactionGroup {
     int nReactions;
     
     /**
-     * Constructor (with name).
+     * Constructor with name.
      */
-    public ReactionGroup(String reactionName) {
+    public ReactionGroup(String reactionGroupName) {
         
         // Ensure lists are defined:
         reactCounts = Lists.newArrayList();
@@ -30,11 +30,11 @@ public class ReactionGroup {
 
         rates = Lists.newArrayList();
         
-        this.reactionGroupName = reactionName;
+        this.reactionGroupName = reactionGroupName;
     }
     
     /**
-     * Constructor (no name).
+     * Constructor without name.
      */
     public ReactionGroup() {
         
@@ -59,7 +59,7 @@ public class ReactionGroup {
     }
     
     /**
-     * Define a particular sub-population-level schema by listing the individual
+     * Define a particular schema by listing the individual
      * products involved in a reaction.
      *
      * @param pops	varargs list of product populations.

@@ -16,31 +16,33 @@
  */
 package hamlet;
 
-import java.util.List;
-
 /**
- * A class representing an inheritance graph generated under a particular
- * stochastic population dynamics model.  Inheritance trees are a special
- * case in which children have only one parent.
+ * Specification of a simulation which will result in generation of an
+ * inheritance graph between individual members of the populations involved.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class InheritanceGraph {
-
-    // List of nodes present at the start of the simulation
-    public List <Node> startNodes;
-
-    public List<Node> activeNodes;
+public class InheritanceGraphSpec extends Spec {
     
-    InheritanceGraphSpec spec;
+    InheritanceModel inheritanceModel;
     
     /**
-     * Build an inheritance graph corrsponding to a set of lineages
-     * embedded within populations evolving under a birth-death process.
-     * 
-     * @param spec Inheritanc graph simulation specification.
+     * Constructor.
      */
-    public InheritanceGraph(InheritanceGraphSpec spec) {
-        this.spec = spec;
+    public InheritanceGraphSpec() {
+        super();
     }
+    
+    /**
+     * Specify inheritance model to use.  Note that the model field
+     * is also set by this method, so that the non-inheritance graph
+     * methods can still interact with those aspects of the model.
+     * 
+     * @param inheritanceModel 
+     */
+    public void setModel(InheritanceModel inheritanceModel) {
+        this.inheritanceModel = inheritanceModel;
+        this.model = inheritanceModel;
+    }
+    
 }

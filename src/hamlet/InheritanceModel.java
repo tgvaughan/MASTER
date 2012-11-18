@@ -16,31 +16,28 @@
  */
 package hamlet;
 
+import com.google.common.collect.Lists;
 import java.util.List;
 
 /**
- * A class representing an inheritance graph generated under a particular
- * stochastic population dynamics model.  Inheritance trees are a special
- * case in which children have only one parent.
+ * Model additionally containing inheritance reaction groups.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class InheritanceGraph {
-
-    // List of nodes present at the start of the simulation
-    public List <Node> startNodes;
-
-    public List<Node> activeNodes;
+public class InheritanceModel extends Model {
     
-    InheritanceGraphSpec spec;
+    List<InheritanceReactionGroup> inheritanceReactionGroups;
     
     /**
-     * Build an inheritance graph corrsponding to a set of lineages
-     * embedded within populations evolving under a birth-death process.
-     * 
-     * @param spec Inheritanc graph simulation specification.
+     * InheritanceModel constructor.
      */
-    public InheritanceGraph(InheritanceGraphSpec spec) {
-        this.spec = spec;
+    public InheritanceModel() {
+        super();
+        inheritanceReactionGroups = Lists.newArrayList();
+    }
+    
+    public void addInheritanceReactionGroup(InheritanceReactionGroup irGroup) {
+        addReactionGroup(irGroup);
+        inheritanceReactionGroups.add(irGroup);
     }
 }

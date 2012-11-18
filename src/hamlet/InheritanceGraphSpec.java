@@ -16,6 +16,8 @@
  */
 package hamlet;
 
+import java.util.List;
+
 /**
  * Specification of a simulation which will result in generation of an
  * inheritance graph between individual members of the populations involved.
@@ -24,13 +26,22 @@ package hamlet;
  */
 public class InheritanceGraphSpec extends Spec {
     
+    // Birth-death model including inheritance relationships.
     InheritanceModel inheritanceModel;
+
+    // Lineages present at start of simulation.
+    List<Node> initLineages;
+    
+    // Maximum time to simulate for:
+    double simulationTime;
     
     /**
      * Constructor.
      */
     public InheritanceGraphSpec() {
         super();
+        
+        simulationTime = Double.POSITIVE_INFINITY;
     }
     
     /**
@@ -43,6 +54,17 @@ public class InheritanceGraphSpec extends Spec {
     public void setModel(InheritanceModel inheritanceModel) {
         this.inheritanceModel = inheritanceModel;
         this.model = inheritanceModel;
+    }
+    
+    /**
+     * Specify maximum time to simulate for.  Simulation will end when
+     * all lineages are dead or this time is exceeded, whichever occurs
+     * first.  (Default is +infinity.)
+     * 
+     * @param simulationTime 
+     */
+    public void setSimulationTime(double simulationTime) {
+        this.simulationTime = simulationTime;
     }
     
 }

@@ -34,9 +34,9 @@ public class GillespieIntegrator extends Integrator {
             
             // Calculate propensities
             double totalPropensity = 0.0;
-            for (ReactionGroup reaction : model.reactionGroups) {
-                reaction.calcPropensities(state);
-                for (double propensity : reaction.propensities)
+            for (ReactionGroup reactionGroup : model.reactionGroups) {
+                reactionGroup.calcPropensities(state);
+                for (double propensity : reactionGroup.propensities)
                     totalPropensity += propensity;
             }
 
@@ -50,15 +50,16 @@ public class GillespieIntegrator extends Integrator {
             // Choose reaction to implement
             double u = Randomizer.nextDouble()*totalPropensity;
             boolean found = false;
-            ReactionGroup thisReact = null;
-            int thisSub = 0;
-            for (int ridx=0; ridx<model.reactionGroups.size(); ridx++) {
-                thisReact = model.reactionGroups.get(ridx);
+            ReactionGroup chosenReactionGroup = null;
+            int chosenReaction = 0;
+            for (ReactionGroup reactionGroup : model.reactionGroups) {
                 
-                for (thisSub=0; thisSub<thisReact.propensities.size(); thisSub++) {
-                    u -= thisReact.propensities.get(thisSub);
+                for (int reaction=0; reaction<reactionGroup.propensities.size(); reaction++) {
+                    u -= reactionGroup.propensities.get(reaction);
                     if (u<0) { 
                         found = true;
+                        chosenReactionGroup = reactionGroup;
+                        chosenReaction = reaction;
                         break;
                     }
                 }
@@ -67,7 +68,7 @@ public class GillespieIntegrator extends Integrator {
             }
             
             // Implement chosen reaction:
-            state.implementReaction(thisReact, thisSub, 1);
+            state.implementReaction(chosenReactionGroup, chosenReaction, 1);
         }
     }
 

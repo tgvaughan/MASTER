@@ -9,8 +9,6 @@ package hamlet;
  */
 public class Trajectory {
 
-	State currentState;
-
 	// Sampled states:
 	State[] sampledStates;
 
@@ -31,7 +29,7 @@ public class Trajectory {
 		sampledStates = new State[spec.nSamples];
 
 		// Initialise system state:
-		currentState = new State(spec.initState);
+		State currentState = new State(spec.initState);
 
 		// Derived simulation parameters:
                 double sampleDt = spec.getSampleDt();

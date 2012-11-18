@@ -90,5 +90,25 @@ public class Node {
         
         return this;
     }
+    
+    /**
+     * Return a copy of this node.  Note that the children and parents
+     * of the copy refer to the children and parents of the original
+     * node.  This method does <b>not</b> produce a copy of the entire
+     * inheritance graph.
+     * 
+     * @return Copy of this node.
+     */
+    public Node copy() {
+        Node copy = new Node(population, time);
+        
+        for (Node parent : parents)
+            copy.addParent(parent);
+        
+        for (Node child : children)
+            copy.addChild(child);
+        
+        return copy;
+    }
 
 }

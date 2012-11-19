@@ -4,7 +4,7 @@ import beast.math.GammaFunction;
 import beast.util.Randomizer;
 
 /**
- * Class with a static method useful for generating sequences of numbers which
+ * Class with static methods useful for generating sequences of numbers which
  * appear to be chosen from Poissonian distributions.
  *
  * Uses BEAST's uniform RNG and logGamma.
@@ -17,11 +17,18 @@ import beast.util.Randomizer;
  */
 public class Poisson {
 
-    // If mean is above this, use rejection sampling method.
-    private static double REJECT = 12;
+    /**
+     * If mean is above this, use rejection sampling method.
+     */
+    public static double REJECT = 12;
 
-    // Rejection method from NR, apparently good for lambda>=12
-    private static double poissonian_reject(double lambda) {
+    /**
+     * Rejection method from NR, apparently good for lambda>=12.
+     * 
+     * @param lambda
+     * @return 
+     */
+    public static double poissonian_reject(double lambda) {
         double sq = Math.sqrt(2.0*lambda);
         double alxm = Math.log(lambda);
         double g = lambda*alxm-GammaFunction.lnGamma(lambda+1.0);
@@ -42,8 +49,13 @@ public class Poisson {
         return em;
     }
 
-    // Direct method due to Knuth. Only efficient for small lambda.
-    private static double poissonian_knuth(double lambda) {
+    /**
+     * Direct method due to Knuth. Only efficient for small lambda.
+     * 
+     * @param lambda
+     * @return 
+     */
+    public static double poissonian_knuth(double lambda) {
         double L = Math.exp(-lambda);
         double p;
         int k;
@@ -54,7 +66,12 @@ public class Poisson {
         return k-1;
     }
 
-    // Meta-function selects direct or rejection method according to lambda.
+    /**
+     * Meta-function selects direct or rejection method according to lambda.
+     * 
+     * @param lambda
+     * @return 
+     */
     public static double nextDouble(double lambda) {
         if (lambda<REJECT)
             return poissonian_knuth(lambda);

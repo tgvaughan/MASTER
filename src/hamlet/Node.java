@@ -67,6 +67,15 @@ public class Node {
     }
     
     /**
+     * Set node height.
+     * 
+     * @param time New height of node.
+     */
+    public void setTime(double time) {
+        this.time = time;
+    }
+    
+    /**
      * Add a child node to the list of children.  Returns this node to
      * allow method chaining.
      * 
@@ -80,82 +89,4 @@ public class Node {
         return this;
     }
     
-    /**
-     * Add a parent node to the list of parents.  Returns this node to
-     * allow method chaining.
-     * 
-     * @param parent Parent to add.
-     * @return this
-     */
-    public Node addParent(Node parent) {
-        parents.add(parent);
-        parent.children.add(this);
-        
-        return this;
-    }
-
-    /**
-     * Internal method for constructing copy of graph.
-     * 
-     * @param nodesSeen List of nodes already added to graph.
-     * @param nodeCopies List of node copies corresponding to original nodes.
-     * @return 
-     */
-    private Node graphCopy(List<Node> nodesSeen, List<Node> nodeCopies) {
-        nodesSeen.add(this);
-        Node copy = new Node(population, time);
-        nodeCopies.add(copy);
-        
-        for (Node parent : parents) {
-            if (!nodesSeen.contains(parent))
-                copy.parents.add(parent.graphCopy(nodesSeen, nodeCopies));
-            else
-                copy.parents.add(nodeCopies.get(nodesSeen.indexOf(parent)));
-        }
-        
-        for (Node child : children) {
-            if (!nodesSeen.contains(child))
-                copy.children.add(child.graphCopy(nodesSeen, nodeCopies));
-            else
-                copy.children.add(nodeCopies.get(nodesSeen.indexOf(child)));
-        }
-        
-        return copy;
-    }
-    
-    /**
-     * Return a copy of this node and everything attached to that node.
-     * 
-     * @return Copy of node and attached graph.
-     */
-    public Node graphCopy() {
-        List<Node> nodesSeen = Lists.newArrayList();
-        List<Node> nodeCopies = Lists.newArrayList();
-        
-        return graphCopy(nodesSeen, nodeCopies);
-    }
-    
-    /**
-     * Main method for testing.
-     * @param args 
-     */
-    public static void main(String [] args) {
-        
-        Population X = new Population("X");
-        
-        Node root1 = new Node(X);
-        Node root2 = new Node(X);
-        
-        Node leaf1 = new Node(X);
-        Node leaf2 = new Node(X);
-        
-        root1.addChild(leaf1);
-        root1.addChild(leaf2);
-        
-        root2.addChild(leaf1);
-        root2.addChild(leaf2);
-        
-        Node rootCopy = root1.graphCopy();
-        System.out.println(rootCopy);
-    }
 }

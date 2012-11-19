@@ -19,8 +19,10 @@ package hamlet;
 import beast.util.Randomizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A class representing an inheritance graph generated under a particular
@@ -149,23 +151,38 @@ public class InheritanceGraph {
                     popsSeen.put(node.population,1);
             }
             
-            // Implement modifications to inheritance graph:
-            Map<Node,Node> childrenMap = Maps.newHashMap();
+            // Attach reaction graph to inheritance graph
+            Map<Node, Node> nextLevelNodes = Maps.newHashMap();
             for (int i=0; i<nodesInvolved.size(); i++) {
                 Node node = nodesInvolved.get(i);
                 Node reactNode = reactNodesInvolved.get(i);
+                node.setTime(t);
                 
-                for (Node child : reactNode.children) {
-                    if (!childrenMap.containsKey(child))
-                        childrenMap.put(child, new Node(child.population));
-                    
-                    // Thought: do we need to keep a separate node.parents list?
-                    // While useful in traversing graphs, we haven't actually
-                    // had to do that yet, and it seems it'll be tricky to keep
-                    // the parents lists up to date during graph construction,
-                    // especially as the _order_ of these lists are important.
+                for (Node reactChild : reactNode.children) {
+                    if (nextLevelNodes.containsKey(reactChild))
+                        node.addChild(nextLevelNodes.get(reactChild));
+                    else {
+                        Node child = new Node(reactChild.population, t);
+                        nextLevelNodes.put(reactChild, child);
+                        node.addChild(child);
+                    }
                 }
             }
+            
+            // Prune superfluous nodes
+            for (Node node : nodesInvolved) {
+                if (node.children.size()==1) {
+                    for (Node parent : node.parents) {
+                        while (parent.children.contains(node)) {
+                            int nodeIdx = parent.children.indexOf(node);
+                            parent.children.set(nodeIdx, node.children.get(0));
+                        }
+                    }
+                }
+            }
+            
+            // Update list of active nodes
+            
             
             // Implement state change due to reaction:
             

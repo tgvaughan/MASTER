@@ -18,6 +18,7 @@ package hamlet;
 
 import com.google.common.collect.Lists;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Reaction group additionally specifying inheritance relationships between
@@ -28,6 +29,7 @@ import java.util.List;
 public class InheritanceReactionGroup extends ReactionGroup {
     
     List<List<Node>> reactNodes;
+    List<Map<Population, Integer>> inheritanceReactCounts;
     
     /**
      * Constructor with name.
@@ -37,6 +39,7 @@ public class InheritanceReactionGroup extends ReactionGroup {
     public InheritanceReactionGroup(String reactionGroupName) {
         super(reactionGroupName);
         reactNodes = Lists.newArrayList();
+        inheritanceReactCounts = Lists.newArrayList();
     }
     
     /**
@@ -45,6 +48,7 @@ public class InheritanceReactionGroup extends ReactionGroup {
     public InheritanceReactionGroup() {
         super();
         reactNodes = Lists.newArrayList();
+        inheritanceReactCounts = Lists.newArrayList();
     }
     
     /**
@@ -57,5 +61,11 @@ public class InheritanceReactionGroup extends ReactionGroup {
      */
     public void addInheritanceSchema(Node ... nodes) {
         reactNodes.add(Lists.newArrayList(nodes));
+        
+        Population [] reactNodePops = new Population[nodes.length];
+        for (int i=0; i<nodes.length; i++)
+            reactNodePops[i] = nodes[i].population;
+        
+        inheritanceReactCounts.add(getPopCount(reactNodePops));
     }
 }

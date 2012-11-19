@@ -54,7 +54,7 @@ public class ReactionGroup {
     public void addReactantSchema(Population ... pops) {
 
         // Record unique sub-population counts:
-        reactCounts.add(getSubCount(pops));
+        reactCounts.add(getPopCount(pops));
 
     }
     
@@ -67,7 +67,7 @@ public class ReactionGroup {
     public void addProductSchema(Population ... pops) {
 
         // Record unique population counts:
-        prodCounts.add(getSubCount(pops));
+        prodCounts.add(getPopCount(pops));
     }
     
     /**
@@ -75,26 +75,26 @@ public class ReactionGroup {
      * a map from the populations to their multiplicity in the list.
      * 
      * @param pops List of populations.
-     * @return Map from subpopulations to their list multiplicity.
+     * @return Map from populations to their list multiplicity.
      */
-    private Map<Population, Integer> getSubCount(Population ... pops) {
+    protected Map<Population, Integer> getPopCount(Population ... pops) {
 
         // Condense provided schema into a map of the form
         // SubPop->count, where count is the number of times
         // that specific offset appears as a reactant/product in this schema.
-        Map<Population, Integer> subCount = Maps.newHashMap();
+        Map<Population, Integer> popCount = Maps.newHashMap();
         
-        for (Population sub : pops) {   
+        for (Population pop : pops) {   
             
-            if (!subCount.containsKey(sub))
-                subCount.put(sub, 1);
+            if (!popCount.containsKey(pop))
+                popCount.put(pop, 1);
             else {
-                int val = subCount.get(sub);
-                subCount.put(sub, val+1);
+                int val = popCount.get(pop);
+                popCount.put(pop, val+1);
             }
         }
 
-        return subCount;
+        return popCount;
     }
 
     /**

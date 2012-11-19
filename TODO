@@ -1,5 +1,0 @@
-* Implement a SubPopulation class.
-  The current use of Arrays to represent sub-populations is annoying
-  and fraught with danger.  I propose we replace these with a
-  purpose-built class SubPopulation which will allow for checking of
-  bounds and cleaner code.

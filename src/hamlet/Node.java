@@ -16,6 +16,7 @@
  */
 package hamlet;
 
+import com.google.common.collect.Lists;
 import java.util.*;
 
 /**
@@ -74,6 +75,7 @@ public class Node {
      */
     public Node addChild(Node child) {
         children.add(child);
+        child.parents.add(this);
         
         return this;
     }
@@ -87,28 +89,73 @@ public class Node {
      */
     public Node addParent(Node parent) {
         parents.add(parent);
+        parent.children.add(this);
         
         return this;
     }
-    
+
     /**
-     * Return a copy of this node.  Note that the children and parents
-     * of the copy refer to the children and parents of the original
-     * node.  This method does <b>not</b> produce a copy of the entire
-     * inheritance graph.
+     * Internal method for constructing copy of graph.
      * 
-     * @return Copy of this node.
+     * @param nodesSeen List of nodes already added to graph.
+     * @param nodeCopies List of node copies corresponding to original nodes.
+     * @return 
      */
-    public Node copy() {
+    private Node graphCopy(List<Node> nodesSeen, List<Node> nodeCopies) {
+        nodesSeen.add(this);
         Node copy = new Node(population, time);
+        nodeCopies.add(copy);
         
-        for (Node parent : parents)
-            copy.addParent(parent);
+        for (Node parent : parents) {
+            if (!nodesSeen.contains(parent))
+                copy.parents.add(parent.graphCopy(nodesSeen, nodeCopies));
+            else
+                copy.parents.add(nodeCopies.get(nodesSeen.indexOf(parent)));
+        }
         
-        for (Node child : children)
-            copy.addChild(child);
+        for (Node child : children) {
+            if (!nodesSeen.contains(child))
+                copy.children.add(child.graphCopy(nodesSeen, nodeCopies));
+            else
+                copy.children.add(nodeCopies.get(nodesSeen.indexOf(child)));
+        }
         
         return copy;
     }
-
+    
+    /**
+     * Return a copy of this node and everything attached to that node.
+     * 
+     * @return Copy of node and attached graph.
+     */
+    public Node graphCopy() {
+        List<Node> nodesSeen = Lists.newArrayList();
+        List<Node> nodeCopies = Lists.newArrayList();
+        
+        return graphCopy(nodesSeen, nodeCopies);
+    }
+    
+    /**
+     * Main method for testing.
+     * @param args 
+     */
+    public static void main(String [] args) {
+        
+        Population X = new Population("X");
+        
+        Node root1 = new Node(X);
+        Node root2 = new Node(X);
+        
+        Node leaf1 = new Node(X);
+        Node leaf2 = new Node(X);
+        
+        root1.addChild(leaf1);
+        root1.addChild(leaf2);
+        
+        root2.addChild(leaf1);
+        root2.addChild(leaf2);
+        
+        Node rootCopy = root1.graphCopy();
+        System.out.println(rootCopy);
+    }
 }

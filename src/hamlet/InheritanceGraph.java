@@ -44,6 +44,9 @@ public class InheritanceGraph {
      * Build an inheritance graph corrsponding to a set of lineages
      * embedded within populations evolving under a birth-death process.
      * 
+     * I'm sure there's a more efficient way of implementing this. Suggestions
+     * are very welcome. (Tim)
+     * 
      * @param spec Inheritanc graph simulation specification.
      */
     public InheritanceGraph(InheritanceGraphSpec spec) {
@@ -78,9 +81,9 @@ public class InheritanceGraph {
             // Choose reaction to implement
             double u = Randomizer.nextDouble()*totalPropensity;
             boolean found = false;
-            ReactionGroup chosenReactionGroup = null;
+            InheritanceReactionGroup chosenReactionGroup = null;
             int chosenReaction = 0;
-            for (ReactionGroup reactionGroup : spec.model.reactionGroups) {
+            for (InheritanceReactionGroup reactionGroup : spec.inheritanceModel.inheritanceReactionGroups) {
                 
                 for (int ridx = 0; ridx<reactionGroup.propensities.size(); ridx++) {
                     u -= reactionGroup.propensities.get(ridx);
@@ -101,6 +104,7 @@ public class InheritanceGraph {
             Map<Population, Integer> popsSeen = Maps.newHashMap();
             Map<Population, Integer> popsChosen = Maps.newHashMap();
             List<Node> nodesInvolved = Lists.newArrayList();
+            List<Node> reactNodesInvolved = Lists.newArrayList();
             for (Node node : activeNodes) {
                 if (!chosenReactionGroup.reactCounts.get(chosenReaction).containsKey(node.population))
                     continue;
@@ -118,6 +122,20 @@ public class InheritanceGraph {
                 // Decide whether lineage is involved
                 if (Randomizer.nextDouble() < m/N) {
                     nodesInvolved.add(node);
+                    
+                    // Select particular reactant node to use:
+                    int idx = Randomizer.nextInt(m);
+                    for (Node reactNode : chosenReactionGroup.reactNodes.get(chosenReaction)) {
+                        if (reactNode.population == node.population) {
+                            if (idx == 0) {
+                                reactNodesInvolved.add(reactNode);
+                                break;
+                            } else
+                                idx -= 1;
+                        }
+                    }
+                    
+                    // Update popsChosen and popsSeen
                     if (popsChosen.containsKey(node.population))
                         popsChosen.put(node.population, popsChosen.get(node.population)+1);
                     else
@@ -131,12 +149,12 @@ public class InheritanceGraph {
                     popsSeen.put(node.population,1);
             }
             
+            
+            
             // Implement modifications to inheritance graph:
-            for (Node node : nodesInvolved) {
-                
-            }
             
             // Implement state change due to reaction:
+            
         }
     }
 }

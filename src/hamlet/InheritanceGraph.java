@@ -149,9 +149,23 @@ public class InheritanceGraph {
                     popsSeen.put(node.population,1);
             }
             
-            
-            
             // Implement modifications to inheritance graph:
+            Map<Node,Node> childrenMap = Maps.newHashMap();
+            for (int i=0; i<nodesInvolved.size(); i++) {
+                Node node = nodesInvolved.get(i);
+                Node reactNode = reactNodesInvolved.get(i);
+                
+                for (Node child : reactNode.children) {
+                    if (!childrenMap.containsKey(child))
+                        childrenMap.put(child, new Node(child.population));
+                    
+                    // Thought: do we need to keep a separate node.parents list?
+                    // While useful in traversing graphs, we haven't actually
+                    // had to do that yet, and it seems it'll be tricky to keep
+                    // the parents lists up to date during graph construction,
+                    // especially as the _order_ of these lists are important.
+                }
+            }
             
             // Implement state change due to reaction:
             

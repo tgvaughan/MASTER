@@ -67,4 +67,13 @@ public class InheritanceGraphSpec extends Spec {
         this.simulationTime = simulationTime;
     }
     
+    /**
+     * Specify initial nodes whose lineages the simulation will follow.
+     * 
+     * @param initNodes List of starting nodes.
+     */
+    public void setInitNodes(List<Node> initNodes) {
+        this.initNodes = initNodes;
+    }
+    
 }

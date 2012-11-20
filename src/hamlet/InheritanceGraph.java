@@ -258,7 +258,7 @@ public class InheritanceGraph {
     public void subTreeToNewick(Node node, StringBuilder sb) {
         
         double branchLength;
-        if (node.parents.size()==0)
+        if (node.parents.isEmpty())
             branchLength=0;
         else
             branchLength = node.getParents().get(0).getTime();

@@ -19,6 +19,7 @@ package hamlet;
 import beast.util.Randomizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -69,8 +70,14 @@ public class InheritanceGraph {
         startNodes = spec.initNodes;
         
         // Initialise time and activeLineages:
-        double t=0.0;
-        List<Node> activeLineages = spec.initNodes;
+        double t = 0.0;
+        List<Node> activeLineages = Lists.newArrayList();
+        for (Node node : spec.initNodes) {
+            node.setTime(t);
+            Node child = new Node(node.population);
+            node.addChild(child);
+            activeLineages.add(child);
+        }
         
         // Initialise system state:
         State currentState = new State(spec.initState);
@@ -231,6 +238,43 @@ public class InheritanceGraph {
             // Implement state change due to reaction:
             currentState.implementReaction(chosenReactionGroup, chosenReaction, 1);
             
+            // End simulation if there are no active lineages remaining.
+            if (activeLineages.isEmpty())
+                break;
         }
+        
+        // Fix final time of any remaining active lineages.
+        for (Node node : activeLineages)
+            node.setTime(spec.simulationTime);
+    }
+
+    public void dumpGraphAsNewickTree (PrintStream pstream) {        
+        StringBuilder sb = new StringBuilder();
+        subTreeToNewick(startNodes.get(0), sb);        
+        pstream.println(sb.append(";"));
+        
+    }
+    
+    public void subTreeToNewick(Node node, StringBuilder sb) {
+        
+        double branchLength;
+        if (node.parents.size()==0)
+            branchLength=0;
+        else
+            branchLength = node.getParents().get(0).getTime();
+        
+        if (node.getChildren().size()>0) {
+            sb.append("(");
+            boolean first=true;
+            for (Node child : node.getChildren()) {
+                if (!first)
+                    sb.append(",");
+                else
+                    first = false;
+                subTreeToNewick(child, sb);
+            }
+            sb.append(")");
+        }
+        sb.append(":").append(branchLength);
     }
 }

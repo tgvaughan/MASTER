@@ -73,7 +73,7 @@ public class Node {
      */
     public void setTime(double time) {
         this.time = time;
-    }
+    }    
     
     /**
      * Add a child node to the list of children.  Returns this node to
@@ -87,6 +87,22 @@ public class Node {
         child.parents.add(this);
         
         return this;
+    }
+    
+    /*
+     * Getters:
+     */
+
+    public double getTime() {
+        return this.time;
+    }
+    
+    public List<Node> getParents() {
+        return this.parents;
+    }
+    
+    public List<Node> getChildren() {
+        return this.children;
     }
     
 }

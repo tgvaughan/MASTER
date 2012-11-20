@@ -30,7 +30,7 @@ public class InheritanceGraphSpec extends Spec {
     InheritanceModel inheritanceModel;
 
     // Lineages present at start of simulation.
-    List<Node> initLineages;
+    List<Node> initNodes;
     
     // Maximum time to simulate for:
     double simulationTime;

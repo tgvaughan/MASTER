@@ -19,25 +19,36 @@ package hamlet;
 import beast.util.Randomizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A class representing an inheritance graph generated under a particular
  * stochastic population dynamics model.  Inheritance trees are a special
  * case in which children have only one parent.
- *
+ * 
+ * <p>Things to keep in mind if you're reading this code:
+ * 
+ * <ol>
+ * <li>Construction of the graph proceeds in a top-down fashion beginning
+ * with the earliest nodes (provided in spec.initNodes), implementing
+ * changes as reactions occur and finishing when one of the end conditions
+ * is met.</li>
+ * 
+ * <li>During graph construction, activeLineages maintains a list of node
+ * objects that represent single lineages extant at the current time.  The fact
+ * that they represent lineages rather than regular graph nodes is important, as
+ * it means that the node objects contained in activeLineages may have only
+ * one parent, as having more would mean the node represents more than one
+ * lineage.</li>
+ *</ol>
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class InheritanceGraph {
 
     // List of nodes present at the start of the simulation
     public List <Node> startNodes;
-
-    // List of nodes/lineages currently present in simulation.
-    public List<Node> activeNodes;
     
     // Simulation specification.
     InheritanceGraphSpec spec;
@@ -52,12 +63,14 @@ public class InheritanceGraph {
      * @param spec Inheritanc graph simulation specification.
      */
     public InheritanceGraph(InheritanceGraphSpec spec) {
-        this.spec = spec;
-        startNodes = spec.initLineages;
-        activeNodes = spec.initLineages;
         
-        // Initialise time
+        // Keep a record of the simulation spec and the starting nodes.
+        this.spec = spec;
+        startNodes = spec.initNodes;
+        
+        // Initialise time and activeLineages:
         double t=0.0;
+        List<Node> activeLineages = spec.initNodes;
         
         // Initialise system state:
         State currentState = new State(spec.initState);
@@ -107,7 +120,7 @@ public class InheritanceGraph {
             Map<Population, Integer> popsChosen = Maps.newHashMap();
             List<Node> nodesInvolved = Lists.newArrayList();
             List<Node> reactNodesInvolved = Lists.newArrayList();
-            for (Node node : activeNodes) {
+            for (Node node : activeLineages) {
                 if (!chosenReactionGroup.reactCounts.get(chosenReaction).containsKey(node.population))
                     continue;
                 
@@ -128,13 +141,14 @@ public class InheritanceGraph {
                     // Select particular reactant node to use:
                     int idx = Randomizer.nextInt(m);
                     for (Node reactNode : chosenReactionGroup.reactNodes.get(chosenReaction)) {
-                        if (reactNode.population == node.population) {
-                            if (idx == 0) {
-                                reactNodesInvolved.add(reactNode);
-                                break;
-                            } else
-                                idx -= 1;
-                        }
+                        if (reactNode.population != node.population)
+                            continue;
+                        
+                        if (idx == 0) {
+                            reactNodesInvolved.add(reactNode);
+                            break;
+                        } else
+                            idx -= 1;
                     }
                     
                     // Update popsChosen and popsSeen
@@ -156,35 +170,66 @@ public class InheritanceGraph {
             for (int i=0; i<nodesInvolved.size(); i++) {
                 Node node = nodesInvolved.get(i);
                 Node reactNode = reactNodesInvolved.get(i);
-                node.setTime(t);
                 
                 for (Node reactChild : reactNode.children) {
                     if (nextLevelNodes.containsKey(reactChild))
                         node.addChild(nextLevelNodes.get(reactChild));
                     else {
-                        Node child = new Node(reactChild.population, t);
+                        Node child = new Node(reactChild.population);
                         nextLevelNodes.put(reactChild, child);
                         node.addChild(child);
                     }
                 }
             }
             
-            // Prune superfluous nodes
+            // Prune superfluous nodes from activeLineages:
             for (Node node : nodesInvolved) {
+                
+                // Active lineages are nodes having only one parent:
+                Node parent = node.parents.get(0);
+                
                 if (node.children.size()==1) {
-                    for (Node parent : node.parents) {
-                        while (parent.children.contains(node)) {
-                            int nodeIdx = parent.children.indexOf(node);
-                            parent.children.set(nodeIdx, node.children.get(0));
-                        }
+                    Node child = node.children.get(0);
+                    
+                    // Prune from graph
+                    int nodeIdx = parent.children.indexOf(node);
+                    parent.children.set(nodeIdx, node.children.get(0));
+                    
+                    nodeIdx = child.parents.indexOf(node);
+                    child.parents.set(nodeIdx, parent);
+                }
+                
+                if (node.children.size()>=1) {
+                    
+                    // Ensure node has current time.
+                    node.setTime(t);
+                    
+                    // Remove from active lineage list
+                    activeLineages.remove(node);
+                    
+                    // Ensure children are in active nodes list
+                    for (Node child : node.children) {
+                        if (!activeLineages.contains(child))
+                            activeLineages.add(child);
                     }
+                    
                 }
             }
             
-            // Update list of active nodes
-            
+            // Deal with multi-parent nodes:
+            for (Node node : nextLevelNodes.values()) {
+                if (node.parents.size()>1) {
+                    node.setTime(t);
+                    activeLineages.remove(node);
+                    
+                    Node child = new Node(node.population);
+                    node.addChild(child);
+                    activeLineages.add(child);
+                }
+            }
             
             // Implement state change due to reaction:
+            currentState.implementReaction(chosenReactionGroup, chosenReaction, 1);
             
         }
     }

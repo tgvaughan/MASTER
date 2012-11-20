@@ -16,13 +16,14 @@
  */
 package hamlet.examples;
 
-import hamlet.InheritanceGraph;
-import hamlet.InheritanceGraphSpec;
-import hamlet.InheritanceModel;
-import hamlet.InheritanceReactionGroup;
-import hamlet.Node;
 import hamlet.Population;
 import hamlet.State;
+import hamlet.inheritance.InheritanceGraph;
+import hamlet.inheritance.InheritanceGraphSpec;
+import hamlet.inheritance.InheritanceModel;
+import hamlet.inheritance.InheritanceReactionGroup;
+import hamlet.inheritance.NewickOutput;
+import hamlet.inheritance.Node;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -50,22 +51,21 @@ public class TreeTest {
         
         // X -> 2X
         InheritanceReactionGroup birth = new InheritanceReactionGroup("Birth");
-        birth.addReactantSchema(X);
-        birth.addProductSchema(X,X);
+        Node Xparent = new Node(X);
+        Node Xchild1 = new Node(X);
+        Node Xchild2 = new Node(X);
+        Xparent.addChild(Xchild1);
+        Xparent.addChild(Xchild2);
+        birth.addInheritanceReactantSchema(Xparent);
+        birth.addInheritanceProductSchema(Xchild1, Xchild2);
         birth.addRate(1.0);
-        Node nodeX = new Node(X);
-        nodeX.addChild(new Node(X));
-        nodeX.addChild(new Node(X));
-        birth.addInheritanceSchema(nodeX);
         model.addInheritanceReactionGroup(birth);
 
         // X -> 0
         InheritanceReactionGroup death = new InheritanceReactionGroup("Death");
-        death.addReactantSchema(X);
-        death.addProductSchema();
         death.addRate(0.2);
-        nodeX = new Node(X);
-        death.addInheritanceSchema(nodeX);
+        death.addInheritanceReactantSchema(new Node(X));
+        death.addInheritanceProductSchema();
         model.addInheritanceReactionGroup(death);
         
         /*
@@ -99,7 +99,7 @@ public class TreeTest {
          * Dump results as a newick tree:
          */
         
-        graph.dumpGraphAsNewickTree(new PrintStream("out.tree"));
+        NewickOutput.writeOut(graph, new PrintStream("out.tree"));
     }
     
 }

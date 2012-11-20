@@ -66,5 +66,9 @@ public class Spec {
     public long getSeed() {
         return seed;
     }
+    
+    public State getInitState() {
+        return initState;
+    }
 
 }

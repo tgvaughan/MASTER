@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hamlet;
+package hamlet.inheritance;
 
+import hamlet.Spec;
 import java.util.List;
 
 /**
@@ -53,7 +54,7 @@ public class InheritanceGraphSpec extends Spec {
      */
     public void setModel(InheritanceModel inheritanceModel) {
         this.inheritanceModel = inheritanceModel;
-        this.model = inheritanceModel;
+        super.setModel(inheritanceModel);
     }
     
     /**

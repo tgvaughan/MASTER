@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hamlet;
+package hamlet.inheritance;
 
 import com.google.common.collect.Lists;
+import hamlet.Model;
 import java.util.List;
 
 /**

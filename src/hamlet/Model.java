@@ -84,7 +84,7 @@ public class Model {
     }
 
     /*
-     * Getters for JSON object mapper
+     * Getters:
      */
     public List<PopulationType> getPopulationTypes() {
         return types;

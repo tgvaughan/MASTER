@@ -14,10 +14,10 @@ import org.codehaus.jackson.annotate.JsonValue;
  */
 public class ReactionGroup {
 
-    String reactionGroupName;
-    List<Map<Population,Integer>> reactCounts, prodCounts, deltaCounts;
-    List<Double> rates, propensities;
-    int nReactions;
+    public String reactionGroupName;
+    public List<Map<Population,Integer>> reactCounts, prodCounts, deltaCounts;
+    public List<Double> rates, propensities;
+    public int nReactions;
     
     /**
      * Constructor with name.
@@ -77,7 +77,7 @@ public class ReactionGroup {
      * @param pops List of populations.
      * @return Map from populations to their list multiplicity.
      */
-    protected Map<Population, Integer> getPopCount(Population ... pops) {
+    private Map<Population, Integer> getPopCount(Population ... pops) {
 
         // Condense provided schema into a map of the form
         // SubPop->count, where count is the number of times

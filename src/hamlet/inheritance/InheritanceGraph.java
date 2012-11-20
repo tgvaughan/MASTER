@@ -14,11 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hamlet;
+package hamlet.inheritance;
 
 import beast.util.Randomizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import hamlet.Population;
+import hamlet.ReactionGroup;
+import hamlet.State;
 import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
@@ -80,14 +83,14 @@ public class InheritanceGraph {
         }
         
         // Initialise system state:
-        State currentState = new State(spec.initState);
+        State currentState = new State(spec.getInitState());
         
         // Integration loop:
         while (true) {
             
             // Calculate propensities
             double totalPropensity = 0.0;
-            for (ReactionGroup reactionGroup : spec.model.reactionGroups) {
+            for (ReactionGroup reactionGroup : spec.getModel().getReactionGroups()) {
                 reactionGroup.calcPropensities(currentState);
                 for (double propensity : reactionGroup.propensities)
                     totalPropensity += propensity;
@@ -259,34 +262,4 @@ public class InheritanceGraph {
             node.setTime(spec.simulationTime);
     }
 
-    public void dumpGraphAsNewickTree (PrintStream pstream) {        
-        StringBuilder sb = new StringBuilder();
-        subTreeToNewick(startNodes.get(0), sb);
-        pstream.println(sb.append(";"));
-        
-    }
-    
-    public void subTreeToNewick(Node node, StringBuilder sb) {
-        
-        double branchLength;
-        if (node.parents.isEmpty())
-            branchLength=0;
-        else
-            branchLength = node.getTime() - node.getParents().get(0).getTime();
-        
-        if (node.getChildren().size()>0) {
-            sb.append("(");
-            boolean first=true;
-            for (Node child : node.getChildren()) {
-                if (!first)
-                    sb.append(",");
-                else
-                    first = false;
-                subTreeToNewick(child, sb);
-            }
-            sb.append(")");
-        }
-        sb.append(node.hashCode());
-        sb.append(":").append(branchLength);
-    }
 }

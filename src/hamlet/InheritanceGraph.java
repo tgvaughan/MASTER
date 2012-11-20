@@ -192,10 +192,21 @@ public class InheritanceGraph {
             // Prune superfluous nodes from activeLineages:
             for (Node node : nodesInvolved) {
                 
-                // Active lineages are nodes having only one parent:
-                Node parent = node.parents.get(0);
+                if (node.children.isEmpty()) {
+                    // Lineage is dead
+                    
+                    // Ensure node has current time
+                    node.setTime(t);
+                    
+                    // Remove from active lineages list
+                    activeLineages.remove(node);
+                    
+                }
                 
                 if (node.children.size()==1) {
+                    
+                    // Active lineages are nodes having only one parent:
+                    Node parent = node.parents.get(0);                    
                     Node child = node.children.get(0);
                     
                     // Prune from graph
@@ -250,7 +261,7 @@ public class InheritanceGraph {
 
     public void dumpGraphAsNewickTree (PrintStream pstream) {        
         StringBuilder sb = new StringBuilder();
-        subTreeToNewick(startNodes.get(0), sb);        
+        subTreeToNewick(startNodes.get(0), sb);
         pstream.println(sb.append(";"));
         
     }
@@ -261,7 +272,7 @@ public class InheritanceGraph {
         if (node.parents.isEmpty())
             branchLength=0;
         else
-            branchLength = node.getParents().get(0).getTime();
+            branchLength = node.getTime() - node.getParents().get(0).getTime();
         
         if (node.getChildren().size()>0) {
             sb.append("(");
@@ -275,6 +286,7 @@ public class InheritanceGraph {
             }
             sb.append(")");
         }
+        sb.append(node.hashCode());
         sb.append(":").append(branchLength);
     }
 }

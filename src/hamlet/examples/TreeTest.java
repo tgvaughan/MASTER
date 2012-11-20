@@ -57,6 +57,16 @@ public class TreeTest {
         nodeX.addChild(new Node(X));
         nodeX.addChild(new Node(X));
         birth.addInheritanceSchema(nodeX);
+        model.addInheritanceReactionGroup(birth);
+
+        // X -> 0
+        InheritanceReactionGroup death = new InheritanceReactionGroup("Death");
+        death.addReactantSchema(X);
+        death.addProductSchema();
+        death.addRate(0.2);
+        nodeX = new Node(X);
+        death.addInheritanceSchema(nodeX);
+        model.addInheritanceReactionGroup(death);
         
         /*
          * Set initial state:
@@ -75,7 +85,7 @@ public class TreeTest {
 
         spec.setModel(model);
         spec.setSimulationTime(5.0);
-        spec.setSeed(53);
+        //spec.setSeed(53);
         spec.setInitState(initState);
         spec.setInitNodes(initNodes);
         

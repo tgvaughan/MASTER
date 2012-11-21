@@ -281,4 +281,14 @@ public class InheritanceGraph {
             node.setTime(t);
     }
 
+    /**
+     * Construct inheritance graph from existing network of nodes.
+     * 
+     * @param startNodes 
+     */
+    public InheritanceGraph(Node ... startNodes) {
+        this.spec = null;
+        this.startNodes = Lists.newArrayList(startNodes);
+    }
+    
 }

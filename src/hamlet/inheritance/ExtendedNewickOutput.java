@@ -18,7 +18,10 @@ package hamlet.inheritance;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import hamlet.Population;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,45 +45,45 @@ public class ExtendedNewickOutput {
             boolean reverseTime, boolean includeRootBranches,
             PrintStream pstream) {
         
-        if (!reverseTime)
-            writeOutForwardTime(graph, includeRootBranches, pstream);
+        Set<Node> rootNodes;
+        if (reverseTime)
+            rootNodes = findEndNodes(graph);
         else
-            writeOutReverseTime(graph, includeRootBranches, pstream);
-    }
-    
-    private static void writeOutForwardTime(InheritanceGraph graph,
-            boolean includeRootBranches,
-            PrintStream pstream) {
+            rootNodes = Sets.newHashSet(graph.startNodes);
         
-        Map<Node, Integer> hybridLabels = labelHybridNodes(graph);
+        Map<Node, Integer> hybridLabels = labelHybridNodes(rootNodes, reverseTime);
         Set<Node> visitedHybrids = Sets.newHashSet();
         
         StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for (Node node : graph.startNodes) {
+        for (Node node : rootNodes) {
             if (!first)
                 sb.append(",");
             else
                 first = false;
 
             if (includeRootBranches)
-                subTreeToExtendedNewick(node, null, hybridLabels, visitedHybrids, sb);
+                subTreeToExtendedNewick(node, null,
+                        hybridLabels, visitedHybrids, reverseTime, sb);
             else
-                subTreeToExtendedNewick(node.getChildren().get(0), null, hybridLabels, visitedHybrids, sb);
+                subTreeToExtendedNewick(node.getChildren().get(0), null,
+                        hybridLabels, visitedHybrids, reverseTime, sb);
         }
         
         pstream.println(sb.append(";"));
+
     }
+    
     
     private static void subTreeToExtendedNewick(Node node, Node last,
             Map<Node,Integer> hybridLabels, Set<Node> visitedHybrids,
-            StringBuilder sb) {
+            boolean reverseTime, StringBuilder sb) {
         
         double branchLength;
         if (last == null)
             branchLength = 0;
         else
-            branchLength = node.getTime() - last.getTime();
+            branchLength = Math.abs(node.getTime() - last.getTime());
         
         if (visitedHybrids.contains(node)) {
             sb.append("#H").append(hybridLabels.get(node));
@@ -90,16 +93,22 @@ public class ExtendedNewickOutput {
         
         visitedHybrids.add(node);
         
-        if (node.getChildren().size()>0) {
+        List<Node> nextNodes;
+        if (reverseTime)
+            nextNodes = node.getParents();
+        else
+            nextNodes = node.getChildren();
+        
+        if (nextNodes.size()>0) {
             sb.append("(");
             boolean first = true;
-            for (Node child : node.getChildren()) {
+            for (Node next : nextNodes) {
                 if (!first)
                     sb.append(",");
                 else
                     first = false;
                 
-                subTreeToExtendedNewick(child, node, hybridLabels, visitedHybrids, sb);
+                subTreeToExtendedNewick(next, node, hybridLabels, visitedHybrids, reverseTime, sb);
             }
             sb.append(")");
         } else {
@@ -112,18 +121,18 @@ public class ExtendedNewickOutput {
         sb.append(":").append(branchLength);
     }
     
-    private static Map<Node, Integer> labelHybridNodes(InheritanceGraph graph) {
+    private static Map<Node, Integer> labelHybridNodes(Set<Node> rootNodes, boolean reverseTime) {
         Set<Node> visited = Sets.newHashSet();
         Map <Node,Integer> hybridLabels = Maps.newHashMap();
         
-        for (Node node : graph.startNodes)
-            findHybridNodesInSubTree(node, visited, hybridLabels);
+        for (Node node : rootNodes)
+            findHybridNodesInSubTree(node, visited, hybridLabels, reverseTime);
         
         return hybridLabels;
     }
     
     private static void findHybridNodesInSubTree(Node node, Set<Node> visited,
-            Map<Node,Integer> hybridLabels) {
+            Map<Node,Integer> hybridLabels, boolean reverseTime) {
         if (visited.contains(node)) {
             if (!hybridLabels.containsKey(node))
                 hybridLabels.put(node, hybridLabels.size()+1);
@@ -131,33 +140,14 @@ public class ExtendedNewickOutput {
         } else
             visited.add(node);
         
-        for (Node child : node.getChildren())
-            findHybridNodesInSubTree(child, visited, hybridLabels);
-    }
- 
-    private static void writeOutReverseTime(InheritanceGraph graph,
-            boolean includeRootBranches,
-            PrintStream pstream) {
+        List<Node> nextNodes;
+        if (reverseTime)
+            nextNodes = node.getParents();
+        else
+            nextNodes = node.getChildren();
         
-        Set<Node> endNodes = findEndNodes(graph);
-        Map<Node, Integer> hybridLabels = labelHybridNodesReverseTime(endNodes);
-        Set<Node> visitedHybrids = Sets.newHashSet();
-        
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for (Node node : endNodes) {
-            if (!first)
-                sb.append(",");
-            else
-                first = false;
-
-            if (includeRootBranches)
-                subTreeToExtendedNewickReverseTime(node, null, hybridLabels, visitedHybrids, sb);
-            else
-                subTreeToExtendedNewickReverseTime(node.getParents().get(0), null, hybridLabels, visitedHybrids, sb);
-        }
-        
-        pstream.println(sb.append(";"));
+        for (Node next : nextNodes)
+            findHybridNodesInSubTree(next, visited, hybridLabels, reverseTime);
     }
     
     private static Set<Node> findEndNodes(InheritanceGraph graph) {
@@ -180,66 +170,31 @@ public class ExtendedNewickOutput {
             findEndNodesOnSubGraph(child, endNodes);
     }
     
-    private static Map<Node, Integer> labelHybridNodesReverseTime(Set<Node> endNodes) {
-        Set<Node> visited = Sets.newHashSet();
-        Map <Node,Integer> hybridLabels = Maps.newHashMap();
-        
-        for (Node node : endNodes)
-            findHybridNodesInSubTreeReverseTime(node, visited, hybridLabels);
-        
-        return hybridLabels;
-    }
     
-    private static void findHybridNodesInSubTreeReverseTime(Node node, Set<Node> visited,
-            Map<Node,Integer> hybridLabels) {
-        if (visited.contains(node)) {
-            if (!hybridLabels.containsKey(node))
-                hybridLabels.put(node, hybridLabels.size()+1);
-            return;
-        } else
-            visited.add(node);
+    /**
+     * Main method for testing.
+     * 
+     * @param args 
+     */
+    public static void main (String[] args) throws FileNotFoundException {
+       
+        // Create artificial inheritance graph:
         
-        for (Node parent : node.getParents())
-            findHybridNodesInSubTreeReverseTime(parent, visited, hybridLabels);
-    }
-    
-    private static void subTreeToExtendedNewickReverseTime(Node node, Node last,
-            Map<Node,Integer> hybridLabels, Set<Node> visitedHybrids,
-            StringBuilder sb) {
+        Population X = new Population("X");
         
-        double branchLength;
-        if (last == null)
-            branchLength = 0;
-        else
-            branchLength = last.getTime() - node.getTime();
+        // Basic 3-taxon tree: (:1,:1):1,:2):0;
+//        Node root = (new Node(X,0))
+//                .addChild((new Node(X,1)).addChild(new Node(X,2)).addChild(new Node(X,2)))
+//                .addChild(new Node(X,2));
+
+        // Simple network:
+        Node hybrid = (new Node(X,1)).addChild(new Node(X,2)).addChild(new Node(X,2));
+        Node root = (new Node(X,0))
+                .addChild(hybrid)
+                .addChild((new Node(X,0.5)).addChild(hybrid).addChild(new Node(X,2)));
         
-        if (visitedHybrids.contains(node)) {
-            sb.append("#H").append(hybridLabels.get(node));
-            sb.append(":").append(branchLength);
-            return;
-        }
+        InheritanceGraph graph = new InheritanceGraph(root);
         
-        visitedHybrids.add(node);
-        
-        if (node.getParents().size()>0) {
-            sb.append("(");
-            boolean first = true;
-            for (Node parent : node.getParents()) {
-                if (!first)
-                    sb.append(",");
-                else
-                    first = false;
-                
-                subTreeToExtendedNewickReverseTime(parent, node, hybridLabels, visitedHybrids, sb);
-            }
-            sb.append(")");
-        } else {
-            sb.append(node.hashCode());
-        }
-        
-        if (hybridLabels.containsKey(node))
-            sb.append("#H").append(hybridLabels.get(node));
-        
-        sb.append(":").append(branchLength);
+        writeOut(graph, false, true, new PrintStream("out.tree"));
     }
 }

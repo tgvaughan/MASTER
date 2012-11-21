@@ -96,6 +96,11 @@ public class InheritanceGraph {
                     totalPropensity += propensity;
             }
             
+            // End simulation if propensity reaches zero
+            // (occurs if we reach an absorbing state)
+            if (totalPropensity == 0)
+                break;
+            
             // Draw time of next reaction
             t += Randomizer.nextExponential(totalPropensity);
             

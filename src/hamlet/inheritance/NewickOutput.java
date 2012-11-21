@@ -19,22 +19,31 @@ package hamlet.inheritance;
 import java.io.PrintStream;
 
 /**
+ * Static methods for generating Newick representations of tree-like
+ * inheritance graphs.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class NewickOutput {
     
-    public static void writeOut(InheritanceGraph graph, PrintStream pstream) {
+    public static void writeOut(InheritanceGraph graph,
+            boolean includeRootBranch,
+            PrintStream pstream) {
         
         StringBuilder sb = new StringBuilder();
-        subTreeToNewick(graph.startNodes.get(0), sb);
+        
+        if (includeRootBranch)
+            subTreeToNewick(graph.startNodes.get(0), sb, true);            
+        else
+            subTreeToNewick(graph.startNodes.get(0).getChildren().get(0), sb, true);
+
         pstream.println(sb.append(";"));
     }
     
-    public static void subTreeToNewick(Node node, StringBuilder sb) {
+    private static void subTreeToNewick(Node node, StringBuilder sb, boolean start) {
         
         double branchLength;
-        if (node.getParents().isEmpty())
+        if (start)
             branchLength=0;
         else
             branchLength = node.getTime() - node.getParents().get(0).getTime();
@@ -47,7 +56,7 @@ public class NewickOutput {
                     sb.append(",");
                 else
                     first = false;
-                subTreeToNewick(child, sb);
+                subTreeToNewick(child, sb, false);
             }
             sb.append(")");
         }
@@ -55,27 +64,34 @@ public class NewickOutput {
         sb.append(":").append(branchLength);
     }
     
-    public static void writeOutReverse(InheritanceGraph graph, PrintStream pstream) {
+    public static void writeOutReverse(InheritanceGraph graph,
+            boolean includeRootBranch,
+            PrintStream pstream) {
         
         StringBuilder sb = new StringBuilder();
-        subTreeToNewickReverse(graph.startNodes.get(0), sb);
+        Node reverseRoot = findReverseRoot(graph.startNodes.get(0));
+        if (includeRootBranch)
+            subTreeToNewickReverse(reverseRoot, sb, true);
+        else
+            subTreeToNewickReverse(reverseRoot.getParents().get(0), sb, true);
+        
         pstream.println(sb.append(";"));
     }
     
-    public static Node findReverseRoot(Node node) {
-        if (node.getParents().isEmpty())
+    private static Node findReverseRoot(Node node) {
+        if (node.getChildren().isEmpty())
             return node;
         else
-            return findReverseRoot(node.getParents().get(0));
+            return findReverseRoot(node.getChildren().get(0));
     }
     
-    public static void subTreeToNewickReverse(Node node, StringBuilder sb) {
+    private static void subTreeToNewickReverse(Node node, StringBuilder sb, boolean start) {
         
         double branchLength;
-        if (node.getChildren().isEmpty())
+        if (start)
             branchLength=0;
         else
-            branchLength = node.getParents().get(0).getTime() - node.getTime();
+            branchLength = node.getChildren().get(0).getTime() - node.getTime();
         
         if (node.getParents().size()>0) {
             sb.append("(");
@@ -85,12 +101,12 @@ public class NewickOutput {
                     sb.append(",");
                 else
                     first = false;
-                subTreeToNewick(parent, sb);
+                subTreeToNewickReverse(parent, sb, false);
             }
             sb.append(")");
         }
         sb.append(node.hashCode());
         sb.append(":").append(branchLength);
-        }
+    }
     
 }

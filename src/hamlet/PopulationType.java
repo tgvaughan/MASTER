@@ -57,6 +57,26 @@ public class PopulationType implements Iterable<Population> {
 
         return offset;
     }
+    
+    /**
+     * Reverse translation of offset into population sizes vector back to the
+     * original location array.  Only used by a couple of toString() methods
+     * and potentially when writing output to disk.
+     * 
+     * @param offset
+     * @return Location array.
+     */
+    public int[] offsetToLoc(int offset) {
+        int[] location = new int[dims.length];
+        
+        int m=1;
+        for (int i=0; i<dims.length; i++) {
+            m *= dims[i];
+            location[i] = offset%m;
+        }
+        
+        return location;
+    }
 
     /*
      * Getters for JSON object mapper

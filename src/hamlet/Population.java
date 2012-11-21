@@ -79,4 +79,22 @@ public class Population {
         hash = 89*hash+this.offset;
         return hash;
     }    
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(type.name);
+        
+        if (type.nPops>1) {
+            sb.append("[");
+            int[] loc = type.offsetToLoc(offset);
+            for (int i=0; i<loc.length; i++) {
+                if (i>0)
+                    sb.append(",");
+                sb.append(loc[i]);
+            }
+            sb.append("]");
+        }
+        
+        return sb.toString();
+    }
 }

@@ -30,76 +30,71 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Small test of inheritance graph generation code.
+ * Generates a tree in reverse by simulating the coalescent process.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class TreeTest {
+public class CoalescentTree {
     
-    public static void main(String[] argv) throws FileNotFoundException {
+    public static void main (String[] args) throws FileNotFoundException {
+        
         /*
-         * Assemble model:
+         * Assemble model
          */
-    
+        
         InheritanceModel model = new InheritanceModel();
-    
+        
         // Define populations:
         Population X = new Population("X");
         model.addPopulation(X);
-        
-        // Define reactions:
-        
-        // X -> 2X
-        InheritanceReactionGroup birth = new InheritanceReactionGroup("Birth");
-        Node Xparent = new Node(X);
-        Node Xchild1 = new Node(X);
-        Node Xchild2 = new Node(X);
-        Xparent.addChild(Xchild1);
-        Xparent.addChild(Xchild2);
-        birth.addInheritanceReactantSchema(Xparent);
-        birth.addInheritanceProductSchema(Xchild1, Xchild2);
-        birth.addRate(1.0);
-        model.addInheritanceReactionGroup(birth);
 
-        // X -> 0
-        InheritanceReactionGroup death = new InheritanceReactionGroup("Death");
-        death.addRate(0.2);
-        death.addInheritanceReactantSchema(new Node(X));
-        death.addInheritanceProductSchema();
-        model.addInheritanceReactionGroup(death);
+        
+        // Define inheritance relationships in a coalescence event:
+        Node Xparent1 = new Node(X);
+        Node Xparent2 = new Node(X);
+        Node Xchild = new Node(X);
+        Xparent1.addChild(Xchild);
+        Xparent2.addChild(Xchild);
+                
+        // Define coalescence reaction:
+        InheritanceReactionGroup coalescence = new InheritanceReactionGroup("Coalescence");
+        coalescence.addInheritanceReactantSchema(Xparent1, Xparent2);
+        coalescence.addInheritanceProductSchema(Xchild);
+        coalescence.addRate(1.0);
+        model.addInheritanceReactionGroup(coalescence);
         
         /*
          * Set initial state:
          */
         
         State initState = new State(model);
-        initState.set(X, 1.0);
+        initState.set(X, 100.0);
+        
         List<Node> initNodes = new ArrayList<Node>();
-        initNodes.add(new Node(X));
+        for (int i=0; i<100; i++)
+            initNodes.add(new Node(X));
         
         /*
          * Define simulation:
          */
         
         InheritanceGraphSpec spec = new InheritanceGraphSpec();
-
         spec.setModel(model);
-        spec.setSimulationTime(5.0);
-        //spec.setSeed(53);
+        spec.setSimulationTime(Double.POSITIVE_INFINITY);
         spec.setInitState(initState);
         spec.setInitNodes(initNodes);
         
         /*
-         * Generate inheritance graph:
+         * Generate coalescent tree:
          */
         
         InheritanceGraph graph = new InheritanceGraph(spec);
         
         /*
-         * Dump results as a newick tree:
+         * Write result to file:
          */
         
-        NewickOutput.writeOut(graph, new PrintStream("out.tree"));
+        NewickOutput.writeOutReverse(graph, false, new PrintStream("out.tree"));
     }
     
 }

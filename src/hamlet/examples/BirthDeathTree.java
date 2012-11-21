@@ -18,6 +18,7 @@ package hamlet.examples;
 
 import hamlet.Population;
 import hamlet.State;
+import hamlet.inheritance.ExtendedNewickOutput;
 import hamlet.inheritance.InheritanceGraph;
 import hamlet.inheritance.InheritanceGraphSpec;
 import hamlet.inheritance.InheritanceModel;
@@ -99,7 +100,7 @@ public class BirthDeathTree {
          * Dump results as a newick tree:
          */
         
-        NewickOutput.writeOut(graph, false, new PrintStream("out.tree"));
+        ExtendedNewickOutput.writeOut(graph, false, false, new PrintStream("out.tree"));
     }
     
 }

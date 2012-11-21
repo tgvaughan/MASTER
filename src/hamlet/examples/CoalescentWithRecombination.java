@@ -18,11 +18,15 @@ package hamlet.examples;
 
 import hamlet.Population;
 import hamlet.State;
+import hamlet.inheritance.ExtendedNewickOutput;
 import hamlet.inheritance.InheritanceGraph;
 import hamlet.inheritance.InheritanceGraphSpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
 import hamlet.inheritance.Node;
+import hamlet.inheritance.ReachedMRCA;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +38,7 @@ import java.util.List;
  */
 public class CoalescentWithRecombination {
     
-    public static void main (String[] args) {
+    public static void main (String[] args) throws FileNotFoundException {
         
         /*
          * Assemble model
@@ -71,7 +75,7 @@ public class CoalescentWithRecombination {
         InheritanceReactionGroup recombination = new InheritanceReactionGroup("Recombination");
         recombination.addInheritanceReactantSchema(Xparent);
         recombination.addInheritanceProductSchema(Xchild1, Xchild2);
-        recombination.addRate(0.1);
+        recombination.addRate(2.0);
         model.addInheritanceReactionGroup(recombination);
         
         /*
@@ -79,10 +83,10 @@ public class CoalescentWithRecombination {
          */
         
         State initState = new State(model);
-        initState.set(X, 10.0);
+        initState.set(X, 50.0);
         
         List<Node> initNodes = new ArrayList<Node>();
-        for (int i=0; i<10; i++)
+        for (int i=0; i<50; i++)
             initNodes.add(new Node(X));
                 
         /*
@@ -94,6 +98,7 @@ public class CoalescentWithRecombination {
         spec.setSimulationTime(Double.POSITIVE_INFINITY);
         spec.setInitState(initState);
         spec.setInitNodes(initNodes);
+        spec.addEndCondition(new ReachedMRCA());
                 
         /*
          * Generate coalescent tree:
@@ -101,5 +106,10 @@ public class CoalescentWithRecombination {
         
         InheritanceGraph graph = new InheritanceGraph(spec);
         
+        /*
+         * Write output in extended Newick format:
+         */
+        
+        ExtendedNewickOutput.writeOut(graph, true, false, new PrintStream("out.tree"));
     }
 }

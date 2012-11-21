@@ -20,12 +20,22 @@ import java.io.PrintStream;
 
 /**
  * Static methods for generating Newick representations of tree-like
- * inheritance graphs.
+ * inheritance graphs.  Contains methods for interpreting graphs as
+ * trees in either forward or reverse time directions.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class NewickOutput {
     
+    /**
+     *  Construct a Newick-formatted string representing a tree-like graph.
+     * Graph must be tree-like in the forward time direction.
+     * 
+     * @param graph Graph to render as a Newick string.
+     * @param includeRootBranch False causes the branch connecting the starting
+     * node to its child to be excluded.
+     * @param pstream PrintStream object to write output to.
+     */
     public static void writeOut(InheritanceGraph graph,
             boolean includeRootBranch,
             PrintStream pstream) {
@@ -64,6 +74,14 @@ public class NewickOutput {
         sb.append(":").append(branchLength);
     }
     
+    /**
+     *  Construct a Newick-formatted string representing a tree-like graph.
+     * Graph must be tree-like in the <b>reverse</b> time direction.
+     * 
+     * @param graph Graph to render as a Newick string.
+     * @param includeRootBranch False causes the root branch to be excluded.
+     * @param pstream PrintStream object to write output to.
+     */
     public static void writeOutReverse(InheritanceGraph graph,
             boolean includeRootBranch,
             PrintStream pstream) {

@@ -36,20 +36,20 @@ public class State {
 
         // Copy sub-population sizes:
         this.popSizes = Maps.newHashMap();
-        for (Population sub : oldState.popSizes.keySet()) {
-            popSizes.put(sub, oldState.popSizes.get(sub));
+        for (Population pop : oldState.popSizes.keySet()) {
+            popSizes.put(pop, oldState.popSizes.get(pop));
         }
     }
 
     /**
-     * Get size of a particular sub-population.
+     * Get size of a particular population.
      *
-     * @param sub Specific sub-population.
-     * @return Size of sub-population.
+     * @param pop Specific population.
+     * @return Size of population.
      */
-    public double get(Population sub) {
-        if (popSizes.containsKey(sub))
-            return popSizes.get(sub);
+    public double get(Population pop) {
+        if (popSizes.containsKey(pop))
+            return popSizes.get(pop);
         else
             return 0.0;
     }
@@ -65,7 +65,7 @@ public class State {
     }
 
     /**
-     * Add value to size of particular sub-population.
+     * Add value to size of particular population.
      *
      * @param pop
      * @param increment
@@ -75,7 +75,7 @@ public class State {
     }
 
     /**
-     * Add value to size of particular sub-population specified using a
+     * Add value to size of particular population specified using a
      * pre-calculated offset, truncating at zero if result is negative.
      *
      * @param pop
@@ -91,7 +91,7 @@ public class State {
 
     /**
      * Alter state according to one ore more occurrences of a particular
-     * reaction and subReaction.
+     * reaction.
      * 
      * @param reactionGroup
      * @param reactionIndex

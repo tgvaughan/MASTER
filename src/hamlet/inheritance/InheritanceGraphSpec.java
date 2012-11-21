@@ -16,6 +16,7 @@
  */
 package hamlet.inheritance;
 
+import com.google.common.collect.Lists;
 import hamlet.Spec;
 import java.util.List;
 
@@ -36,6 +37,9 @@ public class InheritanceGraphSpec extends Spec {
     // Maximum time to simulate for:
     double simulationTime;
     
+    // End condition:
+    List<InheritanceGraphEndCondition> endConditions;
+    
     /**
      * Constructor.
      */
@@ -43,6 +47,7 @@ public class InheritanceGraphSpec extends Spec {
         super();
         
         simulationTime = Double.POSITIVE_INFINITY;
+        endConditions = Lists.newArrayList();
     }
     
     /**
@@ -77,4 +82,12 @@ public class InheritanceGraphSpec extends Spec {
         this.initNodes = initNodes;
     }
     
+    /**
+     * Specify end condition besides exceeding simulation time.
+     * 
+     * @param endCondition 
+     */
+    public void addEndCondition(InheritanceGraphEndCondition endCondition) {
+        this.endConditions.add(endCondition);
+    }
 }

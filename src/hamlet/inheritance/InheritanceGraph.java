@@ -88,6 +88,16 @@ public class InheritanceGraph {
         // Integration loop:
         while (true) {
             
+            // Check whether any end conditions are met:
+            boolean endConditionMet = false;
+            for (InheritanceGraphEndCondition endCondition : spec.endConditions) {
+                if (endCondition.isMet(activeLineages, currentState))
+                    endConditionMet = true;
+                    break;
+            }
+            if (endConditionMet)
+                break;
+            
             // Calculate propensities
             double totalPropensity = 0.0;
             for (ReactionGroup reactionGroup : spec.getModel().getReactionGroups()) {
@@ -98,15 +108,19 @@ public class InheritanceGraph {
             
             // End simulation if propensity reaches zero
             // (occurs if we reach an absorbing state)
-            if (totalPropensity == 0)
+            if (totalPropensity == 0) {
+                t = spec.simulationTime;
                 break;
+            }
             
             // Draw time of next reaction
             t += Randomizer.nextExponential(totalPropensity);
             
             // Break if new time exceeds end time:
-            if (t>spec.simulationTime)
+            if (t>spec.simulationTime) {
+                t = spec.simulationTime;
                 break;
+            }
             
             // Choose reaction to implement
             double u = Randomizer.nextDouble()*totalPropensity;
@@ -264,7 +278,7 @@ public class InheritanceGraph {
         
         // Fix final time of any remaining active lineages.
         for (Node node : activeLineages)
-            node.setTime(spec.simulationTime);
+            node.setTime(t);
     }
 
 }

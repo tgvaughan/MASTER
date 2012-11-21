@@ -22,21 +22,19 @@ import hamlet.inheritance.InheritanceGraph;
 import hamlet.inheritance.InheritanceGraphSpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
-import hamlet.inheritance.NewickOutput;
 import hamlet.inheritance.Node;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Generates a tree in reverse by simulating the coalescent process.
+ * Simulates an ancestral recombination graph for a set of N samples
+ * under a recombinant coalescent model.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class CoalescentTree {
+public class CoalescentWithRecombination {
     
-    public static void main (String[] args) throws FileNotFoundException {
+    public static void main (String[] args) {
         
         /*
          * Assemble model
@@ -48,13 +46,13 @@ public class CoalescentTree {
         Population X = new Population("X");
         model.addPopulation(X);
         
-        // Define inheritance relationships in a coalescence event:
+        // Define inheritance relationships in a coalescence event
         Node Xparent1 = new Node(X);
         Node Xparent2 = new Node(X);
         Node Xchild = new Node(X);
         Xparent1.addChild(Xchild);
         Xparent2.addChild(Xchild);
-                
+        
         // Define coalescence reaction:
         InheritanceReactionGroup coalescence = new InheritanceReactionGroup("Coalescence");
         coalescence.addInheritanceReactantSchema(Xparent1, Xparent2);
@@ -62,17 +60,31 @@ public class CoalescentTree {
         coalescence.addRate(1.0);
         model.addInheritanceReactionGroup(coalescence);
         
+        // Define inheritance relationships in a recombination event
+        Node Xparent = new Node(X);
+        Node Xchild1 = new Node(X);
+        Node Xchild2 = new Node(X);
+        Xparent.addChild(Xchild1);
+        Xparent.addChild(Xchild2);
+        
+        // Define recombination reaction:
+        InheritanceReactionGroup recombination = new InheritanceReactionGroup("Recombination");
+        recombination.addInheritanceReactantSchema(Xparent);
+        recombination.addInheritanceProductSchema(Xchild1, Xchild2);
+        recombination.addRate(0.1);
+        model.addInheritanceReactionGroup(recombination);
+        
         /*
          * Set initial state:
          */
         
         State initState = new State(model);
-        initState.set(X, 100.0);
+        initState.set(X, 10.0);
         
         List<Node> initNodes = new ArrayList<Node>();
-        for (int i=0; i<100; i++)
+        for (int i=0; i<10; i++)
             initNodes.add(new Node(X));
-        
+                
         /*
          * Define simulation:
          */
@@ -82,18 +94,12 @@ public class CoalescentTree {
         spec.setSimulationTime(Double.POSITIVE_INFINITY);
         spec.setInitState(initState);
         spec.setInitNodes(initNodes);
-        
+                
         /*
          * Generate coalescent tree:
          */
         
         InheritanceGraph graph = new InheritanceGraph(spec);
         
-        /*
-         * Write result to file:
-         */
-        
-        NewickOutput.writeOutReverse(graph, false, new PrintStream("out.tree"));
     }
-    
 }

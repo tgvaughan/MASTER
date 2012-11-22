@@ -20,15 +20,21 @@ import hamlet.State;
 import java.util.List;
 
 /**
- * End condition which fires when a single lineage remains.
+ * End condition which fires when a single lineage remains.  Graph is
+ * not rejected.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class ReachedMRCA implements InheritanceGraphEndCondition {
+    
+    @Override
+    public boolean isMet(List<Node> activeLineages) {
+        return activeLineages.size()==1;
+    }
 
     @Override
-    public boolean isMet(List<Node> activeLineages, State currentState) {
-        return activeLineages.size()==1;
+    public boolean isRejection() {
+        return false;
     }
     
 }

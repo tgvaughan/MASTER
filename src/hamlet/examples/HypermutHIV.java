@@ -245,7 +245,7 @@ public class HypermutHIV {
 
         spec.setModel(model);
         spec.setSimulationTime(365);
-        spec.setIntegrator(new TauLeapingStepper(365.0/10000.0));
+        spec.setStepper(new TauLeapingStepper(365.0/10000.0));
         spec.setnSamples(1001);
         spec.setnTraj(1);
         spec.setSeed(53);

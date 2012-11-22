@@ -71,6 +71,8 @@ public class InheritanceGraph extends Trajectory {
         this.graphSpec = spec;
         startNodes = spec.initNodes;
         
+        double simulationTime = spec.getSimulationTime();
+        
         // Initialise time and activeLineages:
         double t = 0.0;
         List<Node> activeLineages = Lists.newArrayList();
@@ -89,8 +91,9 @@ public class InheritanceGraph extends Trajectory {
             
             // Check whether any end conditions are met:
             boolean endConditionMet = false;
-            for (InheritanceGraphEndCondition endCondition : spec.endConditions) {
-                if (endCondition.isMet(activeLineages, currentState))
+            for (InheritanceGraphEndCondition graphEndCondition
+                    : spec.graphEndConditions) {
+                if (graphEndCondition.isMet(activeLineages))
                     endConditionMet = true;
                     break;
             }
@@ -108,7 +111,7 @@ public class InheritanceGraph extends Trajectory {
             // End simulation if propensity reaches zero
             // (occurs if we reach an absorbing state)
             if (totalPropensity == 0) {
-                t = spec.simulationTime;
+                t = simulationTime;
                 break;
             }
             
@@ -116,8 +119,8 @@ public class InheritanceGraph extends Trajectory {
             t += Randomizer.nextExponential(totalPropensity);
             
             // Break if new time exceeds end time:
-            if (t>spec.simulationTime) {
-                t = spec.simulationTime;
+            if (t>simulationTime) {
+                t = simulationTime;
                 break;
             }
             
@@ -126,7 +129,8 @@ public class InheritanceGraph extends Trajectory {
             boolean found = false;
             InheritanceReactionGroup chosenReactionGroup = null;
             int chosenReaction = 0;
-            for (InheritanceReactionGroup reactionGroup : spec.inheritanceModel.inheritanceReactionGroups) {
+            for (InheritanceReactionGroup reactionGroup :
+                    spec.inheritanceModel.inheritanceReactionGroups) {
                 
                 for (int ridx = 0; ridx<reactionGroup.propensities.size(); ridx++) {
                     u -= reactionGroup.propensities.get(ridx);
@@ -149,11 +153,13 @@ public class InheritanceGraph extends Trajectory {
             List<Node> nodesInvolved = Lists.newArrayList();
             List<Node> reactNodesInvolved = Lists.newArrayList();
             for (Node node : activeLineages) {
-                if (!chosenReactionGroup.reactCounts.get(chosenReaction).containsKey(node.population))
+                if (!chosenReactionGroup.reactCounts
+                        .get(chosenReaction).containsKey(node.population))
                     continue;
                 
                 // Calculate probability that lineage is involved in reaction:
-                int m = chosenReactionGroup.reactCounts.get(chosenReaction).get(node.population);
+                int m = chosenReactionGroup.reactCounts
+                        .get(chosenReaction).get(node.population);
                 double N = currentState.get(node.population);
                 
                 if (popsChosen.containsKey(node.population))
@@ -168,7 +174,8 @@ public class InheritanceGraph extends Trajectory {
                     
                     // Select particular reactant node to use:
                     int idx = Randomizer.nextInt(m);
-                    for (Node reactNode : chosenReactionGroup.reactNodes.get(chosenReaction)) {
+                    for (Node reactNode :
+                            chosenReactionGroup.reactNodes.get(chosenReaction)) {
                         if (reactNode.population != node.population)
                             continue;
                         
@@ -181,7 +188,8 @@ public class InheritanceGraph extends Trajectory {
                     
                     // Update popsChosen and popsSeen
                     if (popsChosen.containsKey(node.population))
-                        popsChosen.put(node.population, popsChosen.get(node.population)+1);
+                        popsChosen.put(node.population,
+                                popsChosen.get(node.population)+1);
                     else
                         popsChosen.put(node.population, 1);
                 }

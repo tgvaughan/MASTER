@@ -99,7 +99,7 @@ public class CoalescentWithRecombination {
         spec.setSimulationTime(Double.POSITIVE_INFINITY);
         spec.setInitState(initState);
         spec.setInitNodes(initNodes);
-        spec.addEndCondition(new ReachedMRCA());
+        spec.addGraphEndCondition(new ReachedMRCA());
                 
         /*
          * Generate coalescent tree:

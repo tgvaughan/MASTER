@@ -79,7 +79,7 @@ public class StochasticLogistic {
 
         spec.setSimulationTime(100.0);
         //spec.setIntegrator(new TauLeapingStepper(100.0/1e4));
-        spec.setIntegrator(new GillespieStepper());
+        spec.setStepper(new GillespieStepper());
         //spec.setnSamples(1001);
         spec.setnTraj(2);
         spec.setSeed(42);

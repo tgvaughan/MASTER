@@ -78,7 +78,7 @@ public class SIS {
         spec.addMoment(mS);
         spec.addMoment(mI);
 
-        spec.setIntegrator(new TauLeapingStepper(0.01));
+        spec.setStepper(new TauLeapingStepper(0.01));
         //spec.setIntegrator(new GillespieIntegrator());
 
         // Report on ensemble calculation progress:

@@ -18,6 +18,7 @@ package hamlet.inheritance;
 
 import com.google.common.collect.Lists;
 import hamlet.Spec;
+import hamlet.Stepper;
 import hamlet.TrajectorySpec;
 import java.util.List;
 
@@ -35,11 +36,13 @@ public class InheritanceGraphSpec extends TrajectorySpec {
     // Lineages present at start of simulation.
     List<Node> initNodes;
     
-    // Maximum time to simulate for:
-    double simulationTime;
-    
     // End condition:
-    List<InheritanceGraphEndCondition> endConditions;
+    List<InheritanceGraphEndCondition> graphEndConditions;
+    
+    // When nSamples is <2, this determines whether the state is
+    // sampled following every reaction or only those reactions that
+    // result in the generation of a node on the inheritance graph.
+    boolean sampleStateAtNodes;
     
     /**
      * Constructor.
@@ -47,8 +50,11 @@ public class InheritanceGraphSpec extends TrajectorySpec {
     public InheritanceGraphSpec() {
         super();
         
-        simulationTime = Double.POSITIVE_INFINITY;
-        endConditions = Lists.newArrayList();
+        graphEndConditions = Lists.newArrayList();
+        
+        // For inheritance graphs there is a sensible default
+        // maximum simulation time.
+        super.setSimulationTime(Double.POSITIVE_INFINITY);
     }
     
     /**
@@ -61,18 +67,7 @@ public class InheritanceGraphSpec extends TrajectorySpec {
     public void setModel(InheritanceModel inheritanceModel) {
         this.inheritanceModel = inheritanceModel;
         super.setModel(inheritanceModel);
-    }
-    
-    /**
-     * Specify maximum time to simulate for.  Simulation will end when
-     * all lineages are dead or this time is exceeded, whichever occurs
-     * first.  (Default is +infinity.)
-     * 
-     * @param simulationTime 
-     */
-    public void setSimulationTime(double simulationTime) {
-        this.simulationTime = simulationTime;
-    }
+    }    
     
     /**
      * Specify initial nodes whose lineages the simulation will follow.
@@ -88,7 +83,24 @@ public class InheritanceGraphSpec extends TrajectorySpec {
      * 
      * @param endCondition 
      */
-    public void addEndCondition(InheritanceGraphEndCondition endCondition) {
-        this.endConditions.add(endCondition);
+    public void addGraphEndCondition(InheritanceGraphEndCondition endCondition) {
+        this.graphEndConditions.add(endCondition);
+    }
+
+    @Override
+    public void setStepper(Stepper stepper) {
+        throw new IllegalArgumentException("State stepper cannot be set for"
+                + " inheritance graphs.");
+    }
+    
+    /**
+     * In the case that nSamples is less than 2, this specifies whether
+     * population size samples are to be recorded following every reaction
+     * or only when a node is created on the graph.
+     * 
+     * @param value true causes sampling to occur only at node creation.
+     */
+    public void sampleStateAtNodes(boolean value) {
+        this.sampleStateAtNodes = value;
     }
 }

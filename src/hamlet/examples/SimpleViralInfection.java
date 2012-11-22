@@ -115,7 +115,7 @@ public class SimpleViralInfection {
 
         spec.setModel(model);
         spec.setSimulationTime(10.0); // days
-        spec.setIntegrator(new TauLeapingStepper(10.0/1e3));
+        spec.setStepper(new TauLeapingStepper(10.0/1e3));
         spec.setnSamples(1001);
         spec.setnTraj(1000);
         spec.setSeed(42);

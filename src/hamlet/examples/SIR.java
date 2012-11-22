@@ -82,7 +82,7 @@ public class SIR {
         spec.addMoment(mI);
         spec.addMoment(mR);
 
-        spec.setIntegrator(new TauLeapingStepper(0.01));
+        spec.setStepper(new TauLeapingStepper(0.01));
         //spec.setIntegrator(new GillespieIntegrator());
 
         // Report on ensemble calculation progress:

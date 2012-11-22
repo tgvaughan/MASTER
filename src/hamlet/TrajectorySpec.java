@@ -44,7 +44,7 @@ public class TrajectorySpec extends Spec {
         this.simulationTime = simulationTime;
     }
 
-    public void setIntegrator(Stepper integrator) {
+    public void setStepper(Stepper integrator) {
         this.stepper = integrator;
     }
 
@@ -73,7 +73,7 @@ public class TrajectorySpec extends Spec {
         return simulationTime;
     }
    
-    public Stepper getIntegrator() {
+    public Stepper getStepper() {
         return stepper;
     }
 

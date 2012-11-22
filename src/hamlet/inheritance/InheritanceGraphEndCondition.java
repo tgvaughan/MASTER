@@ -26,5 +26,14 @@ import java.util.List;
  */
 public interface InheritanceGraphEndCondition {
     
-    boolean isMet(List<Node> activeLineages, State currentState);
+    /**
+     * @return true if graphs meeting end condition should be discarded.
+     */
+    boolean isRejection();
+    
+    /**
+     * @param activeLineages
+     * @return true if end condition is met.
+     */
+    boolean isMet(List<Node> activeLineages);
 }

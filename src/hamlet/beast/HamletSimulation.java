@@ -104,7 +104,7 @@ public class HamletSimulation extends Runnable {
         spec = new hamlet.EnsembleSummarySpec();
 
         spec.setModel(modelInput.get().model);
-        spec.setIntegrator(integratorInput.get().getIntegratorObject());
+        spec.setStepper(integratorInput.get().getIntegratorObject());
         spec.setSimulationTime(simulationTimeInput.get());
         spec.setnSamples(nSamplesInput.get());
         spec.setnTraj(nTrajInput.get());

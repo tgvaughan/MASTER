@@ -1,53 +1,105 @@
+/*
+ * Copyright (C) 2012 Tim Vaughan <tgvaughan@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package hamlet;
 
 import com.google.common.collect.Lists;
 import java.util.List;
 
 /**
- * Class of objects representing trajectories through the
- * state space of the birth-death model.
- * 
+ * Class of objects representing trajectories through the state space of the
+ * birth-death model.
+ *
  * @author Tim Vaughan
  *
  */
 public class Trajectory {
 
-	// List of sampled states:
-	List<State> sampledStates;
+    // List of sampled states:
+    List<State> sampledStates;
+    List<Double> sampledTimes;
+    
+    // Simulation specification:
+    private TrajectorySpec spec;
 
-	// Simulation specification:
-	TrajectorySpec spec;
+    /**
+     * Generate trajectory of birth-death process.
+     *
+     * @param spec Simulation specification.
+     */
+    public Trajectory(TrajectorySpec spec) {
 
-	/**
-	 * Generate trajectory of birth-death process.
-	 * 
-	 * @param spec Simulation specification.
-	 */
-	public Trajectory(TrajectorySpec spec) {
+        // Keep copy of simulation parameters with trajectory:
+        this.spec = spec;
 
-		// Keep copy of simulation parameters with trajectory:
-		this.spec = spec;
+        // Initialise sampled state and time lists:
+        sampledStates = Lists.newArrayList();
+        sampledTimes = Lists.newArrayList();
 
-		// Initialise state list:
-		sampledStates = Lists.newArrayList();
+        // Initialise system state:
+        State currentState = new State(spec.initState);
 
-		// Initialise system state:
-		State currentState = new State(spec.initState);
+        if (spec.nSamples>=2) {
+            // Sample at evenly spaced times
 
-		// Derived simulation parameters:
-                double sampleDt = spec.getSampleDt();
+            double sampleDt = spec.getSampleDt();
 
-		// Integration loop:
-		for (int sidx=0; sidx<spec.nSamples; sidx++) {
+            // Integration loop:
+            for (int sidx = 0; sidx<spec.nSamples; sidx++) {
 
-                    // Sample state if necessary:
-                    sampledStates.add(new State(currentState));
+                // Sample state if necessary:
+                sampledStates.add(new State(currentState));
+                sampledTimes.add(sampleDt*sidx);
 
-                    // Integrate to next sample time:
-                    double t=0;
-                    while (t<sampleDt)
-                        t+=spec.integrator.step(currentState, spec.model, sampleDt-t);
-                    
-		}
-	}
+                // Integrate to next sample time:
+                double t = 0;
+                while (t<sampleDt)
+                    t += spec.stepper.step(currentState, spec.model,
+                            sampleDt-t);
+
+            }
+        } else {
+            // Sample following every integration step
+
+            double t = 0;
+            while (t<spec.simulationTime) {
+                sampledStates.add(new State(currentState));
+                sampledTimes.add(t);
+
+                t += spec.stepper.step(currentState, spec.model,
+                        spec.simulationTime-t);
+            }
+        }
+    }
+    
+    /**
+     * Default constructor.  Creates an empty trajectory object.  Must be
+     * present to allow classes to derive from this one.
+     */
+    public Trajectory() {
+        sampledStates = Lists.newArrayList();
+        sampledTimes = Lists.newArrayList();
+    }
+    
+    /**
+     * Retrieve trajectory simulation specification.
+     * 
+     * @return TrajectorySpec object.
+     */
+    public TrajectorySpec getSpec() {
+        return spec;
+    }
 }

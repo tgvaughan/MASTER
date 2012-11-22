@@ -71,7 +71,7 @@ public class EnsembleSummary {
                 // Integrate to next sample time:
                 double t = 0;
                 while (t<sampleDt)
-                    t += spec.integrator.step(currentState, spec.model, sampleDt-t);
+                    t += spec.stepper.step(currentState, spec.model, sampleDt-t);
             }
         }
 

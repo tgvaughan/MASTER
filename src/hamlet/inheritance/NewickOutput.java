@@ -293,6 +293,6 @@ public class NewickOutput {
 //                .addChild((new Node(X,0.5)).addChild(hybrid).addChild(new Node(X,2)));
         
         InheritanceGraph graph = new InheritanceGraph(root);        
-        write(graph, true, false, new PrintStream("out.tree"));
+        write(graph, false, true, new PrintStream("out.tree"));
     }
 }

@@ -18,6 +18,7 @@ package hamlet.inheritance;
 
 import com.google.common.collect.Lists;
 import hamlet.Spec;
+import hamlet.TrajectorySpec;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ import java.util.List;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class InheritanceGraphSpec extends Spec {
+public class InheritanceGraphSpec extends TrajectorySpec {
     
     // Birth-death model including inheritance relationships.
     InheritanceModel inheritanceModel;

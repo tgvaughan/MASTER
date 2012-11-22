@@ -45,7 +45,7 @@ public class JsonOutput {
         
         HashMap<String, Object> outputData = Maps.newHashMap();
         
-        TrajectorySpec spec = trajectory.spec;
+        TrajectorySpec spec = trajectory.getSpec();
         List<State> sampledStates = trajectory.sampledStates;
         
         for (PopulationType type : spec.model.getPopulationTypes()) {
@@ -56,11 +56,7 @@ public class JsonOutput {
         }
         
         // Add list of sampling times to output object:
-        ArrayList<Double> tData = Lists.newArrayList();
-        double dT = spec.getSampleDt();
-        for (int sidx = 0; sidx<sampledStates.size(); sidx++)
-            tData.add(dT*sidx);
-        outputData.put("t", tData);
+        outputData.put("t", trajectory.sampledTimes);
         
         // Record spec parameters to object output:
         outputData.put("sim", spec);
@@ -85,6 +81,47 @@ public class JsonOutput {
             }
         }
         return nestedData;
+    }
+    
+    /**
+     * Express a given trajectory ensemble as a JSON-formatted string and send
+     * the result to a PrintStream.
+     * 
+     * @param ensemble Trajectory ensemble to dump.
+     * @param pstream PrintStream where output is sent.
+     */
+    public static void write(Ensemble ensemble, PrintStream pstream) {
+        HashMap<String, Object> outputData = Maps.newHashMap();
+        
+        EnsembleSpec spec = ensemble.spec;
+        
+        List<Object> trajData = Lists.newArrayList();
+        for (Trajectory trajectory : ensemble.trajectories) {
+            HashMap<String, Object> thisTrajData = Maps.newHashMap();
+            List<State> sampledStates = trajectory.sampledStates;
+        
+            for (PopulationType type : spec.model.getPopulationTypes()) {
+                int[] loc = new int[type.getDims().length];
+                for (int d=0; d<loc.length; d++)
+                    loc[d] = 0;
+                thisTrajData.put(type.getName(), iterateOverLocs(sampledStates, type, loc, 0));
+            }
+        
+            // Add list of sampling times to output object:
+            thisTrajData.put("t", trajectory.sampledTimes);
+            trajData.add(thisTrajData);
+        }
+        outputData.put("trajectories", trajData);
+        
+        // Record spec parameters to object output:
+        outputData.put("sim", spec);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            pstream.println(mapper.writeValueAsString(outputData));
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
     }
     
     /**

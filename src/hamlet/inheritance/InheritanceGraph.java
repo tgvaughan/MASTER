@@ -22,8 +22,7 @@ import com.google.common.collect.Maps;
 import hamlet.Population;
 import hamlet.ReactionGroup;
 import hamlet.State;
-import java.io.PrintStream;
-import java.util.Iterator;
+import hamlet.Trajectory;
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +48,13 @@ import java.util.Map;
  *</ol>
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class InheritanceGraph {
+public class InheritanceGraph extends Trajectory {
 
     // List of nodes present at the start of the simulation
     public List <Node> startNodes;
     
     // Simulation specification.
-    InheritanceGraphSpec spec;
+    private InheritanceGraphSpec graphSpec;
     
     /**
      * Build an inheritance graph corrsponding to a set of lineages
@@ -69,7 +68,7 @@ public class InheritanceGraph {
     public InheritanceGraph(InheritanceGraphSpec spec) {
         
         // Keep a record of the simulation spec and the starting nodes.
-        this.spec = spec;
+        this.graphSpec = spec;
         startNodes = spec.initNodes;
         
         // Initialise time and activeLineages:
@@ -268,6 +267,17 @@ public class InheritanceGraph {
         for (Node node : activeLineages)
             node.setTime(t);
     }
+    
+    /**
+     * Retrieve inheritance graph simulation specification.
+     * 
+     * @return InheritanceGraphSpec object.
+     */
+    @Override
+    public InheritanceGraphSpec getSpec() {
+        return graphSpec;
+    }
+            
 
     /**
      * Construct inheritance graph from existing network of nodes.
@@ -275,7 +285,7 @@ public class InheritanceGraph {
      * @param startNodes 
      */
     public InheritanceGraph(Node ... startNodes) {
-        this.spec = null;
+        this.graphSpec = null;
         this.startNodes = Lists.newArrayList(startNodes);
     }
     

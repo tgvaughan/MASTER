@@ -29,11 +29,12 @@ public class TrajectorySpec extends Spec {
     double simulationTime;
 
     // Integrator to use:
-    Stepper integrator;
+    Stepper stepper;
     
-    // Number of evenly spaced samples times
+    // Number of evenly spaced samples times.  If this is < 2 then
+    // The number of samples is set by the state stepping algorithm.
     int nSamples;
-
+    
 
     /*
      * Setters:
@@ -44,9 +45,22 @@ public class TrajectorySpec extends Spec {
     }
 
     public void setIntegrator(Stepper integrator) {
-        this.integrator = integrator;
+        this.stepper = integrator;
     }
 
+    /**
+     * Set the samples to record.  If this number is >= 2, that number
+     * of evenly spaced sample times will be chosen between the start
+     * and end of the simulation interval.  (The actual number of samples
+     * recorded may be different if state-dependent end conditions are
+     * used.)  If the number is less than 2, the number of samples recorded
+     * will depend on the state stepper used.  If the stepper is a finite
+     * time step stochastic integrator, a sample will be taken following
+     * each integration interval.  If the stepper is a Gillespie simulator,
+     * a sample will be taken following each reaction.
+     * 
+     * @param nSamples 
+     */
     public void setnSamples(int nSamples) {
         this.nSamples = nSamples;
     }
@@ -60,7 +74,7 @@ public class TrajectorySpec extends Spec {
     }
    
     public Stepper getIntegrator() {
-        return integrator;
+        return stepper;
     }
 
     public int getnSamples() {

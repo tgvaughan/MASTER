@@ -41,8 +41,8 @@ public class TauLeapingIntegrator extends Integrator {
     }
     
     @Override
-    public hamlet.Integrator getIntegratorObject() {
-        return new hamlet.TauLeapingIntegrator(stepSize);
+    public hamlet.Stepper getIntegratorObject() {
+        return new hamlet.TauLeapingStepper(stepSize);
     }
     
 }

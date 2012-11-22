@@ -1,5 +1,8 @@
 package hamlet;
 
+import com.google.common.collect.Lists;
+import java.util.List;
+
 /**
  * Class of objects representing trajectories through the
  * state space of the birth-death model.
@@ -9,8 +12,8 @@ package hamlet;
  */
 public class Trajectory {
 
-	// Sampled states:
-	State[] sampledStates;
+	// List of sampled states:
+	List<State> sampledStates;
 
 	// Simulation specification:
 	TrajectorySpec spec;
@@ -26,7 +29,7 @@ public class Trajectory {
 		this.spec = spec;
 
 		// Initialise state list:
-		sampledStates = new State[spec.nSamples];
+		sampledStates = Lists.newArrayList();
 
 		// Initialise system state:
 		State currentState = new State(spec.initState);
@@ -38,28 +41,13 @@ public class Trajectory {
 		for (int sidx=0; sidx<spec.nSamples; sidx++) {
 
                     // Sample state if necessary:
-                    sampledStates[sidx] = new State(currentState);
+                    sampledStates.add(new State(currentState));
 
-                    // Perform single time step:
-                    spec.integrator.step(currentState, spec.model, sampleDt);
-		}
-
-	}
-
-	/**
-	 * Dump trajectory data to stdout. (Mostly for debugging.)
-	 */
-	public void dump() {
-
-		double dt = spec.getSampleDt();
-
-		System.out.print("t ");
-		System.out.println(sampledStates[0].getNames());
-		int sidx = 0;
-		for (State s : sampledStates) {
-			System.out.print(dt*(sidx++) + " ");
-			System.out.println(s);
+                    // Integrate to next sample time:
+                    double t=0;
+                    while (t<sampleDt)
+                        t+=spec.integrator.step(currentState, spec.model, sampleDt-t);
+                    
 		}
 	}
-
 }

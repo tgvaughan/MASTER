@@ -32,8 +32,8 @@ public class GillespieIntegrator extends Integrator {
     public void initAndValidate() { };
 
     @Override
-    public hamlet.Integrator getIntegratorObject() {
-        return new hamlet.GillespieIntegrator();
+    public hamlet.Stepper getIntegratorObject() {
+        return new hamlet.GillespieStepper();
     }
     
 }

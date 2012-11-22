@@ -29,11 +29,11 @@ public class TrajectorySpec extends Spec {
     double simulationTime;
 
     // Integrator to use:
-    Integrator integrator;
+    Stepper integrator;
     
     // Number of evenly spaced samples times
     int nSamples;
-    
+
 
     /*
      * Setters:
@@ -43,7 +43,7 @@ public class TrajectorySpec extends Spec {
         this.simulationTime = simulationTime;
     }
 
-    public void setIntegrator(Integrator integrator) {
+    public void setIntegrator(Stepper integrator) {
         this.integrator = integrator;
     }
 
@@ -59,7 +59,7 @@ public class TrajectorySpec extends Spec {
         return simulationTime;
     }
    
-    public Integrator getIntegrator() {
+    public Stepper getIntegrator() {
         return integrator;
     }
 

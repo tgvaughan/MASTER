@@ -42,15 +42,4 @@ public class Ensemble {
 		}
 
 	}
-
-	/**
-	 * Raw dump of the ensemble contents.
-         * 
-         * TODO: Change over to writing full JSON output similar to
-         * EnsembleSummary.
-	 */
-	public void dump () {
-		for (Trajectory trajectory : trajectories)
-			trajectory.dump();
-	}
 }

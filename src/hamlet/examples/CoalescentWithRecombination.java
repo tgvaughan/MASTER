@@ -22,6 +22,7 @@ import hamlet.inheritance.InheritanceGraph;
 import hamlet.inheritance.InheritanceGraphSpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
+import hamlet.inheritance.NewickOutput;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
 import hamlet.inheritance.ReachedMRCA;
@@ -82,7 +83,7 @@ public class CoalescentWithRecombination {
          * Set initial state:
          */
         
-        State initState = new State(model);
+        State initState = new State();
         initState.set(X, 50.0);
         
         List<Node> initNodes = new ArrayList<Node>();
@@ -110,6 +111,6 @@ public class CoalescentWithRecombination {
          * Write output in extended Newick format:
          */
         
-        NexusOutput.write(graph, true, false, new PrintStream("out.tree"));
+        NewickOutput.write(graph, true, false, new PrintStream("out.tree"));
     }
 }

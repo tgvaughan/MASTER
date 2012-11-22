@@ -17,22 +17,23 @@
 package hamlet;
 
 /**
- * Abstract base class for integration algorithms.
+ * Abstract base class for algorithms which increment the system state
+ * under the chosen reaction scheme.
  * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public abstract class Integrator {
+public abstract class Stepper {
 
     /**
-     * Use the stochastic integration algorithm to ove the state an
-     * amount T forward in time under the given model.
+     * Use the stochastic integration algorithm to increment the state
+     * forward in time under the given model.
      * 
      * @param state
      * @param model
-     * @param T
-
+     * @param maxStepSize 
+     * @return Length of time increment.
      */
-    public abstract void step (State state, Model model, double T);
+    public abstract double step (State state, Model model, double maxStepSize);
     
     /**
      * Retrieve descriptive name of this integrator as a string.

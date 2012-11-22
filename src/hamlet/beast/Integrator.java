@@ -29,5 +29,5 @@ public abstract class Integrator extends Plugin {
     /**
      * Returns a Hamlet integrator object.
      */
-    public abstract hamlet.Integrator getIntegratorObject();
+    public abstract hamlet.Stepper getIntegratorObject();
 }

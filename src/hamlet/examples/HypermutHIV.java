@@ -3,15 +3,16 @@ package hamlet.examples;
 import beast.math.Binomial;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Moment;
 import hamlet.MomentGroup;
+import hamlet.Population;
 import hamlet.PopulationType;
+import hamlet.Reaction;
 import hamlet.ReactionGroup;
 import hamlet.State;
-import hamlet.Population;
-import hamlet.Reaction;
-import hamlet.TauLeapingIntegrator;
+import hamlet.TauLeapingStepper;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
@@ -228,7 +229,7 @@ public class HypermutHIV {
          * Set initial state:
          */
 
-        State initState = new State(model);
+        State initState = new State();
 
         initState.set(X, 6.006e9); // Deterministic steady state values
         initState.set(new Population(Ytype, 0, 0), 2.44e8);
@@ -244,7 +245,7 @@ public class HypermutHIV {
 
         spec.setModel(model);
         spec.setSimulationTime(365);
-        spec.setIntegrator(new TauLeapingIntegrator(365.0/10000.0));
+        spec.setIntegrator(new TauLeapingStepper(365.0/10000.0));
         spec.setnSamples(1001);
         spec.setnTraj(1);
         spec.setSeed(53);
@@ -266,7 +267,7 @@ public class HypermutHIV {
          * Dump results to file (JSON):
          */
 
-        ensemble.dump(new PrintStream("out.json"));
+        JsonOutput.write(ensemble, new PrintStream("out.json"));
 
     }
 

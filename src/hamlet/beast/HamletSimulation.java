@@ -19,6 +19,7 @@ package hamlet.beast;
 import beast.core.*;
 import beast.core.Input.Validate;
 import beast.core.Runnable;
+import hamlet.JsonOutput;
 import java.io.*;
 import java.util.*;
 
@@ -108,7 +109,7 @@ public class HamletSimulation extends Runnable {
         spec.setnSamples(nSamplesInput.get());
         spec.setnTraj(nTrajInput.get());
         
-        hamlet.State initState = new hamlet.State(modelInput.get().model);
+        hamlet.State initState = new hamlet.State();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
             initState.set(popSize.pop, popSize.size);
         spec.setInitState(initState);
@@ -150,7 +151,7 @@ public class HamletSimulation extends Runnable {
                 new hamlet.EnsembleSummary(spec);
 
         // Format results using JSON:
-        ensemble.dump(outStream);
+        JsonOutput.write(ensemble, outStream);
 
         // Close output file:
         outStream.close();

@@ -1,14 +1,15 @@
 package hamlet.examples;
 
-import hamlet.EnsembleSpec;
-import hamlet.Ensemble;
-import hamlet.State;
-import hamlet.PopulationType;
-import hamlet.ReactionGroup;
+import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Population;
 import hamlet.Reaction;
-import hamlet.TauLeapingIntegrator;
+import hamlet.State;
+import hamlet.TauLeapingStepper;
+import hamlet.Trajectory;
+import hamlet.TrajectorySpec;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 /**
  * Implements a stochastic logistic model of population dynamics.
@@ -18,11 +19,7 @@ import hamlet.TauLeapingIntegrator;
  */
 public class StochasticLogistic {
 
-    public static void main(String[] argv) {
-
-        /*
-         *  Simulation parameters:
-         */
+    public static void main(String[] argv) throws FileNotFoundException {
 
         /*
          * Assemble model:
@@ -55,34 +52,33 @@ public class StochasticLogistic {
          * Set initial state:
          */
 
-        State initState = new State(model);
+        State initState = new State();
         initState.set(X, 1.0);
 
         /*
          * Assemble simulation spec:
          */
 
-        EnsembleSpec spec = new EnsembleSpec();
+        TrajectorySpec spec = new TrajectorySpec();
 
         spec.setSimulationTime(100.0);
-        spec.setIntegrator(new TauLeapingIntegrator(100.0/1e4));
+        spec.setIntegrator(new TauLeapingStepper(100.0/1e4));
         spec.setnSamples(1001);
-        spec.setnTraj(1);
         spec.setSeed(42);
         spec.setModel(model);
         spec.setInitState(initState);
 
         /*
-         * Generate ensemble
+         * Generate trajectory
          */
 
-        Ensemble ensemble = new Ensemble(spec);
-
+        Trajectory trajectory = new Trajectory(spec);
+        
         /*
-         * Dump first trajectory to stdout:
+         * Write result to JSON-formatted output file:
          */
-
-        ensemble.dump();
-
+        
+        JsonOutput.write(trajectory, new PrintStream("out.json"));
+        
     }
 }

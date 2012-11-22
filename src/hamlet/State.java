@@ -2,6 +2,7 @@ package hamlet;
 
 import com.google.common.collect.*;
 import java.util.*;
+import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * Class of objects describing distinct states of the simulated system.
@@ -11,7 +12,6 @@ import java.util.*;
  */
 public class State {
 
-    Model model;
     Map<Population, Double> popSizes;
 
     /**
@@ -19,8 +19,7 @@ public class State {
      *
      * @param model Model defining the state space.
      */
-    public State(Model model) {
-        this.model = model;
+    public State() {
 
         // Initialise sub-population sizes:
         popSizes = Maps.newHashMap();
@@ -32,7 +31,6 @@ public class State {
      * @param oldState State to copy.
      */
     public State(State oldState) {
-        this.model = oldState.model;
 
         // Copy sub-population sizes:
         this.popSizes = Maps.newHashMap();
@@ -101,38 +99,34 @@ public class State {
         for (Population pop : reactionGroup.deltaCounts.get(reactionIndex).keySet())
             addNoNeg(pop, q*reactionGroup.deltaCounts.get(reactionIndex).get(pop));
     }
-
-    /**
-     * Obtain a very raw string representation of state.
-     * 
-     * @return string
-     */
+    
+    @JsonValue
     @Override
     public String toString() {
-        
         StringBuilder sb = new StringBuilder();
-
-        for (PopulationType pop : model.types) {
-            for (Population sub : pop)
-                sb.append(" ").append(String.valueOf(get(sub)));
+        
+        boolean first = true;
+        for (Population pop : popSizes.keySet()) {
+            if (!first)
+                sb.append(" ");
+            else
+                first = false;
+            
+            sb.append(pop.getType().getName());
+            if (!pop.isScalar()) {
+                sb.append("[");
+                int[] loc = pop.getLocation();
+                for (int i=0; i<loc.length; i++) {
+                    if (i>0)
+                        sb.append(",");
+                    sb.append(loc[i]);
+                }
+                sb.append("]");
+            }
+            sb.append(": ").append(popSizes.get(pop));
         }
-
-        return sb.toString();
-    }
-
-    /**
-     * Retrieve names of constituent populations.
-     * 
-     * @return string
-     */
-    public String getNames() {
         
-        StringBuilder sb = new StringBuilder();
-
-        for (PopulationType popType : model.types)
-            for (Population pop : popType)
-                sb.append(popType.name).append(String.valueOf(pop.offset));
-
         return sb.toString();
     }
+    
 }

@@ -2,13 +2,13 @@ package hamlet.examples;
 
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
-import hamlet.GillespieIntegrator;
+import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Moment;
 import hamlet.Population;
 import hamlet.Reaction;
 import hamlet.State;
-import hamlet.TauLeapingIntegrator;
+import hamlet.TauLeapingStepper;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -70,7 +70,7 @@ public class SIRSample {
          * Set initial state:
          */
 
-        State initState = new State(model);
+        State initState = new State();
         initState.set(S, 999.0);
         initState.set(I, 1.0);
         initState.set(R, 0.0);
@@ -93,7 +93,7 @@ public class SIRSample {
         spec.addMoment(mR);
         spec.addMoment(mIsamp);
 
-        spec.setIntegrator(new TauLeapingIntegrator(0.01));
+        spec.setIntegrator(new TauLeapingStepper(0.01));
         //spec.setIntegrator(new GillespieIntegrator());
 
         // Report on ensemble calculation progress:
@@ -109,6 +109,6 @@ public class SIRSample {
          * Dump results (JSON):
          */
 
-        ensemble.dump(new PrintStream("out.json"));
+        JsonOutput.write(ensemble, new PrintStream("out.json"));
     }
 }

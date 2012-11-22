@@ -2,16 +2,13 @@ package hamlet.examples;
 
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
-import hamlet.GillespieIntegrator;
+import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Moment;
-import hamlet.MomentGroup;
 import hamlet.Population;
-import hamlet.PopulationType;
 import hamlet.Reaction;
-import hamlet.ReactionGroup;
 import hamlet.State;
-import hamlet.TauLeapingIntegrator;
+import hamlet.TauLeapingStepper;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -62,7 +59,7 @@ public class SIS {
          * Set initial state:
          */
 
-        State initState = new State(model);
+        State initState = new State();
         initState.set(S, 999.0);
         initState.set(I, 1.0);
 
@@ -81,7 +78,7 @@ public class SIS {
         spec.addMoment(mS);
         spec.addMoment(mI);
 
-        spec.setIntegrator(new TauLeapingIntegrator(0.01));
+        spec.setIntegrator(new TauLeapingStepper(0.01));
         //spec.setIntegrator(new GillespieIntegrator());
 
         // Report on ensemble calculation progress:
@@ -97,6 +94,6 @@ public class SIS {
          * Dump results (JSON):
          */
 
-        ensemble.dump(new PrintStream("out.json"));
+        JsonOutput.write(ensemble, new PrintStream("out.json"));
     }
 }

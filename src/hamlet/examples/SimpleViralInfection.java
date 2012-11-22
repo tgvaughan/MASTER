@@ -1,16 +1,14 @@
 package hamlet.examples;
 
-import hamlet.State;
-import hamlet.PopulationType;
-import hamlet.ReactionGroup;
-import hamlet.Model;
-import hamlet.MomentGroup;
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.JsonOutput;
+import hamlet.Model;
 import hamlet.Moment;
 import hamlet.Population;
 import hamlet.Reaction;
-import hamlet.TauLeapingIntegrator;
+import hamlet.State;
+import hamlet.TauLeapingStepper;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
@@ -104,7 +102,7 @@ public class SimpleViralInfection {
          *  Set initial state:
          */
 
-        State initState = new State(model);
+        State initState = new State();
         initState.set(X, 2.5e11);
         initState.set(Y, 0);
         initState.set(V, 100.0);
@@ -117,7 +115,7 @@ public class SimpleViralInfection {
 
         spec.setModel(model);
         spec.setSimulationTime(10.0); // days
-        spec.setIntegrator(new TauLeapingIntegrator(10.0/1e3));
+        spec.setIntegrator(new TauLeapingStepper(10.0/1e3));
         spec.setnSamples(1001);
         spec.setnTraj(1000);
         spec.setSeed(42);
@@ -136,6 +134,6 @@ public class SimpleViralInfection {
          * Dump results (JSON):
          */
 
-        ensemble.dump(new PrintStream("out.json"));
+        JsonOutput.write(ensemble, new PrintStream("out.json"));
     }
 }

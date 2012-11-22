@@ -67,7 +67,7 @@ public class CoalescentTree {
          * Set initial state:
          */
         
-        State initState = new State(model);
+        State initState = new State();
         initState.set(X, 100.0);
         
         List<Node> initNodes = new ArrayList<Node>();

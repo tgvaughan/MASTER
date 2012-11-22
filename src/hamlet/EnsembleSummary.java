@@ -68,9 +68,10 @@ public class EnsembleSummary {
                 // Record sample:
                 stateSummaries[sidx].record(currentState);
 
-                // Perform integration step:
-                spec.integrator.step(currentState,
-                        spec.model, sampleDt);
+                // Integrate to next sample time:
+                double t = 0;
+                while (t<sampleDt)
+                    t += spec.integrator.step(currentState, spec.model, sampleDt-t);
             }
         }
 
@@ -79,65 +80,4 @@ public class EnsembleSummary {
             summary.normalise();
     }
 
-    /**
-     * Dump ensemble summary to a given PrintStream object out using JSON.
-     *
-     * @param pstream PrintStream where output is sent.
-     */
-    public void dump(PrintStream pstream) {
-
-        HashMap<String, Object> outputData = Maps.newHashMap();
-
-        // Construct an object containing the summarized
-        // data.  Heirarchy is moment->[mean/std]->schema->estimate.
-
-        for (MomentGroup moment : spec.momentGroups) {
-            HashMap<String, Object> momentData = Maps.newHashMap();
-
-            ArrayList<Object> meanData = new ArrayList<Object>();
-            for (int schema = 0; schema<stateSummaries[0].mean.get(moment).length; schema++) {
-                ArrayList<Double> schemaData = Lists.newArrayList();
-                for (int sidx = 0; sidx<stateSummaries.length; sidx++)
-                    schemaData.add(stateSummaries[sidx].mean.get(moment)[schema]);
-                meanData.add(schemaData);
-            }
-            momentData.put("mean", meanData);
-
-            ArrayList<Object> stdData = Lists.newArrayList();
-            for (int schema = 0; schema<stateSummaries[0].std.get(moment).length; schema++) {
-                ArrayList<Double> schemaData = Lists.newArrayList();
-                for (int sidx = 0; sidx<stateSummaries.length; sidx++)
-                    schemaData.add(stateSummaries[sidx].std.get(moment)[schema]);
-                stdData.add(schemaData);
-            }
-            momentData.put("std", stdData);
-
-            outputData.put(moment.name, momentData);
-        }
-
-        // Add list of sampling times to output object:
-        ArrayList<Double> tData = Lists.newArrayList();
-        double dT = spec.getSampleDt();
-        for (int sidx = 0; sidx<stateSummaries.length; sidx++)
-            tData.add(dT*sidx);
-        outputData.put("t", tData);
-
-        // Record spec parameters to object output:
-        outputData.put("sim", spec);
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            pstream.println(mapper.writeValueAsString(outputData));
-        } catch (IOException ex) {
-            System.err.println(ex);
-        }
-
-    }
-
-    /**
-     * Dump ensemble summary to stdout using JSON.
-     */
-    public void dump() {
-        dump(System.out);
-    }
 }

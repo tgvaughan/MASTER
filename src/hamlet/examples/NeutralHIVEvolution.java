@@ -2,6 +2,7 @@ package hamlet.examples;
 
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Moment;
 import hamlet.MomentGroup;
@@ -10,7 +11,7 @@ import hamlet.ReactionGroup;
 import hamlet.State;
 import hamlet.Population;
 import hamlet.Reaction;
-import hamlet.TauLeapingIntegrator;
+import hamlet.TauLeapingStepper;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
@@ -155,7 +156,7 @@ public class NeutralHIVEvolution {
          * Set initial state:
          */
 
-        State initState = new State(model);
+        State initState = new State();
         initState.set(X, 6.1e9);
         initState.set(new Population(Ytype, 0), 2.5e8);
         initState.set(new Population(Vtype, 0), 8.2e10);
@@ -168,7 +169,7 @@ public class NeutralHIVEvolution {
 
         spec.setModel(model);
         spec.setSimulationTime(365.0);
-        spec.setIntegrator(new TauLeapingIntegrator(365.0/1e4));
+        spec.setIntegrator(new TauLeapingStepper(365.0/1e4));
         spec.setnSamples(1001);
         spec.setnTraj(10);
         spec.setSeed(53);
@@ -190,7 +191,7 @@ public class NeutralHIVEvolution {
          * Dump results to file (JSON):
          */
 
-        ensemble.dump(new PrintStream("out.json"));
+        JsonOutput.write(ensemble, new PrintStream("out.json"));
     }
 
     /**

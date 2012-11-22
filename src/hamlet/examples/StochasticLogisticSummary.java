@@ -2,15 +2,13 @@ package hamlet.examples;
 
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Moment;
-import hamlet.MomentGroup;
 import hamlet.Population;
-import hamlet.PopulationType;
 import hamlet.Reaction;
-import hamlet.ReactionGroup;
 import hamlet.State;
-import hamlet.TauLeapingIntegrator;
+import hamlet.TauLeapingStepper;
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -60,7 +58,7 @@ public class StochasticLogisticSummary {
          * Set initial state:
          */
 
-        State initState = new State(model);
+        State initState = new State();
         initState.set(X, 1.0);
 
         /*
@@ -77,7 +75,7 @@ public class StochasticLogisticSummary {
         spec.setInitState(initState);
         spec.addMoment(mX);
 
-        spec.setIntegrator(new TauLeapingIntegrator(0.01));
+        spec.setIntegrator(new TauLeapingStepper(0.01));
         //spec.setIntegrator(new GillespieIntegrator());
 
         // Report on ensemble calculation progress:
@@ -93,6 +91,6 @@ public class StochasticLogisticSummary {
          * Dump results (JSON):
          */
 
-        ensemble.dump(new PrintStream("out.json"));
+        JsonOutput.write(ensemble, new PrintStream("out.json"));
     }
 }

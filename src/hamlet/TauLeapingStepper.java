@@ -23,7 +23,7 @@ import hamlet.math.Poisson;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class TauLeapingIntegrator extends Integrator {
+public class TauLeapingStepper extends Stepper {
     
     private double dt;
     
@@ -33,7 +33,7 @@ public class TauLeapingIntegrator extends Integrator {
      * @param integrationTimeStep Size of time step to use in integration
      * algorithm. (Doesn't need to be a multiple of the desired sampling rate.)
      */
-    public TauLeapingIntegrator(double integrationTimeStep) {
+    public TauLeapingStepper(double integrationTimeStep) {
         dt = integrationTimeStep;
     }
 
@@ -58,24 +58,20 @@ public class TauLeapingIntegrator extends Integrator {
     }
     
     @Override
-    public void step(State state, Model model, double T) {
+    public double step(State state, Model model, double maxStepSize) {
         
-        double t = 0.0;
-        while (t<T) {
-            
-            double thisdt = Math.min(dt, T-t);
-            
-            // Calculate transition rates based on starting state:
-            for (ReactionGroup reaction : model.reactionGroups)
-                reaction.calcPropensities(state);
 
-            // Update state according to these rates:
-            for (ReactionGroup reaction : model.reactionGroups)
-                leap(reaction, state, model, thisdt);
+        double thisdt = Math.min(dt, maxStepSize);
             
-            t += dt;
-        }
+        // Calculate transition rates based on starting state:
+        for (ReactionGroup reaction : model.reactionGroups)
+            reaction.calcPropensities(state);
 
+        // Update state according to these rates:
+        for (ReactionGroup reaction : model.reactionGroups)
+            leap(reaction, state, model, thisdt);
+            
+        return thisdt;
     }
 
     @Override

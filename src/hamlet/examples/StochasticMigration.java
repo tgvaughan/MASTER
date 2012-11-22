@@ -2,13 +2,14 @@ package hamlet.examples;
 
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.MomentGroup;
 import hamlet.PopulationType;
 import hamlet.ReactionGroup;
 import hamlet.State;
 import hamlet.Population;
-import hamlet.TauLeapingIntegrator;
+import hamlet.TauLeapingStepper;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
@@ -72,7 +73,7 @@ public class StochasticMigration {
          * Define initial state:
          */
 
-        State initState = new State(model);
+        State initState = new State();
         initState.set(subA, 100);
         initState.set(subB, 0);
 
@@ -84,7 +85,7 @@ public class StochasticMigration {
 
         spec.setModel(model);
         spec.setSimulationTime(20.0);
-        spec.setIntegrator(new TauLeapingIntegrator(0.01));
+        spec.setIntegrator(new TauLeapingStepper(0.01));
         spec.setnSamples(1001);
         spec.setnTraj(100);
         spec.setSeed(42);
@@ -102,10 +103,9 @@ public class StochasticMigration {
         EnsembleSummary ensemble = new EnsembleSummary(spec);
 
         /*
-         * Dump results to stdout:
+         * Dump results to JSON-formatted output file:
          */
 
-        ensemble.dump(new PrintStream("out.json"));
-
+        JsonOutput.write(ensemble, new PrintStream("out.json"));
     }
 }

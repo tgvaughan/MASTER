@@ -43,7 +43,7 @@ public class NewickOutput {
     
     
     /**
-     * Constructor.
+     * Create an extended Newick string representation of graph.
      * 
      * @param graph Graph to represent.
      * @param reverseTime True causes the graph to be read in the direction
@@ -110,10 +110,7 @@ public class NewickOutput {
         newickStr.append(";");
     }
     
-    public void writeOut(PrintStream pstream) {              
-        pstream.println(newickStr);
-    }
-    
+
     /**
      * Recursive method to construct an extended newick string representing
      * a sub-tree or sub-graph.
@@ -251,6 +248,27 @@ public class NewickOutput {
             findEndNodesOnSubGraph(child, endNodes);
     }
     
+    @Override
+    public String toString() {
+        return newickStr.toString();
+    }
+    
+    /**
+     * Write extended Newick representation of graph to PrintStream pstream.
+     * 
+     * @param graph Graph to write.
+     * @param reverseTime Whether to traverse graph in reverse time.
+     * @param includeRootBranches Whether to include root branch(es).
+     * @param pstream PrintStream used as destination for string representation.
+     */
+    public static void write(InheritanceGraph graph,
+            boolean reverseTime, boolean includeRootBranches,
+            PrintStream pstream) {
+        
+        
+        pstream.println(new NewickOutput(graph, reverseTime, includeRootBranches));
+    }
+    
     
     /**
      * Main method for testing.
@@ -274,8 +292,7 @@ public class NewickOutput {
 //                .addChild(hybrid)
 //                .addChild((new Node(X,0.5)).addChild(hybrid).addChild(new Node(X,2)));
         
-        InheritanceGraph graph = new InheritanceGraph(root);
-        
-        (new NewickOutput(graph, false, true)).writeOut(new PrintStream("out.tree"));
+        InheritanceGraph graph = new InheritanceGraph(root);        
+        write(graph, true, false, new PrintStream("out.tree"));
     }
 }

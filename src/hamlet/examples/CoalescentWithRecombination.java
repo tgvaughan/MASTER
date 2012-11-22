@@ -18,11 +18,11 @@ package hamlet.examples;
 
 import hamlet.Population;
 import hamlet.State;
-import hamlet.inheritance.NewickOutput;
 import hamlet.inheritance.InheritanceGraph;
 import hamlet.inheritance.InheritanceGraphSpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
+import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
 import hamlet.inheritance.ReachedMRCA;
 import java.io.FileNotFoundException;
@@ -110,6 +110,6 @@ public class CoalescentWithRecombination {
          * Write output in extended Newick format:
          */
         
-        (new NewickOutput(graph, true, false)).writeOut(new PrintStream("out.tree"));
+        NexusOutput.write(graph, true, false, new PrintStream("out.tree"));
     }
 }

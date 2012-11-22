@@ -22,7 +22,6 @@ import hamlet.inheritance.InheritanceGraph;
 import hamlet.inheritance.InheritanceGraphSpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
-import hamlet.inheritance.NewickOutput;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
 import hamlet.inheritance.ReachedMRCA;
@@ -96,8 +95,7 @@ public class CoalescentTree {
          * Write result to file:
          */
         
-        //(new NewickOutput(graph, true, false)).writeOut(new PrintStream("out.tree"));
-        (new NexusOutput(graph, true, false)).writeOut(new PrintStream("out.tree"));
+        NexusOutput.write(graph, true, false, new PrintStream("out.tree"));
     }
     
 }

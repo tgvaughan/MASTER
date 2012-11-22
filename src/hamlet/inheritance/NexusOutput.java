@@ -45,16 +45,6 @@ public class NexusOutput extends NewickOutput {
     public NexusOutput(InheritanceGraph graph, boolean reverseTime, boolean includeRootBranches) {
         super(graph, reverseTime, includeRootBranches);
     }
-
-    @Override
-    public void writeOut(PrintStream pstream) {
-        pstream.print("#nexus\n\n");
-        
-        pstream.println("Begin trees;");        
-        pstream.print("tree TREE = ");
-        pstream.println(newickStr);
-        pstream.println("End;");
-    }
     
     @Override
     protected void addLabel(Node node, double branchLength) {
@@ -82,5 +72,32 @@ public class NexusOutput extends NewickOutput {
         newickStr.append(":").append(branchLength);
     }
     
+    @Override
+    public String toString() {
+        StringBuilder nexusStr = new StringBuilder();
+        
+        nexusStr.append("#nexus\n\n")
+                .append("Begin trees;\n")
+                .append("tree TREE = ")
+                .append(newickStr)
+                .append("\nEnd;");
+        
+        return nexusStr.toString();
+    }
     
+    /**
+     * Write extended Newick representation of graph to PrintStream pstream
+     * with a NEXUS wrapper.  Note that in this representation nodes are
+     * annotated with details of the population they belong to.
+     * 
+     * @param graph Graph to represent.
+     * @param reverseTime Whether to traverse tree in backward time.
+     * @param includeRootBranches Whether to include root branch(es).
+     * @param pstream PrintStream object to which result is sent.
+     */
+    public static void write(InheritanceGraph graph,
+            boolean reverseTime, boolean includeRootBranches,
+            PrintStream pstream) {
+        pstream.println(new NexusOutput(graph, reverseTime, includeRootBranches));
+    }
 }

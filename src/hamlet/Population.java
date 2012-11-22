@@ -54,6 +54,24 @@ public class Population {
     }
     
     /**
+     * Obtain type of this population.
+     * 
+     * @return population type
+     */
+    public PopulationType getType() {
+        return this.type;
+    }
+    
+    /**
+     * Retrieve location vector for this population.
+     * 
+     * @return Location of this population.
+     */
+    public int[] getLocation() {
+        return this.type.offsetToLoc(offset);
+    }
+    
+    /**
      * @return true if population is the sole member of its type.
      */
     public boolean isScalar() {

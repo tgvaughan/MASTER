@@ -61,8 +61,8 @@ public class InheritanceGraph {
      * Build an inheritance graph corrsponding to a set of lineages
      * embedded within populations evolving under a birth-death process.
      * 
-     * I'm sure there's a more efficient way of implementing this. Suggestions
-     * are very welcome. (Tim)
+     * I'm sure there's a more efficient and less ugly way of implementing
+     * this.  Suggestions are very welcome. (Tim)
      * 
      * @param spec Inheritanc graph simulation specification.
      */
@@ -211,23 +211,14 @@ public class InheritanceGraph {
                 }
             }
             
-            // Prune superfluous nodes from activeLineages:
+            // Update activeLineages:
             for (Node node : nodesInvolved) {
-                
-                if (node.children.isEmpty()) {
-                    // Lineage is dead
+                                
+                if (node.children.size()==1
+                        && (node.parents.get(0).population == node.children.get(0).population)) {
+                    // Node does not represent a state change
                     
-                    // Ensure node has current time
-                    node.setTime(t);
-                    
-                    // Remove from active lineages list
-                    activeLineages.remove(node);
-                    
-                }
-                
-                if (node.children.size()==1) {
-                    
-                    // Active lineages are nodes having only one parent:
+                    // Active lineages are nodes having exactloy one parent:
                     Node parent = node.parents.get(0);                    
                     Node child = node.children.get(0);
                     
@@ -239,21 +230,18 @@ public class InheritanceGraph {
                     child.parents.set(nodeIdx, parent);
                 }
                 
-                if (node.children.size()>=1) {
+                // Ensure node has current time.
+                node.setTime(t);
                     
-                    // Ensure node has current time.
-                    node.setTime(t);
+                // Remove from active lineage list
+                activeLineages.remove(node);
                     
-                    // Remove from active lineage list
-                    activeLineages.remove(node);
-                    
-                    // Ensure children are in active nodes list
-                    for (Node child : node.children) {
-                        if (!activeLineages.contains(child))
-                            activeLineages.add(child);
-                    }
-                    
+                // Ensure any children are in active nodes list
+                for (Node child : node.children) {
+                    if (!activeLineages.contains(child))
+                        activeLineages.add(child);
                 }
+
             }
             
             // Deal with multi-parent nodes:

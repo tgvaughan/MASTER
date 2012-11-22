@@ -18,12 +18,12 @@ package hamlet.examples;
 
 import hamlet.Population;
 import hamlet.State;
-import hamlet.inheritance.ExtendedNewickOutput;
 import hamlet.inheritance.InheritanceGraph;
 import hamlet.inheritance.InheritanceGraphSpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
 import hamlet.inheritance.NewickOutput;
+import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
 import hamlet.inheritance.ReachedMRCA;
 import java.io.FileNotFoundException;
@@ -69,7 +69,7 @@ public class CoalescentTree {
          */
         
         State initState = new State(model);
-        initState.set(X, 10.0);
+        initState.set(X, 100.0);
         
         List<Node> initNodes = new ArrayList<Node>();
         for (int i=0; i<initState.get(X); i++)
@@ -96,7 +96,8 @@ public class CoalescentTree {
          * Write result to file:
          */
         
-        ExtendedNewickOutput.writeOut(graph, true, false, new PrintStream("out.tree"));
+        //(new NewickOutput(graph, true, false)).writeOut(new PrintStream("out.tree"));
+        (new NexusOutput(graph, true, false)).writeOut(new PrintStream("out.tree"));
     }
     
 }

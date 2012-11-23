@@ -31,11 +31,13 @@ public class TrajectorySpec extends Spec {
     // Integrator to use:
     Stepper stepper;
     
-    // Number of evenly spaced samples times.  If this is < 2 then
-    // The number of samples is set by the state stepping algorithm.
+    // Whether to collect evenly spaced samples or let the state stepper
+    // when to sample:
+    boolean evenlySpacedSampling;
+
+    // Number of evenly spaced samples times.  Must be >=2.
     int nSamples;
     
-
     /*
      * Setters:
      */
@@ -49,20 +51,25 @@ public class TrajectorySpec extends Spec {
     }
 
     /**
-     * Set the samples to record.  If this number is >= 2, that number
-     * of evenly spaced sample times will be chosen between the start
-     * and end of the simulation interval.  (The actual number of samples
-     * recorded may be different if state-dependent end conditions are
-     * used.)  If the number is less than 2, the number of samples recorded
-     * will depend on the state stepper used.  If the stepper is a finite
-     * time step stochastic integrator, a sample will be taken following
-     * each integration interval.  If the stepper is a Gillespie simulator,
-     * a sample will be taken following each reaction.
+     * Sample population sizes at evenly spaced times.
      * 
-     * @param nSamples 
+     * @param nSamples Number of samples to record. Must be >=2.
      */
-    public void setnSamples(int nSamples) {
-        this.nSamples = nSamples;
+    public void setEvenSampling(int nSamples) {
+        if (nSamples>=2) {
+            this.nSamples = nSamples;
+            this.evenlySpacedSampling = true;
+        } else
+            this.evenlySpacedSampling = false;
+    }
+    
+    /**
+     * Sample the state following every simulation step.  Note that this
+     * will still give evenly spaced samples when a finite time-step
+     * integration algorithm is used as the stepper.
+     */
+    public void setUnevenSampling() {
+        this.evenlySpacedSampling = false;
     }
     
     /*
@@ -76,9 +83,13 @@ public class TrajectorySpec extends Spec {
     public Stepper getStepper() {
         return stepper;
     }
-
+    
     public int getnSamples() {
         return nSamples;
+    }
+    
+    public boolean isSamplingEvenlySpaced() {
+        return evenlySpacedSampling;
     }
 
     /**

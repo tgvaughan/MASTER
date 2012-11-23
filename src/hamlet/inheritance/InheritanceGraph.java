@@ -57,9 +57,6 @@ public class InheritanceGraph extends Trajectory {
      * Build an inheritance graph corrsponding to a set of lineages embedded
      * within populations evolving under a birth-death process.
      *
-     * I'm sure there's a more efficient and less ugly way of implementing this.
-     * Suggestions are very welcome. (Tim)
-     *
      * @param spec Inheritanc graph simulation specification.
      */
     public InheritanceGraph(InheritanceGraphSpec spec) {
@@ -69,9 +66,15 @@ public class InheritanceGraph extends Trajectory {
         startNodes = spec.initNodes;
 
         double simulationTime = spec.getSimulationTime();
+        
+        double sampDt=0;
+        boolean evenlySpacedSampling = spec.isSamplingEvenlySpaced();
+        if (evenlySpacedSampling)
+            sampDt = spec.getSampleDt();
 
         // Initialise time and activeLineages:
         double t = 0.0;
+
         List<Node> activeLineages = Lists.newArrayList();
         for (Node node : spec.initNodes) {
             node.setTime(t);
@@ -83,18 +86,49 @@ public class InheritanceGraph extends Trajectory {
         // Initialise system state:
         State currentState = new State(spec.getInitState());
 
+        // Initialise sampling index and sample first state
+        int sidx = 1;
+        if (spec.samplePopSizes)
+            sampleState(currentState, 0.0);
+        
         // Simulation loop:
         while (true) {
 
             // Check whether any end conditions are met:
-            boolean endConditionMet = false;
+            InheritanceGraphEndCondition endConditionMet = null;
             for (InheritanceGraphEndCondition graphEndCondition : spec.graphEndConditions) {
-                if (graphEndCondition.isMet(activeLineages))
-                    endConditionMet = true;
-                break;
+                if (graphEndCondition.isMet(activeLineages)) {
+                    endConditionMet = graphEndCondition;
+                    break;
+                }
             }
-            if (endConditionMet)
-                break;
+   
+            // What happens when an end condition is met depends on whether
+            // that condition is a rejection or a stopping point.
+            if (endConditionMet != null) {
+                if (endConditionMet.isRejection()) {
+                    // Rejection: Abort and start a new simulation
+                    activeLineages = Lists.newArrayList();
+                    t = 0.0;
+
+                    for (Node node : spec.initNodes) {
+                        node.setTime(t);
+                        Node child = new Node(node.population);
+                        node.addChild(child);
+                        activeLineages.add(child);
+                    }
+                    
+                    if (spec.samplePopSizes) {
+                        sidx = 1;
+                        clearSamples();
+                        sampleState(currentState, 0.0);
+                    }
+                    continue;
+                } else {
+                    // Stopping point: Truncate existing simulation
+                    break;
+                }
+            }
 
             // Calculate propensities
             double totalPropensity = 0.0;
@@ -114,6 +148,15 @@ public class InheritanceGraph extends Trajectory {
             // Draw time of next reaction
             t += Randomizer.nextExponential(totalPropensity);
 
+            // Sample population sizes (evenly) if necessary:
+            if (spec.samplePopSizes && evenlySpacedSampling) {
+                double tmin = Math.min(t, simulationTime);
+                while (sidx*sampDt < tmin) {
+                    sampleState(currentState, sampDt*sidx);
+                    sidx += 1;
+                }
+            }
+            
             // Break if new time exceeds end time:
             if (t>simulationTime) {
                 t = simulationTime;
@@ -144,6 +187,13 @@ public class InheritanceGraph extends Trajectory {
             // Select lineages involved in chosen reaction:
             Map<Node, Node> nodesInvolved = selectLineagesInvolved(activeLineages,
                 currentState, chosenReactionGroup, chosenReaction);
+ 
+            // Sample population sizes (unevenly) if necessary:
+            if (spec.samplePopSizes && !evenlySpacedSampling) {              
+                if (!spec.sampleStateAtNodes || !nodesInvolved.isEmpty())
+                    sampleState(currentState, t);
+            }
+
             
             // Implement changes to inheritance graph:
             implementInheritanceReaction(activeLineages, nodesInvolved, t);
@@ -159,6 +209,10 @@ public class InheritanceGraph extends Trajectory {
         // Fix final time of any remaining active lineages.
         for (Node node : activeLineages)
             node.setTime(t);
+        
+        // Perform final sample
+        if (spec.samplePopSizes)
+            sampleState(currentState, t);
     }
     
     /**

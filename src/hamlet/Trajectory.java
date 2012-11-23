@@ -60,9 +60,8 @@ public class Trajectory {
             // Integration loop:
             for (int sidx = 0; sidx<spec.nSamples; sidx++) {
 
-                // Sample state if necessary:
-                sampledStates.add(new State(currentState));
-                sampledTimes.add(sampleDt*sidx);
+                // Sample state:
+                sampleState(currentState, sampleDt*sidx);
 
                 // Integrate to next sample time:
                 double t = 0;
@@ -76,9 +75,8 @@ public class Trajectory {
 
             double t = 0;
             while (t<spec.simulationTime) {
-                sampledStates.add(new State(currentState));
-                sampledTimes.add(t);
-
+                sampleState(currentState, t);
+                
                 t += spec.stepper.step(currentState, spec.model,
                         spec.simulationTime-t);
             }
@@ -101,5 +99,16 @@ public class Trajectory {
      */
     public TrajectorySpec getSpec() {
         return spec;
+    }
+    
+
+    public final void sampleState(State currentState, double time) {
+        sampledStates.add(new State(currentState));
+        sampledTimes.add(time);
+    }
+    
+    public void clearSamples() {
+        sampledStates.clear();
+        sampledTimes.clear();
     }
 }

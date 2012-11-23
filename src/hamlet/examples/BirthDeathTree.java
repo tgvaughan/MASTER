@@ -16,6 +16,7 @@
  */
 package hamlet.examples;
 
+import hamlet.JsonOutput;
 import hamlet.Population;
 import hamlet.State;
 import hamlet.inheritance.InheritanceGraph;
@@ -62,11 +63,11 @@ public class BirthDeathTree {
         model.addInheritanceReactionGroup(birth);
 
         // X -> 0
-        InheritanceReactionGroup death = new InheritanceReactionGroup("Death");
-        death.addRate(0.2);
-        death.addInheritanceReactantSchema(new Node(X));
-        death.addInheritanceProductSchema();
-        model.addInheritanceReactionGroup(death);
+//        InheritanceReactionGroup death = new InheritanceReactionGroup("Death");
+//        death.addRate(0.2);
+//        death.addInheritanceReactantSchema(new Node(X));
+//        death.addInheritanceProductSchema();
+//        model.addInheritanceReactionGroup(death);
         
         /*
          * Set initial state:
@@ -88,6 +89,8 @@ public class BirthDeathTree {
         //spec.setSeed(53);
         spec.setInitState(initState);
         spec.setInitNodes(initNodes);
+        //spec.setEvenSampling(11);
+        spec.setUnevenSampling(false);
         
         /*
          * Generate inheritance graph:
@@ -100,6 +103,7 @@ public class BirthDeathTree {
          */
         
         NexusOutput.write(graph, false, false, new PrintStream("out.tree"));
+        JsonOutput.write(graph, new PrintStream("out.json"));
     }
     
 }

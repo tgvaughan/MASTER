@@ -19,7 +19,7 @@ package hamlet;
 import hamlet.math.Poisson;
 
 /**
- * Implementation of Gillespie's tau-leaping integrator.
+ * Implementation of Gillespie's tau-leaping stochastic integrator.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */

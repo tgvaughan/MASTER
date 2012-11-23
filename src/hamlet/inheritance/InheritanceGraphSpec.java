@@ -38,11 +38,15 @@ public class InheritanceGraphSpec extends TrajectorySpec {
     
     // End condition:
     List<InheritanceGraphEndCondition> graphEndConditions;
+
+    // Record population size dynamics.
+    boolean samplePopSizes;
     
     // When nSamples is <2, this determines whether the state is
     // sampled following every reaction or only those reactions that
     // result in the generation of a node on the inheritance graph.
     boolean sampleStateAtNodes;
+
     
     /**
      * Constructor.
@@ -55,6 +59,9 @@ public class InheritanceGraphSpec extends TrajectorySpec {
         // For inheritance graphs there is a sensible default
         // maximum simulation time.
         super.setSimulationTime(Double.POSITIVE_INFINITY);
+        
+        // Do not record population sizes by default:
+        samplePopSizes = false;
     }
     
     /**
@@ -86,21 +93,46 @@ public class InheritanceGraphSpec extends TrajectorySpec {
     public void addGraphEndCondition(InheritanceGraphEndCondition endCondition) {
         this.graphEndConditions.add(endCondition);
     }
-
+    
+    @Override
+    public void setEvenSampling(int nSamples) {
+        this.samplePopSizes = true;
+        super.setEvenSampling(nSamples);
+    }
+            
+    /**
+     * Sample the population sizes only when reactions occur.  If
+     * sampleStateAtNodes is true, only sample when reactions cause a
+     * creation of a new node in the graph.
+     * 
+     * @param sampleStateAtNodes Sample only when node are created.
+     */
+    public void setUnevenSampling(boolean sampleStateAtNodes) {
+        this.samplePopSizes = true;
+        this.sampleStateAtNodes = sampleStateAtNodes;
+    }
+    
+    @Override
+    public void setUnevenSampling() {
+        throw new UnsupportedOperationException("Use setUnevenSampling(boolean)"
+                + " from InheritanceGraphSpec.");
+    }
+    
+    /**
+     * Do not record population sizes at all.
+     */
+    public void setNoSampling() {
+        this.samplePopSizes = false;
+    }
+    
     @Override
     public void setStepper(Stepper stepper) {
         throw new IllegalArgumentException("State stepper cannot be set for"
                 + " inheritance graphs.");
     }
     
-    /**
-     * In the case that nSamples is less than 2, this specifies whether
-     * population size samples are to be recorded following every reaction
-     * or only when a node is created on the graph.
-     * 
-     * @param value true causes sampling to occur only at node creation.
-     */
-    public void sampleStateAtNodes(boolean value) {
-        this.sampleStateAtNodes = value;
+    @Override
+    public Stepper getStepper() {
+        return new InheritanceGraphStepper();
     }
 }

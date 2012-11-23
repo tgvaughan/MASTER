@@ -19,19 +19,23 @@ package hamlet.examples;
 import hamlet.JsonOutput;
 import hamlet.Population;
 import hamlet.State;
+import hamlet.inheritance.ConditionExtinct;
 import hamlet.inheritance.InheritanceGraph;
 import hamlet.inheritance.InheritanceGraphSpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
+import hamlet.inheritance.NewickOutput;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
+import hamlet.inheritance.ConditionMRCA;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Small test of inheritance graph generation code.
+ * Generates an inheritance tree of a particular individual chosen
+ * from within a population evolving under the stochastic logistic model.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
@@ -62,11 +66,15 @@ public class BirthDeathTree {
         birth.addRate(1.0);
         model.addInheritanceReactionGroup(birth);
 
-        // X -> 0
+        // X2 -> X
         InheritanceReactionGroup death = new InheritanceReactionGroup("Death");
-        death.addRate(0.2);
-        death.addInheritanceReactantSchema(new Node(X));
-        death.addInheritanceProductSchema();
+        Node Xcompetitor1 = new Node(X);
+        Node Xcompetitor2 = new Node(X);
+        Node Xsurvivor = new Node(X);
+        Xcompetitor1.addChild(Xsurvivor);
+        death.addInheritanceReactantSchema(Xcompetitor1, Xcompetitor2);
+        death.addInheritanceProductSchema(Xsurvivor);
+        death.addRate(0.01);
         model.addInheritanceReactionGroup(death);
         
         /*
@@ -74,7 +82,7 @@ public class BirthDeathTree {
          */
         
         State initState = new State();
-        initState.set(X, 1.0);
+        initState.set(X, 100.0);
         List<Node> initNodes = new ArrayList<Node>();
         initNodes.add(new Node(X));
         
@@ -85,12 +93,10 @@ public class BirthDeathTree {
         InheritanceGraphSpec spec = new InheritanceGraphSpec();
 
         spec.setModel(model);
-        spec.setSimulationTime(5.0);
-        //spec.setSeed(53);
         spec.setInitState(initState);
         spec.setInitNodes(initNodes);
-        spec.setEvenSampling(11);
-        //spec.setUnevenSampling();
+        spec.setUnevenSampling();
+        spec.addGraphEndCondition(new ConditionExtinct());
         
         /*
          * Generate inheritance graph:

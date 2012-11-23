@@ -25,7 +25,7 @@ import hamlet.inheritance.InheritanceReactionGroup;
 import hamlet.inheritance.NewickOutput;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
-import hamlet.inheritance.ReachedMRCA;
+import hamlet.inheritance.ConditionMRCA;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -99,7 +99,7 @@ public class CoalescentWithRecombination {
         spec.setSimulationTime(Double.POSITIVE_INFINITY);
         spec.setInitState(initState);
         spec.setInitNodes(initNodes);
-        spec.addGraphEndCondition(new ReachedMRCA());
+        spec.addGraphEndCondition(new ConditionMRCA());
                 
         /*
          * Generate coalescent tree:

@@ -108,12 +108,14 @@ public class InheritanceGraphSpec extends TrajectorySpec {
      * @param sampleStateAtNodes Sample only when node are created.
      */
     public void setUnevenSampling(boolean sampleStateAtNodes) {
+        super.setUnevenSampling();
         this.samplePopSizes = true;
         this.sampleStateAtNodes = sampleStateAtNodes;
     }
     
     @Override
     public void setUnevenSampling() {
+        super.setUnevenSampling();
         this.samplePopSizes = true;
         this.sampleStateAtNodes = false;
     }

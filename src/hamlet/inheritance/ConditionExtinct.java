@@ -16,25 +16,23 @@
  */
 package hamlet.inheritance;
 
-import hamlet.State;
 import java.util.List;
 
 /**
- * End condition which fires when a single lineage remains.  Graph is
- * not rejected.
- *
+ * This end condition fires when all lineages are extinct.
+ * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class ReachedMRCA implements InheritanceGraphEndCondition {
-    
-    @Override
-    public boolean isMet(List<Node> activeLineages) {
-        return activeLineages.size()==1;
-    }
+public class ConditionExtinct implements InheritanceGraphEndCondition {   
 
     @Override
     public boolean isRejection() {
         return false;
+    }
+
+    @Override
+    public boolean isMet(List<Node> activeLineages) {
+        return activeLineages.isEmpty();
     }
     
 }

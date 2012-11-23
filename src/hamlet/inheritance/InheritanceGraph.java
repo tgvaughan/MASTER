@@ -250,11 +250,14 @@ public class InheritanceGraph extends Trajectory {
             // Decide whether lineage is involved
             if (Randomizer.nextDouble()<m/N) {
 
+                // TODO: fix this, it's BROKEN!!!!
+                
                 // Node is involved, select particular reactant node to use:
                 int idx = Randomizer.nextInt(m);
                 for (Node reactNode :
                         chosenReactionGroup.reactNodes.get(chosenReaction)) {
-                    if (reactNode.population!=node.population)
+                    if (reactNode.population!=node.population
+                            || nodesInvolved.containsValue(reactNode))
                         continue;
 
                     if (idx==0) {
@@ -293,25 +296,22 @@ public class InheritanceGraph extends Trajectory {
     private void implementInheritanceReaction(List<Node> activeLineages,
             Map<Node,Node> nodesInvolved, double t) {
        
-
         // Attach reaction graph to inheritance graph
         Map<Node, Node> nextLevelNodes = Maps.newHashMap();
         for (Node node : nodesInvolved.keySet()) {
             Node reactNode = nodesInvolved.get(node);
 
-            for (Node reactChild : reactNode.children)
-                if (nextLevelNodes.containsKey(reactChild))
-                    node.addChild(nextLevelNodes.get(reactChild));
-                else {
-                    Node child = new Node(reactChild.population);
-                    nextLevelNodes.put(reactChild, child);
-                    node.addChild(child);
-                }
+            for (Node reactChild : reactNode.children) {
+                if (!nextLevelNodes.containsKey(reactChild))
+                    nextLevelNodes.put(reactChild, new Node(reactChild.population));
+                
+                node.addChild(nextLevelNodes.get(reactChild));
+            }
         }
-
+        
         // Update activeLineages:
         for (Node node : nodesInvolved.keySet()) {
-
+            
             if (node.children.size()==1
                     &&(node.parents.get(0).population==node.children.get(0).population)) {
                 // Node does not represent a state change
@@ -342,7 +342,7 @@ public class InheritanceGraph extends Trajectory {
         }
 
         // Deal with multi-parent nodes:
-        for (Node node : nextLevelNodes.values())
+        for (Node node : nextLevelNodes.values()) {
             if (node.parents.size()>1) {
                 node.setTime(t);
                 activeLineages.remove(node);
@@ -351,6 +351,9 @@ public class InheritanceGraph extends Trajectory {
                 node.addChild(child);
                 activeLineages.add(child);
             }
+        
+        }
+
     }
         
     /**

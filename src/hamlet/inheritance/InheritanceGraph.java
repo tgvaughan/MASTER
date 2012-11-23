@@ -187,19 +187,18 @@ public class InheritanceGraph extends Trajectory {
             // Select lineages involved in chosen reaction:
             Map<Node, Node> nodesInvolved = selectLineagesInvolved(activeLineages,
                 currentState, chosenReactionGroup, chosenReaction);
- 
-            // Sample population sizes (unevenly) if necessary:
-            if (spec.samplePopSizes && !evenlySpacedSampling) {              
-                if (!spec.sampleStateAtNodes || !nodesInvolved.isEmpty())
-                    sampleState(currentState, t);
-            }
-
             
             // Implement changes to inheritance graph:
             implementInheritanceReaction(activeLineages, nodesInvolved, t);
 
             // Implement state change due to reaction:
             currentState.implementReaction(chosenReactionGroup, chosenReaction, 1);
+                         
+            // Sample population sizes (unevenly) if necessary:
+            if (spec.samplePopSizes && !evenlySpacedSampling) {              
+                if (!spec.sampleStateAtNodes || !nodesInvolved.isEmpty())
+                    sampleState(currentState, t);
+            }
 
             // End simulation if there are no active lineages remaining.
             if (activeLineages.isEmpty())

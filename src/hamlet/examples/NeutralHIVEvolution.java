@@ -170,7 +170,7 @@ public class NeutralHIVEvolution {
         spec.setModel(model);
         spec.setSimulationTime(365.0);
         spec.setStepper(new TauLeapingStepper(365.0/1e4));
-        spec.setnSamples(1001);
+        spec.setEvenSampling(1001);
         spec.setnTraj(10);
         spec.setSeed(53);
         spec.setInitState(initState);

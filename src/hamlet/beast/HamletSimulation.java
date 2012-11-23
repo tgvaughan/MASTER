@@ -106,7 +106,7 @@ public class HamletSimulation extends Runnable {
         spec.setModel(modelInput.get().model);
         spec.setStepper(integratorInput.get().getIntegratorObject());
         spec.setSimulationTime(simulationTimeInput.get());
-        spec.setnSamples(nSamplesInput.get());
+        spec.setEvenSampling(nSamplesInput.get());
         spec.setnTraj(nTrajInput.get());
         
         hamlet.State initState = new hamlet.State();

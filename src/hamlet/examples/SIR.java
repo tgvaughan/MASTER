@@ -74,7 +74,7 @@ public class SIR {
 
         spec.setModel(model);
         spec.setSimulationTime(50.0);
-        spec.setnSamples(1001);
+        spec.setEvenSampling(1001);
         spec.setnTraj(1000);
         spec.setSeed(53);
         spec.setInitState(initState);

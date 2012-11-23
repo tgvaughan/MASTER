@@ -86,7 +86,7 @@ public class StochasticMigration {
         spec.setModel(model);
         spec.setSimulationTime(20.0);
         spec.setStepper(new TauLeapingStepper(0.01));
-        spec.setnSamples(1001);
+        spec.setEvenSampling(1001);
         spec.setnTraj(100);
         spec.setSeed(42);
         spec.setInitState(initState);

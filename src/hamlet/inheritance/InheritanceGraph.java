@@ -57,7 +57,7 @@ public class InheritanceGraph extends Trajectory {
      * Build an inheritance graph corrsponding to a set of lineages embedded
      * within populations evolving under a birth-death process.
      *
-     * @param spec Inheritanc graph simulation specification.
+     * @param spec Inheritance graph simulation specification.
      */
     public InheritanceGraph(InheritanceGraphSpec spec) {
 

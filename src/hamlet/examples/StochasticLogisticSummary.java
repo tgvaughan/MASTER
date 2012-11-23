@@ -69,7 +69,7 @@ public class StochasticLogisticSummary {
 
         spec.setModel(model);
         spec.setSimulationTime(20.0);
-        spec.setnSamples(1001);
+        spec.setEvenSampling(1001);
         spec.setnTraj(1000);
         spec.setSeed(53);
         spec.setInitState(initState);

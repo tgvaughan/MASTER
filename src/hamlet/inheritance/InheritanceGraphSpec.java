@@ -114,8 +114,8 @@ public class InheritanceGraphSpec extends TrajectorySpec {
     
     @Override
     public void setUnevenSampling() {
-        throw new UnsupportedOperationException("Use setUnevenSampling(boolean)"
-                + " from InheritanceGraphSpec.");
+        this.samplePopSizes = true;
+        this.sampleStateAtNodes = false;
     }
     
     /**

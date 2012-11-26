@@ -114,6 +114,7 @@ public class NewickOutput {
     /**
      * Recursive method to construct an extended newick string representing
      * a sub-tree or sub-graph.
+     * 
      * @param node Root of this subtree
      * @param last Previous node in traversal (null if none)
      * @param leafLabels Map of leaf nodes to their chosen labels

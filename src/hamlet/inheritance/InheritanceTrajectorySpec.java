@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class InheritanceGraphSpec extends TrajectorySpec {
+public class InheritanceTrajectorySpec extends TrajectorySpec {
     
     // Birth-death model including inheritance relationships.
     InheritanceModel inheritanceModel;
@@ -37,7 +37,7 @@ public class InheritanceGraphSpec extends TrajectorySpec {
     List<Node> initNodes;
     
     // End condition:
-    List<InheritanceGraphEndCondition> graphEndConditions;
+    List<InheritanceTrajectoryEndCondition> graphEndConditions;
 
     // Record population size dynamics.
     boolean samplePopSizes;
@@ -51,7 +51,7 @@ public class InheritanceGraphSpec extends TrajectorySpec {
     /**
      * Constructor.
      */
-    public InheritanceGraphSpec() {
+    public InheritanceTrajectorySpec() {
         super();
         
         graphEndConditions = Lists.newArrayList();
@@ -90,7 +90,7 @@ public class InheritanceGraphSpec extends TrajectorySpec {
      * 
      * @param endCondition 
      */
-    public void addGraphEndCondition(InheritanceGraphEndCondition endCondition) {
+    public void addGraphEndCondition(InheritanceTrajectoryEndCondition endCondition) {
         this.graphEndConditions.add(endCondition);
     }
     
@@ -135,6 +135,6 @@ public class InheritanceGraphSpec extends TrajectorySpec {
     
     @Override
     public Stepper getStepper() {
-        return new InheritanceGraphStepper();
+        return new InheritanceTrajectoryStepper();
     }
 }

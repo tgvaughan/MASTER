@@ -24,7 +24,7 @@ import java.util.List;
  * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class ConditionLineageCount implements InheritanceGraphEndCondition {
+public class ConditionLineageCount implements InheritanceTrajectoryEndCondition {
     
     private int nlineages;
     private boolean rejection;

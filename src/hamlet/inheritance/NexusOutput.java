@@ -38,7 +38,7 @@ public class NexusOutput extends NewickOutput {
      * @param reverseTime True causes the graph to be read in the direction
      * from the latest nodes to the earliest.  Useful for coalescent trees.
      */
-    public NexusOutput(InheritanceGraph graph, boolean reverseTime) {
+    public NexusOutput(InheritanceTrajectory graph, boolean reverseTime) {
         super(graph, reverseTime);
     }
     
@@ -90,7 +90,7 @@ public class NexusOutput extends NewickOutput {
      * @param reverseTime Whether to traverse tree in backward time.
      * @param pstream PrintStream object to which result is sent.
      */
-    public static void write(InheritanceGraph graph,
+    public static void write(InheritanceTrajectory graph,
             boolean reverseTime, PrintStream pstream) {
         pstream.println(new NexusOutput(graph, reverseTime));
     }

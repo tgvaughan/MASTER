@@ -21,8 +21,8 @@ import hamlet.Population;
 import hamlet.State;
 import hamlet.inheritance.ConditionExtinct;
 import hamlet.inheritance.ConditionLineageCount;
-import hamlet.inheritance.InheritanceGraph;
-import hamlet.inheritance.InheritanceGraphSpec;
+import hamlet.inheritance.InheritanceTrajectory;
+import hamlet.inheritance.InheritanceTrajectorySpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
 import hamlet.inheritance.NexusOutput;
@@ -77,7 +77,7 @@ public class YuleTree {
          * Define simulation:
          */
         
-        InheritanceGraphSpec spec = new InheritanceGraphSpec();
+        InheritanceTrajectorySpec spec = new InheritanceTrajectorySpec();
 
         spec.setModel(model);
         spec.setInitState(initState);
@@ -90,13 +90,13 @@ public class YuleTree {
          * Generate inheritance graph:
          */
         
-        InheritanceGraph graph = new InheritanceGraph(spec);
+        InheritanceTrajectory traj = new InheritanceTrajectory(spec);
         
         /*
          * Write results as a newick tree:
          */
         
-        NexusOutput.write(graph, false, new PrintStream("out.tree"));
+        NexusOutput.write(traj, false, new PrintStream("out.tree"));
     }
     
 }

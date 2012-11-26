@@ -16,26 +16,24 @@
  */
 package hamlet.inheritance;
 
-import hamlet.Model;
 import hamlet.State;
-import hamlet.Stepper;
+import java.util.List;
 
 /**
- * A dummy stepper to include in spec for inheritance graphs. (May actually
- * move the graph building code over here though at some point.)
+ * End condition for simulation of inheritance graphs.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class InheritanceGraphStepper extends Stepper {
-
-    @Override
-    public double step(State state, Model model, double maxStepSize) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public String getAlgorithmName() {
-        return "Built-in graph stepper.";
-    }
+public interface InheritanceTrajectoryEndCondition {
     
+    /**
+     * @return true if graphs meeting end condition should be discarded.
+     */
+    boolean isRejection();
+    
+    /**
+     * @param activeLineages
+     * @return true if end condition is met.
+     */
+    boolean isMet(List<Node> activeLineages);
 }

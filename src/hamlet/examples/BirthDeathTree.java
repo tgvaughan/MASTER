@@ -20,8 +20,8 @@ import hamlet.JsonOutput;
 import hamlet.Population;
 import hamlet.State;
 import hamlet.inheritance.ConditionExtinct;
-import hamlet.inheritance.InheritanceGraph;
-import hamlet.inheritance.InheritanceGraphSpec;
+import hamlet.inheritance.InheritanceTrajectory;
+import hamlet.inheritance.InheritanceTrajectorySpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
 import hamlet.inheritance.NexusOutput;
@@ -88,7 +88,7 @@ public class BirthDeathTree {
          * Define simulation:
          */
         
-        InheritanceGraphSpec spec = new InheritanceGraphSpec();
+        InheritanceTrajectorySpec spec = new InheritanceTrajectorySpec();
 
         spec.setModel(model);
         spec.setInitState(initState);
@@ -97,17 +97,17 @@ public class BirthDeathTree {
         spec.addGraphEndCondition(new ConditionExtinct());
         
         /*
-         * Generate inheritance graph:
+         * Generate inheritance trajectory:
          */
         
-        InheritanceGraph graph = new InheritanceGraph(spec);
+        InheritanceTrajectory traj = new InheritanceTrajectory(spec);
         
         /*
-         * Dump results as a newick tree:
+         * Write results as JSON file and a newick tree:
          */
         
-        NexusOutput.write(graph, false, new PrintStream("out.tree"));
-        JsonOutput.write(graph, new PrintStream("out.json"));
+        NexusOutput.write(traj, false, new PrintStream("out.tree"));
+        JsonOutput.write(traj, new PrintStream("out.json"));
     }
     
 }

@@ -23,7 +23,7 @@ import java.util.List;
  * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class ConditionExtinct implements InheritanceGraphEndCondition {   
+public class ConditionExtinct implements InheritanceTrajectoryEndCondition {   
 
     @Override
     public boolean isRejection() {

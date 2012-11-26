@@ -27,9 +27,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A class representing an inheritance graph generated under a particular
- * stochastic population dynamics model. Inheritance trees are a special case in
- * which children have only one parent.
+ * A class representing a stochastic inheritance trajectory generated under
+ * a particular stochastic population dynamics model. Inheritance trajectories
+ * are trajectories which additionally contain a time graph reprepresenting
+ * the lineages decending from members of a subset of the population.
  *
  * <p>Things to keep in mind if you're reading this code:
  *
@@ -46,12 +47,12 @@ import java.util.Map;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class InheritanceGraph extends Trajectory {
+public class InheritanceTrajectory extends Trajectory {
 
     // List of nodes present at the start of the simulation
     public List<Node> startNodes;
     // Simulation specification.
-    private InheritanceGraphSpec graphSpec;
+    private InheritanceTrajectorySpec graphSpec;
 
     /**
      * Build an inheritance graph corrsponding to a set of lineages embedded
@@ -59,7 +60,7 @@ public class InheritanceGraph extends Trajectory {
      *
      * @param spec Inheritance graph simulation specification.
      */
-    public InheritanceGraph(InheritanceGraphSpec spec) {
+    public InheritanceTrajectory(InheritanceTrajectorySpec spec) {
 
         // Keep a record of the simulation spec and the starting nodes.
         this.graphSpec = spec;
@@ -95,8 +96,8 @@ public class InheritanceGraph extends Trajectory {
         while (true) {
 
             // Check whether any end conditions are met:
-            InheritanceGraphEndCondition endConditionMet = null;
-            for (InheritanceGraphEndCondition graphEndCondition : spec.graphEndConditions) {
+            InheritanceTrajectoryEndCondition endConditionMet = null;
+            for (InheritanceTrajectoryEndCondition graphEndCondition : spec.graphEndConditions) {
                 if (graphEndCondition.isMet(activeLineages)) {
                     endConditionMet = graphEndCondition;
                     break;
@@ -360,21 +361,22 @@ public class InheritanceGraph extends Trajectory {
     }
         
     /**
-     * Retrieve inheritance graph simulation specification.
+     * Retrieve inheritance trajectory simulation specification.
      *
-     * @return InheritanceGraphSpec object.
+     * @return InheritanceTrajectorySpec object.
      */
     @Override
-    public InheritanceGraphSpec getSpec() {
+    public InheritanceTrajectorySpec getSpec() {
         return graphSpec;
     }
 
     /**
-     * Construct inheritance graph from existing network of nodes.
+     * Construct graph component of inheritance trajectory from existing
+     * network of nodes.
      *
      * @param startNodes
      */
-    public InheritanceGraph(Node... startNodes) {
+    public InheritanceTrajectory(Node... startNodes) {
         this.graphSpec = null;
         this.startNodes = Lists.newArrayList(startNodes);
     }

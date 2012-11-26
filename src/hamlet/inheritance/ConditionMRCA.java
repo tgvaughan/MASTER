@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class ConditionMRCA implements InheritanceGraphEndCondition {
+public class ConditionMRCA implements InheritanceTrajectoryEndCondition {
     
     @Override
     public boolean isMet(List<Node> activeLineages) {

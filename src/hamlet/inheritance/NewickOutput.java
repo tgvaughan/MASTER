@@ -34,7 +34,7 @@ import java.util.Set;
  */
 public class NewickOutput {
     
-    InheritanceGraph graph;
+    InheritanceTrajectory graph;
     boolean reverseTime;
     
     StringBuilder newickStr;
@@ -49,7 +49,7 @@ public class NewickOutput {
      * @param reverseTime True causes the graph to be read in the direction
      * from the latest nodes to the earliest.  Useful for coalescent trees.
      */
-    public NewickOutput(InheritanceGraph graph, boolean reverseTime) {
+    public NewickOutput(InheritanceTrajectory graph, boolean reverseTime) {
 
         this.graph = graph;
         this.reverseTime = reverseTime;
@@ -217,7 +217,7 @@ public class NewickOutput {
      * @param graph
      * @return Set containing leaf nodes.
      */
-    private Set<Node> findEndNodes(InheritanceGraph graph) {
+    private Set<Node> findEndNodes(InheritanceTrajectory graph) {
         Set<Node> endNodes = Sets.newHashSet();
         
         for (Node startNode : graph.startNodes)
@@ -255,7 +255,7 @@ public class NewickOutput {
      * @param reverseTime Whether to traverse graph in reverse time.
      * @param pstream PrintStream used as destination for string representation.
      */
-    public static void write(InheritanceGraph graph,
+    public static void write(InheritanceTrajectory graph,
             boolean reverseTime, PrintStream pstream) {
         
         
@@ -285,7 +285,7 @@ public class NewickOutput {
 //                .addChild(hybrid)
 //                .addChild((new Node(X,0.5)).addChild(hybrid).addChild(new Node(X,2)));
         
-        InheritanceGraph graph = new InheritanceGraph(root);        
+        InheritanceTrajectory graph = new InheritanceTrajectory(root);        
         write(graph, false, new PrintStream("out.tree"));
     }
 }

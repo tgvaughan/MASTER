@@ -96,7 +96,7 @@ public class YuleTree {
          * Write results as a newick tree:
          */
         
-        NexusOutput.write(graph, false, true, new PrintStream("out.tree"));
+        NexusOutput.write(graph, false, new PrintStream("out.tree"));
     }
     
 }

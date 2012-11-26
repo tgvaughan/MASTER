@@ -18,13 +18,13 @@ package hamlet.examples;
 
 import hamlet.Population;
 import hamlet.State;
+import hamlet.inheritance.ConditionMRCA;
 import hamlet.inheritance.InheritanceGraph;
 import hamlet.inheritance.InheritanceGraphSpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
-import hamlet.inheritance.ConditionMRCA;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ public class CoalescentTree {
          * Write result to file:
          */
         
-        NexusOutput.write(graph, true, false, new PrintStream("out.tree"));
+        NexusOutput.write(graph, true, new PrintStream("out.tree"));
     }
     
 }

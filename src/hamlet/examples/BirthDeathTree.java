@@ -24,10 +24,8 @@ import hamlet.inheritance.InheritanceGraph;
 import hamlet.inheritance.InheritanceGraphSpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
-import hamlet.inheritance.NewickOutput;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
-import hamlet.inheritance.ConditionMRCA;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -108,7 +106,7 @@ public class BirthDeathTree {
          * Dump results as a newick tree:
          */
         
-        NexusOutput.write(graph, false, false, new PrintStream("out.tree"));
+        NexusOutput.write(graph, false, new PrintStream("out.tree"));
         JsonOutput.write(graph, new PrintStream("out.json"));
     }
     

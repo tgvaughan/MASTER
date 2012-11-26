@@ -35,7 +35,7 @@ import java.util.Set;
 public class NewickOutput {
     
     InheritanceGraph graph;
-    boolean reverseTime, includeRootBranches;
+    boolean reverseTime;
     
     StringBuilder newickStr;
     Set<Node> rootNodes, leafNodes;
@@ -48,16 +48,11 @@ public class NewickOutput {
      * @param graph Graph to represent.
      * @param reverseTime True causes the graph to be read in the direction
      * from the latest nodes to the earliest.  Useful for coalescent trees.
-     * @param includeRootBranches Hamlet always creates rooted graphs/trees
-     * starting with a singleton node.  Some software (I'm looking at you,
-     * APE) doesn't like this.  Use false to exclude the root branch.
      */
-    public NewickOutput(InheritanceGraph graph,
-            boolean reverseTime, boolean includeRootBranches) {
+    public NewickOutput(InheritanceGraph graph, boolean reverseTime) {
 
         this.graph = graph;
         this.reverseTime = reverseTime;
-        this.includeRootBranches = includeRootBranches;
         
         leafLabels = Maps.newHashMap();
         hybridLabels = Maps.newHashMap();
@@ -95,16 +90,13 @@ public class NewickOutput {
             else
                 first = false;
 
-            if (includeRootBranches)
-                subTreeToExtendedNewick(node, null, visitedHybrids);
-            else {
-                Node next;
-                if (reverseTime)
-                    next = node.getParents().get(0);
-                else
-                    next = node.getChildren().get(0);
-                subTreeToExtendedNewick(next, null, visitedHybrids);
-            }
+            Node next;
+            if (reverseTime)
+                next = node.getParents().get(0);
+            else
+                next = node.getChildren().get(0);
+            
+            subTreeToExtendedNewick(next, node, visitedHybrids);
         }
         
         newickStr.append(";");
@@ -261,15 +253,13 @@ public class NewickOutput {
      * 
      * @param graph Graph to write.
      * @param reverseTime Whether to traverse graph in reverse time.
-     * @param includeRootBranches Whether to include root branch(es).
      * @param pstream PrintStream used as destination for string representation.
      */
     public static void write(InheritanceGraph graph,
-            boolean reverseTime, boolean includeRootBranches,
-            PrintStream pstream) {
+            boolean reverseTime, PrintStream pstream) {
         
         
-        pstream.println(new NewickOutput(graph, reverseTime, includeRootBranches));
+        pstream.println(new NewickOutput(graph, reverseTime));
     }
     
     
@@ -296,6 +286,6 @@ public class NewickOutput {
 //                .addChild((new Node(X,0.5)).addChild(hybrid).addChild(new Node(X,2)));
         
         InheritanceGraph graph = new InheritanceGraph(root);        
-        write(graph, false, true, new PrintStream("out.tree"));
+        write(graph, false, new PrintStream("out.tree"));
     }
 }

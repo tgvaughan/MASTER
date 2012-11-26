@@ -37,13 +37,9 @@ public class NexusOutput extends NewickOutput {
      * @param graph Graph to represent.
      * @param reverseTime True causes the graph to be read in the direction
      * from the latest nodes to the earliest.  Useful for coalescent trees.
-     * @param includeRootBranches Hamlet always creates rooted graphs/trees
-     * starting with one or more singleton nodes.  Some software (I'm looking
-     * at you, APE) refuses to read trees with this property.  Use false to
-     * exclude the root branch(es).
      */
-    public NexusOutput(InheritanceGraph graph, boolean reverseTime, boolean includeRootBranches) {
-        super(graph, reverseTime, includeRootBranches);
+    public NexusOutput(InheritanceGraph graph, boolean reverseTime) {
+        super(graph, reverseTime);
     }
     
     @Override
@@ -92,12 +88,10 @@ public class NexusOutput extends NewickOutput {
      * 
      * @param graph Graph to represent.
      * @param reverseTime Whether to traverse tree in backward time.
-     * @param includeRootBranches Whether to include root branch(es).
      * @param pstream PrintStream object to which result is sent.
      */
     public static void write(InheritanceGraph graph,
-            boolean reverseTime, boolean includeRootBranches,
-            PrintStream pstream) {
-        pstream.println(new NexusOutput(graph, reverseTime, includeRootBranches));
+            boolean reverseTime, PrintStream pstream) {
+        pstream.println(new NexusOutput(graph, reverseTime));
     }
 }

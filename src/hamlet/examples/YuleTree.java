@@ -83,7 +83,8 @@ public class YuleTree {
         spec.setInitState(initState);
         spec.setInitNodes(initNodes);
         spec.setUnevenSampling();
-        spec.addGraphEndCondition(new ConditionLineageCount(100, false));
+        spec.setSimulationTime(5);
+        spec.addGraphEndCondition(new ConditionLineageCount(10, true));
         
         /*
          * Generate inheritance graph:
@@ -95,7 +96,7 @@ public class YuleTree {
          * Write results as a newick tree:
          */
         
-        NexusOutput.write(graph, false, false, new PrintStream("out.tree"));
+        NexusOutput.write(graph, false, true, new PrintStream("out.tree"));
     }
     
 }

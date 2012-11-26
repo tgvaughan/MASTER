@@ -108,15 +108,18 @@ public class InheritanceGraph extends Trajectory {
             if (endConditionMet != null) {
                 if (endConditionMet.isRejection()) {
                     // Rejection: Abort and start a new simulation
-                    activeLineages = Lists.newArrayList();
+                    activeLineages.clear();
                     t = 0.0;
 
                     for (Node node : spec.initNodes) {
+                        node.children.clear();
                         node.setTime(t);
                         Node child = new Node(node.population);
                         node.addChild(child);
                         activeLineages.add(child);
                     }
+                    // Initialise system state:
+                    currentState = new State(spec.getInitState());
                     
                     if (spec.samplePopSizes) {
                         sidx = 1;

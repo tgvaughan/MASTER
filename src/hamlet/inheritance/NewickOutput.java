@@ -117,11 +117,7 @@ public class NewickOutput {
      * 
      * @param node Root of this subtree
      * @param last Previous node in traversal (null if none)
-     * @param leafLabels Map of leaf nodes to their chosen labels
-     * @param hybridLabels Map of hybrid nodes to their chosen labels
      * @param visitedHybrids Set containing hybrids already visited
-     * @param reverseTime Whether the traversal is in reverse time
-     * @param sb StringBuilder that output is sent to
      */
     private void subTreeToExtendedNewick(Node node, Node last, Set<Node> visitedHybrids) {
         
@@ -161,6 +157,12 @@ public class NewickOutput {
         addLabel(node, branchLength);
     }
     
+    /**
+     * Add node label to Newick string.
+     * 
+     * @param node
+     * @param branchLength 
+     */
     protected void addLabel(Node node, double branchLength) {
         
         if (leafLabels.containsKey(node))

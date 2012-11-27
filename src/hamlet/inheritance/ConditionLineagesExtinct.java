@@ -34,5 +34,10 @@ public class ConditionLineagesExtinct implements LineageEndCondition {
     public boolean isMet(List<Node> activeLineages) {
         return activeLineages.isEmpty();
     }
+
+    @Override
+    public String getConditionDescription() {
+        return "Condition is met when no lineages remain.";
+    }
     
 }

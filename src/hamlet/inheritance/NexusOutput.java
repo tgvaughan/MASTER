@@ -63,6 +63,9 @@ public class NexusOutput extends NewickOutput {
             }
             newickStr.append("}");
         }
+        if (node.reactionGroup != null && node.reactionGroup.getName() != null) {
+            newickStr.append(",reaction=").append(node.reactionGroup.getName());
+        }
         newickStr.append("]");
         
         newickStr.append(":").append(branchLength);

@@ -30,6 +30,13 @@ public interface PopulationEndCondition {
      */
     public boolean isMet(PopulationState currentState);
     
+    /**
+     * @return true if end condition is a rejection.
+     */
     public boolean isRejection();
     
+    /**
+     * @return String describing this particular end condition.
+     */
+    public String getConditionDescription();
 }

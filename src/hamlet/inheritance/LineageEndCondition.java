@@ -16,7 +16,6 @@
  */
 package hamlet.inheritance;
 
-import hamlet.PopulationState;
 import java.util.List;
 
 /**
@@ -29,11 +28,16 @@ public interface LineageEndCondition {
     /**
      * @return true if graphs meeting end condition should be discarded.
      */
-    boolean isRejection();
+    public boolean isRejection();
     
     /**
      * @param activeLineages
      * @return true if end condition is met.
      */
-    boolean isMet(List<Node> activeLineages);
+    public boolean isMet(List<Node> activeLineages);
+    
+    /**
+     * @return String describing this particular end condition.
+     */
+    public String getConditionDescription();
 }

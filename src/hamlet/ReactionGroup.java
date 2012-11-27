@@ -219,6 +219,16 @@ public class ReactionGroup {
         }        
     }
     
+    /**
+     * Retrieve name of reaction group optionally provided during
+     * specification.
+     * 
+     * @return reaction group name
+     */
+    public String getName() {
+        return reactionGroupName;
+    }
+    
     /*
      * Methods for JSON object mapper
      */

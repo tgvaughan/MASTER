@@ -49,5 +49,10 @@ public class ConditionExtinction implements PopulationEndCondition {
     public boolean isRejection() {
         return this.rejection;
     }
+
+    @Override
+    public String getConditionDescription() {
+        return "Condition is met when " + pop + " is extinct.";
+    }
     
 }

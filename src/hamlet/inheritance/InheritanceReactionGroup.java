@@ -52,8 +52,8 @@ public class InheritanceReactionGroup extends ReactionGroup {
     }
     
     /**
-     * Define a particular reaction by listing nodes representing individual
-     * reactants involved in that reaction.  In contrast to the similarly
+     * Define a particular reactionGroup by listing nodes representing individual
+     * reactants involved in that reactionGroup.  In contrast to the similarly
      * named method in the ReactionGroup class, this method takes <b>nodes</b>
      * which specify through their children an inheritance relationship to
      * products listed in the call to addProductSchema.
@@ -70,8 +70,8 @@ public class InheritanceReactionGroup extends ReactionGroup {
     }
     
     /**
-     * Define a particular reaction by listing nodes representing individual
-     * products involved in that reaction.  In contrast to the similarly
+     * Define a particular reactionGroup by listing nodes representing individual
+     * products involved in that reactionGroup.  In contrast to the similarly
      * named method in the ReactionGroup class, this method takes <b>nodes</b>
      * which specify through their parents an inheritance relationship to
      * products listed in the call to addReactantSchema.

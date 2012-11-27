@@ -51,5 +51,11 @@ public class ConditionPopSize implements PopulationEndCondition {
     public boolean isRejection() {
         return rejection;
     }
+
+    @Override
+    public String getConditionDescription() {
+        return "Condition is met when size of " + pop
+                + " population is exactly " + size;
+    }
     
 }

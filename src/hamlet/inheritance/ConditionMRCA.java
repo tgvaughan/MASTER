@@ -36,5 +36,10 @@ public class ConditionMRCA implements LineageEndCondition {
     public boolean isRejection() {
         return false;
     }
+
+    @Override
+    public String getConditionDescription() {
+        return "Condition is met when one lineage remains.";
+    }
     
 }

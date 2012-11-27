@@ -133,7 +133,7 @@ public class InheritanceTrajectory extends Trajectory {
                     totalPropensity += propensity;
             }
 
-            // Draw time of next reaction
+            // Draw time of next reactionGroup
             if (totalPropensity > 0)
                 t += Randomizer.nextExponential(totalPropensity);
             else
@@ -163,7 +163,7 @@ public class InheritanceTrajectory extends Trajectory {
                 }
             }
             
-            // Continue to on to next reaction if lineage has been seeded
+            // Continue to on to next reactionGroup if lineage has been seeded
             if (seedTimeExceeded) {
                 Node seedNode = inactiveLineages.get(0);
                 inactiveLineages.remove(0);
@@ -179,7 +179,7 @@ public class InheritanceTrajectory extends Trajectory {
             if (simulationTimeExceeded)
                 break;
 
-            // Choose reaction to implement
+            // Choose reactionGroup to implement
             double u = Randomizer.nextDouble()*totalPropensity;
             boolean found = false;
             InheritanceReactionGroup chosenReactionGroup = null;
@@ -200,14 +200,15 @@ public class InheritanceTrajectory extends Trajectory {
                     break;
             }
 
-            // Select lineages involved in chosen reaction:
+            // Select lineages involved in chosen reactionGroup:
             Map<Node, Node> nodesInvolved = selectLineagesInvolved(activeLineages,
                 currentPopState, chosenReactionGroup, chosenReaction);
             
             // Implement changes to inheritance graph:
-            implementInheritanceReaction(activeLineages, nodesInvolved, t);
+            implementInheritanceReaction(activeLineages, nodesInvolved,
+                    chosenReactionGroup, t);
 
-            // Implement state change due to reaction:
+            // Implement state change due to reactionGroup:
             currentPopState.implementReaction(chosenReactionGroup, chosenReaction, 1);
                          
             // Sample population sizes (unevenly) if necessary:
@@ -290,13 +291,13 @@ public class InheritanceTrajectory extends Trajectory {
 
     
     /**
-     * Select lineages involved in reaction.  This is done by sampling
+     * Select lineages involved in reactionGroup.  This is done by sampling
      * without replacement from the individuals present in the current state.
      * 
      * @param activeLineages list of active lineages
      * @param currentPopState current state of population sizes
-     * @param chosenReactionGroup reaction group selected
-     * @param chosenReaction integer index into reaction group specifying reaction
+     * @param chosenReactionGroup reactionGroup group selected
+     * @param chosenReaction integer index into reactionGroup group specifying reactionGroup
      * @return Map from nodes involved to the corresponding reactant nodes.
      */
     private Map<Node,Node> selectLineagesInvolved(
@@ -311,7 +312,7 @@ public class InheritanceTrajectory extends Trajectory {
                     .get(chosenReaction).containsKey(node.population))
                 continue;
 
-            // Calculate probability that lineage is involved in reaction:
+            // Calculate probability that lineage is involved in reactionGroup:
             int m = chosenReactionGroup.reactCounts
                     .get(chosenReaction).get(node.population);
             double N = currentState.get(node.population);
@@ -325,8 +326,6 @@ public class InheritanceTrajectory extends Trajectory {
             // Decide whether lineage is involved
             if (Randomizer.nextDouble()<m/N) {
 
-                // TODO: fix this, it's BROKEN!!!!
-                
                 // Node is involved, select particular reactant node to use:
                 int idx = Randomizer.nextInt(m);
                 for (Node reactNode :
@@ -362,16 +361,17 @@ public class InheritanceTrajectory extends Trajectory {
 
     /**
      * Update the graph and the activeLineages list according to the chosen
-     * reaction.
+     * reactionGroup.
      * 
      * @param activeLineages list of active lineages
      * @param nodesInvolved map from active lineages involved to reactant nodes
      * @param t current time in simulation
      */
     private void implementInheritanceReaction(List<Node> activeLineages,
-            Map<Node,Node> nodesInvolved, double t) {
+            Map<Node,Node> nodesInvolved,
+            InheritanceReactionGroup reactionGroup, double t) {
        
-        // Attach reaction graph to inheritance graph
+        // Attach reactionGroup graph to inheritance graph
         Map<Node, Node> nextLevelNodes = Maps.newHashMap();
         for (Node node : nodesInvolved.keySet()) {
             Node reactNode = nodesInvolved.get(node);
@@ -389,7 +389,7 @@ public class InheritanceTrajectory extends Trajectory {
             
             if (node.children.size()==1
                     &&(node.parents.get(0).population==node.children.get(0).population)) {
-                // Node does not represent a state change
+                // Node does not represent a state change: delete it
 
                 // Active lineages are nodes having exactloy one parent:
                 Node parent = node.parents.get(0);
@@ -401,10 +401,15 @@ public class InheritanceTrajectory extends Trajectory {
 
                 nodeIdx = child.parents.indexOf(node);
                 child.parents.set(nodeIdx, parent);
+            } else {
+                // Node is here to stay
+                                
+                // Ensure node has current time.
+                node.setTime(t);
+                
+                // Annotate node with reaction group
+                node.setReactionGroup(reactionGroup);
             }
-
-            // Ensure node has current time.
-            node.setTime(t);
 
             // Remove from active lineage list
             activeLineages.remove(node);

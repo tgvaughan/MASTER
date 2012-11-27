@@ -16,7 +16,6 @@
  */
 package hamlet.inheritance;
 
-import com.google.common.collect.Lists;
 import hamlet.Population;
 import java.util.*;
 
@@ -39,6 +38,9 @@ public class Node {
     // Height of this node.
     double time;
     
+    // Reaction group (if any) associated with this node.
+    InheritanceReactionGroup reactionGroup;
+    
     /**
      * Constructor.
      *
@@ -52,6 +54,8 @@ public class Node {
 
         parents = new ArrayList<Node>();
         children = new ArrayList<Node>();
+        
+        reactionGroup = null;
     }
     
     /**
@@ -65,6 +69,8 @@ public class Node {
         
         parents = new ArrayList<Node>();
         children = new ArrayList<Node>();
+        
+        reactionGroup = null;
     }
     
     /**
@@ -88,6 +94,16 @@ public class Node {
         child.parents.add(this);
         
         return this;
+    }
+    
+    /**
+     * Associate a reaction group with this node.  Used as an annotation in the
+     * NEXUS output format.
+     * 
+     * @param reactionGroup 
+     */
+    public void setReactionGroup(InheritanceReactionGroup reactionGroup) {
+        this.reactionGroup = reactionGroup;
     }
     
     /*

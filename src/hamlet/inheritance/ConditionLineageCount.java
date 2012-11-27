@@ -50,5 +50,10 @@ public class ConditionLineageCount implements LineageEndCondition {
     public boolean isMet(List<Node> activeLineages) {
         return (activeLineages.size() == nlineages);
     }
+
+    @Override
+    public String getConditionDescription() {
+        return "Condition met when number of lineages reaches " + nlineages;
+    }
     
 }

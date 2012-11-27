@@ -83,7 +83,7 @@ public class CoalescentTree {
         spec.setSimulationTime(Double.POSITIVE_INFINITY);
         spec.setInitState(initState);
         spec.setInitNodes(initNodes);
-        spec.addGraphEndCondition(new ConditionMRCA());
+        spec.addLineageEndCondition(new ConditionMRCA());
         
         /*
          * Generate coalescent tree:

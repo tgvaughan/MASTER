@@ -52,32 +52,32 @@ public class InheritanceTrajectory extends Trajectory {
     // List of nodes present at the start of the simulation
     public List<Node> startNodes;
     // Simulation specification.
-    private InheritanceTrajectorySpec graphSpec;
+    private InheritanceTrajectorySpec inheritanceSpec;
 
     /**
      * Build an inheritance graph corrsponding to a set of lineages embedded
      * within populations evolving under a birth-death process.
      *
-     * @param spec Inheritance graph simulation specification.
+     * @param inheritancSpec Inheritance graph simulation specification.
      */
-    public InheritanceTrajectory(InheritanceTrajectorySpec spec) {
+    public InheritanceTrajectory(InheritanceTrajectorySpec inheritancSpec) {
 
         // Keep a record of the simulation spec and the starting nodes.
-        this.graphSpec = spec;
-        startNodes = spec.initNodes;
+        this.inheritanceSpec = inheritancSpec;
+        startNodes = inheritancSpec.initNodes;
 
-        double simulationTime = spec.getSimulationTime();
+        double simulationTime = inheritancSpec.getSimulationTime();
         
         double sampDt=0;
-        boolean evenlySpacedSampling = spec.isSamplingEvenlySpaced();
+        boolean evenlySpacedSampling = inheritancSpec.isSamplingEvenlySpaced();
         if (evenlySpacedSampling)
-            sampDt = spec.getSampleDt();
+            sampDt = inheritancSpec.getSampleDt();
 
         // Initialise time and activeLineages:
         double t = 0.0;
 
         List<Node> activeLineages = Lists.newArrayList();
-        for (Node node : spec.initNodes) {
+        for (Node node : inheritancSpec.initNodes) {
             node.setTime(t);
             Node child = new Node(node.population);
             node.addChild(child);
@@ -85,25 +85,25 @@ public class InheritanceTrajectory extends Trajectory {
         }
 
         // Initialise system state:
-        State currentState = new State(spec.getInitState());
+        State currentState = new State(inheritancSpec.getInitState());
 
         // Initialise sampling index and sample first state
         int sidx = 1;
-        if (spec.samplePopSizes)
+        if (inheritancSpec.samplePopSizes)
             sampleState(currentState, 0.0);
         
         // Simulation loop:
         while (true) {
 
             // Check whether any end conditions are met:
-            InheritanceTrajectoryEndCondition endConditionMet = null;
-            for (InheritanceTrajectoryEndCondition graphEndCondition : spec.graphEndConditions) {
+            LineageEndCondition endConditionMet = null;
+            for (LineageEndCondition graphEndCondition : inheritancSpec.lineageEndConditions) {
                 if (graphEndCondition.isMet(activeLineages)) {
                     endConditionMet = graphEndCondition;
                     break;
                 }
             }
-   
+            
             // What happens when an end condition is met depends on whether
             // that condition is a rejection or a stopping point.
             if (endConditionMet != null) {
@@ -112,7 +112,7 @@ public class InheritanceTrajectory extends Trajectory {
                     activeLineages.clear();
                     t = 0.0;
 
-                    for (Node node : spec.initNodes) {
+                    for (Node node : inheritancSpec.initNodes) {
                         node.children.clear();
                         node.setTime(t);
                         Node child = new Node(node.population);
@@ -120,9 +120,9 @@ public class InheritanceTrajectory extends Trajectory {
                         activeLineages.add(child);
                     }
                     // Initialise system state:
-                    currentState = new State(spec.getInitState());
+                    currentState = new State(inheritancSpec.getInitState());
                     
-                    if (spec.samplePopSizes) {
+                    if (inheritancSpec.samplePopSizes) {
                         sidx = 1;
                         clearSamples();
                         sampleState(currentState, 0.0);
@@ -136,7 +136,7 @@ public class InheritanceTrajectory extends Trajectory {
 
             // Calculate propensities
             double totalPropensity = 0.0;
-            for (ReactionGroup reactionGroup : spec.getModel().getReactionGroups()) {
+            for (ReactionGroup reactionGroup : inheritancSpec.getModel().getReactionGroups()) {
                 reactionGroup.calcPropensities(currentState);
                 for (double propensity : reactionGroup.propensities)
                     totalPropensity += propensity;
@@ -153,7 +153,7 @@ public class InheritanceTrajectory extends Trajectory {
             t += Randomizer.nextExponential(totalPropensity);
 
             // Sample population sizes (evenly) if necessary:
-            if (spec.samplePopSizes && evenlySpacedSampling) {
+            if (inheritancSpec.samplePopSizes && evenlySpacedSampling) {
                 double tmin = Math.min(t, simulationTime);
                 while (sidx*sampDt < tmin) {
                     sampleState(currentState, sampDt*sidx);
@@ -173,7 +173,7 @@ public class InheritanceTrajectory extends Trajectory {
             InheritanceReactionGroup chosenReactionGroup = null;
             int chosenReaction = 0;
             for (InheritanceReactionGroup reactionGroup :
-                    spec.inheritanceModel.inheritanceReactionGroups) {
+                    inheritancSpec.inheritanceModel.inheritanceReactionGroups) {
 
                 for (int ridx = 0; ridx<reactionGroup.propensities.size(); ridx++) {
                     u -= reactionGroup.propensities.get(ridx);
@@ -199,8 +199,8 @@ public class InheritanceTrajectory extends Trajectory {
             currentState.implementReaction(chosenReactionGroup, chosenReaction, 1);
                          
             // Sample population sizes (unevenly) if necessary:
-            if (spec.samplePopSizes && !evenlySpacedSampling) {              
-                if (!spec.sampleStateAtNodes || !nodesInvolved.isEmpty())
+            if (inheritancSpec.samplePopSizes && !evenlySpacedSampling) {              
+                if (!inheritancSpec.sampleStateAtNodes || !nodesInvolved.isEmpty())
                     sampleState(currentState, t);
             }
 
@@ -214,7 +214,7 @@ public class InheritanceTrajectory extends Trajectory {
             node.setTime(t);
         
         // Perform final sample
-        if (spec.samplePopSizes)
+        if (inheritancSpec.samplePopSizes)
             sampleState(currentState, t);
     }
     
@@ -367,7 +367,7 @@ public class InheritanceTrajectory extends Trajectory {
      */
     @Override
     public InheritanceTrajectorySpec getSpec() {
-        return graphSpec;
+        return inheritanceSpec;
     }
 
     /**
@@ -377,7 +377,7 @@ public class InheritanceTrajectory extends Trajectory {
      * @param startNodes
      */
     public InheritanceTrajectory(Node... startNodes) {
-        this.graphSpec = null;
+        this.inheritanceSpec = null;
         this.startNodes = Lists.newArrayList(startNodes);
     }
 }

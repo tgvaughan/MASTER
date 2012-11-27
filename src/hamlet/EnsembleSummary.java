@@ -1,10 +1,22 @@
+/*
+ * Copyright (C) 2012 Tim Vaughan <tgvaughan@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package hamlet;
 
 import beast.util.Randomizer;
-import com.google.common.collect.*;
-import java.io.*;
-import java.util.*;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * A class representing a collection of results obtained by estimating moments
@@ -58,9 +70,27 @@ public class EnsembleSummary {
 
             // Integration loop:
             for (int sidx = 0; sidx<spec.nSamples; sidx++) {
+                
+                // Check for end conditions:
+                for (PopulationEndCondition endCondition : spec.popSizeEndConditions) {
+                    if (endCondition.isMet(currentState)) {
+                        
+                        // Can immediately reject, as only rejection condtions
+                        // allowed for ensemble summaries.
+                        currentState = new State(spec.initState);
+                        sidx = -1;
+                        
+                        // Report if necessary:
+                        if (spec.verbosity>1)
+                            System.err.println("Rejection end condition met"
+                                    + " at time " + sampleDt);
+                        
+                        continue;
+                    }
+                }
 
                 // Report trajectory progress at all times:
-                if (spec.verbosity==2)
+                if (spec.verbosity>1)
                     System.err.println("Recording sample time point "
                             +String.valueOf(sidx+1)+" of "
                             +String.valueOf(spec.nSamples));
@@ -73,6 +103,9 @@ public class EnsembleSummary {
                 while (t<sampleDt)
                     t += spec.stepper.step(currentState, spec.model, sampleDt-t);
             }
+            
+            for (StateSummary summary : stateSummaries)
+                summary.accept();
         }
 
         // Normalise state summaries:

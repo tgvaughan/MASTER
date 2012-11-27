@@ -14,19 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hamlet;
+package hamlet.inheritance;
+
+import hamlet.State;
+import java.util.List;
 
 /**
- * End condition for trajectories.  End conditions may result in either
- * truncation or complete rejection of a trajectory.
+ * End condition for simulation of inheritance graphs.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public interface EndCondition {
+public interface LineageEndCondition {
     
     /**
-     * @param currentState
+     * @return true if graphs meeting end condition should be discarded.
+     */
+    boolean isRejection();
+    
+    /**
+     * @param activeLineages
      * @return true if end condition is met.
      */
-    public boolean isMet(State currentState);
+    boolean isMet(List<Node> activeLineages);
 }

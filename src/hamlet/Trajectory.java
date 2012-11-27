@@ -52,13 +52,37 @@ public class Trajectory {
         // Initialise system state:
         State currentState = new State(spec.initState);
 
-        if (spec.nSamples>=2) {
+        if (spec.evenlySpacedSampling) {
             // Sample at evenly spaced times
 
             double sampleDt = spec.getSampleDt();
 
             // Integration loop:
-            for (int sidx = 0; sidx<spec.nSamples; sidx++) {
+            for (int sidx = 0; sidx<spec.nSamples; sidx++) {                
+                
+                // Check for end conditions:
+                PopulationEndCondition endConditionMet = null;
+                for (PopulationEndCondition endCondition : spec.popSizeEndConditions) {
+                    if (endCondition.isMet(currentState)) {
+                        endConditionMet = endCondition;
+                        break;
+                    }
+                }
+                if (endConditionMet != null) {
+                    if (endConditionMet.isRejection()) {
+                        currentState = new State(spec.initState);
+                        clearSamples();
+                        sidx = -1;
+                        continue;
+                    } else
+                        break;
+                }
+                
+                // Report trajectory progress:
+                if (spec.verbosity>1)
+                    System.err.println("Recording sample time point "
+                            +String.valueOf(sidx+1)+" of "
+                            +String.valueOf(spec.nSamples));    
 
                 // Sample state:
                 sampleState(currentState, sampleDt*sidx);
@@ -75,6 +99,39 @@ public class Trajectory {
 
             double t = 0;
             while (t<spec.simulationTime) {
+                
+                // Check for end conditions:
+                PopulationEndCondition endConditionMet = null;
+                for (PopulationEndCondition endCondition : spec.popSizeEndConditions) {
+                    if (endCondition.isMet(currentState)) {
+                        endConditionMet = endCondition;
+                        break;
+                    }
+                }
+                if (endConditionMet != null) {
+                    if (endConditionMet.isRejection()) {
+                        if (spec.verbosity>1)
+                            System.err.println("Rejection end condition met "
+                                    + "at time " + t);                        
+                        
+                        currentState = new State(spec.initState);
+                        clearSamples();                        
+                        t = 0;
+                        
+                        continue;
+                    } else {
+                        if (spec.verbosity>1)
+                            System.err.println("Truncation end condition met "
+                                    + "at time " + t);  
+                        break;
+                    }
+                }
+                
+                // Report trajectory progress:
+                if (spec.verbosity>1)
+                    System.err.println("Recording sample at time "
+                            + String.valueOf(t));
+                
                 sampleState(currentState, t);
                 
                 t += spec.stepper.step(currentState, spec.model,
@@ -101,13 +158,21 @@ public class Trajectory {
         return spec;
     }
     
-
+    /**
+     *  Sample current population size state and time.
+     * 
+     * @param currentState
+     * @param time 
+     */
     public final void sampleState(State currentState, double time) {
         sampledStates.add(new State(currentState));
         sampledTimes.add(time);
     }
     
-    public void clearSamples() {
+    /**
+     * Clear sampled population size states and times.
+     */
+    public final void clearSamples() {
         sampledStates.clear();
         sampledTimes.clear();
     }

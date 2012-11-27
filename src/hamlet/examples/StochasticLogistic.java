@@ -16,14 +16,14 @@
  */
 package hamlet.examples;
 
-import hamlet.Ensemble;
-import hamlet.EnsembleSpec;
-import hamlet.GillespieStepper;
 import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Population;
 import hamlet.Reaction;
 import hamlet.State;
+import hamlet.TauLeapingStepper;
+import hamlet.Trajectory;
+import hamlet.TrajectorySpec;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
@@ -75,28 +75,29 @@ public class StochasticLogistic {
          * Assemble simulation spec:
          */
 
-        EnsembleSpec spec = new EnsembleSpec();
+        TrajectorySpec spec = new TrajectorySpec();
 
         spec.setSimulationTime(100.0);
-        //spec.setIntegrator(new TauLeapingStepper(100.0/1e4));
-        spec.setStepper(new GillespieStepper());
-        //spec.setnSamples(1001);
-        spec.setnTraj(2);
-        spec.setSeed(42);
+        spec.setStepper(new TauLeapingStepper(100.0/1e4));
+        //spec.setStepper(new GillespieStepper());
+        spec.setEvenSampling(1001);
+        //spec.setUnevenSampling();
+        //spec.setSeed(42);
         spec.setModel(model);
         spec.setInitState(initState);
+        spec.setVerbosity(2);
 
         /*
          * Generate trajectory
          */
 
-        Ensemble ensemble = new Ensemble(spec);
+        Trajectory trajectory = new Trajectory(spec);
         
         /*
          * Write result to JSON-formatted output file:
          */
         
-        JsonOutput.write(ensemble, new PrintStream("out.json"));
+        JsonOutput.write(trajectory, new PrintStream("out.json"));
         
     }
 }

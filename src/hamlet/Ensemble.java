@@ -52,6 +52,12 @@ public class Ensemble {
 
         // Generate trajectories:
         for (int traj = 0; traj<spec.nTraj; traj++) {
+            
+            // Report ensemble progress if verbosity high enough:
+            if (spec.verbosity>0)
+                System.err.println("Integrating trajectory "
+                        +String.valueOf(traj+1)+" of "
+                        +String.valueOf(spec.nTraj));
 
             Trajectory thisTraj = new Trajectory(spec);
             trajectories.add(thisTraj);

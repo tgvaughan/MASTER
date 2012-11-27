@@ -16,24 +16,23 @@
  */
 package hamlet.inheritance;
 
-import hamlet.State;
 import java.util.List;
 
 /**
- * End condition for simulation of inheritance graphs.
- *
+ * This end condition fires when all lineages are extinct.
+ * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public interface InheritanceTrajectoryEndCondition {
+public class ConditionLineagesExtinct implements LineageEndCondition {   
+
+    @Override
+    public boolean isRejection() {
+        return false;
+    }
+
+    @Override
+    public boolean isMet(List<Node> activeLineages) {
+        return activeLineages.isEmpty();
+    }
     
-    /**
-     * @return true if graphs meeting end condition should be discarded.
-     */
-    boolean isRejection();
-    
-    /**
-     * @param activeLineages
-     * @return true if end condition is met.
-     */
-    boolean isMet(List<Node> activeLineages);
 }

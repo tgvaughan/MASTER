@@ -16,6 +16,8 @@
  */
 package hamlet;
 
+import com.google.common.collect.Lists;
+import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
@@ -31,6 +33,9 @@ public class TrajectorySpec extends Spec {
     // Integrator to use:
     Stepper stepper;
     
+    // Population size end conditions:
+    List<PopulationEndCondition> popSizeEndConditions;
+    
     // Whether to collect evenly spaced samples or let the state stepper
     // when to sample:
     boolean evenlySpacedSampling;
@@ -38,16 +43,41 @@ public class TrajectorySpec extends Spec {
     // Number of evenly spaced samples times.  Must be >=2.
     int nSamples;
     
-    /*
-     * Setters:
+    /**
+     * Constructor.
      */
+    public TrajectorySpec() {
+        super();
+        popSizeEndConditions = Lists.newArrayList();
+    }
     
+
+    /**
+     * Set maximum simulation time.
+     * 
+     * @param simulationTime 
+     */
     public void setSimulationTime(double simulationTime) {
         this.simulationTime = simulationTime;
     }
 
+    /**
+     * Set state updating algorithm to use.
+     * 
+     * @param integrator 
+     */
     public void setStepper(Stepper integrator) {
         this.stepper = integrator;
+    }
+
+    /**
+     * Add a population size end condition.  Note that truncation end
+     * conditions may play havoc with ensemble summaries.
+     * 
+     * @param endCondition 
+     */
+    public void addPopSizeEndCondition(PopulationEndCondition endCondition) {
+        this.popSizeEndConditions.add(endCondition);
     }
 
     /**
@@ -60,7 +90,8 @@ public class TrajectorySpec extends Spec {
             this.nSamples = nSamples;
             this.evenlySpacedSampling = true;
         } else
-            this.evenlySpacedSampling = false;
+            throw new IllegalArgumentException("Number of sampling times"
+                    + " must be >= 2");
     }
     
     /**

@@ -1,7 +1,23 @@
+/*
+ * Copyright (C) 2012 Tim Vaughan <tgvaughan@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package hamlet;
 
-import java.util.*;
 import com.google.common.collect.*;
+import java.util.*;
 
 /**
  * Class representing an ensemble of states summarised in
@@ -13,6 +29,7 @@ import com.google.common.collect.*;
 public class StateSummary {
 
 	Map<MomentGroup,double[]> mean, std;
+        Map<MomentGroup,double[]> summaries;
 	int sampleNum;
 
 	/**
@@ -28,6 +45,7 @@ public class StateSummary {
 		for (MomentGroup moment : moments) {
 			mean.put(moment, new double[moment.summationGroups.size()]);
 			std.put(moment, new double[moment.summationGroups.size()]);
+                        summaries.put(moment, new double[moment.summationGroups.size()]);
 		}
 
 		sampleNum = 0;
@@ -41,11 +59,25 @@ public class StateSummary {
 	public void record(State state) {
 
 		for (MomentGroup moment : mean.keySet())
-			moment.getEstimate(state, mean.get(moment), std.get(moment));
+			moment.getSummary(state, summaries.get(moment));
 
 		sampleNum += 1;
 
 	}
+      
+        /**
+         * Incorporate latest full trajectory summaries into mean
+         * and variance estimates.
+         */
+        public void accept() {
+            for (MomentGroup moment : mean.keySet()) {
+                for (int i=0; i<mean.get(moment).length; i++) {
+                    double summary = summaries.get(moment)[i];
+                    mean.get(moment)[i] += summary;
+                    std.get(moment)[i] += summary*summary;
+                }
+            }
+        }
 
 	/**
 	 * Normalise the summary.

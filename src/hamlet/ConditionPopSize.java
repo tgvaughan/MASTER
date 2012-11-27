@@ -14,41 +14,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hamlet.inheritance;
-
-import java.util.List;
+package hamlet;
 
 /**
- * A condition which is met when the simulation includes a specific
- * number of lineages.
- * 
+ * Population end condition which is met when a population reaches a
+ * specific size.  May be either a rejection or a truncation condition.
+ *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class ConditionLineageCount implements LineageEndCondition {
+public class ConditionPopSize implements PopulationEndCondition {
     
-    private int nlineages;
-    private boolean rejection;
+    Population pop;
+    double size;
+    boolean rejection;
     
     /**
-     * Create an inheritance graph end condition which is met when the
-     * given number of lineages is reached.
+     * Create new population end condition which is met when pop reaches
+     * size.
      * 
-     * @param nlineages number of lineages constituting end condition
-     * @param rejection true causes graphs meeting condition to be discarded
+     * @param pop Population size to watch.
+     * @param size Population size at which condition is met.
+     * @param rejection True creates a rejection end condition.
      */
-    public ConditionLineageCount(int nlineages, boolean rejection) {
-        this.nlineages = nlineages;
+    public ConditionPopSize(Population pop, double size, boolean rejection) {
+        this.pop = pop;
+        this.size = size;
         this.rejection = rejection;
     }
 
     @Override
-    public boolean isRejection() {
-        return this.rejection;
+    public boolean isMet(State currentState) {
+        return currentState.get(pop) == size;
     }
 
     @Override
-    public boolean isMet(List<Node> activeLineages) {
-        return (activeLineages.size() == nlineages);
+    public boolean isRejection() {
+        return rejection;
     }
     
 }

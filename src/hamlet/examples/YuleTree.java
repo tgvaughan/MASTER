@@ -19,7 +19,7 @@ package hamlet.examples;
 import hamlet.JsonOutput;
 import hamlet.Population;
 import hamlet.State;
-import hamlet.inheritance.ConditionExtinct;
+import hamlet.inheritance.ConditionLineagesExtinct;
 import hamlet.inheritance.ConditionLineageCount;
 import hamlet.inheritance.InheritanceTrajectory;
 import hamlet.inheritance.InheritanceTrajectorySpec;
@@ -84,7 +84,7 @@ public class YuleTree {
         spec.setInitNodes(initNodes);
         spec.setUnevenSampling();
         spec.setSimulationTime(5);
-        spec.addGraphEndCondition(new ConditionLineageCount(10, true));
+        spec.addLineageEndCondition(new ConditionLineageCount(10, true));
         
         /*
          * Generate inheritance graph:

@@ -14,25 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package hamlet.inheritance;
-
-import java.util.List;
+package hamlet;
 
 /**
- * This end condition fires when all lineages are extinct.
- * 
+ * End condition for trajectories.  End conditions may result in either
+ * truncation or complete rejection of a trajectory.
+ *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class ConditionExtinct implements InheritanceTrajectoryEndCondition {   
-
-    @Override
-    public boolean isRejection() {
-        return false;
-    }
-
-    @Override
-    public boolean isMet(List<Node> activeLineages) {
-        return activeLineages.isEmpty();
-    }
+public interface PopulationEndCondition {
+    
+    /**
+     * @param currentState
+     * @return true if end condition is met.
+     */
+    public boolean isMet(State currentState);
+    
+    public boolean isRejection();
     
 }

@@ -36,8 +36,8 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     // Lineages present at start of simulation.
     List<Node> initNodes;
     
-    // End condition:
-    List<InheritanceTrajectoryEndCondition> graphEndConditions;
+    // Lineage end conditions:
+    List<LineageEndCondition> lineageEndConditions;
 
     // Record population size dynamics.
     boolean samplePopSizes;
@@ -54,7 +54,7 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     public InheritanceTrajectorySpec() {
         super();
         
-        graphEndConditions = Lists.newArrayList();
+        lineageEndConditions = Lists.newArrayList();
         
         // For inheritance graphs there is a sensible default
         // maximum simulation time.
@@ -90,14 +90,14 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
      * 
      * @param endCondition 
      */
-    public void addGraphEndCondition(InheritanceTrajectoryEndCondition endCondition) {
-        this.graphEndConditions.add(endCondition);
+    public void addLineageEndCondition(LineageEndCondition endCondition) {
+        this.lineageEndConditions.add(endCondition);
     }
     
     @Override
     public void setEvenSampling(int nSamples) {
-        this.samplePopSizes = true;
         super.setEvenSampling(nSamples);
+        this.samplePopSizes = true;
     }
             
     /**

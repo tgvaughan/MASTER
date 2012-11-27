@@ -62,7 +62,7 @@ public class Trajectory {
                 
                 // Check for end conditions:
                 PopulationEndCondition endConditionMet = null;
-                for (PopulationEndCondition endCondition : spec.popSizeEndConditions) {
+                for (PopulationEndCondition endCondition : spec.populationEndConditions) {
                     if (endCondition.isMet(currentState)) {
                         endConditionMet = endCondition;
                         break;
@@ -102,7 +102,7 @@ public class Trajectory {
                 
                 // Check for end conditions:
                 PopulationEndCondition endConditionMet = null;
-                for (PopulationEndCondition endCondition : spec.popSizeEndConditions) {
+                for (PopulationEndCondition endCondition : spec.populationEndConditions) {
                     if (endCondition.isMet(currentState)) {
                         endConditionMet = endCondition;
                         break;

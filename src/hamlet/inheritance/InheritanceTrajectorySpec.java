@@ -17,7 +17,6 @@
 package hamlet.inheritance;
 
 import com.google.common.collect.Lists;
-import hamlet.Spec;
 import hamlet.Stepper;
 import hamlet.TrajectorySpec;
 import java.util.List;
@@ -136,5 +135,14 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     @Override
     public Stepper getStepper() {
         return new InheritanceTrajectoryStepper();
+    }
+    
+    /**
+     * Retrieve list of lineage end conditions currently in use.
+     * 
+     * @return list of lineage end conditions.
+     */
+    public List<LineageEndCondition> getLineageEndConditions() {
+        return lineageEndConditions;
     }
 }

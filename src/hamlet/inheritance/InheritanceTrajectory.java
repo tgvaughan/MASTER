@@ -20,6 +20,7 @@ import beast.util.Randomizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import hamlet.Population;
+import hamlet.PopulationEndCondition;
 import hamlet.ReactionGroup;
 import hamlet.State;
 import hamlet.Trajectory;
@@ -52,8 +53,8 @@ public class InheritanceTrajectory extends Trajectory {
     // List of nodes present at the start of the simulation
     public List<Node> startNodes;
     // Simulation specification.
-    private InheritanceTrajectorySpec inheritanceSpec;
-
+    private InheritanceTrajectorySpec inheritanceSpec;    
+    
     /**
      * Build an inheritance graph corrsponding to a set of lineages embedded
      * within populations evolving under a birth-death process.
@@ -73,9 +74,10 @@ public class InheritanceTrajectory extends Trajectory {
         if (evenlySpacedSampling)
             sampDt = inheritancSpec.getSampleDt();
 
-        // Initialise time and activeLineages:
+        // Initialise time
         double t = 0.0;
 
+        // Initialise active lineages
         List<Node> activeLineages = Lists.newArrayList();
         for (Node node : inheritancSpec.initNodes) {
             node.setTime(t);
@@ -95,19 +97,31 @@ public class InheritanceTrajectory extends Trajectory {
         // Simulation loop:
         while (true) {
 
-            // Check whether any end conditions are met:
-            LineageEndCondition endConditionMet = null;
-            for (LineageEndCondition graphEndCondition : inheritancSpec.lineageEndConditions) {
-                if (graphEndCondition.isMet(activeLineages)) {
-                    endConditionMet = graphEndCondition;
+            // Check whether a lineage end condition is met:
+            boolean conditionMet = false;
+            boolean isRejection = false;
+            for (LineageEndCondition lineageEC : inheritancSpec.getLineageEndConditions()) {
+                if (lineageEC.isMet(activeLineages)) {
+                    conditionMet = true;
+                    isRejection = lineageEC.isRejection();
                     break;
                 }
             }
             
-            // What happens when an end condition is met depends on whether
-            // that condition is a rejection or a stopping point.
-            if (endConditionMet != null) {
-                if (endConditionMet.isRejection()) {
+            // Check whether a population end condition is met:
+            if (!conditionMet) {
+                for (PopulationEndCondition popEC : inheritancSpec.getPopulationEndConditions()) {
+                    if (popEC.isMet(currentState)) {
+                        conditionMet = true;
+                        isRejection = popEC.isRejection();
+                        break;
+                    }
+                }
+            }
+            
+            // Act on arrival at any end condition:
+            if (conditionMet) {
+                if (isRejection) {
                     // Rejection: Abort and start a new simulation
                     activeLineages.clear();
                     t = 0.0;
@@ -128,11 +142,10 @@ public class InheritanceTrajectory extends Trajectory {
                         sampleState(currentState, 0.0);
                     }
                     continue;
-                } else {
+                } else
                     // Stopping point: Truncate existing simulation
                     break;
-                }
-            }
+            }            
 
             // Calculate propensities
             double totalPropensity = 0.0;
@@ -216,6 +229,36 @@ public class InheritanceTrajectory extends Trajectory {
         // Perform final sample
         if (inheritancSpec.samplePopSizes)
             sampleState(currentState, t);
+    }    
+    
+    /**
+     * Determine which, if any, lineage end condition is met.
+     * 
+     * @param activeLineages
+     * @return first end condition met or null if none are met.
+     */
+    private LineageEndCondition getMetLineageCondition(List<Node> activeLineages) {
+        
+        for (LineageEndCondition endCondition : inheritanceSpec.getLineageEndConditions())
+            if (endCondition.isMet(activeLineages))
+                return endCondition;
+        
+        return null;
+    }
+    
+    /**
+     * Determine which, if any, population end condition is met.
+     * 
+     * @param currentState
+     * @return first end condition met or null if none are met.
+     */
+    private PopulationEndCondition getMetPopulationCondition(State currentState) {
+        
+        for (PopulationEndCondition endCondition : inheritanceSpec.getPopulationEndConditions())
+            if (endCondition.isMet(currentState))
+                return endCondition;
+        
+        return null;
     }
     
     /**

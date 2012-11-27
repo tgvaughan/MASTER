@@ -72,7 +72,7 @@ public class EnsembleSummary {
             for (int sidx = 0; sidx<spec.nSamples; sidx++) {
                 
                 // Check for end conditions:
-                for (PopulationEndCondition endCondition : spec.popSizeEndConditions) {
+                for (PopulationEndCondition endCondition : spec.populationEndConditions) {
                     if (endCondition.isMet(currentState)) {
                         
                         // Can immediately reject, as only rejection condtions

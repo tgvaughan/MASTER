@@ -34,7 +34,7 @@ public class TrajectorySpec extends Spec {
     Stepper stepper;
     
     // Population size end conditions:
-    List<PopulationEndCondition> popSizeEndConditions;
+    List<PopulationEndCondition> populationEndConditions;
     
     // Whether to collect evenly spaced samples or let the state stepper
     // when to sample:
@@ -48,9 +48,8 @@ public class TrajectorySpec extends Spec {
      */
     public TrajectorySpec() {
         super();
-        popSizeEndConditions = Lists.newArrayList();
+        populationEndConditions = Lists.newArrayList();
     }
-    
 
     /**
      * Set maximum simulation time.
@@ -77,7 +76,7 @@ public class TrajectorySpec extends Spec {
      * @param endCondition 
      */
     public void addPopSizeEndCondition(PopulationEndCondition endCondition) {
-        this.popSizeEndConditions.add(endCondition);
+        this.populationEndConditions.add(endCondition);
     }
 
     /**
@@ -103,22 +102,38 @@ public class TrajectorySpec extends Spec {
         this.evenlySpacedSampling = false;
     }
     
-    /*
-     * Getters:
+    /**
+     * Retrieve maximum simulation time.
+     * 
+     * @return simulationTime
      */
-    
     public double getSimulationTime() {
         return simulationTime;
     }
    
+    /**
+     * Retrieve object representing a particular state incrementing algorithm.
+     * 
+     * @return Stepper object.
+     */
     public Stepper getStepper() {
         return stepper;
     }
     
+    /**
+     * Get number of evenly spaced samples.
+     * 
+     * @return nSamples
+     */
     public int getnSamples() {
         return nSamples;
     }
     
+    /**
+     * Determine whether evenly spaced sampling is to be used.
+     * 
+     * @return true if evenly spaced sampling is uesed.
+     */
     public boolean isSamplingEvenlySpaced() {
         return evenlySpacedSampling;
     }
@@ -131,5 +146,14 @@ public class TrajectorySpec extends Spec {
     @JsonIgnore
     public double getSampleDt() {
         return simulationTime/(nSamples-1);
+    }
+    
+    /**
+     * Retrieve list of population end conditions.
+     * 
+     * @return population end conditions.
+     */
+    public List<PopulationEndCondition> getPopulationEndConditions() {
+        return populationEndConditions;
     }
 }

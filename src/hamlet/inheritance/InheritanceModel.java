@@ -37,8 +37,22 @@ public class InheritanceModel extends Model {
         inheritanceReactionGroups = Lists.newArrayList();
     }
     
+    /**
+     * Add inheritance reaction group to model.
+     * 
+     * @param irGroup 
+     */
     public void addInheritanceReactionGroup(InheritanceReactionGroup irGroup) {
         addReactionGroup(irGroup);
         inheritanceReactionGroups.add(irGroup);
+    }
+    
+    /**
+     * Add inheritance reaction to model.
+     * 
+     */
+    public void addInheritanceReaction(InheritanceReaction reaction) {
+        addReactionGroup(reaction);
+        inheritanceReactionGroups.add(reaction);
     }
 }

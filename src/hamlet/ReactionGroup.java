@@ -105,6 +105,27 @@ public class ReactionGroup {
     public void addRate(double rate) {
         rates.add(rate);
     }
+    
+    /**
+     * Clear defined reactant schemas:
+     */
+    public void clearReactantSchemas() {
+        reactCounts.clear();
+    }
+    
+    /**
+     * Clear defined product schemas:
+     */
+    public void clearProductSchemas() {
+        prodCounts.clear();
+    }
+    
+    /**
+     * Clear defined reaction rates:
+     */
+    public void clearRates() {
+        rates.clear();
+    }
 
     /**
      * Uses a single value to populate the rate list.

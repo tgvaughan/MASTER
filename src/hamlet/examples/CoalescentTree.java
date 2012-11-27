@@ -16,12 +16,10 @@
  */
 package hamlet.examples;
 
-import hamlet.JsonOutput;
 import hamlet.Population;
-import hamlet.PopulationState;
 import hamlet.inheritance.ConditionMRCA;
 import hamlet.inheritance.InheritanceModel;
-import hamlet.inheritance.InheritanceReactionGroup;
+import hamlet.inheritance.InheritanceReaction;
 import hamlet.inheritance.InheritanceTrajectory;
 import hamlet.inheritance.InheritanceTrajectorySpec;
 import hamlet.inheritance.NexusOutput;
@@ -32,7 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Generates a tree in reverse by simulating the coalescent process.
+ * Generates a tree in reverse by simulating the coalescent process from
+ * serially-sampled tips.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
@@ -58,11 +57,11 @@ public class CoalescentTree {
         Xparent2.addChild(Xchild);
                 
         // Define coalescence reaction:
-        InheritanceReactionGroup coalescence = new InheritanceReactionGroup("Coalescence");
-        coalescence.addInheritanceReactantSchema(Xparent1, Xparent2);
-        coalescence.addInheritanceProductSchema(Xchild);
-        coalescence.addRate(1.0);
-        model.addInheritanceReactionGroup(coalescence);
+        InheritanceReaction coalescence = new InheritanceReaction("Coalescence");
+        coalescence.setInheritanceReactantSchema(Xparent1, Xparent2);
+        coalescence.setInheritanceProductSchema(Xchild);
+        coalescence.setRate(1.0);
+        model.addInheritanceReaction(coalescence);
         
         /*
          * Set initial state:

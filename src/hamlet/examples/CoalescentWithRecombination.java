@@ -17,10 +17,9 @@
 package hamlet.examples;
 
 import hamlet.Population;
-import hamlet.PopulationState;
 import hamlet.inheritance.ConditionMRCA;
 import hamlet.inheritance.InheritanceModel;
-import hamlet.inheritance.InheritanceReactionGroup;
+import hamlet.inheritance.InheritanceReaction;
 import hamlet.inheritance.InheritanceTrajectory;
 import hamlet.inheritance.InheritanceTrajectorySpec;
 import hamlet.inheritance.NewickOutput;
@@ -58,11 +57,11 @@ public class CoalescentWithRecombination {
         Xparent2.addChild(Xchild);
         
         // Define coalescence reaction:
-        InheritanceReactionGroup coalescence = new InheritanceReactionGroup("Coalescence");
-        coalescence.addInheritanceReactantSchema(Xparent1, Xparent2);
-        coalescence.addInheritanceProductSchema(Xchild);
-        coalescence.addRate(1.0);
-        model.addInheritanceReactionGroup(coalescence);
+        InheritanceReaction coalescence = new InheritanceReaction("Coalescence");
+        coalescence.setInheritanceReactantSchema(Xparent1, Xparent2);
+        coalescence.setInheritanceProductSchema(Xchild);
+        coalescence.setRate(1.0);
+        model.addInheritanceReaction(coalescence);
         
         // Define inheritance relationships in a recombination event
         Node Xparent = new Node(X);
@@ -72,10 +71,10 @@ public class CoalescentWithRecombination {
         Xparent.addChild(Xchild2);
         
         // Define recombination reaction:
-        InheritanceReactionGroup recombination = new InheritanceReactionGroup("Recombination");
-        recombination.addInheritanceReactantSchema(Xparent);
-        recombination.addInheritanceProductSchema(Xchild1, Xchild2);
-        recombination.addRate(2.0);
+        InheritanceReaction recombination = new InheritanceReaction("Recombination");
+        recombination.setInheritanceReactantSchema(Xparent);
+        recombination.setInheritanceProductSchema(Xchild1, Xchild2);
+        recombination.setRate(2.0);
         model.addInheritanceReactionGroup(recombination);
         
         /*

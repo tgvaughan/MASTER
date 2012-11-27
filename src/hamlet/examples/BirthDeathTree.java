@@ -20,10 +20,10 @@ import hamlet.JsonOutput;
 import hamlet.Population;
 import hamlet.PopulationState;
 import hamlet.inheritance.ConditionLineagesExtinct;
+import hamlet.inheritance.InheritanceModel;
+import hamlet.inheritance.InheritanceReaction;
 import hamlet.inheritance.InheritanceTrajectory;
 import hamlet.inheritance.InheritanceTrajectorySpec;
-import hamlet.inheritance.InheritanceModel;
-import hamlet.inheritance.InheritanceReactionGroup;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
 import java.io.FileNotFoundException;
@@ -53,27 +53,27 @@ public class BirthDeathTree {
         // Define reactions:
         
         // X -> 2X
-        InheritanceReactionGroup birth = new InheritanceReactionGroup("Birth");
+        InheritanceReaction birth = new InheritanceReaction("Birth");
         Node Xparent = new Node(X);
         Node Xchild1 = new Node(X);
         Node Xchild2 = new Node(X);
         Xparent.addChild(Xchild1);
         Xparent.addChild(Xchild2);
-        birth.addInheritanceReactantSchema(Xparent);
-        birth.addInheritanceProductSchema(Xchild1, Xchild2);
-        birth.addRate(1.0);
-        model.addInheritanceReactionGroup(birth);
+        birth.setInheritanceReactantSchema(Xparent);
+        birth.setInheritanceProductSchema(Xchild1, Xchild2);
+        birth.setRate(1.0);
+        model.addInheritanceReaction(birth);
 
         // X2 -> X
-        InheritanceReactionGroup death = new InheritanceReactionGroup("Death");
+        InheritanceReaction death = new InheritanceReaction("Death");
         Node Xcompetitor1 = new Node(X);
         Node Xcompetitor2 = new Node(X);
         Node Xsurvivor = new Node(X);
         Xcompetitor1.addChild(Xsurvivor);
-        death.addInheritanceReactantSchema(Xcompetitor1, Xcompetitor2);
-        death.addInheritanceProductSchema(Xsurvivor);
-        death.addRate(0.01);
-        model.addInheritanceReactionGroup(death);
+        death.setInheritanceReactantSchema(Xcompetitor1, Xcompetitor2);
+        death.setInheritanceProductSchema(Xsurvivor);
+        death.setRate(0.01);
+        model.addInheritanceReaction(death);
         
         /*
          * Set initial state:
@@ -105,11 +105,11 @@ public class BirthDeathTree {
         InheritanceTrajectory traj = new InheritanceTrajectory(spec);
         
         /*
-         * Write results as JSON file and a newick tree:
-         */
-        
+         * Write results both as JSON file and a newick tree:
+
+*/
+        JsonOutput.write(traj, new PrintStream("out.json"));        
         NexusOutput.write(traj, false, new PrintStream("out.tree"));
-        JsonOutput.write(traj, new PrintStream("out.json"));
     }
     
 }

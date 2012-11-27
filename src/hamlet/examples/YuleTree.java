@@ -16,15 +16,12 @@
  */
 package hamlet.examples;
 
-import hamlet.JsonOutput;
 import hamlet.Population;
-import hamlet.PopulationState;
-import hamlet.inheritance.ConditionLineagesExtinct;
 import hamlet.inheritance.ConditionLineageCount;
+import hamlet.inheritance.InheritanceModel;
+import hamlet.inheritance.InheritanceReaction;
 import hamlet.inheritance.InheritanceTrajectory;
 import hamlet.inheritance.InheritanceTrajectorySpec;
-import hamlet.inheritance.InheritanceModel;
-import hamlet.inheritance.InheritanceReactionGroup;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
 import java.io.FileNotFoundException;
@@ -53,16 +50,16 @@ public class YuleTree {
         // Define reactions:
         
         // X -> 2X
-        InheritanceReactionGroup birth = new InheritanceReactionGroup("Birth");
+        InheritanceReaction birth = new InheritanceReaction("Birth");
         Node Xparent = new Node(X);
         Node Xchild1 = new Node(X);
         Node Xchild2 = new Node(X);
         Xparent.addChild(Xchild1);
         Xparent.addChild(Xchild2);
-        birth.addInheritanceReactantSchema(Xparent);
-        birth.addInheritanceProductSchema(Xchild1, Xchild2);
-        birth.addRate(1.0);
-        model.addInheritanceReactionGroup(birth);
+        birth.setInheritanceReactantSchema(Xparent);
+        birth.setInheritanceProductSchema(Xchild1, Xchild2);
+        birth.setRate(1.0);
+        model.addInheritanceReaction(birth);
 
         /*
          * Set initial state:

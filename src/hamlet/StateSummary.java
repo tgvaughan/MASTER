@@ -56,7 +56,7 @@ public class StateSummary {
 	 * 
 	 * @param state
 	 */
-	public void record(State state) {
+	public void record(PopulationState state) {
 
 		for (MomentGroup moment : mean.keySet())
 			moment.getSummary(state, summaries.get(moment));

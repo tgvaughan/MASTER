@@ -28,7 +28,7 @@ public interface PopulationEndCondition {
      * @param currentState
      * @return true if end condition is met.
      */
-    public boolean isMet(State currentState);
+    public boolean isMet(PopulationState currentState);
     
     public boolean isRejection();
     

@@ -32,7 +32,7 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     // Birth-death model including inheritance relationships.
     InheritanceModel inheritanceModel;
 
-    // Lineages present at start of simulation.
+    // Nodes used to seed the inheritance graph.
     List<Node> initNodes;
     
     // Lineage end conditions:
@@ -62,6 +62,8 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
         // Do not record population sizes by default:
         samplePopSizes = false;
     }
+    
+    
     
     /**
      * Specify inheritance model to use.  Note that the model field

@@ -20,7 +20,7 @@ import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Population;
 import hamlet.Reaction;
-import hamlet.State;
+import hamlet.PopulationState;
 import hamlet.TauLeapingStepper;
 import hamlet.Trajectory;
 import hamlet.TrajectorySpec;
@@ -68,7 +68,7 @@ public class StochasticLogistic {
          * Set initial state:
          */
 
-        State initState = new State();
+        PopulationState initState = new PopulationState();
         initState.set(X, 1.0);
 
         /*
@@ -84,7 +84,7 @@ public class StochasticLogistic {
         //spec.setUnevenSampling();
         //spec.setSeed(42);
         spec.setModel(model);
-        spec.setInitState(initState);
+        spec.setInitPopulationState(initState);
         spec.setVerbosity(2);
 
         /*

@@ -41,10 +41,10 @@ public class TauLeapingStepper extends Stepper {
      * Generate appropriate random state change according to Gillespie's
      * tau-leaping algorithm.
      *
-     * @param state State to modify.
+     * @param state PopulationState to modify.
      * @param spec	Simulation spec.
      */
-    public void leap(ReactionGroup reaction, State state, Model model, double thisdt) {
+    public void leap(ReactionGroup reaction, PopulationState state, Model model, double thisdt) {
         
         for (int i = 0; i<reaction.propensities.size(); i++) {
 
@@ -58,7 +58,7 @@ public class TauLeapingStepper extends Stepper {
     }
     
     @Override
-    public double step(State state, Model model, double maxStepSize) {
+    public double step(PopulationState state, Model model, double maxStepSize) {
         
 
         double thisdt = Math.min(dt, maxStepSize);

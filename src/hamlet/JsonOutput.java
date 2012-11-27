@@ -46,7 +46,7 @@ public class JsonOutput {
         HashMap<String, Object> outputData = Maps.newHashMap();
         
         TrajectorySpec spec = trajectory.getSpec();
-        List<State> sampledStates = trajectory.sampledStates;
+        List<PopulationState> sampledStates = trajectory.sampledStates;
         
         for (PopulationType type : spec.model.getPopulationTypes()) {
             int[] loc = new int[type.getDims().length];
@@ -69,14 +69,14 @@ public class JsonOutput {
         }
     }
     
-    private static Object iterateOverLocs (List<State> sampledStates, PopulationType type, int[] loc, int depth) {
+    private static Object iterateOverLocs (List<PopulationState> sampledStates, PopulationType type, int[] loc, int depth) {
         List<Object> nestedData = Lists.newArrayList();
         for (int i=0; i<type.getDims()[depth]; i++) {
             loc[depth] = i;
             if (depth<type.getDims().length-1)
                 nestedData.add(iterateOverLocs(sampledStates, type, loc, depth+1));
             else {
-                for (State state : sampledStates)
+                for (PopulationState state : sampledStates)
                     nestedData.add(state.get(new Population(type, loc)));
             }
         }
@@ -98,7 +98,7 @@ public class JsonOutput {
         List<Object> trajData = Lists.newArrayList();
         for (Trajectory trajectory : ensemble.trajectories) {
             HashMap<String, Object> thisTrajData = Maps.newHashMap();
-            List<State> sampledStates = trajectory.sampledStates;
+            List<PopulationState> sampledStates = trajectory.sampledStates;
         
             for (PopulationType type : spec.model.getPopulationTypes()) {
                 int[] loc = new int[type.getDims().length];

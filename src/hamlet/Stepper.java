@@ -33,7 +33,7 @@ public abstract class Stepper {
      * @param maxStepSize 
      * @return Length of time increment.
      */
-    public abstract double step (State state, Model model, double maxStepSize);
+    public abstract double step (PopulationState state, Model model, double maxStepSize);
     
     /**
      * Retrieve descriptive name of this integrator as a string.

@@ -109,10 +109,10 @@ public class HamletSimulation extends Runnable {
         spec.setEvenSampling(nSamplesInput.get());
         spec.setnTraj(nTrajInput.get());
         
-        hamlet.State initState = new hamlet.State();
+        hamlet.PopulationState initState = new hamlet.PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
             initState.set(popSize.pop, popSize.size);
-        spec.setInitState(initState);
+        spec.setInitPopulationState(initState);
         
         for (MomentGroup momentGroup : momentGroupsInput.get())
             spec.addMomentGroup(momentGroup.momentGroup);

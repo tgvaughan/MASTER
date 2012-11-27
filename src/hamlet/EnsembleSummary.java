@@ -66,7 +66,7 @@ public class EnsembleSummary {
                         +String.valueOf(spec.nTraj));
 
             // Initialise system state:
-            State currentState = new State(spec.initState);
+            PopulationState currentState = new PopulationState(spec.initPopulationState);
 
             // Integration loop:
             for (int sidx = 0; sidx<spec.nSamples; sidx++) {
@@ -77,7 +77,7 @@ public class EnsembleSummary {
                         
                         // Can immediately reject, as only rejection condtions
                         // allowed for ensemble summaries.
-                        currentState = new State(spec.initState);
+                        currentState = new PopulationState(spec.initPopulationState);
                         sidx = -1;
                         
                         // Report if necessary:

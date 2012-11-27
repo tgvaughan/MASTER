@@ -182,9 +182,9 @@ public class ReactionGroup {
      * Calculate instantaneous reaction rates (propensities) for a given system
      * state.
      *
-     * @param state	State used to calculate propensities.
+     * @param state	PopulationState used to calculate propensities.
      */
-    public void calcPropensities(State state) {
+    public void calcPropensities(PopulationState state) {
         
         for (int i = 0; i<nReactions; i++) {
             double thisProp = rates.get(i);

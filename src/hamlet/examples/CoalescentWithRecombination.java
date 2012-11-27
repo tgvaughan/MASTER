@@ -17,15 +17,14 @@
 package hamlet.examples;
 
 import hamlet.Population;
-import hamlet.State;
-import hamlet.inheritance.InheritanceTrajectory;
-import hamlet.inheritance.InheritanceTrajectorySpec;
+import hamlet.PopulationState;
+import hamlet.inheritance.ConditionMRCA;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
+import hamlet.inheritance.InheritanceTrajectory;
+import hamlet.inheritance.InheritanceTrajectorySpec;
 import hamlet.inheritance.NewickOutput;
-import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
-import hamlet.inheritance.ConditionMRCA;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -82,10 +81,7 @@ public class CoalescentWithRecombination {
         /*
          * Set initial state:
          */
-        
-        State initState = new State();
-        initState.set(X, 50.0);
-        
+
         List<Node> initNodes = new ArrayList<Node>();
         for (int i=0; i<50; i++)
             initNodes.add(new Node(X));
@@ -97,7 +93,6 @@ public class CoalescentWithRecombination {
         InheritanceTrajectorySpec spec = new InheritanceTrajectorySpec();
         spec.setModel(model);
         spec.setSimulationTime(Double.POSITIVE_INFINITY);
-        spec.setInitState(initState);
         spec.setInitNodes(initNodes);
         spec.addLineageEndCondition(new ConditionMRCA());
                 

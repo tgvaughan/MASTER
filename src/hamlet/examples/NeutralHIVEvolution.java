@@ -8,7 +8,7 @@ import hamlet.Moment;
 import hamlet.MomentGroup;
 import hamlet.PopulationType;
 import hamlet.ReactionGroup;
-import hamlet.State;
+import hamlet.PopulationState;
 import hamlet.Population;
 import hamlet.Reaction;
 import hamlet.TauLeapingStepper;
@@ -156,7 +156,7 @@ public class NeutralHIVEvolution {
          * Set initial state:
          */
 
-        State initState = new State();
+        PopulationState initState = new PopulationState();
         initState.set(X, 6.1e9);
         initState.set(new Population(Ytype, 0), 2.5e8);
         initState.set(new Population(Vtype, 0), 8.2e10);
@@ -173,7 +173,7 @@ public class NeutralHIVEvolution {
         spec.setEvenSampling(1001);
         spec.setnTraj(10);
         spec.setSeed(53);
-        spec.setInitState(initState);
+        spec.setInitPopulationState(initState);
         spec.addMoment(mX);
         spec.addMomentGroup(mY);
         spec.addMomentGroup(mV);

@@ -7,7 +7,7 @@ import hamlet.Model;
 import hamlet.Moment;
 import hamlet.Population;
 import hamlet.Reaction;
-import hamlet.State;
+import hamlet.PopulationState;
 import hamlet.TauLeapingStepper;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -102,7 +102,7 @@ public class SimpleViralInfection {
          *  Set initial state:
          */
 
-        State initState = new State();
+        PopulationState initState = new PopulationState();
         initState.set(X, 2.5e11);
         initState.set(Y, 0);
         initState.set(V, 100.0);
@@ -119,7 +119,7 @@ public class SimpleViralInfection {
         spec.setEvenSampling(1001);
         spec.setnTraj(1000);
         spec.setSeed(42);
-        spec.setInitState(initState);
+        spec.setInitPopulationState(initState);
         spec.addMoment(mX);
         spec.addMoment(mY);
         spec.addMoment(mV);

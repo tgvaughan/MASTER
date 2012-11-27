@@ -7,7 +7,7 @@ import hamlet.Model;
 import hamlet.MomentGroup;
 import hamlet.PopulationType;
 import hamlet.ReactionGroup;
-import hamlet.State;
+import hamlet.PopulationState;
 import hamlet.Population;
 import hamlet.TauLeapingStepper;
 import java.io.FileNotFoundException;
@@ -73,7 +73,7 @@ public class StochasticMigration {
          * Define initial state:
          */
 
-        State initState = new State();
+        PopulationState initState = new PopulationState();
         initState.set(subA, 100);
         initState.set(subB, 0);
 
@@ -89,7 +89,7 @@ public class StochasticMigration {
         spec.setEvenSampling(1001);
         spec.setnTraj(100);
         spec.setSeed(42);
-        spec.setInitState(initState);
+        spec.setInitPopulationState(initState);
         spec.addMomentGroup(momentX);
         spec.addMomentGroup(momentN);
 

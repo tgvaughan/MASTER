@@ -16,13 +16,14 @@
  */
 package hamlet.examples;
 
+import hamlet.JsonOutput;
 import hamlet.Population;
-import hamlet.State;
+import hamlet.PopulationState;
 import hamlet.inheritance.ConditionMRCA;
-import hamlet.inheritance.InheritanceTrajectory;
-import hamlet.inheritance.InheritanceTrajectorySpec;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReactionGroup;
+import hamlet.inheritance.InheritanceTrajectory;
+import hamlet.inheritance.InheritanceTrajectorySpec;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
 import java.io.FileNotFoundException;
@@ -67,12 +68,9 @@ public class CoalescentTree {
          * Set initial state:
          */
         
-        State initState = new State();
-        initState.set(X, 100.0);
-        
         List<Node> initNodes = new ArrayList<Node>();
-        for (int i=0; i<initState.get(X); i++)
-            initNodes.add(new Node(X));
+        for (int i=0; i<100; i++)
+            initNodes.add(new Node(X, 0.1*i));
         
         /*
          * Define simulation:
@@ -80,10 +78,9 @@ public class CoalescentTree {
         
         InheritanceTrajectorySpec spec = new InheritanceTrajectorySpec();
         spec.setModel(model);
-        spec.setSimulationTime(Double.POSITIVE_INFINITY);
-        spec.setInitState(initState);
         spec.setInitNodes(initNodes);
         spec.addLineageEndCondition(new ConditionMRCA());
+        spec.setUnevenSampling();
         
         /*
          * Generate coalescent tree:

@@ -17,7 +17,7 @@
 package hamlet.inheritance;
 
 import hamlet.Model;
-import hamlet.State;
+import hamlet.PopulationState;
 import hamlet.Stepper;
 
 /**
@@ -29,7 +29,7 @@ import hamlet.Stepper;
 public class InheritanceTrajectoryStepper extends Stepper {
 
     @Override
-    public double step(State state, Model model, double maxStepSize) {
+    public double step(PopulationState state, Model model, double maxStepSize) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

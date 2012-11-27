@@ -135,10 +135,10 @@ public class MomentGroup {
     /**
      * Obtain summary for given state.
      *
-     * @param state	State to summarise.
+     * @param state	PopulationState to summarise.
      * @param mean	Array in which to store summary.
      */
-    public void getSummary(State state, double[] summary) {
+    public void getSummary(PopulationState state, double[] summary) {
 
         for (int s = 0; s<summationGroups.size(); s++) {
             double estimate = 0;

@@ -26,7 +26,7 @@ import beast.util.Randomizer;
 public class GillespieStepper extends Stepper {
 
     @Override
-    public double step(State state, Model model, double maxDt) {
+    public double step(PopulationState state, Model model, double maxDt) {
         
         // Calculate propensities
         double totalPropensity = 0.0;

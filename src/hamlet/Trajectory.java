@@ -29,7 +29,7 @@ import java.util.List;
 public class Trajectory {
 
     // List of sampled states:
-    List<State> sampledStates;
+    List<PopulationState> sampledStates;
     List<Double> sampledTimes;
     
     // Simulation specification:
@@ -50,7 +50,7 @@ public class Trajectory {
         sampledTimes = Lists.newArrayList();
 
         // Initialise system state:
-        State currentState = new State(spec.initState);
+        PopulationState currentState = new PopulationState(spec.initPopulationState);
 
         if (spec.evenlySpacedSampling) {
             // Sample at evenly spaced times
@@ -70,7 +70,7 @@ public class Trajectory {
                 }
                 if (endConditionMet != null) {
                     if (endConditionMet.isRejection()) {
-                        currentState = new State(spec.initState);
+                        currentState = new PopulationState(spec.initPopulationState);
                         clearSamples();
                         sidx = -1;
                         continue;
@@ -114,7 +114,7 @@ public class Trajectory {
                             System.err.println("Rejection end condition met "
                                     + "at time " + t);                        
                         
-                        currentState = new State(spec.initState);
+                        currentState = new PopulationState(spec.initPopulationState);
                         clearSamples();                        
                         t = 0;
                         
@@ -164,8 +164,8 @@ public class Trajectory {
      * @param currentState
      * @param time 
      */
-    public final void sampleState(State currentState, double time) {
-        sampledStates.add(new State(currentState));
+    public final void sampleState(PopulationState currentState, double time) {
+        sampledStates.add(new PopulationState(currentState));
         sampledTimes.add(time);
     }
     

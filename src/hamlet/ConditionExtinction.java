@@ -41,7 +41,7 @@ public class ConditionExtinction implements PopulationEndCondition {
     }
 
     @Override
-    public boolean isMet(State currentState) {
+    public boolean isMet(PopulationState currentState) {
         return currentState.get(pop) == 0;
     }
 

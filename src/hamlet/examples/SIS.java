@@ -7,7 +7,7 @@ import hamlet.Model;
 import hamlet.Moment;
 import hamlet.Population;
 import hamlet.Reaction;
-import hamlet.State;
+import hamlet.PopulationState;
 import hamlet.TauLeapingStepper;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -59,7 +59,7 @@ public class SIS {
          * Set initial state:
          */
 
-        State initState = new State();
+        PopulationState initState = new PopulationState();
         initState.set(S, 999.0);
         initState.set(I, 1.0);
 
@@ -74,7 +74,7 @@ public class SIS {
         spec.setEvenSampling(1001);
         spec.setnTraj(1000);
         spec.setSeed(53);
-        spec.setInitState(initState);
+        spec.setInitPopulationState(initState);
         spec.addMoment(mS);
         spec.addMoment(mI);
 

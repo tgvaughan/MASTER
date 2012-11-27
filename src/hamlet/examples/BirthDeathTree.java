@@ -18,7 +18,7 @@ package hamlet.examples;
 
 import hamlet.JsonOutput;
 import hamlet.Population;
-import hamlet.State;
+import hamlet.PopulationState;
 import hamlet.inheritance.ConditionLineagesExtinct;
 import hamlet.inheritance.InheritanceTrajectory;
 import hamlet.inheritance.InheritanceTrajectorySpec;
@@ -79,8 +79,8 @@ public class BirthDeathTree {
          * Set initial state:
          */
         
-        State initState = new State();
-        initState.set(X, 100.0);
+        PopulationState initPopulationState = new PopulationState();
+        initPopulationState.set(X, 9.0);
         List<Node> initNodes = new ArrayList<Node>();
         initNodes.add(new Node(X));
         
@@ -91,10 +91,12 @@ public class BirthDeathTree {
         InheritanceTrajectorySpec spec = new InheritanceTrajectorySpec();
 
         spec.setModel(model);
-        spec.setInitState(initState);
+        spec.setInitPopulationState(initPopulationState);
         spec.setInitNodes(initNodes);
         spec.setUnevenSampling();
+        
         spec.addLineageEndCondition(new ConditionLineagesExtinct());
+        spec.setSimulationTime(100.0);
         
         /*
          * Generate inheritance trajectory:

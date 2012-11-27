@@ -21,9 +21,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import hamlet.Population;
 import hamlet.PopulationEndCondition;
+import hamlet.PopulationState;
 import hamlet.ReactionGroup;
-import hamlet.State;
 import hamlet.Trajectory;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -52,66 +54,59 @@ public class InheritanceTrajectory extends Trajectory {
 
     // List of nodes present at the start of the simulation
     public List<Node> startNodes;
+    
     // Simulation specification.
-    private InheritanceTrajectorySpec inheritanceSpec;    
+    private InheritanceTrajectorySpec spec;    
+    
+    
+    // Simulation state variables
+    List<Node> activeLineages, inactiveLineages;
+    PopulationState currentPopState;
+    double t;
+    int sidx;
     
     /**
      * Build an inheritance graph corrsponding to a set of lineages embedded
      * within populations evolving under a birth-death process.
      *
-     * @param inheritancSpec Inheritance graph simulation specification.
+     * @param spec Inheritance trajectory simulation specification.
      */
-    public InheritanceTrajectory(InheritanceTrajectorySpec inheritancSpec) {
+    public InheritanceTrajectory(InheritanceTrajectorySpec spec) {
 
         // Keep a record of the simulation spec and the starting nodes.
-        this.inheritanceSpec = inheritancSpec;
-        startNodes = inheritancSpec.initNodes;
-
-        double simulationTime = inheritancSpec.getSimulationTime();
+        this.spec = spec;
+        startNodes = spec.initNodes;
         
-        double sampDt=0;
-        boolean evenlySpacedSampling = inheritancSpec.isSamplingEvenlySpaced();
-        if (evenlySpacedSampling)
-            sampDt = inheritancSpec.getSampleDt();
+        // Don't want to calculate this more than once:
+        double sampleDt = 0.0;
+        if (spec.isSamplingEvenlySpaced())
+            sampleDt = spec.getSampleDt();
 
-        // Initialise time
-        double t = 0.0;
-
-        // Initialise active lineages
-        List<Node> activeLineages = Lists.newArrayList();
-        for (Node node : inheritancSpec.initNodes) {
-            node.setTime(t);
-            Node child = new Node(node.population);
-            node.addChild(child);
-            activeLineages.add(child);
-        }
-
-        // Initialise system state:
-        State currentState = new State(inheritancSpec.getInitState());
-
-        // Initialise sampling index and sample first state
-        int sidx = 1;
-        if (inheritancSpec.samplePopSizes)
-            sampleState(currentState, 0.0);
+        initialiseSimulation();
         
         // Simulation loop:
         while (true) {
 
             // Check whether a lineage end condition is met:
+            // (Note that end points can only be reached when all lineages
+            // are in play.  Presumably you don't want to cut the simulation
+            // short if we still have lineages to add.)
             boolean conditionMet = false;
             boolean isRejection = false;
-            for (LineageEndCondition lineageEC : inheritancSpec.getLineageEndConditions()) {
-                if (lineageEC.isMet(activeLineages)) {
-                    conditionMet = true;
-                    isRejection = lineageEC.isRejection();
-                    break;
+            if (inactiveLineages.isEmpty()) {
+                for (LineageEndCondition lineageEC : spec.getLineageEndConditions()) {
+                    if (lineageEC.isMet(activeLineages)) {
+                        conditionMet = true;
+                        isRejection = lineageEC.isRejection();
+                        break;
+                    }
                 }
             }
             
             // Check whether a population end condition is met:
             if (!conditionMet) {
-                for (PopulationEndCondition popEC : inheritancSpec.getPopulationEndConditions()) {
-                    if (popEC.isMet(currentState)) {
+                for (PopulationEndCondition popEC : spec.getPopulationEndConditions()) {
+                    if (popEC.isMet(currentPopState)) {
                         conditionMet = true;
                         isRejection = popEC.isRejection();
                         break;
@@ -123,24 +118,7 @@ public class InheritanceTrajectory extends Trajectory {
             if (conditionMet) {
                 if (isRejection) {
                     // Rejection: Abort and start a new simulation
-                    activeLineages.clear();
-                    t = 0.0;
-
-                    for (Node node : inheritancSpec.initNodes) {
-                        node.children.clear();
-                        node.setTime(t);
-                        Node child = new Node(node.population);
-                        node.addChild(child);
-                        activeLineages.add(child);
-                    }
-                    // Initialise system state:
-                    currentState = new State(inheritancSpec.getInitState());
-                    
-                    if (inheritancSpec.samplePopSizes) {
-                        sidx = 1;
-                        clearSamples();
-                        sampleState(currentState, 0.0);
-                    }
+                    initialiseSimulation();
                     continue;
                 } else
                     // Stopping point: Truncate existing simulation
@@ -149,36 +127,57 @@ public class InheritanceTrajectory extends Trajectory {
 
             // Calculate propensities
             double totalPropensity = 0.0;
-            for (ReactionGroup reactionGroup : inheritancSpec.getModel().getReactionGroups()) {
-                reactionGroup.calcPropensities(currentState);
+            for (ReactionGroup reactionGroup : spec.getModel().getReactionGroups()) {
+                reactionGroup.calcPropensities(currentPopState);
                 for (double propensity : reactionGroup.propensities)
                     totalPropensity += propensity;
             }
 
-            // End simulation if propensity reaches zero
-            // (occurs if we reach an absorbing state)
-            if (totalPropensity==0) {
-                t = simulationTime;
-                break;
+            // Draw time of next reaction
+            if (totalPropensity > 0)
+                t += Randomizer.nextExponential(totalPropensity);
+            else
+                t = Double.POSITIVE_INFINITY;
+            
+            // Check whether new time exceeds node seed time or simulation time
+            boolean seedTimeExceeded = false;
+            boolean simulationTimeExceeded = false;
+            if (!inactiveLineages.isEmpty() &&
+                    inactiveLineages.get(0).getTime()<spec.getSimulationTime()) {
+                if (t>inactiveLineages.get(0).getTime()) {
+                    t = inactiveLineages.get(0).getTime();
+                    seedTimeExceeded = true;
+                }
+            } else {
+                if (t>spec.getSimulationTime()) {
+                    t = spec.getSimulationTime();
+                    simulationTimeExceeded = true;
+                }
             }
 
-            // Draw time of next reaction
-            t += Randomizer.nextExponential(totalPropensity);
-
             // Sample population sizes (evenly) if necessary:
-            if (inheritancSpec.samplePopSizes && evenlySpacedSampling) {
-                double tmin = Math.min(t, simulationTime);
-                while (sidx*sampDt < tmin) {
-                    sampleState(currentState, sampDt*sidx);
+            if (spec.samplePopSizes && spec.isSamplingEvenlySpaced()) {
+                while (sidx*spec.getSampleDt() < t) {
+                    sampleState(currentPopState, sampleDt*sidx);
                     sidx += 1;
                 }
             }
             
-            // Break if new time exceeds end time:
-            if (t>simulationTime) {
-                t = simulationTime;
-                break;
+            // Continue to on to next reaction if lineage has been seeded
+            if (seedTimeExceeded) {
+                Node seedNode = inactiveLineages.get(0);
+                inactiveLineages.remove(0);
+                Node child = new Node(seedNode.population);
+                seedNode.addChild(child);
+                activeLineages.add(child);
+                currentPopState.add(seedNode.population, 1.0);
+                
+                continue;
             }
+            
+            // Break if new time exceeds end time:
+            if (simulationTimeExceeded)
+                break;
 
             // Choose reaction to implement
             double u = Randomizer.nextDouble()*totalPropensity;
@@ -186,7 +185,7 @@ public class InheritanceTrajectory extends Trajectory {
             InheritanceReactionGroup chosenReactionGroup = null;
             int chosenReaction = 0;
             for (InheritanceReactionGroup reactionGroup :
-                    inheritancSpec.inheritanceModel.inheritanceReactionGroups) {
+                    spec.inheritanceModel.inheritanceReactionGroups) {
 
                 for (int ridx = 0; ridx<reactionGroup.propensities.size(); ridx++) {
                     u -= reactionGroup.propensities.get(ridx);
@@ -203,18 +202,18 @@ public class InheritanceTrajectory extends Trajectory {
 
             // Select lineages involved in chosen reaction:
             Map<Node, Node> nodesInvolved = selectLineagesInvolved(activeLineages,
-                currentState, chosenReactionGroup, chosenReaction);
+                currentPopState, chosenReactionGroup, chosenReaction);
             
             // Implement changes to inheritance graph:
             implementInheritanceReaction(activeLineages, nodesInvolved, t);
 
             // Implement state change due to reaction:
-            currentState.implementReaction(chosenReactionGroup, chosenReaction, 1);
+            currentPopState.implementReaction(chosenReactionGroup, chosenReaction, 1);
                          
             // Sample population sizes (unevenly) if necessary:
-            if (inheritancSpec.samplePopSizes && !evenlySpacedSampling) {              
-                if (!inheritancSpec.sampleStateAtNodes || !nodesInvolved.isEmpty())
-                    sampleState(currentState, t);
+            if (spec.samplePopSizes && !spec.isSamplingEvenlySpaced()) {              
+                if (!spec.sampleStateAtNodes || !nodesInvolved.isEmpty())
+                    sampleState(currentPopState, t);
             }
 
             // End simulation if there are no active lineages remaining.
@@ -227,52 +226,81 @@ public class InheritanceTrajectory extends Trajectory {
             node.setTime(t);
         
         // Perform final sample
-        if (inheritancSpec.samplePopSizes)
-            sampleState(currentState, t);
-    }    
-    
-    /**
-     * Determine which, if any, lineage end condition is met.
-     * 
-     * @param activeLineages
-     * @return first end condition met or null if none are met.
-     */
-    private LineageEndCondition getMetLineageCondition(List<Node> activeLineages) {
-        
-        for (LineageEndCondition endCondition : inheritanceSpec.getLineageEndConditions())
-            if (endCondition.isMet(activeLineages))
-                return endCondition;
-        
-        return null;
+        if (spec.samplePopSizes)
+            sampleState(currentPopState, t);
     }
     
     /**
-     * Determine which, if any, population end condition is met.
-     * 
-     * @param currentState
-     * @return first end condition met or null if none are met.
+     * Initialise the state variables involved in the simulation.  Makes
+     * sense to subroutine this as it has to be repeated whenever a
+     * simulation is rejected due to some end condition.
      */
-    private PopulationEndCondition getMetPopulationCondition(State currentState) {
+    private void initialiseSimulation() {
+        // Initialise time
+        t = 0.0;
+
+        // Initialise population size state:
+        currentPopState = new PopulationState(spec.getInitPopulationState());
         
-        for (PopulationEndCondition endCondition : inheritanceSpec.getPopulationEndConditions())
-            if (endCondition.isMet(currentState))
-                return endCondition;
+        // Initialise active lineages with nodes present at start of simulation
+        if (activeLineages == null)
+            activeLineages = Lists.newArrayList();
+        else
+            activeLineages.clear();
         
-        return null;
+        if (inactiveLineages == null)
+            inactiveLineages = Lists.newArrayList();
+        else
+            inactiveLineages.clear();
+        
+        for (Node node : spec.initNodes) {
+            node.getChildren().clear();
+            if (node.getTime()>0.0) {
+                inactiveLineages.add(node);
+            } else {
+                node.setTime(0.0);
+                Node child = new Node(node.population);
+                node.addChild(child);
+                activeLineages.add(child);
+                currentPopState.add(node.population, 1.0);
+            }
+        }
+
+        // Initialise sampling index and sample first state
+        sidx = 1;
+        if (spec.samplePopSizes)
+            sampleState(currentPopState, 0.0);
+        
+        // Sort inactive lineages nodes in order of increasing seed time:
+        Collections.sort(inactiveLineages, new Comparator<Node>() {
+            @Override
+            public int compare(Node node1, Node node2) {
+                double dt = node1.getTime()-node2.getTime();
+                
+                if (dt<0)
+                    return -1;
+                
+                if (dt>0)
+                    return 1;
+                
+                return 0;
+            }
+        });
     }
+
     
     /**
      * Select lineages involved in reaction.  This is done by sampling
      * without replacement from the individuals present in the current state.
      * 
      * @param activeLineages list of active lineages
-     * @param currentState current state of population sizes
+     * @param currentPopState current state of population sizes
      * @param chosenReactionGroup reaction group selected
      * @param chosenReaction integer index into reaction group specifying reaction
      * @return Map from nodes involved to the corresponding reactant nodes.
      */
     private Map<Node,Node> selectLineagesInvolved(
-            List<Node> activeLineages, State currentState,
+            List<Node> activeLineages, PopulationState currentState,
             InheritanceReactionGroup chosenReactionGroup, int chosenReaction) {
 
         Map<Population, Integer> popsSeen = Maps.newHashMap();
@@ -410,7 +438,7 @@ public class InheritanceTrajectory extends Trajectory {
      */
     @Override
     public InheritanceTrajectorySpec getSpec() {
-        return inheritanceSpec;
+        return spec;
     }
 
     /**
@@ -420,7 +448,7 @@ public class InheritanceTrajectory extends Trajectory {
      * @param startNodes
      */
     public InheritanceTrajectory(Node... startNodes) {
-        this.inheritanceSpec = null;
+        this.spec = null;
         this.startNodes = Lists.newArrayList(startNodes);
     }
 }

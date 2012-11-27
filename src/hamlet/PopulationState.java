@@ -21,12 +21,12 @@ import java.util.*;
 import org.codehaus.jackson.annotate.JsonValue;
 
 /**
- * Class of objects describing distinct states of the simulated system.
+ * Class of objects describing population states of the simulated system.
  *
  * @author Tim Vaughan
  *
  */
-public class State {
+public class PopulationState {
 
     Map<Population, Double> popSizes;
 
@@ -35,7 +35,7 @@ public class State {
      *
      * @param model Model defining the state space.
      */
-    public State() {
+    public PopulationState() {
 
         // Initialise sub-population sizes:
         popSizes = Maps.newHashMap();
@@ -44,9 +44,9 @@ public class State {
     /**
      * Copy constructor
      *
-     * @param oldState State to copy.
+     * @param oldState PopulationState to copy.
      */
-    public State(State oldState) {
+    public PopulationState(PopulationState oldState) {
 
         // Copy sub-population sizes:
         this.popSizes = Maps.newHashMap();
@@ -85,7 +85,10 @@ public class State {
      * @param increment
      */
     public void add(Population pop, double increment) {
-        popSizes.put(pop, popSizes.get(pop) + increment);
+        if (popSizes.containsKey(pop))
+            popSizes.put(pop, popSizes.get(pop) + increment);
+        else
+            popSizes.put(pop, increment);
     }
 
     /**

@@ -11,7 +11,7 @@ import hamlet.Population;
 import hamlet.PopulationType;
 import hamlet.Reaction;
 import hamlet.ReactionGroup;
-import hamlet.State;
+import hamlet.PopulationState;
 import hamlet.TauLeapingStepper;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -73,7 +73,7 @@ public class IRSample {
          * Set initial state:
          */
 
-        State initState = new State();
+        PopulationState initState = new PopulationState();
         initState.set(I, 1.0);
         initState.set(R, 0.0);
         initState.set(I_sample, 0.0);
@@ -89,7 +89,7 @@ public class IRSample {
         spec.setEvenSampling(1001);
         spec.setnTraj(1000);
         spec.setSeed(53);
-        spec.setInitState(initState);
+        spec.setInitPopulationState(initState);
         spec.addMoment(mI);
         spec.addMoment(mR);
         spec.addMoment(mIsamp);

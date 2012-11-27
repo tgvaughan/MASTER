@@ -11,7 +11,7 @@ import hamlet.Population;
 import hamlet.PopulationType;
 import hamlet.Reaction;
 import hamlet.ReactionGroup;
-import hamlet.State;
+import hamlet.PopulationState;
 import hamlet.TauLeapingStepper;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -229,7 +229,7 @@ public class HypermutHIV {
          * Set initial state:
          */
 
-        State initState = new State();
+        PopulationState initState = new PopulationState();
 
         initState.set(X, 6.006e9); // Deterministic steady state values
         initState.set(new Population(Ytype, 0, 0), 2.44e8);
@@ -249,7 +249,7 @@ public class HypermutHIV {
         spec.setEvenSampling(1001);
         spec.setnTraj(1);
         spec.setSeed(53);
-        spec.setInitState(initState);
+        spec.setInitPopulationState(initState);
         spec.addMoment(mX);
         spec.addMomentGroup(mY);
         spec.addMomentGroup(mV);

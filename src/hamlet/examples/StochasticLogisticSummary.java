@@ -7,7 +7,7 @@ import hamlet.Model;
 import hamlet.Moment;
 import hamlet.Population;
 import hamlet.Reaction;
-import hamlet.State;
+import hamlet.PopulationState;
 import hamlet.TauLeapingStepper;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -58,7 +58,7 @@ public class StochasticLogisticSummary {
          * Set initial state:
          */
 
-        State initState = new State();
+        PopulationState initState = new PopulationState();
         initState.set(X, 1.0);
 
         /*
@@ -72,7 +72,7 @@ public class StochasticLogisticSummary {
         spec.setEvenSampling(1001);
         spec.setnTraj(1000);
         spec.setSeed(53);
-        spec.setInitState(initState);
+        spec.setInitPopulationState(initState);
         spec.addMoment(mX);
 
         spec.setStepper(new TauLeapingStepper(0.01));

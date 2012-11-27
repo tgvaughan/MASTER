@@ -16,7 +16,7 @@
  */
 package hamlet.inheritance;
 
-import hamlet.State;
+import hamlet.PopulationState;
 import java.util.List;
 
 /**

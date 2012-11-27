@@ -21,11 +21,23 @@ import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
- * Specification for birth-death trajectory (as opposed to tree) simulations.
+ * Basic specification for birth-death trajectory simulations.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class TrajectorySpec extends Spec {
+public class TrajectorySpec {
+    
+    // Birth-death model to simulate:
+    Model model;
+
+    // Seed for RNG (negative number means use default seed):
+    long seed;
+    
+    // Initial state of system:
+    PopulationState initPopulationState;
+    
+    // Verbosity level for reportage on progress of simulation:
+    int verbosity;
     
     // Length of time to propagate for:
     double simulationTime;
@@ -47,8 +59,49 @@ public class TrajectorySpec extends Spec {
      * Constructor.
      */
     public TrajectorySpec() {
-        super();
+        
+        // Default initial population sizes of zero:
+        initPopulationState = new PopulationState();
+        
+        // Spec progress reportage off by default:
+        this.verbosity = 0;
+
+        // Use BEAST RNG seed unless specified:
+        this.seed = -1;
+        
+        // Initialise lists:
         populationEndConditions = Lists.newArrayList();
+    }
+    
+    public void setModel(Model model) {
+        this.model = model;
+    }
+    
+    public Model getModel() {
+        return model;
+    }
+
+    public void setSeed(long seed) {
+        this.seed = seed;
+    }
+
+    public long getSeed() {
+        return seed;
+    }
+    
+    public void setInitPopulationState(PopulationState initState) {
+        this.initPopulationState = initState;
+    }
+
+    public PopulationState getInitPopulationState() {
+        return initPopulationState;
+    }
+
+    public void setVerbosity(int verbosity) {
+        if (verbosity<0 || verbosity>3)
+            throw new IllegalArgumentException("Verbosity number must be between 0 and 3.");
+
+        this.verbosity = verbosity;
     }
 
     /**

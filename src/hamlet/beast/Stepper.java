@@ -16,33 +16,18 @@
  */
 package hamlet.beast;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
+import beast.core.Plugin;
 
 /**
- * Plugin for specifying use of the tau-leaping algorithm.
+ * Abstract base class for plugins for specifying which stochastic integration
+ * algorithm to use in a Hamlet calculation.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-@Description("The original tau-leaping stochastic integration algorithm.")
-public class TauLeapingIntegrator extends Stepper {
-    
-    public Input<Double> stepSizeInput = new Input<Double>("stepSize",
-            "Length of integration time step.", Validate.REQUIRED);
-
-    double stepSize;
-    
-    public TauLeapingIntegrator() { }
-    
-    @Override
-    public void initAndValidate() {
-        stepSize = stepSizeInput.get();
-    }
-    
-    @Override
-    public hamlet.Stepper getIntegratorObject() {
-        return new hamlet.TauLeapingStepper(stepSize);
-    }
-    
+public abstract class Stepper extends Plugin {
+ 
+    /**
+     * Returns a Hamlet integrator object.
+     */
+    public abstract hamlet.Stepper getIntegratorObject();
 }

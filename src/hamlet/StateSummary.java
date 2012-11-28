@@ -41,6 +41,7 @@ public class StateSummary {
 
 		mean = Maps.newHashMap();
 		std = Maps.newHashMap();
+                summaries = Maps.newHashMap();
 
 		for (MomentGroup moment : moments) {
 			mean.put(moment, new double[moment.summationGroups.size()]);

@@ -24,13 +24,12 @@ import java.io.*;
 import java.util.*;
 
 /**
- * BEAST 2 plugin representing a general stochastic simulation.
- *
  * @author Tim Vaughan
- *
  */
-@Description("A stochastic simulation of a birth-death population dynamics model.")
-public class HamletSimulation extends Runnable {
+@Description("Simulates a number of trajectories under a stochastic"
+        + " birth-death model, summarizing the results in terms of"
+        + " moment estimates.")
+public class EnsembleSummary extends Runnable {
 
     /*
      * XML inputs:
@@ -51,7 +50,7 @@ public class HamletSimulation extends Runnable {
     public Input<Integer> seedInput = new Input<Integer>(
             "seed",
             "Seed for RNG.");
-    public Input<Integrator> integratorInput = new Input<Integrator>(
+    public Input<Stepper> integratorInput = new Input<Stepper>(
             "integrator",
             "Integration algorithm to use.",
             Validate.REQUIRED);
@@ -79,22 +78,20 @@ public class HamletSimulation extends Runnable {
             "Individual moment to estimate from birth-death process.",
             new ArrayList<Moment>());
     
-    // Output file name:
-    public Input<String> outFileNameInput = new Input<String>("outFileName",
-            "Name of output file.");
-
+    
+    public Input<List<EnsembleSummaryOutput>> outputsInput = new Input<List<EnsembleSummaryOutput>>(
+            "output",
+            "Output writer used to write simulation output to disk.",
+            new ArrayList<EnsembleSummaryOutput>());
+    
     /*
      * Fields to populate with parameter values:
      */
     
-    // Spec specification:
+    // Simulation specification:
     hamlet.EnsembleSummarySpec spec;
     
-    // Stream object to write JSON output to:
-    PrintStream outStream;
-
-    public HamletSimulation() {
-    }
+    public EnsembleSummary() { }
 
     @Override
     public void initAndValidate() throws Exception {
@@ -132,14 +129,6 @@ public class HamletSimulation extends Runnable {
         // Set the level of verbosity:
         spec.setVerbosity(verbosityInput.get());
 
-        // Open specified file to use as output PrintStream
-        // for JSON-formated results.  If no file specified,
-        // dump to stdout.
-        String outFileName = outFileNameInput.get();
-        if (outFileName!=null)
-            outStream = new PrintStream(outFileName);
-        else
-            outStream = System.out;
     }
 
     @Override
@@ -150,10 +139,9 @@ public class HamletSimulation extends Runnable {
         hamlet.EnsembleSummary ensemble =
                 new hamlet.EnsembleSummary(spec);
 
-        // Format results using JSON:
-        JsonOutput.write(ensemble, outStream);
-
-        // Close output file:
-        outStream.close();
+        // Write outputs:
+        for (EnsembleSummaryOutput output : outputsInput.get())
+            output.write(ensemble);
+        
     }
 }

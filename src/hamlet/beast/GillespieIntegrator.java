@@ -24,7 +24,7 @@ import beast.core.Description;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Gillespie's original stochastic simulation algorithm.")
-public class GillespieIntegrator extends Integrator {
+public class GillespieIntegrator extends Stepper {
     
     public GillespieIntegrator() { };
     

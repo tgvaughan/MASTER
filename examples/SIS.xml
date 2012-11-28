@@ -1,12 +1,11 @@
 <!-- Test stochastic simulation specification -->
 
 <beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
-    <run spec='HamletSimulation'
+    <run spec='EnsembleSummary'
          simulationTime='5'
          nSamples='1001'
          nTraj='1000'
-         seed='53'
-         outFileName='out.json'>
+         seed='53'>
 
         <integrator spec='TauLeapingIntegrator' stepSize="0.01"/>
         <!-- <integrator spec='GillespieIntegrator' /> -->
@@ -43,5 +42,6 @@
             <factor idref='I'/>
         </moment>
         
+        <output spec='JsonOutput' fileName='out.json'/>
     </run>
 </beast>

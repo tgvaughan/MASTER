@@ -16,18 +16,13 @@
  */
 package hamlet.beast;
 
-import beast.core.Plugin;
-
 /**
- * Abstract base class for plugins for specifying which stochastic integration
- * algorithm to use in a Hamlet calculation.
- *
+ * Interface for plugins used to write trajectories to disk.
+ * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public abstract class Integrator extends Plugin {
- 
-    /**
-     * Returns a Hamlet integrator object.
-     */
-    public abstract hamlet.Stepper getIntegratorObject();
+public interface TrajectoryOutput {
+    
+    public void write(hamlet.Trajectory traj);
+    
 }

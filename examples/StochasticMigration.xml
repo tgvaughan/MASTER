@@ -4,12 +4,11 @@
     
     <populationType spec='PopulationType' id='X' typeName='X' dim="2" />
         
-    <run spec='HamletSimulation'
+    <run spec='EnsembleSummary'
          simulationTime='20'
          nSamples='1001'
          nTraj='100'
-         seed='42'
-         outFileName='out.json'>
+         seed='42'>
         
         <integrator spec='TauLeapingIntegrator' stepSize="0.01"/>
         <!--<integrator spec='GillespieIntegrator' />-->
@@ -52,5 +51,6 @@
             </moment>
         </momentGroup>
         
+        <output spec='JsonOutput' fileName='out.json'/>
     </run>
 </beast>

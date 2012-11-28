@@ -2,6 +2,7 @@ package hamlet.examples;
 
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
+import hamlet.GillespieStepper;
 import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Moment;
@@ -93,8 +94,8 @@ public class SIRSample {
         spec.addMoment(mR);
         spec.addMoment(mIsamp);
 
-        spec.setStepper(new TauLeapingStepper(0.01));
-        //spec.setIntegrator(new GillespieIntegrator());
+        //spec.setStepper(new TauLeapingStepper(0.01));
+        spec.setStepper(new GillespieStepper());
 
         // Report on ensemble calculation progress:
         spec.setVerbosity(1);

@@ -131,7 +131,7 @@ public class SimpleViralInfection {
         EnsembleSummary ensemble = new EnsembleSummary(spec);
 
         /*
-         * Dump results (JSON):
+         * Write results to disk (JSON):
          */
 
         JsonOutput.write(ensemble, new PrintStream("out.json"));

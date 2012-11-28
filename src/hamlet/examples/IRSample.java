@@ -2,16 +2,12 @@ package hamlet.examples;
 
 import hamlet.EnsembleSummary;
 import hamlet.EnsembleSummarySpec;
-import hamlet.GillespieStepper;
 import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Moment;
-import hamlet.MomentGroup;
 import hamlet.Population;
-import hamlet.PopulationType;
-import hamlet.Reaction;
-import hamlet.ReactionGroup;
 import hamlet.PopulationState;
+import hamlet.Reaction;
 import hamlet.TauLeapingStepper;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -95,7 +91,7 @@ public class IRSample {
         spec.addMoment(mIsamp);
 
         spec.setStepper(new TauLeapingStepper(0.01));
-        //spec.setIntegrator(new GillespieIntegrator());
+        //spec.setStepper(new GillespieStepper());
 
         // Report on ensemble calculation progress:
         spec.setVerbosity(1);

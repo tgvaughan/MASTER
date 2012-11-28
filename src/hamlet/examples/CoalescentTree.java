@@ -17,11 +17,11 @@
 package hamlet.examples;
 
 import hamlet.Population;
-import hamlet.inheritance.ConditionMRCA;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReaction;
 import hamlet.inheritance.InheritanceTrajectory;
 import hamlet.inheritance.InheritanceTrajectorySpec;
+import hamlet.inheritance.LineageEndCondition;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
 import java.io.FileNotFoundException;
@@ -78,7 +78,7 @@ public class CoalescentTree {
         InheritanceTrajectorySpec spec = new InheritanceTrajectorySpec();
         spec.setModel(model);
         spec.setInitNodes(initNodes);
-        spec.addLineageEndCondition(new ConditionMRCA());
+        spec.addLineageEndCondition(new LineageEndCondition(1, false));
         spec.setUnevenSampling();
         
         /*

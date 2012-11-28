@@ -16,28 +16,81 @@
  */
 package hamlet.inheritance;
 
+import hamlet.Population;
 import java.util.List;
 
 /**
- * End condition for simulation of inheritance graphs.
- *
+ * A condition which is met when the simulation includes a specific
+ * number of lineages.
+ * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public interface LineageEndCondition {
+public class LineageEndCondition {
+    
+    private Population pop;    
+    private int nlineages;
+    private boolean rejection;
     
     /**
-     * @return true if graphs meeting end condition should be discarded.
+     * Create an inheritance graph end condition which is met when the
+     * given number of lineages is reached.
+     * 
+     * @param nlineages number of lineages constituting end condition
+     * @param rejection true causes graphs meeting condition to be discarded
      */
-    public boolean isRejection();
+    public LineageEndCondition(int nlineages, boolean rejection) {
+        this.pop = null;
+        this.nlineages = nlineages;
+        this.rejection = rejection;
+    }
     
     /**
+     * Create an inheritance graph end condition which is met when the
+     * number of lineages matching the given population equals nlineages.
+     * 
+     * @param pop
+     * @param nlineages
+     * @param rejection 
+     */
+    public LineageEndCondition(Population pop, int nlineages, boolean rejection) {
+        this.pop = pop;
+        this.nlineages = nlineages;
+        this.rejection = rejection;
+    }
+
+    /**
+     * @return true if this end condition is a rejection.
+     */
+    public boolean isRejection() {
+        return this.rejection;
+    }
+
+    /**
+     * Returns true iff the given activeLineages list meets the end condition.
+     * 
      * @param activeLineages
-     * @return true if end condition is met.
+     * @return true if the end condition is met.
      */
-    public boolean isMet(List<Node> activeLineages);
-    
+    public boolean isMet(List<Node> activeLineages) {
+        int size;
+        if (pop == null)
+            size = activeLineages.size();
+        else {
+            size = 0;
+            for (Node node : activeLineages) {
+                if (node.population == pop)
+                    size += 1;
+            }            
+        }
+        
+        return size == nlineages;
+    }
+
     /**
-     * @return String describing this particular end condition.
+     * @return Description of the end condition.
      */
-    public String getConditionDescription();
+    public String getConditionDescription() {
+        return "Condition met when number of lineages reaches " + nlineages;
+    }
+    
 }

@@ -17,6 +17,7 @@
 package hamlet.beast;
 
 import beast.core.Description;
+import beast.core.Plugin;
 
 /**
  * Plugin for specifying Gillespie's stochastic simulation algorithm in Hamlet.
@@ -24,7 +25,7 @@ import beast.core.Description;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Gillespie's original stochastic simulation algorithm.")
-public class GillespieStepper extends Stepper {
+public class GillespieStepper extends Plugin implements Stepper {
     
     public GillespieStepper() { };
     
@@ -32,7 +33,7 @@ public class GillespieStepper extends Stepper {
     public void initAndValidate() { };
 
     @Override
-    public hamlet.Stepper getIntegratorObject() {
+    public hamlet.Stepper getStepperObject() {
         return new hamlet.GillespieStepper();
     }
     

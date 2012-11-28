@@ -16,10 +16,15 @@
  */
 package hamlet.beast;
 
+import beast.core.Description;
+import beast.core.Runnable;
+
 /**
- *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class InheritanceTrajectory {
+@Description("Simulates a single trajectory under a stochastic birth-death"
+        + " model, keeping track of lineages decendent form a chosen set"
+        + " of individuals.")
+public class InheritanceTrajectory extends Runnable {
     
 }

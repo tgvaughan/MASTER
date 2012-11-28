@@ -19,6 +19,7 @@ package hamlet.examples;
 import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Population;
+import hamlet.PopulationEndCondition;
 import hamlet.PopulationState;
 import hamlet.Reaction;
 import hamlet.TauLeapingStepper;
@@ -86,6 +87,7 @@ public class StochasticLogistic {
         spec.setModel(model);
         spec.setInitPopulationState(initState);
         spec.setVerbosity(2);
+        spec.addPopSizeEndCondition(new PopulationEndCondition(X, 10, true, false));
 
         /*
          * Generate trajectory

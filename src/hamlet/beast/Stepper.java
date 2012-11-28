@@ -16,18 +16,16 @@
  */
 package hamlet.beast;
 
-import beast.core.Plugin;
-
 /**
- * Abstract base class for plugins for specifying which stochastic integration
+ * Interface for plugins for specifying which stochastic integration
  * algorithm to use in a Hamlet calculation.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public abstract class Stepper extends Plugin {
+public interface Stepper {
  
     /**
      * Returns a Hamlet integrator object.
      */
-    public abstract hamlet.Stepper getIntegratorObject();
+    public hamlet.Stepper getStepperObject();
 }

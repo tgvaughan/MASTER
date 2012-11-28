@@ -16,10 +16,121 @@
  */
 package hamlet.beast;
 
+import beast.core.Description;
+import beast.core.Input;
+import beast.core.Input.Validate;
+import beast.core.Runnable;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class Trajectory {
+@Description("Simulates a single trajectory under a stochastic birth-death model.")
+public class Trajectory extends Runnable {
+
+    /*
+     * XML inputs:
+     */
+    // Spec parameters:
+    public Input<Double> simulationTimeInput = new Input<Double>(
+            "simulationTime",
+            "The maximum length of time to simulate for. (Defaults to infinite.)");
+    public Input<Boolean> useEvenSamplingInput = new Input<Boolean>(
+            "useEvenSampling",
+            "Whether to use evenly spaced samples. (Defaults to false.)",
+            false);
+    public Input<Integer> nSamplesInput = new Input<Integer>(
+            "nSamples",
+            "Number of evenly spaced time points to sample state at.");
+    public Input<Integer> seedInput = new Input<Integer>(
+            "seed",
+            "Seed for RNG.");
+    public Input<Stepper> stepperInput = new Input<Stepper>(
+            "integrator",
+            "Integration algorithm to use.");
     
+    public Input<Integer> verbosityInput = new Input<Integer> (
+            "verbosity", "Level of verbosity to use (0-3).", 1);
+    
+    // Model:
+    public Input<Model> modelInput = new Input<Model>("model",
+            "The specific model to simulate.");
+    
+    // Initial state:
+    public Input<InitState> initialStateInput = new Input<InitState>("initialState",
+            "Initial state of system.");
+    
+    // Moments groups:
+    public Input<List<MomentGroup>> momentGroupsInput = new Input<List<MomentGroup>>(
+            "momentGroup",
+            "Moment group to estimate from birth-death process.",
+            new ArrayList<MomentGroup>());
+    
+    // Individual moments:
+    public Input<List<Moment>> momentsInput = new Input<List<Moment>>(
+            "moment",
+            "Individual moment to estimate from birth-death process.",
+            new ArrayList<Moment>());
+    
+    
+    public Input<List<TrajectoryOutput>> outputsInput = new Input<List<TrajectoryOutput>>(
+            "output",
+            "Output writer used to write simulation output to disk.",
+            new ArrayList<TrajectoryOutput>());
+    
+    /*
+     * Fields to populate using input values:
+     */
+    
+    // Simulation specification:
+    hamlet.TrajectorySpec spec;
+    
+    public Trajectory() { }
+    
+    @Override
+    public void initAndValidate() {
+        spec = new hamlet.TrajectorySpec();
+
+        // Incorporate model:
+        spec.setModel(modelInput.get().model);
+        
+        // Default to Gillespie stepper
+        if (stepperInput.get() != null)
+            spec.setStepper(stepperInput.get().getStepperObject());
+        else
+            spec.setStepper(new hamlet.GillespieStepper());
+        
+        // Default to unevenly spaced sampling times:
+        if (useEvenSamplingInput.get())
+            spec.setEvenSampling(nSamplesInput.get());
+        else
+            spec.setUnevenSampling();
+        
+        // Assemble initial state:
+        hamlet.PopulationState initState = new hamlet.PopulationState();
+        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
+            initState.set(popSize.pop, popSize.size);
+        spec.setInitPopulationState(initState);
+
+        // Set seed if provided, otherwise use default BEAST seed:
+        if (seedInput.get()!=null)
+            spec.setSeed(seedInput.get());
+        
+        // Set the level of verbosity:
+        spec.setVerbosity(verbosityInput.get());
+    }
+    
+    @Override
+    public void run() throws Exception {
+
+        // Generate stochastic trajectory:
+        hamlet.Trajectory trajectory =
+                new hamlet.Trajectory(spec);
+
+        // Write outputs:
+        for (TrajectoryOutput output : outputsInput.get())
+            output.write(trajectory);
+        
+    }
 }

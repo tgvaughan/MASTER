@@ -17,7 +17,7 @@
 package hamlet.examples;
 
 import hamlet.Population;
-import hamlet.inheritance.ConditionLineageCount;
+import hamlet.inheritance.LineageEndCondition;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReaction;
 import hamlet.inheritance.InheritanceTrajectory;
@@ -77,7 +77,7 @@ public class YuleTree {
         spec.setModel(model);
         spec.setInitNodes(initNodes);
         spec.setUnevenSampling();
-        spec.addLineageEndCondition(new ConditionLineageCount(10, false));
+        spec.addLineageEndCondition(new LineageEndCondition(10, false));
         
         /*
          * Generate inheritance graph:

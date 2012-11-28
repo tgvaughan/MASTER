@@ -19,6 +19,7 @@ package hamlet.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
+import beast.core.Plugin;
 
 /**
  * Plugin for specifying use of the tau-leaping algorithm.
@@ -26,7 +27,7 @@ import beast.core.Input.Validate;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("The original tau-leaping stochastic integration algorithm.")
-public class TauLeapingStepper extends Stepper {
+public class TauLeapingStepper extends Plugin implements Stepper {
     
     public Input<Double> stepSizeInput = new Input<Double>("stepSize",
             "Length of integration time step.", Validate.REQUIRED);
@@ -41,7 +42,7 @@ public class TauLeapingStepper extends Stepper {
     }
     
     @Override
-    public hamlet.Stepper getIntegratorObject() {
+    public hamlet.Stepper getStepperObject() {
         return new hamlet.TauLeapingStepper(stepSize);
     }
     

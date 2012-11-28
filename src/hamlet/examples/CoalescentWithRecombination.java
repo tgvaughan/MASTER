@@ -17,11 +17,11 @@
 package hamlet.examples;
 
 import hamlet.Population;
-import hamlet.inheritance.ConditionMRCA;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReaction;
 import hamlet.inheritance.InheritanceTrajectory;
 import hamlet.inheritance.InheritanceTrajectorySpec;
+import hamlet.inheritance.LineageEndCondition;
 import hamlet.inheritance.NewickOutput;
 import hamlet.inheritance.Node;
 import java.io.FileNotFoundException;
@@ -93,7 +93,7 @@ public class CoalescentWithRecombination {
         spec.setModel(model);
         spec.setSimulationTime(Double.POSITIVE_INFINITY);
         spec.setInitNodes(initNodes);
-        spec.addLineageEndCondition(new ConditionMRCA());
+        spec.addLineageEndCondition(new LineageEndCondition(1, false));
                 
         /*
          * Generate coalescent tree:

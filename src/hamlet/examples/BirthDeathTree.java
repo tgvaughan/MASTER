@@ -19,11 +19,11 @@ package hamlet.examples;
 import hamlet.JsonOutput;
 import hamlet.Population;
 import hamlet.PopulationState;
-import hamlet.inheritance.ConditionLineagesExtinct;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReaction;
 import hamlet.inheritance.InheritanceTrajectory;
 import hamlet.inheritance.InheritanceTrajectorySpec;
+import hamlet.inheritance.LineageEndCondition;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
 import java.io.FileNotFoundException;
@@ -95,7 +95,7 @@ public class BirthDeathTree {
         spec.setInitNodes(initNodes);
         spec.setUnevenSampling();
         
-        spec.addLineageEndCondition(new ConditionLineagesExtinct());
+        spec.addLineageEndCondition(new LineageEndCondition(0, false));
         spec.setSimulationTime(100.0);
         
         /*

@@ -19,8 +19,6 @@ package hamlet.beast;
 import beast.core.*;
 import beast.core.Input.Validate;
 import beast.core.Runnable;
-import hamlet.JsonOutput;
-import java.io.*;
 import java.util.*;
 
 /**
@@ -41,8 +39,7 @@ public class EnsembleSummary extends Runnable {
             Validate.REQUIRED);
     public Input<Integer> nSamplesInput = new Input<Integer>(
             "nSamples",
-            "Number of time points to sample state at.",
-            Validate.REQUIRED);
+            "Number of evenly spaced time points to sample state at.", Validate.REQUIRED);
     public Input<Integer> nTrajInput = new Input<Integer>(
             "nTraj",
             "Number of trajectories to generate.",
@@ -50,10 +47,9 @@ public class EnsembleSummary extends Runnable {
     public Input<Integer> seedInput = new Input<Integer>(
             "seed",
             "Seed for RNG.");
-    public Input<Stepper> integratorInput = new Input<Stepper>(
+    public Input<Stepper> stepperInput = new Input<Stepper>(
             "integrator",
-            "Integration algorithm to use.",
-            Validate.REQUIRED);
+            "Integration algorithm to use.");
     
     public Input<Integer> verbosityInput = new Input<Integer> (
             "verbosity", "Level of verbosity to use (0-3).", 1);
@@ -85,7 +81,7 @@ public class EnsembleSummary extends Runnable {
             new ArrayList<EnsembleSummaryOutput>());
     
     /*
-     * Fields to populate with parameter values:
+     * Fields to populate using input values:
      */
     
     // Simulation specification:
@@ -96,21 +92,31 @@ public class EnsembleSummary extends Runnable {
     @Override
     public void initAndValidate() throws Exception {
 
-        // Assemble spec object from XML parameters:
-
         spec = new hamlet.EnsembleSummarySpec();
 
+        // Incorporate model:
         spec.setModel(modelInput.get().model);
-        spec.setStepper(integratorInput.get().getIntegratorObject());
+        
+        // Default to Gillespie stepper
+        if (stepperInput.get() != null)
+            spec.setStepper(stepperInput.get().getStepperObject());
+        else
+            spec.setStepper(new hamlet.GillespieStepper());
+
+        // Ensemble summaries must have finite end time and even sampling:
         spec.setSimulationTime(simulationTimeInput.get());
         spec.setEvenSampling(nSamplesInput.get());
+        
+        // Specify number of trajectories to generate:
         spec.setnTraj(nTrajInput.get());
         
+        // Assemble initial state:
         hamlet.PopulationState initState = new hamlet.PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
             initState.set(popSize.pop, popSize.size);
         spec.setInitPopulationState(initState);
         
+        // Add moments and moment groups:
         for (MomentGroup momentGroup : momentGroupsInput.get())
             spec.addMomentGroup(momentGroup.momentGroup);
         
@@ -128,7 +134,6 @@ public class EnsembleSummary extends Runnable {
         
         // Set the level of verbosity:
         spec.setVerbosity(verbosityInput.get());
-
     }
 
     @Override

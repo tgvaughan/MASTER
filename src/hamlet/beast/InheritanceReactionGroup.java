@@ -17,23 +17,25 @@
 package hamlet.beast;
 
 import beast.core.Description;
+import beast.core.Input;
+import beast.core.Plugin;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Plugin for specifying Gillespie's stochastic simulation algorithm in Hamlet.
- *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-@Description("Gillespie's original stochastic simulation algorithm.")
-public class GillespieIntegrator extends Stepper {
+@Description("Group of reactions in an inheritance-tracking birth-death model.")
+public class InheritanceReactionGroup extends Plugin {
     
-    public GillespieIntegrator() { };
+    public Input<String> nameInput = new Input<String>("reactionGroupName",
+            "Reaction group name");
     
-    @Override
-    public void initAndValidate() { };
-
-    @Override
-    public hamlet.Stepper getIntegratorObject() {
-        return new hamlet.GillespieStepper();
-    }
+    public Input<Double> rateInput = new Input<Double>("rate",
+            "Group reaction rate. (Overrides individual reaction rates.)");
     
+    public Input<List<InheritanceReaction>> reactionsInput = new Input<List<InheritanceReaction>>(
+            "reaction",
+            "Individual inheritance reaction within group.",
+            new ArrayList<InheritanceReaction>());
 }

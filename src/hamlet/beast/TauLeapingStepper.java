@@ -26,14 +26,14 @@ import beast.core.Input.Validate;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("The original tau-leaping stochastic integration algorithm.")
-public class TauLeapingIntegrator extends Stepper {
+public class TauLeapingStepper extends Stepper {
     
     public Input<Double> stepSizeInput = new Input<Double>("stepSize",
             "Length of integration time step.", Validate.REQUIRED);
 
     double stepSize;
     
-    public TauLeapingIntegrator() { }
+    public TauLeapingStepper() { }
     
     @Override
     public void initAndValidate() {

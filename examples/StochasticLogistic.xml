@@ -8,8 +8,8 @@
          seed='53'
          verbosity='1'>
         
-        <integrator spec='TauLeapingIntegrator' stepSize="0.01" />
-        <!-- <integrator spec='GillespieIntegrator' /> -->
+        <integrator spec='TauLeapingStepper' stepSize="0.01" />
+        <!-- <integrator spec='GillespieStepper' /> -->
 
         <model spec='Model' id='model'>
             <population spec='Population' populationName="X" id='X'/>

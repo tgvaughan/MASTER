@@ -7,9 +7,8 @@ import hamlet.JsonOutput;
 import hamlet.Model;
 import hamlet.Moment;
 import hamlet.Population;
-import hamlet.Reaction;
 import hamlet.PopulationState;
-import hamlet.TauLeapingStepper;
+import hamlet.Reaction;
 import java.io.IOException;
 import java.io.PrintStream;
 

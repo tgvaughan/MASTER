@@ -61,6 +61,12 @@ public class Trajectory extends Runnable {
     public Input<InitState> initialStateInput = new Input<InitState>("initialState",
             "Initial state of system.");
     
+    // End conditions:
+    public Input<List<PopulationEndCondition>> endConditionsInput = new Input<List<PopulationEndCondition>>(
+            "populationEndCondition",
+            "Trajectory end condition based on population sizes.",
+            new ArrayList<PopulationEndCondition>());
+    
     // Moments groups:
     public Input<List<MomentGroup>> momentGroupsInput = new Input<List<MomentGroup>>(
             "momentGroup",
@@ -112,6 +118,10 @@ public class Trajectory extends Runnable {
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
             initState.set(popSize.pop, popSize.size);
         spec.setInitPopulationState(initState);
+        
+        // Incorporate any end conditions:
+        for (PopulationEndCondition endCondition : endConditionsInput.get())
+            spec.addPopSizeEndCondition(endCondition.endConditionObject);
 
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)

@@ -38,4 +38,34 @@ public class InheritanceReactionGroup extends Plugin {
             "reaction",
             "Individual inheritance reaction within group.",
             new ArrayList<InheritanceReaction>());
+    
+    // True inheritance reaction object
+    hamlet.inheritance.InheritanceReactionGroup inheritanceReactionGroup;
+    
+    public InheritanceReactionGroup() { };
+    
+    @Override
+    public void initAndValidate() {
+        
+        if (nameInput.get()==null)
+            inheritanceReactionGroup = new hamlet.inheritance.InheritanceReactionGroup();
+        else
+            inheritanceReactionGroup = new hamlet.inheritance.InheritanceReactionGroup(nameInput.get());
+
+        // Add reactions to reaction group:
+        for (InheritanceReaction react : reactionsInput.get()) {
+            
+            inheritanceReactionGroup.addInheritanceReactantSchema(react.reactants);
+            inheritanceReactionGroup.addInheritanceProductSchema(react.products);
+            
+            if (rateInput.get() != null)
+                inheritanceReactionGroup.addRate(rateInput.get());
+            else {
+                if (react.rate>=0)
+                    inheritanceReactionGroup.addRate(react.rate);
+                else
+                    throw new RuntimeException("Neither reaction group nor reaction specify reaction rate.");
+            }
+        }
+    }
 }

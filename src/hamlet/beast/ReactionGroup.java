@@ -16,9 +16,8 @@
  */
 package hamlet.beast;
 
-import java.util.*;
 import beast.core.*;
-import beast.core.parameter.*;
+import java.util.*;
 
 /**
  * @author Tim Vaughan

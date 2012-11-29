@@ -55,4 +55,12 @@ public class InheritanceModel extends Model {
         addReactionGroup(reaction);
         inheritanceReactionGroups.add(reaction);
     }
+    
+    /**
+     * Retrieve list of inheritance reaction groups in model.
+     * @return inheritance reaction groups
+     */
+    public List<InheritanceReactionGroup> getInheritanceReactionGroups() {
+        return inheritanceReactionGroups;
+    }
 }

@@ -17,6 +17,7 @@
 package hamlet.inheritance;
 
 import com.google.common.collect.Lists;
+import hamlet.Model;
 import hamlet.Stepper;
 import hamlet.TrajectorySpec;
 import java.util.List;
@@ -75,7 +76,29 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     public void setModel(InheritanceModel inheritanceModel) {
         this.inheritanceModel = inheritanceModel;
         super.setModel(inheritanceModel);
-    }    
+    }
+    
+    /**
+     * Prevent use of non-inheritances model.  Messy.  Class structure is
+     * getting out of hand.
+     * 
+     * @param model
+     */
+    @Override
+    public void setModel(Model model) {
+       throw new UnsupportedOperationException("Inheritance trajectory "
+               + "specification requires inheritance model."); 
+    }
+    
+    /**
+     * Retrieve inheritance model.
+     * 
+     * @return inheritance model.
+     */
+    @Override
+    public InheritanceModel getModel() {
+        return inheritanceModel;
+    }
     
     /**
      * Specify initial nodes whose lineages the simulation will follow.

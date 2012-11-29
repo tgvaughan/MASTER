@@ -43,6 +43,33 @@ public class InheritanceReaction extends Plugin {
             "product",
             "Product individuals. (Times are ignored.)",
             new ArrayList<Individual>());
+    
+    hamlet.inheritance.Node [] reactants, products;
+    double rate;
+    String name;
 
+    public InheritanceReaction() { }
+    
+    @Override
+    public void initAndValidate() {
+        int nReactants = reactantsInput.get().size();
+        reactants = new hamlet.inheritance.Node[nReactants];
+        for (int i=0; i<nReactants; i++)
+            reactants[i] = reactantsInput.get().get(i).node;
+            
+        int nProducts = productsInput.get().size();
+        products = new hamlet.inheritance.Node[nProducts];
+        for (int i=0; i<nProducts; i++)
+            products[i] = productsInput.get().get(i).node;
+            
+        if (rateInput.get() != null)
+            rate = rateInput.get();
+        else
+            rate = -1;
 
+        if (nameInput.get() != null)
+            name = nameInput.get();
+        else
+            name = null;
+    }
 }

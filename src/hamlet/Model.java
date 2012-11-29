@@ -97,7 +97,7 @@ public class Model {
     public void addReaction(Reaction react) {
         react.postSpecInit();
         reactionGroups.add(react);
-    }
+    }       
 
     /*
      * Getters:

@@ -36,10 +36,24 @@ public class Individual extends Plugin {
             Validate.REQUIRED);    
     
     public Input<Double> timeInput = new Input<Double>("time",
-            "Time at which individual comes into existance. (optional)");
+            "Time at which individual comes into existance. (optional)",
+            0.0);
     
     public Input<List<Individual>> childrenInput = new Input<List<Individual>>(
             "child",
             "An individual which is a child of this one.",
             new ArrayList<Individual>());
+    
+    hamlet.inheritance.Node node;
+    
+    public Individual() { }
+    
+    @Override
+    public void initAndValidate() {
+        
+        node = new hamlet.inheritance.Node(populationInput.get().pop, timeInput.get());
+        
+        for (Individual child : childrenInput.get())
+            node.addChild(child.node);
+    }
 }

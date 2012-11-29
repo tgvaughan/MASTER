@@ -127,7 +127,8 @@ public class InheritanceTrajectory extends Trajectory {
 
             // Calculate propensities
             double totalPropensity = 0.0;
-            for (ReactionGroup reactionGroup : spec.getModel().getReactionGroups()) {
+            for (InheritanceReactionGroup reactionGroup :
+                    spec.getModel().getInheritanceReactionGroups()) {
                 reactionGroup.calcPropensities(currentPopState);
                 for (double propensity : reactionGroup.propensities)
                     totalPropensity += propensity;
@@ -185,7 +186,7 @@ public class InheritanceTrajectory extends Trajectory {
             InheritanceReactionGroup chosenReactionGroup = null;
             int chosenReaction = 0;
             for (InheritanceReactionGroup reactionGroup :
-                    spec.inheritanceModel.inheritanceReactionGroups) {
+                    spec.getModel().getInheritanceReactionGroups()) {
 
                 for (int ridx = 0; ridx<reactionGroup.propensities.size(); ridx++) {
                     u -= reactionGroup.propensities.get(ridx);

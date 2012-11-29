@@ -38,13 +38,22 @@ public class InheritanceTrajectory extends Runnable {
     public Input<Double> simulationTimeInput = new Input<Double>(
             "simulationTime",
             "The maximum length of time to simulate for. (Defaults to infinite.)");
-    public Input<Boolean> useEvenSamplingInput = new Input<Boolean>(
-            "useEvenSampling",
-            "Whether to use evenly spaced samples. (Defaults to false.)",
+
+    public Input<Boolean> samplePopulationSizesInput = new Input<Boolean>(
+            "samplePopulationSizes",
+            "Sample population sizes together with inheritance graph. (Default false.)",
             false);
+    
     public Input<Integer> nSamplesInput = new Input<Integer>(
-            "nSamples",
-            "Number of evenly spaced time points to sample state at.");
+            "nPopSizeSamples",
+            "Number of evenly spaced population size samples to record. (Default 0: uneven sampling)",
+            0);
+    
+    public Input<Boolean> sampleAtNodesOnlyInput = new Input<Boolean>(
+            "sampleAtNodesOnly",
+            "Sample population sizes only at graph node times. (Default false.)",
+            false);
+            
     public Input<Integer> seedInput = new Input<Integer>(
             "seed",
             "Seed for RNG.");
@@ -53,18 +62,24 @@ public class InheritanceTrajectory extends Runnable {
             "verbosity", "Level of verbosity to use (0-3).", 1);
     
     // Model:
-    public Input<Model> modelInput = new Input<Model>("model",
+    public Input<InheritanceModel> modelInput = new Input<InheritanceModel>("model",
             "The specific model to simulate.");
     
     // Initial state:
     public Input<InitState> initialStateInput = new Input<InitState>("initialState",
             "Initial state of system.");
     
-    // End conditions:
-    public Input<List<PopulationEndCondition>> endConditionsInput = new Input<List<PopulationEndCondition>>(
+    // Population end conditions:
+    public Input<List<PopulationEndCondition>> popEndConditionsInput = new Input<List<PopulationEndCondition>>(
             "populationEndCondition",
             "Trajectory end condition based on population sizes.",
             new ArrayList<PopulationEndCondition>());
+    
+    // Lineage end conditions:
+    public Input<List<LineageEndCondition>> lineageEndConditionsInput = new Input<List<LineageEndCondition>>(
+            "lineageEndCondition",
+            "Trajectory end condition based on remaining lineages.",
+            new ArrayList<LineageEndCondition>());
     
     // Moments groups:
     public Input<List<MomentGroup>> momentGroupsInput = new Input<List<MomentGroup>>(
@@ -79,16 +94,68 @@ public class InheritanceTrajectory extends Runnable {
             new ArrayList<Moment>());
     
     
-    public Input<List<TrajectoryOutput>> outputsInput = new Input<List<TrajectoryOutput>>(
-            "output",
-            "Output writer used to write simulation output to disk.",
-            new ArrayList<TrajectoryOutput>());
+    public Input<List<InheritanceTrajectoryOutput>> outputsInput
+            = new Input<List<InheritanceTrajectoryOutput>>("output",
+            "Output writer used to write population size samples to disk.",
+            new ArrayList<InheritanceTrajectoryOutput>());
+    
+    
+    hamlet.inheritance.InheritanceTrajectorySpec spec;
     
     public InheritanceTrajectory() { }
     
     @Override
     public void initAndValidate() {
+        spec = new hamlet.inheritance.InheritanceTrajectorySpec();
+               
+        // Incorporate model:
+        spec.setModel(modelInput.get().model);        
         
+        // Set population size options:
+        if (samplePopulationSizesInput.get()) {
+            if (nSamplesInput.get()<2)
+                spec.setEvenSampling(nSamplesInput.get());
+            else
+                spec.setUnevenSampling(sampleAtNodesOnlyInput.get());
+        }
+        
+        // Set maximum simulation time:
+        if (simulationTimeInput.get() != null)
+            spec.setSimulationTime(simulationTimeInput.get());
+        else
+            spec.setSimulationTime(Double.POSITIVE_INFINITY);
+        
+        // Assemble initial state:
+        hamlet.PopulationState initState = new hamlet.PopulationState();
+        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
+            initState.set(popSize.pop, popSize.size);
+        spec.setInitPopulationState(initState);        
+        spec.setInitNodes(initialStateInput.get().initNodes);
+        
+        // Incorporate any end conditions:
+        for (PopulationEndCondition endCondition : popEndConditionsInput.get())
+            spec.addPopSizeEndCondition(endCondition.endConditionObject);
+        
+        for (LineageEndCondition endCondition : lineageEndConditionsInput.get())
+            spec.addLineageEndCondition(endCondition.endConditionObject);
+
+        // Set seed if provided, otherwise use default BEAST seed:
+        if (seedInput.get()!=null)
+            spec.setSeed(seedInput.get());
+        
+        // Set the level of verbosity:
+        spec.setVerbosity(verbosityInput.get());
     }
     
+    @Override
+    public void run() {
+        
+        // Generate stochastic trajectory:
+        hamlet.inheritance.InheritanceTrajectory itraj =
+                new hamlet.inheritance.InheritanceTrajectory(spec);
+
+        // Write outputs:
+        for (InheritanceTrajectoryOutput output : outputsInput.get())
+            output.write(itraj);
+    }
 }

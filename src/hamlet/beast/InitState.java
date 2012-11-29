@@ -16,11 +16,20 @@ public class InitState extends Plugin {
             "populationSize",
             "Initial population size.",
             new ArrayList<PopulationSize>());
+    
+    public Input<List<Individual>> lineageSeedsInput = new Input<List<Individual>>(
+            "lineageSeed",
+            "Individual parent of a lineage to follow in an inheritance trajectory.",
+            new ArrayList<Individual>());
 
+    List<hamlet.inheritance.Node> initNodes;
+    
     public InitState() { };
 
     @Override
     public void initAndValidate() {
-        
+        initNodes = new ArrayList<hamlet.inheritance.Node>();
+        for (Individual individual : lineageSeedsInput.get())
+            initNodes.add(individual.node);
     }
 }

@@ -64,8 +64,6 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
         samplePopSizes = false;
     }
     
-    
-    
     /**
      * Specify inheritance model to use.  Note that the model field
      * is also set by this method, so that the non-inheritance graph

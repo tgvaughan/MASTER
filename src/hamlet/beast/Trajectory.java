@@ -36,16 +36,20 @@ public class Trajectory extends Runnable {
     public Input<Double> simulationTimeInput = new Input<Double>(
             "simulationTime",
             "The maximum length of time to simulate for. (Defaults to infinite.)");
+    
     public Input<Boolean> useEvenSamplingInput = new Input<Boolean>(
             "useEvenSampling",
             "Whether to use evenly spaced samples. (Defaults to false.)",
             false);
+    
     public Input<Integer> nSamplesInput = new Input<Integer>(
             "nSamples",
             "Number of evenly spaced time points to sample state at.");
+    
     public Input<Integer> seedInput = new Input<Integer>(
             "seed",
             "Seed for RNG.");
+    
     public Input<Stepper> stepperInput = new Input<Stepper>(
             "integrator",
             "Integration algorithm to use.");
@@ -112,6 +116,12 @@ public class Trajectory extends Runnable {
             spec.setEvenSampling(nSamplesInput.get());
         else
             spec.setUnevenSampling();
+        
+        // Set maximum simulation time:
+        if (simulationTimeInput.get() != null)
+            spec.setSimulationTime(simulationTimeInput.get());
+        else
+            spec.setSimulationTime(Double.POSITIVE_INFINITY);
         
         // Assemble initial state:
         hamlet.PopulationState initState = new hamlet.PopulationState();

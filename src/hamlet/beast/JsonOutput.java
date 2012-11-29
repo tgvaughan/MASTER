@@ -20,9 +20,6 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.Plugin;
-import hamlet.Ensemble;
-import hamlet.EnsembleSummary;
-import hamlet.Trajectory;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -31,9 +28,14 @@ import java.util.logging.Logger;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-@Description("Hamlet output writer capable of writing trajectories to "
-        + "disk as a JSON-formatted file.")
-public class JsonOutput extends Plugin implements TrajectoryOutput, EnsembleOutput, EnsembleSummaryOutput {
+@Description("Hamlet output writer capable of writing population size samples"
+        + " from all kinds of trajectories and ensembles to disk as a"
+        + " JSON-formatted file.")
+public class JsonOutput extends Plugin implements
+        TrajectoryOutput,
+        EnsembleOutput,
+        EnsembleSummaryOutput,
+        InheritanceTrajectoryOutput {
     
     public Input<String> fileNameInput = new Input<String>("fileName",
             "Name of file to write to.", Validate.REQUIRED);
@@ -44,7 +46,7 @@ public class JsonOutput extends Plugin implements TrajectoryOutput, EnsembleOutp
     public void initAndValidate() { };
 
     @Override
-    public void write(Trajectory traj) {
+    public void write(hamlet.Trajectory traj) {
         try {
             hamlet.JsonOutput.write(traj, new PrintStream(fileNameInput.get()));
         } catch (FileNotFoundException ex) {
@@ -53,7 +55,7 @@ public class JsonOutput extends Plugin implements TrajectoryOutput, EnsembleOutp
     }
 
     @Override
-    public void write(Ensemble ensemble) {
+    public void write(hamlet.Ensemble ensemble) {
         try {
             hamlet.JsonOutput.write(ensemble, new PrintStream(fileNameInput.get()));
         } catch (FileNotFoundException ex) {
@@ -62,9 +64,18 @@ public class JsonOutput extends Plugin implements TrajectoryOutput, EnsembleOutp
     }
 
     @Override
-    public void write(EnsembleSummary ensemblesum) {
+    public void write(hamlet.EnsembleSummary ensemblesum) {
         try {
             hamlet.JsonOutput.write(ensemblesum, new PrintStream(fileNameInput.get()));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(JsonOutput.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void write(hamlet.inheritance.InheritanceTrajectory itraj) {
+        try {
+            hamlet.JsonOutput.write(itraj, new PrintStream(fileNameInput.get()));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(JsonOutput.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -48,8 +48,8 @@ public class EnsembleSummary extends Runnable {
             "seed",
             "Seed for RNG.");
     public Input<Stepper> stepperInput = new Input<Stepper>(
-            "integrator",
-            "Integration algorithm to use.");
+            "stepper",
+            "State stepping algorithm to use.");
     
     public Input<Integer> verbosityInput = new Input<Integer> (
             "verbosity", "Level of verbosity to use (0-3).", 1);

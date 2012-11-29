@@ -1,15 +1,12 @@
-<!-- Test stochastic simulation specification -->
+<!-- Single stochastic logistic model population size trajectory  -->
 
 <beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
-    <run spec='EnsembleSummary'
+    <run spec='Trajectory'
          simulationTime='20'
-         nSamples='1001'
-         nTraj='1000'
-         seed='53'
-         verbosity='1'>
+         verbosity='2'>
         
-        <integrator spec='TauLeapingStepper' stepSize="0.01" />
-        <!-- <integrator spec='GillespieStepper' /> -->
+        <!-- <stepper spec='TauLeapingStepper' stepSize="0.01" /> -->
+        <stepper spec='GillespieStepper' />
 
         <model spec='Model' id='model'>
             <population spec='Population' populationName="X" id='X'/>

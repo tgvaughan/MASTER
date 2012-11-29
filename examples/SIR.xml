@@ -7,8 +7,8 @@
          nTraj='1000'
          seed='53'>
         
-        <integrator spec='TauLeapingIntegrator' stepSize="0.01"/>
-        <!--<integrator spec='GillespieIntegrator' />-->
+        <stepper spec='TauLeapingStepper' stepSize="0.01"/>
+        <!--<stepper spec='GillespieStepper' />-->
 
         <model spec='Model' id='model'>
             <population spec='Population' id='S' populationName='S'/>

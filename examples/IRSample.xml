@@ -5,11 +5,11 @@
          simulationTime='100'
          nSamples='1001'
          nTraj='1000'
-         verbosity='2'
+         verbosity='1'
          seed='53'>
         
-        <!--<integrator spec='TauLeapingIntegrator' stepSize="0.01"/>-->
-        <integrator spec='GillespieIntegrator' />
+        <stepper spec='TauLeapingStepper' stepSize="0.01"/>
+        <!-- <stepper spec='GillespieStepper' /> -->
 
         <model spec='Model' id='model'>
             <population spec='Population' id='I' populationName='I'/>

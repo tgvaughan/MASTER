@@ -32,6 +32,7 @@ public class Trajectory extends Runnable {
     /*
      * XML inputs:
      */
+    
     // Spec parameters:
     public Input<Double> simulationTimeInput = new Input<Double>(
             "simulationTime",
@@ -51,19 +52,21 @@ public class Trajectory extends Runnable {
             "Seed for RNG.");
     
     public Input<Stepper> stepperInput = new Input<Stepper>(
-            "integrator",
-            "Integration algorithm to use.");
+            "stepper",
+            "State incrementing algorithm to use. (Default Gillespie.)");
     
     public Input<Integer> verbosityInput = new Input<Integer> (
-            "verbosity", "Level of verbosity to use (0-3).", 1);
+            "verbosity", "Level of verbosity to use (0-2).", 0);
     
     // Model:
     public Input<Model> modelInput = new Input<Model>("model",
-            "The specific model to simulate.");
+            "The specific model to simulate.",
+            Validate.REQUIRED);
     
     // Initial state:
     public Input<InitState> initialStateInput = new Input<InitState>("initialState",
-            "Initial state of system.");
+            "Initial state of system.",
+            Validate.REQUIRED);
     
     // End conditions:
     public Input<List<PopulationEndCondition>> endConditionsInput = new Input<List<PopulationEndCondition>>(

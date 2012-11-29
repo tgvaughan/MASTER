@@ -18,6 +18,7 @@ package hamlet.beast;
 
 import beast.core.Description;
 import beast.core.Input;
+import beast.core.Input.Validate;
 import beast.core.Runnable;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,34 +38,41 @@ public class Ensemble extends Runnable {
     public Input<Double> simulationTimeInput = new Input<Double>(
             "simulationTime",
             "The length of time to simulate. (Defaults to infinite.)");
+    
     public Input<Boolean> useEvenSamplingInput = new Input<Boolean>(
             "useEvenSampling",
             "Whether to use evenly spaced samples. (Defaults to false.)",
             false);
+    
     public Input<Integer> nSamplesInput = new Input<Integer>(
             "nSamples",
             "Number of evenly spaced time points to sample state at.");
+    
     public Input<Integer> nTrajInput = new Input<Integer>(
             "nTraj",
             "Number of trajectories to generate.",
             Input.Validate.REQUIRED);
+    
     public Input<Integer> seedInput = new Input<Integer>(
             "seed",
             "Seed for RNG.");
+    
     public Input<Stepper> stepperInput = new Input<Stepper>(
-            "integrator",
-            "Integration algorithm to use.");
+            "stepper",
+            "State incrementing algorithm to use. (Default Gillespie.)");
     
     public Input<Integer> verbosityInput = new Input<Integer> (
             "verbosity", "Level of verbosity to use (0-3).", 1);
     
     // Model:
     public Input<Model> modelInput = new Input<Model>("model",
-            "The specific model to simulate.");
+            "The specific model to simulate.",
+            Validate.REQUIRED);
     
     // Initial state:
     public Input<InitState> initialStateInput = new Input<InitState>("initialState",
-            "Initial state of system.");
+            "Initial state of system.",
+            Validate.REQUIRED);
     
     // End conditions:
     public Input<List<PopulationEndCondition>> endConditionsInput = new Input<List<PopulationEndCondition>>(
@@ -117,6 +125,12 @@ public class Ensemble extends Runnable {
             spec.setEvenSampling(nSamplesInput.get());
         else
             spec.setUnevenSampling();
+        
+        // Set maximum simulation time:
+        if (simulationTimeInput.get() != null)
+            spec.setSimulationTime(simulationTimeInput.get());
+        else
+            spec.setSimulationTime(Double.POSITIVE_INFINITY);
         
         // Specify number of trajectories to generate:
         spec.setnTraj(nTrajInput.get());

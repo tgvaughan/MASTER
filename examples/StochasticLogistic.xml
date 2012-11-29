@@ -27,10 +27,6 @@
                 <population idref='X'/>
             </populationSize>
         </initialState>
-
-        <moment spec='Moment' momentName='X'>
-            <factor idref='X'/>
-        </moment>
         
         <output spec='JsonOutput' fileName='out.json'/>
     </run>

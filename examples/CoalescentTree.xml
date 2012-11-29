@@ -1,0 +1,37 @@
+<!-- Generate a coalescent tree from a given number of taxa. -->
+
+<beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
+    <run spec='InheritanceTrajectory'
+         verbosity='2'>
+        
+        <model spec='InheritanceModel'>
+            <population spec='Population' populationName='X' id='X'/>
+            <reaction spec='InheritanceReaction' reactionName='Coalescence' rate="1.0">
+                <reactant spec='Individual' population='@X'>
+                    <child spec='Individual' population='@X' id='child'/>
+                </reactant>
+                <reactant spec='Individual' population='@X'>
+                    <child idref='child'/>
+                </reactant>
+                <product idref='child'/>
+            </reaction>
+        </model>                
+
+        <initialState spec='InitState'>
+            <lineageSeed spec='Individual' population='@X'/>
+            <lineageSeed spec='Individual' population='@X'/>
+            <lineageSeed spec='Individual' population='@X'/>
+            <lineageSeed spec='Individual' population='@X'/>
+            <lineageSeed spec='Individual' population='@X'/>
+            <lineageSeed spec='Individual' population='@X'/>
+            <lineageSeed spec='Individual' population='@X'/>
+            <lineageSeed spec='Individual' population='@X'/>
+            <lineageSeed spec='Individual' population='@X'/>
+            <lineageSeed spec='Individual' population='@X'/>
+        </initialState>
+        
+        <lineageEndCondition spec='LineageEndCondition' nLineages="1"/>
+                
+        <output spec='NexusOutput' fileName='out.tree' reverseTime="true"/>
+    </run>
+</beast>

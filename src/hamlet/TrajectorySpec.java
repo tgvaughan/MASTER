@@ -202,6 +202,16 @@ public class TrajectorySpec {
     }
     
     /**
+     * Retrieve verbosity index.
+     * 
+     * @return verbosity
+     */
+    @JsonIgnore
+    public int getVerbosity() {
+        return verbosity;
+    }
+    
+    /**
      * Retrieve list of population end conditions.
      * 
      * @return population end conditions.

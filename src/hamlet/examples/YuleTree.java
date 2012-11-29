@@ -17,11 +17,11 @@
 package hamlet.examples;
 
 import hamlet.Population;
-import hamlet.inheritance.LineageEndCondition;
 import hamlet.inheritance.InheritanceModel;
 import hamlet.inheritance.InheritanceReaction;
 import hamlet.inheritance.InheritanceTrajectory;
 import hamlet.inheritance.InheritanceTrajectorySpec;
+import hamlet.inheritance.LineageEndCondition;
 import hamlet.inheritance.NexusOutput;
 import hamlet.inheritance.Node;
 import java.io.FileNotFoundException;

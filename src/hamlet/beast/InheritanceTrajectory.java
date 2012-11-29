@@ -18,6 +18,7 @@ package hamlet.beast;
 
 import beast.core.Description;
 import beast.core.Input;
+import beast.core.Input.Validate;
 import beast.core.Runnable;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,11 +64,11 @@ public class InheritanceTrajectory extends Runnable {
     
     // Model:
     public Input<InheritanceModel> modelInput = new Input<InheritanceModel>("model",
-            "The specific model to simulate.");
+            "The specific model to simulate.", Validate.REQUIRED);
     
     // Initial state:
     public Input<InitState> initialStateInput = new Input<InitState>("initialState",
-            "Initial state of system.");
+            "Initial state of system.", Validate.REQUIRED);
     
     // Population end conditions:
     public Input<List<PopulationEndCondition>> popEndConditionsInput = new Input<List<PopulationEndCondition>>(
@@ -113,7 +114,7 @@ public class InheritanceTrajectory extends Runnable {
         
         // Set population size options:
         if (samplePopulationSizesInput.get()) {
-            if (nSamplesInput.get()<2)
+            if (nSamplesInput.get()>=2)
                 spec.setEvenSampling(nSamplesInput.get());
             else
                 spec.setUnevenSampling(sampleAtNodesOnlyInput.get());

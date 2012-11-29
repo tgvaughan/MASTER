@@ -22,7 +22,6 @@ import com.google.common.collect.Maps;
 import hamlet.Population;
 import hamlet.PopulationEndCondition;
 import hamlet.PopulationState;
-import hamlet.ReactionGroup;
 import hamlet.Trajectory;
 import java.util.Collections;
 import java.util.Comparator;
@@ -118,12 +117,24 @@ public class InheritanceTrajectory extends Trajectory {
             if (conditionMet) {
                 if (isRejection) {
                     // Rejection: Abort and start a new simulation
+                    if (spec.getVerbosity()>0)
+                        System.err.println("Rejection end condition met "
+                                + "at time " + t);   
                     initialiseSimulation();
                     continue;
-                } else
+                } else {
                     // Stopping point: Truncate existing simulation
+                    if (spec.getVerbosity()>0)
+                        System.err.println("Truncation end condition met "
+                                + "at time " + t);   
                     break;
-            }            
+                }                
+            }
+            
+            // Report trajectory progress:
+            if (spec.getVerbosity()>1)
+                System.err.println("Simulation arrived at time "
+                        + String.valueOf(t));
 
             // Calculate propensities
             double totalPropensity = 0.0;
@@ -218,9 +229,6 @@ public class InheritanceTrajectory extends Trajectory {
                     sampleState(currentPopState, t);
             }
 
-            // End simulation if there are no active lineages remaining.
-            if (activeLineages.isEmpty())
-                break;
         }
 
         // Fix final time of any remaining active lineages.

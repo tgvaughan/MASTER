@@ -1,0 +1,40 @@
+<!-- Generate an inheritance tree from the stochastic logistic model. -->
+
+<beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
+    <run spec='InheritanceTrajectory'
+         simulationTime="100"
+         samplePopulationSizes="true"
+         verbosity='1'>
+        
+        <model spec='InheritanceModel'>
+            <population spec='Population' populationName='X' id='X'/>
+            <reaction spec='InheritanceReaction' reactionName='Birth' rate="1.0">
+                <reactant spec='Individual' population='@X'>
+                    <child spec='Individual' population='@X' id='child1'/>
+                    <child spec='Individual' population='@X' id='child2'/>
+                </reactant>
+                <product idref='child1'/>
+                <product idref='child2'/>
+            </reaction>
+            <reaction spec='InheritanceReaction' reactionName='Death' rate="0.01">
+                <reactant spec='Individual' population='@X'>
+                    <child spec='Individual' population='@X' id='child'/>
+                </reactant>
+                <reactant spec='Individual' population='@X'/>
+                <product idref='child'/>
+            </reaction>
+        </model>                
+
+        <initialState spec='InitState'>
+            <populationSize spec='PopulationSize' size='9'>
+                <population idref='X'/>
+            </populationSize>
+            <lineageSeed spec='Individual' population='@X'/>
+        </initialState>
+        
+        <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>        
+        
+        <output spec='NexusOutput' fileName='out.tree'/>
+        <output spec='JsonOutput' fileName='out.json'/>
+    </run>
+</beast>

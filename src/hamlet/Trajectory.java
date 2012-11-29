@@ -110,7 +110,7 @@ public class Trajectory {
                 }
                 if (endConditionMet != null) {
                     if (endConditionMet.isRejection()) {
-                        if (spec.verbosity>1)
+                        if (spec.verbosity>0)
                             System.err.println("Rejection end condition met "
                                     + "at time " + t);                        
                         
@@ -120,7 +120,7 @@ public class Trajectory {
                         
                         continue;
                     } else {
-                        if (spec.verbosity>1)
+                        if (spec.verbosity>0)
                             System.err.println("Truncation end condition met "
                                     + "at time " + t);  
                         break;

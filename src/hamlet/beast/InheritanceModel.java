@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-@Description("")
+@Description("Specification of a birth-death model with inheritance relationships.")
 public class InheritanceModel extends Plugin {
     
     public Input<List<PopulationType>> populationTypesInput = new Input<List<PopulationType>>(
@@ -39,15 +39,18 @@ public class InheritanceModel extends Plugin {
             new ArrayList<Population>());
     
     public Input<List<InheritanceReactionGroup>> inheritanceReactionGroupsInput =
-            new Input<List<InheritanceReactionGroup>>("inheritanceReactionGroup",
+            new Input<List<InheritanceReactionGroup>>("reactionGroup",
             "Specifies an inheritance reaction group.",
             new ArrayList<InheritanceReactionGroup>());
     
     public Input<List<InheritanceReaction>> inheritanceReactionsInput = 
-            new Input<List<InheritanceReaction>>("inheritanceReaction",
-            "Specifies an individual inheritance reaction.");
+            new Input<List<InheritanceReaction>>("reaction",
+            "Specifies an individual inheritance reaction.",
+            new ArrayList<InheritanceReaction>());
     
     hamlet.inheritance.InheritanceModel model;
+    
+    public InheritanceModel() { }
     
     @Override
     public void initAndValidate() throws Exception {

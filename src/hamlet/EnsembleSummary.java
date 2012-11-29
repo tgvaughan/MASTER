@@ -81,7 +81,7 @@ public class EnsembleSummary {
                         sidx = -1;
                         
                         // Report if necessary:
-                        if (spec.verbosity>1)
+                        if (spec.verbosity>0)
                             System.err.println("Rejection end condition met"
                                     + " at time " + sampleDt);
                         

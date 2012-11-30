@@ -7,13 +7,7 @@
         <model spec='InheritanceModel'>
             <population spec='Population' populationName='X' id='X'/>
             <reaction spec='InheritanceReaction' reactionName='Coalescence' rate="1.0">
-                <reactant spec='Individual' population='@X'>
-                    <child spec='Individual' population='@X' id='child'/>
-                </reactant>
-                <reactant spec='Individual' population='@X'>
-                    <child idref='child'/>
-                </reactant>
-                <product idref='child'/>
+                2X:1 -> X:1
             </reaction>
         </model>                
 

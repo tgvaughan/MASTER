@@ -9,26 +9,15 @@
         <model spec='InheritanceModel'>
             <population spec='Population' populationName='X' id='X'/>
             <reaction spec='InheritanceReaction' reactionName='Birth' rate="1.0">
-                <reactant spec='Individual' population='@X'>
-                    <child spec='Individual' population='@X' id='child1'/>
-                    <child spec='Individual' population='@X' id='child2'/>
-                </reactant>
-                <product idref='child1'/>
-                <product idref='child2'/>
+                X -> 2X
             </reaction>
             <reaction spec='InheritanceReaction' reactionName='Death' rate="0.01">
-                <reactant spec='Individual' population='@X'>
-                    <child spec='Individual' population='@X' id='child'/>
-                </reactant>
-                <reactant spec='Individual' population='@X'/>
-                <product idref='child'/>
+                2X -> X
             </reaction>
         </model>                
 
         <initialState spec='InitState'>
-            <populationSize spec='PopulationSize' size='9'>
-                <population idref='X'/>
-            </populationSize>
+            <populationSize spec='PopulationSize' population='@X' size='9'/>
             <lineageSeed spec='Individual' population='@X'/>
         </initialState>
         

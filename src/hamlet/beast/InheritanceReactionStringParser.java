@@ -62,9 +62,9 @@ public class InheritanceReactionStringParser {
         doRecursiveDecent();
         
         // Create inheritance relationships:
-        for (int p=0; p<products.size(); p++) {
-            for (int r=0; r<reactants.size(); r++) {
-                if (reactantIDs.get(r)==productIDs.get(p)) {
+        for (int r=0; r<reactants.size(); r++) {
+            for (int p=0; p<products.size(); p++) {
+                if (productIDs.get(p)==reactantIDs.get(r)) {
                     reactants.get(r).addChild(products.get(p));
                 }
             }
@@ -152,6 +152,7 @@ public class InheritanceReactionStringParser {
         reactantIDs = Lists.newArrayList();
         products = Lists.newArrayList();
         productIDs = Lists.newArrayList();
+        nextNodeID = Maps.newHashMap();
         
         for (hamlet.PopulationType popType : popTypes)
             nextNodeID.put(popType, 0);
@@ -278,6 +279,12 @@ public class InheritanceReactionStringParser {
         return loc;
     }
     
+    /**
+     * I -> : int | eps
+     * 
+     * @return
+     * @throws ParseException 
+     */
     private int ruleI() throws ParseException {
         int id;
         if (acceptToken(Token.COLON, false)) {

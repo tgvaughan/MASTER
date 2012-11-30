@@ -339,7 +339,7 @@ public class InheritanceTrajectory extends Trajectory {
                 int idx = Randomizer.nextInt(m);
                 for (Node reactNode :
                         chosenReactionGroup.reactNodes.get(chosenReaction)) {
-                    if (reactNode.population!=node.population
+                    if (!reactNode.population.equals(node.population)
                             || nodesInvolved.containsValue(reactNode))
                         continue;
 
@@ -397,7 +397,7 @@ public class InheritanceTrajectory extends Trajectory {
         for (Node node : nodesInvolved.keySet()) {
             
             if (node.children.size()==1
-                    &&(node.parents.get(0).population==node.children.get(0).population)) {
+                    &&(node.parents.get(0).population.equals(node.children.get(0).population))) {
                 // Node does not represent a state change: delete it
 
                 // Active lineages are nodes having exactloy one parent:

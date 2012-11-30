@@ -21,6 +21,11 @@ public class InitState extends Plugin {
             "lineageSeed",
             "Individual parent of a lineage to follow in an inheritance trajectory.",
             new ArrayList<Individual>());
+    
+    public Input<List<MultipleIndividuals>> multipleLineageSeedsInput = new Input<List<MultipleIndividuals>>(
+            "lineageSeedMultiple",
+            "Specify multiple identical lineage seeds.",
+            new ArrayList<MultipleIndividuals>());
 
     List<hamlet.inheritance.Node> initNodes;
     
@@ -31,5 +36,8 @@ public class InitState extends Plugin {
         initNodes = new ArrayList<hamlet.inheritance.Node>();
         for (Individual individual : lineageSeedsInput.get())
             initNodes.add(individual.node);
+        
+        for (MultipleIndividuals multi : multipleLineageSeedsInput.get())
+            initNodes.addAll(multi.nodes);            
     }
 }

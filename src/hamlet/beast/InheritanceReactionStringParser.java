@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * A parser for strings specifying individual inheritance reactions.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */

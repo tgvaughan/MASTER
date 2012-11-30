@@ -15,16 +15,7 @@
         </model>                
 
         <initialState spec='InitState'>
-            <lineageSeed spec='Individual' population='@X'/>
-            <lineageSeed spec='Individual' population='@X'/>
-            <lineageSeed spec='Individual' population='@X'/>
-            <lineageSeed spec='Individual' population='@X'/>
-            <lineageSeed spec='Individual' population='@X'/>
-            <lineageSeed spec='Individual' population='@X'/>
-            <lineageSeed spec='Individual' population='@X'/>
-            <lineageSeed spec='Individual' population='@X'/>
-            <lineageSeed spec='Individual' population='@X'/>
-            <lineageSeed spec='Individual' population='@X'/>
+            <lineageSeedMultiple spec='MultipleIndividuals' population='@X' copies="20"/>
         </initialState>
         
         <lineageEndCondition spec='LineageEndCondition' nLineages="1"/>

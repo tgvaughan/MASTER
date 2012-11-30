@@ -30,28 +30,41 @@ import java.util.regex.Pattern;
  */
 public class InheritanceReactionStringParser {
     
+    // Outputs of the parser.  The `node ID' lists are used to
+    // assign inheritance relationships.
     private List<hamlet.inheritance.Node> reactants, products;
     private List<Integer> reactantIDs, productIDs;
     
     private String string;
-    private List<hamlet.PopulationType> popTypes;
     private Map<String, hamlet.PopulationType> popTypeMap;
-        
+    
+    // Available tokens:
     private enum Token {
         SPACE, INT, LABEL, STARTLOC, ENDLOC, COMMA, COLON, PLUS, ARROW, END;
     }
     
+    // Lists of tokens and values appearing in string:
     private List<Token> tokenList;
     private List<String> valueList;
     
-    private int parseIdx;
+    // This parser abuses fields by treating them as global variables:
+    private int parseIdx;    
+    private int nextNodeID;
+    Map<hamlet.PopulationType,Integer> seenTypeIDs;
     
-    private Map<hamlet.PopulationType, Integer> nextNodeID;
-    
+    /**
+     * Assemble lists of reactant and product nodes by parsing a
+     * (hopefully) human-readable string.
+     * 
+     * @param string String to parse
+     * @param popTypes List of population types. Needed to interpret population
+     * labels occuring in string.
+     * 
+     * @throws ParseException Tries to be a tiny bit informative when things go wrong.
+     */
     public InheritanceReactionStringParser(String string, List<hamlet.PopulationType> popTypes) throws ParseException {
        
         this.string = string.trim();        
-        this.popTypes = popTypes;
         
         // Construct map from pop type names to pop type objects.
         popTypeMap = Maps.newHashMap();
@@ -152,31 +165,26 @@ public class InheritanceReactionStringParser {
         reactantIDs = Lists.newArrayList();
         products = Lists.newArrayList();
         productIDs = Lists.newArrayList();
-        nextNodeID = Maps.newHashMap();
         
-        for (hamlet.PopulationType popType : popTypes)
-            nextNodeID.put(popType, 0);
-                
-        ruleS(reactants, reactantIDs);
+        nextNodeID = 0;
+        seenTypeIDs = Maps.newHashMap();
+        
+        ruleS(true);
         acceptToken(Token.ARROW, true);
         
-        for (hamlet.PopulationType popType : popTypes)
-            nextNodeID.put(popType, 0);
-        
-        ruleS(products, productIDs);
+        ruleS(false);
         acceptToken(Token.END, true);
     }
     
     /**
      * S -> zero | PQ
      * 
-     * @param poplist
-     * @param idlist
+     * @param processingReactants 
      * @throws ParseException 
      */
-    private void ruleS(List<hamlet.inheritance.Node> nodelist, List<Integer> idlist) throws ParseException {
+    private void ruleS(boolean processingReactants) throws ParseException {
         
-        // Deal special case of "0":
+        // Deal special case of "0"
         if (acceptToken(Token.INT, false)) {
             if (valueList.get(parseIdx-1).equals("0"))
                 return;
@@ -186,52 +194,71 @@ public class InheritanceReactionStringParser {
             }
         }
 
-        ruleP(nodelist, idlist);
-        ruleQ(nodelist, idlist);
+        ruleP(processingReactants);
+        ruleQ(processingReactants);
     }    
     
     /**
      * Q -> plus PQ | eps
      * 
-     * @param nodelist
-     * @param idlist 
+     * @param processingReactants 
      * @throws ParseException 
      */
-    private void ruleQ(List<hamlet.inheritance.Node> nodelist, List<Integer> idlist) throws ParseException {
+    private void ruleQ(boolean processingReactants) throws ParseException {
         if (acceptToken(Token.PLUS, false)) {
-            ruleP(nodelist, idlist);
-            ruleQ(nodelist, idlist);
+            ruleP(processingReactants);
+            ruleQ(processingReactants);
         }
         // else accept epsilon
     }
     
     /**
      * P -> FLDI
-     * @param nodelist
-     * @param idlist 
+     * 
+     * @param processingReactants 
      * @throws ParseException 
      */
-    private void ruleP(List<hamlet.inheritance.Node> nodelist, List<Integer> idlist) throws ParseException {
+    private void ruleP(boolean processingReactants) throws ParseException {
         int factor = ruleF();
         String popName = ruleL();
         int[] loc = ruleD();
-        int id = ruleI();
+        int chosenid = ruleI();
         
         hamlet.Population pop = new hamlet.Population(popTypeMap.get(popName), loc);
-        for (int i=0; i<factor; i++)
-            nodelist.add(new hamlet.inheritance.Node(pop));
-        
-        if (id<0) {
-            id = nextNodeID.get(pop.getType());
-            for (int i=0; i<factor; i++) {
-                idlist.add(id);
-                id += 1;
-            }
-        } else {
-            for (int i=0; i<factor; i++)
-                idlist.add(id);
+        for (int i=0; i<factor; i++) {
+            if (processingReactants)
+                reactants.add(new hamlet.inheritance.Node(pop));
+            else
+                products.add(new hamlet.inheritance.Node(pop));
         }
-        nextNodeID.put(pop.getType(), id);
+        
+        // Automatic assignment of inheritance relationships.
+        // This default behaviour is to make the first reactant node of a given
+        // type the parent of all product nodes of the same type.
+        int id;
+        
+        for (int i=0; i<factor; i++) {
+            if (chosenid<0) {
+                if (processingReactants) {
+                    id = nextNodeID++;
+                    if (!seenTypeIDs.containsKey(pop.getType()))
+                        seenTypeIDs.put(pop.getType(), id);
+                } else {
+                    if (seenTypeIDs.containsKey(pop.getType()))
+                        id = seenTypeIDs.get(pop.getType());
+                    else
+                        id = nextNodeID++;
+                }
+            } else {
+                id = chosenid;
+            }
+        
+            if (processingReactants)
+                reactantIDs.add(id);
+            else
+                productIDs.add(id);
+        }
+        
     }
     
     /**

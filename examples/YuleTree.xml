@@ -8,7 +8,7 @@
         <model spec='InheritanceModel'>
             <population spec='Population' populationName='X' id='X'/>
             <reaction spec='InheritanceReaction' reactionName='Speciation' rate="1.0">
-                X:1 -> 2X:1
+                X -> 2X
             </reaction>
         </model>
 

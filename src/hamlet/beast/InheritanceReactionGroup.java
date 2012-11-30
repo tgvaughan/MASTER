@@ -45,7 +45,9 @@ public class InheritanceReactionGroup extends Plugin {
     public InheritanceReactionGroup() { };
     
     @Override
-    public void initAndValidate() {
+    public void initAndValidate() { };
+    
+    public void postProcessing(List<hamlet.PopulationType> popTypes) {
         
         if (nameInput.get()==null)
             inheritanceReactionGroup = new hamlet.inheritance.InheritanceReactionGroup();
@@ -55,14 +57,15 @@ public class InheritanceReactionGroup extends Plugin {
         // Add reactions to reaction group:
         for (InheritanceReaction react : reactionsInput.get()) {
             
-            inheritanceReactionGroup.addInheritanceReactantSchema(react.reactants);
-            inheritanceReactionGroup.addInheritanceProductSchema(react.products);
+            react.parseStrings(popTypes);
+            inheritanceReactionGroup.addInheritanceReactantSchema(react.getReactants());
+            inheritanceReactionGroup.addInheritanceProductSchema(react.getProducts());
             
             if (rateInput.get() != null)
                 inheritanceReactionGroup.addRate(rateInput.get());
             else {
-                if (react.rate>=0)
-                    inheritanceReactionGroup.addRate(react.rate);
+                if (react.getRate()>=0)
+                    inheritanceReactionGroup.addRate(react.getRate());
                 else
                     throw new RuntimeException("Neither reaction group nor reaction specify reaction rate.");
             }

@@ -61,7 +61,7 @@ public class Model extends Plugin {
 
             hamlet.Reaction reaction;
             if (react.getName()!=null)
-                reaction = new hamlet.Reaction(react.nameInput.get());
+                reaction = new hamlet.Reaction(react.getName());
             else
                 reaction = new hamlet.Reaction();
 

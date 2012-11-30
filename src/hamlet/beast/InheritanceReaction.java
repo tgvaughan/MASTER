@@ -19,8 +19,11 @@ package hamlet.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Plugin;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -44,24 +47,19 @@ public class InheritanceReaction extends Plugin {
             "Product individuals. (Times are ignored.)",
             new ArrayList<Individual>());
     
-    hamlet.inheritance.Node [] reactants, products;
-    double rate;
-    String name;
+    public Input<String> reactionStringInput = new Input<String>(
+            "value",
+            "Alternative string description of reaction. (Overrides reactant and product elements.)");
+    
+    private hamlet.inheritance.Node [] reactants, products;
+    private double rate;
+    private String name;
 
     public InheritanceReaction() { }
     
     @Override
     public void initAndValidate() {
-        int nReactants = reactantsInput.get().size();
-        reactants = new hamlet.inheritance.Node[nReactants];
-        for (int i=0; i<nReactants; i++)
-            reactants[i] = reactantsInput.get().get(i).node;
-            
-        int nProducts = productsInput.get().size();
-        products = new hamlet.inheritance.Node[nProducts];
-        for (int i=0; i<nProducts; i++)
-            products[i] = productsInput.get().get(i).node;
-            
+                    
         if (rateInput.get() != null)
             rate = rateInput.get();
         else
@@ -71,5 +69,46 @@ public class InheritanceReaction extends Plugin {
             name = nameInput.get();
         else
             name = null;
+        
+        if (reactionStringInput.get() == null) {
+            int nReactants = reactantsInput.get().size();
+            reactants = new hamlet.inheritance.Node[nReactants];
+            for (int i=0; i<nReactants; i++)
+                reactants[i] = reactantsInput.get().get(i).node;
+            
+            int nProducts = productsInput.get().size();
+            products = new hamlet.inheritance.Node[nProducts];
+            for (int i=0; i<nProducts; i++)
+                products[i] = productsInput.get().get(i).node;
+        }
+    }
+    
+    public void parseStrings(List<hamlet.PopulationType> popTypes) {
+        if (reactionStringInput.get() != null) {
+            try {
+                InheritanceReactionStringParser parser =
+                        new InheritanceReactionStringParser(reactionStringInput.get(), popTypes);
+                reactants = parser.getReactants();
+                products = parser.getProducts();
+            } catch (ParseException ex) {
+                Logger.getLogger(InheritanceReaction.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    public hamlet.inheritance.Node[] getReactants() {
+        return reactants;
+    }
+    
+    public hamlet.inheritance.Node[] getProducts() {
+        return products;
+    }
+        
+    public double getRate() {
+        return rate;
+    }
+    
+    public String getName() {
+        return name;
     }
 }

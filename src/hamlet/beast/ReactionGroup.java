@@ -42,9 +42,7 @@ public class ReactionGroup extends Plugin {
     public ReactionGroup() { };
     
     @Override
-    public void initAndValidate() throws Exception {
-        
-    }
+    public void initAndValidate() { };
         
     public void postProcessing(List<hamlet.PopulationType> popTypes) {
         

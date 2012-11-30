@@ -37,7 +37,7 @@ public class ReactionStringParser {
     private Map<String, hamlet.PopulationType> popTypeMap;
         
     private enum Token {
-        SPACE, ZERO, INT, POPLABEL, STARTLOC, ENDLOC, COMMA, PLUS, ARROW, END;
+        SPACE, INT, POPLABEL, STARTLOC, ENDLOC, COMMA, PLUS, ARROW, END;
     }
     
     private List<Token> tokenList;
@@ -71,8 +71,7 @@ public class ReactionStringParser {
         Map<Token, Pattern> tokenPatterns = Maps.newHashMap();
                
         tokenPatterns.put(Token.SPACE, Pattern.compile("\\s+"));
-        tokenPatterns.put(Token.ZERO, Pattern.compile("0"));
-        tokenPatterns.put(Token.INT, Pattern.compile("[1-9]\\d*"));
+        tokenPatterns.put(Token.INT, Pattern.compile("\\d+"));
         tokenPatterns.put(Token.POPLABEL, Pattern.compile("[a-zA-Z_]\\w*"));
         tokenPatterns.put(Token.STARTLOC, Pattern.compile("\\["));
         tokenPatterns.put(Token.ENDLOC, Pattern.compile("\\]"));
@@ -152,8 +151,15 @@ public class ReactionStringParser {
      */
     private void ruleS(List<hamlet.Population> poplist) throws ParseException {
         
-        if (acceptToken(Token.ZERO, false))
-            return;
+        // Deal special case of "0":
+        if (acceptToken(Token.INT, false)) {
+            if (valueList.get(idx-1).equals("0"))
+                return;
+            else {
+                //backtrack
+                idx -= 1;
+            }
+        }
 
         ruleP(poplist);
         ruleQ(poplist);
@@ -222,6 +228,7 @@ public class ReactionStringParser {
             acceptToken(Token.INT, true);
             locList.add(Integer.parseInt(valueList.get(idx-1)));
             ruleM(locList);
+            acceptToken(Token.ENDLOC, true);
         }
         
         int [] loc = new int[locList.size()];

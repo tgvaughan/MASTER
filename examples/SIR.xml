@@ -16,15 +16,11 @@
             <population spec='Population' id='R' populationName='R'/>
 
             <reaction spec='Reaction' reactionName="Infection" rate="0.001">
-                <reactant idref='S'/>
-                <reactant idref='I'/>
-                <product idref='I'/>
-                <product idref='I'/>
+                S + I -> 2I
             </reaction>
 
             <reaction spec='Reaction' reactionName="Recovery" rate="0.5">
-                <reactant idref='I'/>
-                <product idref='R'/>
+                I -> R
             </reaction>
         </model>
 

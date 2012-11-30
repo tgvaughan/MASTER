@@ -18,21 +18,17 @@
 
             <!-- birth reaction -->
             <reaction spec='Reaction' reactionName="Birth" rate="1">
-                <reactant idref='I'/>
-                <product idref='I'/>
-                <product idref='I'/>
+                I -> 2I
             </reaction>
             
             <!-- recovery reaction -->
             <reaction spec='Reaction' reactionName="Recovery" rate="0.25">
-                <reactant idref='I'/>
-                <product idref='R'/>
+                I -> R
             </reaction>
             
             <!-- sampling reaction -->
             <reaction spec='Reaction' reactionName="Sampling" rate="0.25">
-                <reactant idref='I'/>
-                <product idref='I_sample'/>
+                I -> I_sample
             </reaction>
         </model>
 

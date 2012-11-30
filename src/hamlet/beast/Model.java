@@ -41,7 +41,7 @@ public class Model extends Plugin {
     public void initAndValidate() throws Exception {
 
         model = new hamlet.Model();
-
+        
         // Add population types to model:
         for (PopulationType popType : populationTypesInput.get())
             model.addPopulationType(popType.popType);
@@ -51,23 +51,26 @@ public class Model extends Plugin {
             model.addPopulation(pop.pop);
 
         // Add reaction groups to model:
-        for (ReactionGroup reactGroup : reactionGroupsInput.get())
+        for (ReactionGroup reactGroup : reactionGroupsInput.get()) {
+            reactGroup.postProcessing(model.getPopulationTypes());
             model.addReactionGroup(reactGroup.reactionGroup);
+        }
 
         // Add individual reactions to model:
         for (Reaction react : reactionsInput.get()) {
 
             hamlet.Reaction reaction;
-            if (react.name!=null)
+            if (react.getName()!=null)
                 reaction = new hamlet.Reaction(react.nameInput.get());
             else
                 reaction = new hamlet.Reaction();
 
-            reaction.setReactantSchema(react.reactants);
-            reaction.setProductSchema(react.products);
+            react.parseStrings(model.getPopulationTypes());
+            reaction.setReactantSchema(react.getReactants());
+            reaction.setProductSchema(react.getProducts());
 
-            if (react.rate>=0)
-                reaction.addRate(react.rate);
+            if (react.getRate()>=0)
+                reaction.addRate(react.getRate());
             else
                 throw new RuntimeException("Reaction does not specify reaction rate.");
             

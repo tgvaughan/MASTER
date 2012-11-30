@@ -191,7 +191,7 @@ public class InheritanceTrajectory extends Trajectory {
             if (simulationTimeExceeded)
                 break;
 
-            // Choose reactionGroup to implement
+            // Choose reactionto implement
             double u = Randomizer.nextDouble()*totalPropensity;
             boolean found = false;
             InheritanceReactionGroup chosenReactionGroup = null;
@@ -212,7 +212,7 @@ public class InheritanceTrajectory extends Trajectory {
                     break;
             }
 
-            // Select lineages involved in chosen reactionGroup:
+            // Select lineages involved in chosen reaction:
             Map<Node, Node> nodesInvolved = selectLineagesInvolved(activeLineages,
                 currentPopState, chosenReactionGroup, chosenReaction);
             
@@ -220,7 +220,7 @@ public class InheritanceTrajectory extends Trajectory {
             implementInheritanceReaction(activeLineages, nodesInvolved,
                     chosenReactionGroup, t);
 
-            // Implement state change due to reactionGroup:
+            // Implement state change due to reaction:
             currentPopState.implementReaction(chosenReactionGroup, chosenReaction, 1);
                          
             // Sample population sizes (unevenly) if necessary:
@@ -300,13 +300,13 @@ public class InheritanceTrajectory extends Trajectory {
 
     
     /**
-     * Select lineages involved in reactionGroup.  This is done by sampling
+     * Select lineages involved in reaction.  This is done by sampling
      * without replacement from the individuals present in the current state.
      * 
      * @param activeLineages list of active lineages
      * @param currentPopState current state of population sizes
-     * @param chosenReactionGroup reactionGroup group selected
-     * @param chosenReaction integer index into reactionGroup group specifying reactionGroup
+     * @param chosenReactionGroup reaction group selected
+     * @param chosenReaction integer index into reaction group specifying reactionGroup
      * @return Map from nodes involved to the corresponding reactant nodes.
      */
     private Map<Node,Node> selectLineagesInvolved(
@@ -321,7 +321,7 @@ public class InheritanceTrajectory extends Trajectory {
                     .get(chosenReaction).containsKey(node.population))
                 continue;
 
-            // Calculate probability that lineage is involved in reactionGroup:
+            // Calculate probability that lineage is involved in reaction:
             int m = chosenReactionGroup.reactCounts
                     .get(chosenReaction).get(node.population);
             double N = currentState.get(node.population);

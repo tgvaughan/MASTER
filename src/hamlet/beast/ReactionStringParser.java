@@ -35,15 +35,19 @@ public class ReactionStringParser {
     
     private String string;
     private Map<String, hamlet.PopulationType> popTypeMap;
+        
+    private enum Token {
+        SPACE, ZERO, INT, POPLABEL, STARTLOC, ENDLOC, COMMA, PLUS, ARROW, END;
+    }
     
-    private List<String> tokenList;
+    private List<Token> tokenList;
     private List<String> valueList;
     
     private int idx;
     
     public ReactionStringParser(String string, List<hamlet.PopulationType> popTypes) throws ParseException {
        
-        this.string = string;
+        this.string = string.trim();
         
         // Construct map from pop type names to pop type objects.
         popTypeMap = Maps.newHashMap();
@@ -55,48 +59,27 @@ public class ReactionStringParser {
     }    
     
     public hamlet.Population[] getReactants() {
-        return (hamlet.Population[])reactants.toArray();
+        return reactants.toArray(new hamlet.Population[0]);
     }
     
     public hamlet.Population[] getProducts() {
-        return (hamlet.Population[])products.toArray();
+        return products.toArray(new hamlet.Population[0]);
     }
-        
+    
     private void doLex() throws ParseException {
         
-        List<String> tokens = Lists.newArrayList();
-        List<Pattern> tokenPatterns = Lists.newArrayList();
+        Map<Token, Pattern> tokenPatterns = Maps.newHashMap();
                
-        tokens.add("SPACE");
-        tokenPatterns.add(Pattern.compile("\\s+"));
-        
-        tokens.add("ZERO");
-        tokenPatterns.add(Pattern.compile("0"));
-        
-        tokens.add("INT");
-        tokenPatterns.add(Pattern.compile("[1-9]\\d+"));
-        
-        tokens.add("POP");
-        tokenPatterns.add(Pattern.compile("[a-zA-Z_]\\w*"));
-        
-        tokens.add("STARTLOC");
-        tokenPatterns.add(Pattern.compile("\\["));
-        
-        tokens.add("COMMA");
-        tokenPatterns.add(Pattern.compile(","));
-        
-        tokens.add("ENDLOC");
-        tokenPatterns.add(Pattern.compile("\\]"));
-        
-        tokens.add("PLUS");
-        tokenPatterns.add(Pattern.compile("\\+"));
-        
-        tokens.add("ARROW");
-        tokenPatterns.add(Pattern.compile("->"));
+        tokenPatterns.put(Token.SPACE, Pattern.compile("\\s+"));
+        tokenPatterns.put(Token.ZERO, Pattern.compile("0"));
+        tokenPatterns.put(Token.INT, Pattern.compile("[1-9]\\d*"));
+        tokenPatterns.put(Token.POPLABEL, Pattern.compile("[a-zA-Z_]\\w*"));
+        tokenPatterns.put(Token.STARTLOC, Pattern.compile("\\["));
+        tokenPatterns.put(Token.ENDLOC, Pattern.compile("\\]"));
+        tokenPatterns.put(Token.COMMA, Pattern.compile(","));        
+        tokenPatterns.put(Token.PLUS, Pattern.compile("\\+"));
+        tokenPatterns.put(Token.ARROW, Pattern.compile("->"));
                 
-        List <Population> reactantList = Lists.newArrayList();
-        List <Population> productList = Lists.newArrayList();
-
         tokenList = Lists.newArrayList();
         valueList = Lists.newArrayList();
                 
@@ -106,38 +89,44 @@ public class ReactionStringParser {
         while (idx<string.length()) {
             
             boolean matched = false;
-            for (int tidx=0; tidx<tokens.size(); tidx++) {
-                Matcher matcher = tokenPatterns.get(tidx).matcher(string.substring(idx));
+            for (Token token : tokenPatterns.keySet()) {
+                Matcher matcher = tokenPatterns.get(token).matcher(string.substring(idx));
                 if (matcher.find() && matcher.start()==0) {
                     idx += matcher.group().length();
                     matched = true;
                     
                     // Discard whitespace:
-                    if (tokens.get(tidx).equals("SPACE"))
+                    if (token == Token.SPACE)
                         break;
                     
-                    tokenList.add(tokens.get(tidx));
+                    tokenList.add(token);
                     valueList.add(matcher.group());
                     
-                    System.out.println(tokens.get(tidx) + ": " + matcher.group());                    
+                    //System.out.println(token + ": " + matcher.group());  
+                    break;
                 }
             }
             
             if (!matched) {
-                throw new ParseException("Error reading reaction string.", idx);
+                throw new ParseException("Error reading reaction string:"
+                        + " couldn't match '" + string.substring(idx) + "'", idx);
             }
         }
+        
+        // Add dummy end token to specify end of input:
+        tokenList.add(Token.END);
+        valueList.add("");
     }
     
-    private boolean acceptToken(String tokenStr, boolean manditory) throws ParseException {
-        if (tokenList.get(idx).equals(tokenStr)) {
+    private boolean acceptToken(Token token, boolean manditory) throws ParseException {
+        if (tokenList.get(idx).equals(token)) {
             idx += 1;
             return true;
         } else {
             if (manditory)
                 throw new ParseException(
                         "Error parsing token " + valueList.get(idx)
-                        + " (expected " + tokenStr + ")", idx);
+                        + " (expected " + token + ")", idx);
         }
             return false;
     }
@@ -150,8 +139,9 @@ public class ReactionStringParser {
         products = Lists.newArrayList();
                 
         ruleS(reactants);
-        acceptToken("ARROW", true);
+        acceptToken(Token.ARROW, true);
         ruleS(products);
+        acceptToken(Token.END, true);
     }
     
     /**
@@ -162,7 +152,7 @@ public class ReactionStringParser {
      */
     private void ruleS(List<hamlet.Population> poplist) throws ParseException {
         
-        if (acceptToken("ZERO", false))
+        if (acceptToken(Token.ZERO, false))
             return;
 
         ruleP(poplist);
@@ -176,7 +166,7 @@ public class ReactionStringParser {
      * @throws ParseException 
      */
     private void ruleQ(List<hamlet.Population> poplist) throws ParseException {
-        if (acceptToken("PLUS", false)) {
+        if (acceptToken(Token.PLUS, false)) {
             ruleP(poplist);
             ruleQ(poplist);
         }
@@ -204,7 +194,7 @@ public class ReactionStringParser {
      * @throws ParseException 
      */
     private int ruleF() throws ParseException {
-        if (acceptToken("INT", false))
+        if (acceptToken(Token.INT, false))
             return Integer.parseInt(valueList.get(idx-1));
         else
             return 1;
@@ -216,7 +206,7 @@ public class ReactionStringParser {
      * @throws ParseException 
      */
     private String ruleL() throws ParseException {
-        acceptToken("POP", true);
+        acceptToken(Token.POPLABEL, true);
         return valueList.get(idx-1);
     }
     
@@ -228,8 +218,8 @@ public class ReactionStringParser {
      */
     private int[] ruleD() throws ParseException {
         List<Integer> locList = Lists.newArrayList();
-        if (acceptToken("STARTLOC", false)) {
-            acceptToken("INT", true);
+        if (acceptToken(Token.STARTLOC, false)) {
+            acceptToken(Token.INT, true);
             locList.add(Integer.parseInt(valueList.get(idx-1)));
             ruleM(locList);
         }
@@ -248,8 +238,8 @@ public class ReactionStringParser {
      * @throws ParseException 
      */
     private void ruleM(List<Integer> locList) throws ParseException {
-        if (acceptToken("COMMA", false)) {
-            acceptToken("INT", true);
+        if (acceptToken(Token.COMMA, false)) {
+            acceptToken(Token.INT, true);
             locList.add(Integer.parseInt(valueList.get(idx-1)));
             ruleM(locList);
         }

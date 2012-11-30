@@ -16,9 +16,6 @@
  */
 package hamlet;
 
-import com.google.common.collect.Maps;
-import java.util.Map;
-
 /**
  * Specifies a particular population/deme of a given type.
  *

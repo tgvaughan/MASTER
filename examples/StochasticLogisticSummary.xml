@@ -14,14 +14,10 @@
         <model spec='Model' id='model'>
             <population spec='Population' populationName="X" id='X'/>
             <reaction spec='Reaction' reactionName="Birth" rate="1.0">
-                <reactant idref='X'/>
-                <product idref='X'/>
-                <product idref='X'/>
+                X -> 2X
             </reaction>
             <reaction spec='Reaction' reactionName="Death" rate="0.01">
-                <reactant idref='X'/>
-                <reactant idref='X'/>
-                <product idref='X'/>
+                2X -> X
             </reaction>
         </model>
 

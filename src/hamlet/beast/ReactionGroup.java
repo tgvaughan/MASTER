@@ -41,9 +41,13 @@ public class ReactionGroup extends Plugin {
 
     public ReactionGroup() { };
     
-	@Override
+    @Override
     public void initAndValidate() throws Exception {
-
+        
+    }
+        
+    public void postProcessing(List<hamlet.PopulationType> popTypes) {
+        
         if (nameInput.get()==null)
             reactionGroup = new hamlet.ReactionGroup();
         else
@@ -52,14 +56,15 @@ public class ReactionGroup extends Plugin {
         // Add reactions to reaction group:
         for (Reaction react : reactionsInput.get()) {
             
-            reactionGroup.addReactantSchema(react.reactants);
-            reactionGroup.addProductSchema(react.products);
+            react.parseStrings(popTypes);
+            reactionGroup.addReactantSchema(react.getReactants());
+            reactionGroup.addProductSchema(react.getProducts());
             
             if (rateInput.get() != null)
                 reactionGroup.addRate(rateInput.get());
             else {
-                if (react.rate>=0)
-                    reactionGroup.addRate(react.rate);
+                if (react.getRate()>=0)
+                    reactionGroup.addRate(react.getRate());
                 else
                     throw new RuntimeException("Neither reaction group nor reaction specify reaction rate.");
             }

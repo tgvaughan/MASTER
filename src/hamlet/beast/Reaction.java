@@ -19,8 +19,15 @@ package hamlet.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Plugin;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -44,25 +51,21 @@ public class Reaction extends Plugin {
             "Individual product populations.",
             new ArrayList<Population>());
     
+    public Input<String> reactionStringInput = new Input<String>(
+            "value",
+            "Alternative string description of reaction. (Overrides reactant and product elements.)");
+    
     // Reactant and product schemata
-    hamlet.Population [] reactants, products;
-    double rate;
-    String name;
+    private hamlet.Population [] reactants, products;
+    private double rate;
+    private String name;
     
     public Reaction() { };
     
     @Override
-    public void initAndValidate() {
-        int nReactants = reactantsInput.get().size();
-        reactants = new hamlet.Population[nReactants];
-        for (int i=0; i<nReactants; i++)
-            reactants[i] = reactantsInput.get().get(i).pop;
-            
-        int nProducts = productsInput.get().size();
-        products = new hamlet.Population[nProducts];
-        for (int i=0; i<nProducts; i++)
-            products[i] = productsInput.get().get(i).pop;       
-            
+    public void initAndValidate() throws ParseException {
+ 
+                    
         if (rateInput.get() != null)
             rate = rateInput.get();
         else
@@ -72,6 +75,47 @@ public class Reaction extends Plugin {
             name = nameInput.get();
         else
             name = null;
+        
+        if (reactionStringInput.get() == null) {
+            int nReactants = reactantsInput.get().size();
+            reactants = new hamlet.Population[nReactants];
+            for (int i=0; i<nReactants; i++)
+                reactants[i] = reactantsInput.get().get(i).pop;
+            
+            int nProducts = productsInput.get().size();
+            products = new hamlet.Population[nProducts];
+            for (int i=0; i<nProducts; i++)
+                products[i] = productsInput.get().get(i).pop;
+        }
+
+    }
+    
+    public void parseStrings(List<hamlet.PopulationType> popTypes) {
+        if (reactionStringInput.get() != null) {
+            try {
+                ReactionStringParser parser = new ReactionStringParser(
+                        reactionStringInput.get(), popTypes);
+                reactants = parser.getReactants();
+                products = parser.getProducts();
+            } catch (ParseException ex) {
+                Logger.getLogger(Reaction.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public hamlet.Population[] getReactants() {
+        return reactants;
+    };
+    public hamlet.Population[] getProducts() {
+        return products;
+    }
+    
+    public double getRate() {
+        return rate;
+    }
+    
+    public String getName() {
+        return name;
     }
     
 }

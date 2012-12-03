@@ -22,9 +22,7 @@
         </model>
 
         <initialState spec='InitState'>
-            <populationSize spec='PopulationSize' size='1'>
-                <population idref='X'/>
-            </populationSize>
+            <populationSize spec='PopulationSize' population='@X' size='1'/>
         </initialState>
 
         <moment spec='Moment' momentName='X'>

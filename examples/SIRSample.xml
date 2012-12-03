@@ -33,18 +33,10 @@
         </model>
 
         <initialState spec='InitState'>
-            <populationSize spec='PopulationSize' size='999'>
-                <population idref='S'/>
-            </populationSize>
-            <populationSize spec='PopulationSize' size='1'>
-                <population idref='I'/>
-            </populationSize>
-            <populationSize spec='PopulationSize' size='0'>
-                <population idref='I_sample'/>
-            </populationSize>
-            <populationSize spec='PopulationSize' size='0'>
-                <population idref='R'/>
-            </populationSize>
+            <populationSize spec='PopulationSize' population='@S' size='999'/>
+            <populationSize spec='PopulationSize' population='@I' size='1'/>
+            <populationSize spec='PopulationSize' population='@I_sample' size='0'/>
+            <populationSize spec='PopulationSize' population='@R' size='0'/>
         </initialState>
 
         <moment spec='Moment' momentName='S'>

@@ -24,11 +24,9 @@ import beast.evolution.alignment.Alignment;
 import beast.evolution.tree.Tree;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  *
@@ -142,6 +140,13 @@ public class HamletTree extends Tree implements StateNodeInitialiser {
         initStateNodes();        
     }
     
+    /**
+     * Use inheritance trajectory to assemble BEAST tree.
+     * 
+     * @param itraj inheritance trajectory object
+     * @throws Exception when inheritance graph is not tree-like in preferred
+     * time direction.
+     */
     private void assembleTree(hamlet.inheritance.InheritanceTrajectory itraj) throws Exception {
 
         boolean reverseTime = reverseTimeInput.get();
@@ -236,6 +241,8 @@ public class HamletTree extends Tree implements StateNodeInitialiser {
      * 
      * @param hamletNode
      * @param beastNode 
+     * @param timeOffset 
+     * @param leafLabels 
      * @return 
      */
     private void assembleSubtree(hamlet.inheritance.Node hamletNode,
@@ -271,7 +278,14 @@ public class HamletTree extends Tree implements StateNodeInitialiser {
 
     }
     
-    
+    /**
+     *  Assign integer node numbers to BEAST tree nodes.  If an alignment
+     * is supplied, leaf node numbers are selected so that the Hamlet node
+     * labels match the taxon names.  An exception is thrown if no such
+     * taxon exists.
+     * 
+     * @param beastRoot Root of BEAST tree.
+     */
     public void initNodeNumbers(beast.evolution.tree.Node beastRoot) {
         
         List<beast.evolution.tree.Node> leaves = getBeastLeaves(beastRoot);

@@ -39,7 +39,8 @@ public class NewickOutput {
     
     StringBuilder newickStr;
     Set<Node> rootNodes, leafNodes;
-    Map<Node, Integer> leafLabels, hybridLabels;
+    Map<Node, String> leafLabels;
+    Map<Node, Integer> hybridIDs;
     
     
     /**
@@ -55,7 +56,7 @@ public class NewickOutput {
         this.reverseTime = reverseTime;
         
         leafLabels = Maps.newHashMap();
-        hybridLabels = Maps.newHashMap();
+        hybridIDs = Maps.newHashMap();
         
         // Identify root and leaf nodes
         if (reverseTime) {
@@ -66,20 +67,24 @@ public class NewickOutput {
             leafNodes = findEndNodes(graph);
         }
         
-        // Assign a unique integer label to each leaf node:
+        // Assign a unique integer label to each unnamed leaf node:
         leafLabels = Maps.newHashMap();
         int label = 1;
-        for (Node leaf : leafNodes)
-            leafLabels.put(leaf, label++);
+        for (Node leaf : leafNodes) {
+            if (leaf.getName() == null)
+                leafLabels.put(leaf, String.valueOf(label++));
+            else
+                leafLabels.put(leaf, leaf.getName());
+        }
         
         // Identify hybrid nodes:
         Set<Node> hybridNodes = findHybridNodes(rootNodes, reverseTime);
         
         // Assign a unique integer label to each hybrid node:
-        hybridLabels = Maps.newHashMap();
+        hybridIDs = Maps.newHashMap();
         label = 1;
         for (Node hybrid : hybridNodes)
-            hybridLabels.put(hybrid, label++);
+            hybridIDs.put(hybrid, label++);
         
         Set<Node> visitedHybrids = Sets.newHashSet();        
         newickStr = new StringBuilder();
@@ -160,8 +165,8 @@ public class NewickOutput {
         if (leafLabels.containsKey(node))
             newickStr.append(leafLabels.get(node));
         
-        if (hybridLabels.containsKey(node))
-            newickStr.append("#H").append(hybridLabels.get(node));
+        if (hybridIDs.containsKey(node))
+            newickStr.append("#H").append(hybridIDs.get(node));
         
         newickStr.append(":").append(branchLength);
     }
@@ -189,7 +194,7 @@ public class NewickOutput {
      * 
      * @param node Node containing a subgraph.
      * @param visited Set containing nodes already seen.
-     * @param hybridLabels Map of hybrid nodes already found to integer labels.
+     * @param hybridIDs Map of hybrid nodes already found to integer labels.
      * @param reverseTime Whether traversal is occuring in reverse time.
      */
     private void findHybridNodesInSubTree(Node node, Set<Node> visited,

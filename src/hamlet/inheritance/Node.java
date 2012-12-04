@@ -41,6 +41,9 @@ public class Node {
     // Reaction group (if any) associated with this node.
     InheritanceReactionGroup reactionGroup;
     
+    // Unique name for this node:
+    String name;
+    
     /**
      * Constructor.
      *
@@ -56,6 +59,7 @@ public class Node {
         children = new ArrayList<Node>();
         
         reactionGroup = null;
+        name = null;
     }
     
     /**
@@ -71,6 +75,7 @@ public class Node {
         children = new ArrayList<Node>();
         
         reactionGroup = null;
+        name = null;
     }
     
     /**
@@ -106,6 +111,18 @@ public class Node {
         this.reactionGroup = reactionGroup;
     }
     
+    /**
+     * Give this node a unique name.  Used to label this node in Newick and
+     * NEXUS output formats.  No checking is done at this stage to ensure
+     * that the label is actually unique, but invalid Newick strings will
+     * result if it is not.
+     * 
+     * @param name 
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     /*
      * Getters:
      */
@@ -120,6 +137,14 @@ public class Node {
     
     public List<Node> getChildren() {
         return this.children;
+    }
+
+    public InheritanceReactionGroup getReactionGroup() {
+        return this.reactionGroup;
+    }
+    
+    public String getName() {
+        return name;
     }
     
 }

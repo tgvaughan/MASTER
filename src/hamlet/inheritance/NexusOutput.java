@@ -48,8 +48,8 @@ public class NexusOutput extends NewickOutput {
         if (leafLabels.containsKey(node))
             newickStr.append(leafLabels.get(node));
         
-        if (hybridLabels.containsKey(node))
-            newickStr.append("#H").append(hybridLabels.get(node));
+        if (hybridIDs.containsKey(node))
+            newickStr.append("#H").append(hybridIDs.get(node));
         
         newickStr.append("[&");
         newickStr.append("type=").append(node.population.getType().getName());

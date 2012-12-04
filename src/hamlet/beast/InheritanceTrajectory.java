@@ -82,19 +82,6 @@ public class InheritanceTrajectory extends Runnable {
             "Trajectory end condition based on remaining lineages.",
             new ArrayList<LineageEndCondition>());
     
-    // Moments groups:
-    public Input<List<MomentGroup>> momentGroupsInput = new Input<List<MomentGroup>>(
-            "momentGroup",
-            "Moment group to estimate from birth-death process.",
-            new ArrayList<MomentGroup>());
-    
-    // Individual moments:
-    public Input<List<Moment>> momentsInput = new Input<List<Moment>>(
-            "moment",
-            "Individual moment to estimate from birth-death process.",
-            new ArrayList<Moment>());
-    
-    
     public Input<List<InheritanceTrajectoryOutput>> outputsInput
             = new Input<List<InheritanceTrajectoryOutput>>("output",
             "Output writer used to write population size samples to disk.",

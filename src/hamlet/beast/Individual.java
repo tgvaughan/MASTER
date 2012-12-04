@@ -39,8 +39,8 @@ public class Individual extends Plugin {
             "Time at which individual comes into existance. (optional)",
             0.0);
     
-    public Input<String> nameInput = new Input<String>("name",
-            "Optioal unique node name. Used as node label in "
+    public Input<String> labelInput = new Input<String>("label",
+            "Optioal unique node label for use in generating "
             + "Newick/NEXUS/BEAST output.");
     
     public Input<List<Individual>> childrenInput = new Input<List<Individual>>(
@@ -56,8 +56,8 @@ public class Individual extends Plugin {
     public void initAndValidate() {
         
         node = new hamlet.inheritance.Node(populationInput.get().pop, timeInput.get());
-        if (nameInput.get() != null)
-            node.setName(nameInput.get());
+        if (labelInput.get() != null)
+            node.setName(labelInput.get());
         
         for (Individual child : childrenInput.get())
             node.addChild(child.node);

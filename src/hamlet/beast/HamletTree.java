@@ -20,6 +20,7 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.StateNode;
 import beast.core.StateNodeInitialiser;
+import beast.evolution.alignment.Alignment;
 import beast.evolution.tree.Tree;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -68,6 +69,12 @@ public class HamletTree extends Tree implements StateNodeInitialiser {
             "Trajectory end condition based on remaining lineages.",
             new ArrayList<LineageEndCondition>());
     
+    // Outputs (May want to record the tree separately.)
+    public Input<List<InheritanceTrajectoryOutput>> outputsInput = new Input<List<InheritanceTrajectoryOutput>>(
+            "output",
+            "Output writer used to write results of simulation to disk.",
+            new ArrayList<InheritanceTrajectoryOutput>());
+    
     // BEAST Tree construction:
     public Input<Boolean> reverseTimeInput = new Input<Boolean>("reverseTime",
             "Read time in reverse when assembling tree. (Default true.)", true);
@@ -76,6 +83,9 @@ public class HamletTree extends Tree implements StateNodeInitialiser {
             "collapseSingletons",
             "Whether to join branches of singleton nodes together. Default true.",
             true);
+    
+    public Input<Alignment> alignmentInput = new Input<Alignment>("alignment",
+            "If provided, nodes are equated with taxons having the same label.");
         
     hamlet.inheritance.InheritanceTrajectorySpec spec;
     
@@ -122,9 +132,14 @@ public class HamletTree extends Tree implements StateNodeInitialiser {
         hamlet.inheritance.InheritanceTrajectory itraj =
                 new hamlet.inheritance.InheritanceTrajectory(spec);
         
+        // Write any outputs:
+        for (InheritanceTrajectoryOutput output : outputsInput.get())
+            output.write(itraj);
+        
         // Assemble BEAST tree:
         assembleTree(itraj);        
         
+        initStateNodes();        
     }
     
     private void assembleTree(hamlet.inheritance.InheritanceTrajectory itraj) throws Exception {
@@ -173,11 +188,12 @@ public class HamletTree extends Tree implements StateNodeInitialiser {
         
         // Assemble Tree
         assembleSubtree(hamletRoot, beastRoot, youngestLeafTime, leafLabels);
+        
+        // Set node numbers:
+        initNodeNumbers(beastRoot);
                 
         // Tell BEAST tree what it's root is:
         setRoot(beastRoot);
-        
-        initStateNodes();
     }
     
     /**
@@ -226,9 +242,16 @@ public class HamletTree extends Tree implements StateNodeInitialiser {
             beast.evolution.tree.Node beastNode, double timeOffset,
             Map<hamlet.inheritance.Node,String> leafLabels) {
         
+        // Deal with potential time reversal:
+        List<hamlet.inheritance.Node> hamletChildren;
+        if (reverseTimeInput.get())
+            hamletChildren = hamletNode.getParents();
+        else
+            hamletChildren = hamletNode.getChildren();
+        
         // Skip over single-child nodes:
-        if (collapseSingletonsInput.get() && hamletNode.getChildren().size() == 1) {
-            assembleSubtree(hamletNode.getChildren().get(0), beastNode, timeOffset, leafLabels);
+        if (collapseSingletonsInput.get() && hamletChildren.size() == 1) {
+            assembleSubtree(hamletChildren.get(0), beastNode, timeOffset, leafLabels);
             return;
         }
  
@@ -236,16 +259,69 @@ public class HamletTree extends Tree implements StateNodeInitialiser {
         beastNode.setHeight(Math.abs(hamletNode.getTime()-timeOffset));
         
         // Add children:
-        for (hamlet.inheritance.Node hamletChild : hamletNode.getChildren()) {
+        for (hamlet.inheritance.Node hamletChild : hamletChildren) {
             beast.evolution.tree.Node beastChild = new beast.evolution.tree.Node();
             assembleSubtree(hamletChild, beastChild, timeOffset, leafLabels);
             beastNode.addChild(beastChild);
         }        
                 
         // Label leaves by setting appropriate node IDs:
-        if (hamletNode.getChildren().isEmpty())
+        if (hamletChildren.isEmpty())
             beastNode.setID(leafLabels.get(hamletNode));
 
+    }
+    
+    
+    public void initNodeNumbers(beast.evolution.tree.Node beastRoot) {
+        
+        List<beast.evolution.tree.Node> leaves = getBeastLeaves(beastRoot);
+
+        int nodeNr = 0;
+        for (beast.evolution.tree.Node leaf : leaves) {
+            if (alignmentInput.get() != null) {
+                if (!alignmentInput.get().getTaxaNames().contains(leaf.getID()))
+                    throw new IllegalArgumentException("Alignment does not contain taxon named " + leaf.getID());
+
+                leaf.setNr(alignmentInput.get().getTaxonIndex(leaf.getID()));
+            } else
+                leaf.setNr(nodeNr++);
+        }
+        
+        nodeNr = leaves.size();
+        
+        List<beast.evolution.tree.Node> nodes = Lists.newArrayList();
+        List<beast.evolution.tree.Node> nodesPrime = Lists.newArrayList();
+
+        while(nodes.size()>1) {
+            nodesPrime.clear();
+            for (beast.evolution.tree.Node node : nodes) {
+                if (!nodesPrime.contains(node.getParent())) {
+                    node.getParent().setNr(nodeNr++);
+                    nodesPrime.add(node.getParent());
+                }
+            }
+            nodes.clear();
+            nodes.addAll(nodesPrime);
+        }
+        
+    }
+    
+    /**
+     * Obtain list of leaves contained in clade below node.
+     * 
+     * @param node
+     * @return 
+     */
+    List <beast.evolution.tree.Node> getBeastLeaves(beast.evolution.tree.Node node) {        
+        List<beast.evolution.tree.Node> nodeList = Lists.newArrayList();
+        
+        if (node.isLeaf()) {
+            nodeList.add(node);
+        } else {
+            for (beast.evolution.tree.Node child : node.getChildren())
+                nodeList.addAll(getBeastLeaves(child));
+        }
+        return nodeList;
     }
 
     @Override

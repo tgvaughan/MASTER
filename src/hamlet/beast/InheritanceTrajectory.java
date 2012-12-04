@@ -84,7 +84,7 @@ public class InheritanceTrajectory extends Runnable {
     
     public Input<List<InheritanceTrajectoryOutput>> outputsInput
             = new Input<List<InheritanceTrajectoryOutput>>("output",
-            "Output writer used to write population size samples to disk.",
+            "Output writer used to write results of simulation to disk.",
             new ArrayList<InheritanceTrajectoryOutput>());
     
     

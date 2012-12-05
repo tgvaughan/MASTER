@@ -1,7 +1,7 @@
 package hamlet.beast;
 
-import java.util.*;
 import beast.core.*;
+import java.util.*;
 
 /**
  * Beast 2 plugin representing initial system state.

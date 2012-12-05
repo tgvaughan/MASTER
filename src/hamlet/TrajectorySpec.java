@@ -93,6 +93,7 @@ public class TrajectorySpec {
         this.initPopulationState = initState;
     }
 
+    @JsonIgnore
     public PopulationState getInitPopulationState() {
         return initPopulationState;
     }

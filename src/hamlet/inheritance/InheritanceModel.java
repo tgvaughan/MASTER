@@ -19,6 +19,7 @@ package hamlet.inheritance;
 import com.google.common.collect.Lists;
 import hamlet.Model;
 import java.util.List;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * Model additionally containing inheritance reaction groups.
@@ -60,6 +61,7 @@ public class InheritanceModel extends Model {
      * Retrieve list of inheritance reaction groups in model.
      * @return inheritance reaction groups
      */
+    @JsonIgnore
     public List<InheritanceReactionGroup> getInheritanceReactionGroups() {
         return inheritanceReactionGroups;
     }

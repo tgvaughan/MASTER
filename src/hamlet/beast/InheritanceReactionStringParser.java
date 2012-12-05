@@ -225,6 +225,16 @@ public class InheritanceReactionStringParser {
         int[] loc = ruleD();
         int chosenid = ruleI();
         
+        // Check that population specifier name exists:
+        if (!popTypeMap.containsKey(popName))
+            throw new ParseException("Unknown population type name '"
+                    + popName + "' encountered in reaction string.", parseIdx);
+        
+        // Ensure location is valid if given.
+        if (loc.length>0 && !popTypeMap.get(popName).containsLocation(loc))
+            throw new ParseException("Population type '" + popName
+                    + "' does not contain specified location.", parseIdx);
+        
         hamlet.Population pop = new hamlet.Population(popTypeMap.get(popName), loc);
         for (int i=0; i<factor; i++) {
             if (processingReactants)

@@ -76,8 +76,10 @@ public class JsonOutput {
             if (depth<type.getDims().length-1)
                 nestedData.add(iterateOverLocs(sampledStates, type, loc, depth+1));
             else {
+                List<Object> stateList = Lists.newArrayList();
                 for (PopulationState state : sampledStates)
-                    nestedData.add(state.get(new Population(type, loc)));
+                    stateList.add(state.get(new Population(type, loc)));
+                nestedData.add(stateList);
             }
         }
         return nestedData;

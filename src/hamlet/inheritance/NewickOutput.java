@@ -166,7 +166,8 @@ public class NewickOutput {
             newickStr.append(leafLabels.get(node));
         
         if (hybridIDs.containsKey(node))
-            newickStr.append("#H").append(hybridIDs.get(node));
+            newickStr.append("#").append(hybridIDs.get(node));
+        // note that we've omitted the optional "type" specifier
         
         newickStr.append(":").append(branchLength);
     }

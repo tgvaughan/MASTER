@@ -44,7 +44,7 @@ public class ReactionStringParser {
     private List<Token> tokenList;
     private List<String> valueList;
     
-    private int idx;
+    private int parseIdx;
     
     public ReactionStringParser(String string, List<hamlet.PopulationType> popTypes) throws ParseException {
        
@@ -84,15 +84,15 @@ public class ReactionStringParser {
         valueList = Lists.newArrayList();
                 
         // Parse index
-        idx=0;
+        parseIdx=0;
 
-        while (idx<string.length()) {
+        while (parseIdx<string.length()) {
             
             boolean matched = false;
             for (Token token : tokenPatterns.keySet()) {
-                Matcher matcher = tokenPatterns.get(token).matcher(string.substring(idx));
+                Matcher matcher = tokenPatterns.get(token).matcher(string.substring(parseIdx));
                 if (matcher.find() && matcher.start()==0) {
-                    idx += matcher.group().length();
+                    parseIdx += matcher.group().length();
                     matched = true;
                     
                     // Discard whitespace:
@@ -109,7 +109,7 @@ public class ReactionStringParser {
             
             if (!matched) {
                 throw new ParseException("Error reading reaction string:"
-                        + " couldn't match '" + string.substring(idx) + "'", idx);
+                        + " couldn't match '" + string.substring(parseIdx) + "'", parseIdx);
             }
         }
         
@@ -119,21 +119,21 @@ public class ReactionStringParser {
     }
     
     private boolean acceptToken(Token token, boolean manditory) throws ParseException {
-        if (tokenList.get(idx).equals(token)) {
-            idx += 1;
+        if (tokenList.get(parseIdx).equals(token)) {
+            parseIdx += 1;
             return true;
         } else {
             if (manditory)
                 throw new ParseException(
-                        "Error parsing token " + valueList.get(idx)
-                        + " (expected " + token + ")", idx);
+                        "Error parsing token " + valueList.get(parseIdx)
+                        + " (expected " + token + ")", parseIdx);
         }
             return false;
     }
     
     
     private void doRecursiveDecent() throws ParseException {
-        idx = 0;
+        parseIdx = 0;
         
         reactants = Lists.newArrayList();
         products = Lists.newArrayList();
@@ -154,11 +154,11 @@ public class ReactionStringParser {
         
         // Deal special case of "0":
         if (acceptToken(Token.INT, false)) {
-            if (valueList.get(idx-1).equals("0"))
+            if (valueList.get(parseIdx-1).equals("0"))
                 return;
             else {
                 //backtrack
-                idx -= 1;
+                parseIdx -= 1;
             }
         }
 
@@ -190,6 +190,17 @@ public class ReactionStringParser {
         String popName = ruleL();
         int[] loc = ruleD();
         
+        // Check that population specifier name exists:
+        if (!popTypeMap.containsKey(popName))
+            throw new ParseException("Unknown population type name '"
+                    + popName + "' encountered in reaction string.", parseIdx);
+        
+        // Ensure location is valid if given.
+        if (loc.length>0 && !popTypeMap.get(popName).containsLocation(loc))
+            throw new ParseException("Population type '" + popName
+                    + "' does not contain specified location.", parseIdx);
+        
+        
         for (int i=0; i<factor; i++)
             poplist.add(new hamlet.Population(popTypeMap.get(popName), loc));
     }
@@ -202,7 +213,7 @@ public class ReactionStringParser {
      */
     private int ruleF() throws ParseException {
         if (acceptToken(Token.INT, false))
-            return Integer.parseInt(valueList.get(idx-1));
+            return Integer.parseInt(valueList.get(parseIdx-1));
         else
             return 1;
     }
@@ -214,7 +225,7 @@ public class ReactionStringParser {
      */
     private String ruleL() throws ParseException {
         acceptToken(Token.POPLABEL, true);
-        return valueList.get(idx-1);
+        return valueList.get(parseIdx-1);
     }
     
     /**
@@ -227,7 +238,7 @@ public class ReactionStringParser {
         List<Integer> locList = Lists.newArrayList();
         if (acceptToken(Token.STARTLOC, false)) {
             acceptToken(Token.INT, true);
-            locList.add(Integer.parseInt(valueList.get(idx-1)));
+            locList.add(Integer.parseInt(valueList.get(parseIdx-1)));
             ruleM(locList);
             acceptToken(Token.ENDLOC, true);
         }
@@ -248,7 +259,7 @@ public class ReactionStringParser {
     private void ruleM(List<Integer> locList) throws ParseException {
         if (acceptToken(Token.COMMA, false)) {
             acceptToken(Token.INT, true);
-            locList.add(Integer.parseInt(valueList.get(idx-1)));
+            locList.add(Integer.parseInt(valueList.get(parseIdx-1)));
             ruleM(locList);
         }
         // else accept epsilon

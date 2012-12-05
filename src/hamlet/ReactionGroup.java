@@ -228,11 +228,7 @@ public class ReactionGroup {
     public String getName() {
         return reactionGroupName;
     }
-    
-    /*
-     * Methods for JSON object mapper
-     */
-    @JsonValue
+
     @Override
     public String toString() {
 
@@ -279,6 +275,80 @@ public class ReactionGroup {
 
         return sb.toString();
 
+    }
+    
+        
+    /*
+     * Methods for JSON object mapper
+     */
+    
+    public String reactionToString(int react) {
+        // Construct reaction string
+        StringBuilder sb = new StringBuilder();
+ 
+        if (!reactCounts.get(react).isEmpty()) {
+            boolean first = true;
+            for (Population pop : reactCounts.get(react).keySet()) {
+                if (!first)
+                    sb.append(" + ");
+                else
+                    first = false;
+                
+                if (reactCounts.get(react).get(pop)>1)
+                    sb.append(reactCounts.get(react).get(pop));
+                sb.append(pop.type.name);
+                if (!pop.isScalar()) {
+                    sb.append("[");
+                    int [] loc = pop.getLocation();
+                    for (int i=0; i<loc.length; i++)
+                        sb.append(loc[i]);
+                    sb.append("]");
+                }
+            }
+        } else
+            sb.append("0");
+        
+        sb.append(" -> ");
+        
+        if (!prodCounts.get(react).isEmpty()) {
+            boolean first = true;
+            for (Population pop : prodCounts.get(react).keySet()) {
+                if (!first)
+                    sb.append(" + ");
+                else
+                    first = false;
+                
+                if (prodCounts.get(react).get(pop)>1)
+                    sb.append(prodCounts.get(react).get(pop));
+                sb.append(pop.type.name);
+                if (!pop.isScalar()) {
+                    sb.append("[");
+                    int [] loc = pop.getLocation();
+                    for (int i=0; i<loc.length; i++)
+                        sb.append(loc[i]);
+                    sb.append("]");
+                }
+            }
+        } else
+            sb.append("0");
+
+        return sb.toString();
+    }
+    
+    @JsonValue
+    public Map<String, Object> jsonObject() {
+        
+        Map<String, Object> jsonMap = Maps.newHashMap();
+        if (reactionGroupName != null)
+            jsonMap.put("name", reactionGroupName);
+        
+        List<String> reactStringList = Lists.newArrayList();
+        for (int react=0; react<nReactions; react++)
+            reactStringList.add(reactionToString(react));
+        
+        jsonMap.put("reactions", reactStringList);
+        
+        return jsonMap;
     }
 
 }

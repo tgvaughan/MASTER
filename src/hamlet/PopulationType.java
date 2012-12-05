@@ -1,6 +1,7 @@
 package hamlet;
 
 import java.util.Iterator;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * Class of objects describing distinct populations within the model. These
@@ -77,6 +78,25 @@ public class PopulationType implements Iterable<Population> {
         
         return location;
     }
+    
+    /**
+     * Returns true iff location is within bounds of population type.
+     * 
+     * @param location
+     * @return true if location is valid
+     */
+    public boolean containsLocation(int[] location) {
+        
+        if (location.length != dims.length)
+            return false;
+        
+        for (int i=0; i<dims.length; i++) {
+            if (location[i] >= dims[i])
+                return false;
+        }
+        
+        return true;
+    }
 
     /*
      * Getters for JSON object mapper
@@ -87,6 +107,14 @@ public class PopulationType implements Iterable<Population> {
 
     public int[] getDims() {
         return dims;
+    }
+    
+    /**
+     * @return true if only one deme has this population type.
+     */
+    @JsonIgnore
+    public boolean isScalar() {
+        return nPops == 1;
     }
 
     @Override

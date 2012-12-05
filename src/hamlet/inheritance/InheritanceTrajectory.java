@@ -188,8 +188,11 @@ public class InheritanceTrajectory extends Trajectory {
             }
             
             // Break if new time exceeds end time:
-            if (simulationTimeExceeded)
+            if (simulationTimeExceeded) {
+                if (spec.samplePopSizes)
+                    sampleState(currentPopState, t);
                 break;
+            }
 
             // Choose reactionto implement
             double u = Randomizer.nextDouble()*totalPropensity;
@@ -205,6 +208,7 @@ public class InheritanceTrajectory extends Trajectory {
                         found = true;
                         chosenReactionGroup = reactionGroup;
                         chosenReaction = ridx;
+                        break;
                     }
                 }
 
@@ -234,10 +238,6 @@ public class InheritanceTrajectory extends Trajectory {
         // Fix final time of any remaining active lineages.
         for (Node node : activeLineages)
             node.setTime(t);
-        
-        // Perform final sample
-        if (spec.samplePopSizes)
-            sampleState(currentPopState, t);
     }
     
     /**
@@ -397,10 +397,12 @@ public class InheritanceTrajectory extends Trajectory {
         for (Node node : nodesInvolved.keySet()) {
             
             if (node.children.size()==1
-                    &&(node.parents.get(0).population.equals(node.children.get(0).population))) {
-                // Node does not represent a state change: delete it
+                    &&(node.population.equals(node.children.get(0).population)
+                    || node.children.get(0).parents.size()>1)) {
+                // Node is not needed to represent a state change: delete it
+                // from the graph
 
-                // Active lineages are nodes having exactloy one parent:
+                // Active lineages are nodes having exactly one parent:
                 Node parent = node.parents.get(0);
                 Node child = node.children.get(0);
 
@@ -434,6 +436,7 @@ public class InheritanceTrajectory extends Trajectory {
         for (Node node : nextLevelNodes.values()) {
             if (node.parents.size()>1) {
                 node.setTime(t);
+                node.setReactionGroup(reactionGroup);
                 activeLineages.remove(node);
 
                 Node child = new Node(node.population);

@@ -1,6 +1,5 @@
 package hamlet.beast;
 
-import java.util.*;
 import beast.core.*;
 import beast.core.parameter.*;
 

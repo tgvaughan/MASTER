@@ -36,7 +36,7 @@ public class Individual extends Plugin {
             Validate.REQUIRED);    
     
     public Input<Double> timeInput = new Input<Double>("time",
-            "Time at which individual comes into existance. (optional)",
+            "Time at which individual comes into existance. (Default 0.0)",
             0.0);
     
     public Input<String> labelInput = new Input<String>("label",

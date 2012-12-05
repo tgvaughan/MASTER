@@ -135,7 +135,10 @@ public class HamletTree extends Tree implements StateNodeInitialiser {
             output.write(itraj);
         
         // Assemble BEAST tree:
-        assembleTree(itraj);        
+        assembleTree(itraj);
+        
+        // DEBUG: can check BEAST's newick tree against ours
+        //log(0, System.out);
         
         initStateNodes();        
     }

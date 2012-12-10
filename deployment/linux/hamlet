@@ -1,0 +1,11 @@
+#!/bin/bash
+
+OLDDIR=$PWD
+cd $(dirname $(readlink -f $0))
+if [ -z "$1" ]; then
+    java -jar Hamlet.jar
+else
+    java -jar Hamlet.jar $OLDDIR/$1
+fi
+cd $OLDDIR
+

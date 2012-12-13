@@ -1,0 +1,59 @@
+<!-- Test stochastic simulation specification -->
+
+<beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
+  <run spec='Ensemble'
+       simulationTime='50'
+       nTraj="5">
+
+    <model spec='Model' id='model'>
+      <populationType spec='PopulationType' id='S' typeName='S' dim="2"/>
+      <populationType spec='PopulationType' id='I' typeName='I' dim="2"/>
+      <population spec='Population' id='R' populationName='R'/>
+      
+      <reactionGroup spec='ReactionGroup' reactionGroupName="Infection">
+	<reaction spec='Reaction' rate="0.001">
+	  S[0] + I[0] -> 2I[0]
+	</reaction>
+	<reaction spec='Reaction' rate="0.001">
+	  S[1] + I[1] -> 2I[1]
+	</reaction>
+      </reactionGroup>
+      <reactionGroup spec='ReactionGroup' reactionGroupName="Recovery">
+	<reaction  spec='Reaction' rate="0.2">
+	  I[0] -> R
+	</reaction>
+	<reaction spec='Reaction' rate="0.2">
+	  I[1] -> R
+	</reaction>
+      </reactionGroup>
+      <reactionGroup spec='ReactionGroup' reactionGroupName="Migration">
+	<reaction spec='Reaction' rate="0.01">
+	  S[0] -> S[1]
+	</reaction>
+	<reaction spec='Reaction' rate="0.01">
+	  S[1] -> S[0]
+	</reaction>
+	<reaction spec='Reaction' rate="0.01">
+	  I[0] -> I[1]
+	</reaction>
+	<reaction spec='Reaction' rate="0.01">
+	  I[1] -> I[0]
+	</reaction>
+      </reactionGroup>
+    </model>
+    
+    <initialState spec='InitState'>
+      <populationSize spec='PopulationSize' size='400'>
+	<population spec='Population' type='@S' location="0"/>
+      </populationSize>
+      <populationSize spec='PopulationSize' size='500'>
+	<population spec='Population' type='@S' location="1"/>
+      </populationSize>
+      <populationSize spec='PopulationSize' size='100'>
+	<population spec='Population' type='@I' location="0"/>
+      </populationSize>
+    </initialState>
+    
+    <output spec='JsonOutput' fileName='StructuredSIR_output.json'/>
+  </run>
+</beast>

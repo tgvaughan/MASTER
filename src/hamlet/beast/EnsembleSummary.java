@@ -62,6 +62,12 @@ public class EnsembleSummary extends Runnable {
     public Input<InitState> initialStateInput = new Input<InitState>("initialState",
             "Initial state of system.");
     
+    // End conditions:
+    public Input<List<PopulationEndCondition>> endConditionsInput =
+            new Input<List<PopulationEndCondition>>("populationEndCondition",
+            "Trajectory end condition based on population sizes.",
+            new ArrayList<PopulationEndCondition>());
+    
     // Moments groups:
     public Input<List<MomentGroup>> momentGroupsInput = new Input<List<MomentGroup>>(
             "momentGroup",
@@ -115,6 +121,14 @@ public class EnsembleSummary extends Runnable {
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
             initState.set(popSize.pop, popSize.size);
         spec.setInitPopulationState(initState);
+        
+        // Incorporate any end conditions:
+        for (PopulationEndCondition endCondition : endConditionsInput.get())
+            spec.addPopSizeEndCondition(endCondition.endConditionObject);
+
+        // Check for zero-lenght moment and moment group lists (no point to calculation!)
+        if (momentGroupsInput.get().isEmpty() && momentsInput.get().isEmpty())
+            throw new IllegalArgumentException("EnsembleSummary doesn't specfy any moments!");
         
         // Add moments and moment groups:
         for (MomentGroup momentGroup : momentGroupsInput.get())

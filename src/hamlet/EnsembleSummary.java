@@ -72,6 +72,7 @@ public class EnsembleSummary {
             for (int sidx = 0; sidx<spec.nSamples; sidx++) {
                 
                 // Check for end conditions:
+                boolean endConditionMet = false;
                 for (PopulationEndCondition endCondition : spec.populationEndConditions) {
                     if (endCondition.isMet(currentState)) {
                         
@@ -79,15 +80,18 @@ public class EnsembleSummary {
                         // allowed for ensemble summaries.
                         currentState = new PopulationState(spec.initPopulationState);
                         sidx = -1;
+                        endConditionMet = true;
                         
                         // Report if necessary:
                         if (spec.verbosity>0)
                             System.err.println("Rejection end condition met"
                                     + " at time " + sampleDt);
                         
-                        continue;
+                        break;
                     }
                 }
+                if (endConditionMet)
+                    continue;
 
                 // Report trajectory progress at all times:
                 if (spec.verbosity>1)

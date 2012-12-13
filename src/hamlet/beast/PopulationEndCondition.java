@@ -20,6 +20,8 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.Plugin;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -27,10 +29,10 @@ import beast.core.Plugin;
 @Description("Population size end condition for a stochastic trajectory.")
 public class PopulationEndCondition extends Plugin {
     
-    public Input<Population> populationInput = new Input<Population>(
+    public Input<List<Population>> populationInput = new Input<List<Population>>(
             "population",
             "Population whose size to base end condition on.",
-            Validate.REQUIRED);
+            new ArrayList<Population>());
     
     public Input<Double> thresholdInput = new Input<Double>(
             "threshold",
@@ -39,7 +41,7 @@ public class PopulationEndCondition extends Plugin {
     
     public Input<Boolean> exceedCondInput = new Input<Boolean>(
             "exceedCondition",
-            "Whether condition is size>=threshold. False implies opposite.",
+            "Whether condition is size>=threshold. False implies <=threshold.",
             Validate.REQUIRED);
     
     public Input<Boolean> rejectionInput = new Input<Boolean>(
@@ -52,11 +54,22 @@ public class PopulationEndCondition extends Plugin {
     public PopulationEndCondition() { }
     
     @Override
-    public void initAndValidate() {        
+    public void initAndValidate() {
+        int nPops = populationInput.get().size();
+        
+        if (nPops==0)
+            throw new IllegalArgumentException("Need at least one population "
+                    + "for population end condition.");
+        
+
+        hamlet.Population[] pops = new hamlet.Population[nPops];
+        for (int i=0; i< nPops; i++)
+            pops[i] = populationInput.get().get(i).pop;
+        
         endConditionObject = new hamlet.PopulationEndCondition(
-                populationInput.get().pop,
                 thresholdInput.get(),
                 exceedCondInput.get(),
-                rejectionInput.get());
+                rejectionInput.get(),
+                pops);
     }
 }

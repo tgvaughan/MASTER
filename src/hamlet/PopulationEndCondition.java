@@ -16,41 +16,66 @@
  */
 package hamlet;
 
+import com.google.common.collect.Lists;
+import java.util.List;
+
 /**
  * Population end condition which is met when (depending on the construction)
- * a population exceeds or dips below some threshold size.
+ * a population exceeds or dips below some threshold threshold.
  * May be either a rejection or a truncation condition.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class PopulationEndCondition {
     
-    Population pop;
-    double size;
+    List<Population> pops;
+    double threshold;
     boolean exceed, rejection;
     
     /**
      * Create new population end condition which is met when pop exceeds
-     * or dips below size, depending on the value of exceedCond.
+     * or dips below threshold, depending on the value of exceedCond.
      * 
-     * @param pop Population size to watch.
-     * @param size Population size at which condition is met.
-     * @param exceedCond True creates condition met when population >= size.
+     * @param pop Population threshold to watch.
+     * @param threshold Population threshold at which condition is met.
+     * @param exceedCond True creates condition met when population >= threshold.
      * @param rejection True creates a rejection end condition.
      */
-    public PopulationEndCondition(Population pop, double size, boolean exceedCond,
+    public PopulationEndCondition(Population pop, double threshold, boolean exceedCond,
             boolean rejection) {
-        this.pop = pop;
-        this.size = size;
+        this.pops = Lists.newArrayList();
+        pops.add(pop);
+        this.threshold = threshold;
+        this.rejection = rejection;
+        this.exceed = exceedCond;
+    }
+    
+    /**
+     * Create a new multi-population end condition which is met when sum of
+     * populations provided exceeds or dips below threshold, depending on
+     * value of exceedCond.
+     * 
+     * @param threshold Threshold at which condition is met.
+     * @param exceedCond True creates condition met when sum> >= threshold
+     * @param rejection True creates a rejection end condition
+     * @param pops Varargs array of populations to sum over.
+     */
+    public PopulationEndCondition(double threshold, boolean exceedCond, boolean rejection, Population ... pops) {
+        this.pops = Lists.newArrayList(pops);
+        this.threshold = threshold;
         this.rejection = rejection;
         this.exceed = exceedCond;
     }
 
     public boolean isMet(PopulationState currentState) {
+        double size = 0;
+        for (Population pop : pops)
+            size += currentState.get(pop);
+        
         if (exceed)
-            return currentState.get(pop) >= size;
+            return size >= threshold;
         else
-            return currentState.get(pop) <= size;
+            return size <= threshold;
     }
 
     public boolean isRejection() {
@@ -59,16 +84,19 @@ public class PopulationEndCondition {
 
     public String getConditionDescription() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Condition is met when size of ")
-                .append(pop)
-                .append(" population ");
-        
+        sb.append("Condition is met when ");
+        for (int i=0; i<pops.size(); i++) {
+            if (i>0)
+                sb.append(" + ");            
+            sb.append(pops.get(i));
+        }
+
         if (exceed)
-            sb.append(">=");
+            sb.append(" >= ");
         else
-            sb.append("<=");
+            sb.append(" <= ");
         
-        sb.append(size);
+        sb.append(threshold);
         
         return sb.toString();
     }

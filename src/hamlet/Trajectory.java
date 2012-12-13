@@ -126,16 +126,16 @@ public class Trajectory {
                         break;
                     }
                 }
+                                               
+                t += spec.stepper.step(currentState, spec.model,
+                        spec.simulationTime-t);
                 
                 // Report trajectory progress:
                 if (spec.verbosity>1)
                     System.err.println("Recording sample at time "
-                            + String.valueOf(t));
+                            + String.valueOf(t)); 
                 
                 sampleState(currentState, t);
-                
-                t += spec.stepper.step(currentState, spec.model,
-                        spec.simulationTime-t);
             }
         }
     }

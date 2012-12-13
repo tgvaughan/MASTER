@@ -115,7 +115,7 @@ public class Trajectory extends Runnable {
             spec.setStepper(new hamlet.GillespieStepper());
         
         // Default to unevenly spaced sampling times:
-        if (useEvenSamplingInput.get())
+        if (useEvenSamplingInput.get() || nSamplesInput.get() != null)
             spec.setEvenSampling(nSamplesInput.get());
         else
             spec.setUnevenSampling();

@@ -1,6 +1,6 @@
 <!-- Generate an inheritance tree from the stochastic logistic model. -->
 
-<beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
+<beast version='2.0' namespace='master.beast:beast.core.parameter'>
     <run spec='InheritanceTrajectory'
          simulationTime="100"
          samplePopulationSizes="true"

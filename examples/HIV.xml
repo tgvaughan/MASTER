@@ -1,6 +1,6 @@
 <!-- Test stochastic simulation specification -->
 
-<beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
+<beast version='2.0' namespace='master.beast:beast.core.parameter'>
   <run spec='EnsembleSummary'
        nSamples="1001"
        nTraj="1000"

@@ -1,6 +1,6 @@
 <!-- Generate a coalescent tree from a given number of taxa. -->
 
-<beast version='2.0' namespace='hamlet.beast:beast.core.parameter'>
+<beast version='2.0' namespace='master.beast:beast.core.parameter'>
     <run spec='InheritanceTrajectory'
          verbosity='2'>
         

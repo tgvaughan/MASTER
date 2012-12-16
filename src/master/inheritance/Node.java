@@ -77,6 +77,20 @@ public class Node {
         reactionGroup = null;
         name = null;
     }
+
+    /**
+     * Obtain a copy of this node, retaining only its height, its
+     * population and its name - not its children, parents nor any
+     * other of its attributes.
+     * 
+     * @return Fresh copy of Node object.
+     */
+    public Node getCopy() {
+        Node copy = new Node(this.population, this.time);
+        copy.setName(name);
+        
+        return copy;
+    }
     
     /**
      * Set node height.

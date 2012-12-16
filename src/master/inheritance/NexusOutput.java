@@ -93,15 +93,10 @@ public class NexusOutput extends NewickOutput {
     public static void write(InheritanceTrajectory graph,
             boolean reverseTime, PrintStream pstream) {
         
-        StringBuilder nexusStr = new StringBuilder();
-        
-        nexusStr.append("#nexus\n\n")
-                .append("Begin trees;\n")
-                .append("tree TREE = ")
-                .append(new NexusOutput(graph, reverseTime))
-                .append("\nEnd;");
-        
-        pstream.println(nexusStr.toString());
+        pstream.println("#nexus\n\nBegin trees;");
+        pstream.print("tree TREE = ");
+        pstream.println(new NexusOutput(graph, reverseTime));
+        pstream.println("End;");
     }
     
     /**
@@ -117,18 +112,13 @@ public class NexusOutput extends NewickOutput {
     public static void write(InheritanceEnsemble iensemble,
             boolean reverseTime, PrintStream pstream) {
                 
-        StringBuilder nexusStr = new StringBuilder();
-        
-        nexusStr.append("#nexus\n\n")
-                .append("Begin trees;\n");
+        pstream.println("#nexus\n\nBegin trees;");
         
         for (int i=0; i<iensemble.itrajectories.size(); i++) {
             InheritanceTrajectory thisTraj = iensemble.itrajectories.get(i);
-            nexusStr.append("tree TREE_" + i + " = ");
-            nexusStr.append(new NexusOutput(thisTraj, reverseTime));
+            pstream.print("tree TREE_" + i + " = ");
+            pstream.println(new NexusOutput(thisTraj, reverseTime));
         }
-        nexusStr.append(nexusStr);
-        
-        pstream.println(nexusStr.toString());
+        pstream.println("End;");
     }
 }

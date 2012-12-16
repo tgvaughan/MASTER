@@ -19,14 +19,14 @@ package master.inheritance;
 import beast.util.Randomizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import master.Population;
-import master.PopulationEndCondition;
-import master.PopulationState;
-import master.Trajectory;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import master.Population;
+import master.PopulationEndCondition;
+import master.PopulationState;
+import master.Trajectory;
 
 /**
  * A class representing a stochastic inheritance trajectory generated under
@@ -74,7 +74,13 @@ public class InheritanceTrajectory extends Trajectory {
 
         // Keep a record of the simulation spec and the starting nodes.
         this.spec = spec;
-        startNodes = spec.initNodes;
+
+        // Initialise graph with copy of specification init nodes:
+        // (Can't use initNodes themselves when multiple graphs are being
+        // generated from the same spec by InheritanceEnsemble.)
+        startNodes = Lists.newArrayList();
+        for (Node startNode : spec.initNodes)
+            startNodes.add(startNode.getCopy());
         
         // Set seed if defined:
         if (spec.getSeed()>=0 && !spec.isSeedUsed()) {
@@ -269,7 +275,7 @@ public class InheritanceTrajectory extends Trajectory {
         else
             inactiveLineages.clear();
         
-        for (Node node : spec.initNodes) {
+        for (Node node : startNodes) {
             node.getChildren().clear();
             if (node.getTime()>0.0) {
                 inactiveLineages.add(node);

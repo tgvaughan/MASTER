@@ -18,6 +18,7 @@ package master.inheritance;
 
 import beast.util.Randomizer;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -56,6 +57,24 @@ public class InheritanceEnsemble {
             InheritanceTrajectory thisTraj = new InheritanceTrajectory(spec);
             itrajectories.add(thisTraj);
         }
+    }
+    
+    /**
+     * Obtain inheritance ensemble simulation specification.
+     * 
+     * @return InheritanceEnsembleSpec object
+     */
+    public InheritanceEnsembleSpec getSpec() {
+        return spec;
+    }
+    
+    /**
+     * Obtain inheritance trajectories contained in ensemble.
+     * 
+     * @return list of inheritance trajectories
+     */
+    public List<InheritanceTrajectory> getTrajectories() {
+        return itrajectories;
     }
     
 }

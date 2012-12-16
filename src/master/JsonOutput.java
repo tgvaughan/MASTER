@@ -23,6 +23,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import master.inheritance.InheritanceEnsemble;
+import master.inheritance.InheritanceEnsembleSpec;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -174,6 +176,48 @@ public class JsonOutput {
             tData.add(dT*sidx);
         outputData.put("t", tData);
 
+        // Record spec parameters to object output:
+        outputData.put("sim", spec);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            pstream.println(mapper.writeValueAsString(outputData));
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
+    }
+    
+    
+        /**
+     * Express a given trajectory ensemble as a JSON-formatted string and send
+     * the result to a PrintStream.
+     * 
+     * @param ensemble Trajectory ensemble to dump.
+     * @param pstream PrintStream where output is sent.
+     */
+    public static void write(InheritanceEnsemble iensemble, PrintStream pstream) {
+        HashMap<String, Object> outputData = Maps.newHashMap();
+        
+        InheritanceEnsembleSpec spec = iensemble.getSpec();
+        
+        List<Object> trajData = Lists.newArrayList();
+        for (Trajectory trajectory : iensemble.getTrajectories()) {
+            HashMap<String, Object> thisTrajData = Maps.newHashMap();
+            List<PopulationState> sampledStates = trajectory.sampledStates;
+        
+            for (PopulationType type : spec.getModel().getPopulationTypes()) {
+                int[] loc = new int[type.getDims().length];
+                for (int d=0; d<loc.length; d++)
+                    loc[d] = 0;
+                thisTrajData.put(type.getName(), iterateOverLocs(sampledStates, type, loc, 0));
+            }
+        
+            // Add list of sampling times to output object:
+            thisTrajData.put("t", trajectory.sampledTimes);
+            trajData.add(thisTrajData);
+        }
+        outputData.put("trajectories", trajData);
+        
         // Record spec parameters to object output:
         outputData.put("sim", spec);
 

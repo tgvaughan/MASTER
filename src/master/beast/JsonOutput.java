@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import master.inheritance.InheritanceEnsemble;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -35,7 +36,8 @@ public class JsonOutput extends Plugin implements
         TrajectoryOutput,
         EnsembleOutput,
         EnsembleSummaryOutput,
-        InheritanceTrajectoryOutput {
+        InheritanceTrajectoryOutput,
+        InheritanceEnsembleOutput {
     
     public Input<String> fileNameInput = new Input<String>("fileName",
             "Name of file to write to.", Validate.REQUIRED);
@@ -76,6 +78,15 @@ public class JsonOutput extends Plugin implements
     public void write(master.inheritance.InheritanceTrajectory itraj) {
         try {
             master.JsonOutput.write(itraj, new PrintStream(fileNameInput.get()));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(JsonOutput.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void write(InheritanceEnsemble iensemble) {
+        try {
+            master.JsonOutput.write(iensemble, new PrintStream(fileNameInput.get()));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(JsonOutput.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -18,6 +18,6 @@
         
         <lineageEndCondition spec='LineageEndCondition' nLineages="20"/>
                 
-        <output spec='NexusOutput' fileName='out.tree'/>
+        <output spec='NexusOutput' fileName='YuleTree_out.nexus'/>
     </run>
 </beast>

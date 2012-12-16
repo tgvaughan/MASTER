@@ -54,6 +54,6 @@
             </moment>
         </momentGroup>
         
-        <output spec='JsonOutput' fileName='out.json'/>
+        <output spec='JsonOutput' fileName='SIRSummary_out.json'/>
     </run>
 </beast>

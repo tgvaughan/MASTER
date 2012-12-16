@@ -46,6 +46,6 @@
             </moment>
         </momentGroup>
         
-        <output spec='JsonOutput' fileName='out.json'/>
+        <output spec='JsonOutput' fileName='StochasticMigration_out.json'/>
     </run>
 </beast>

@@ -50,6 +50,6 @@
             <factor idref='I_sample'/>
         </moment>
         
-        <output spec='JsonOutput' fileName='out.json'/>
+        <output spec='JsonOutput' fileName='IRSample_out.json'/>
     </run>
 </beast>

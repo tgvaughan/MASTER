@@ -34,6 +34,6 @@
             <factor idref='I'/>
         </moment>
         
-        <output spec='JsonOutput' fileName='out.json'/>
+        <output spec='JsonOutput' fileName='SIS_out.json'/>
     </run>
 </beast>

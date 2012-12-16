@@ -76,6 +76,12 @@ public class InheritanceTrajectory extends Trajectory {
         this.spec = spec;
         startNodes = spec.initNodes;
         
+        // Set seed if defined:
+        if (spec.getSeed()>=0 && !spec.isSeedUsed()) {
+            Randomizer.setSeed(spec.getSeed());
+            spec.setSeedUsed();
+        }
+        
         // Don't want to calculate this more than once:
         double sampleDt = 0.0;
         if (spec.isSamplingEvenlySpaced())

@@ -255,17 +255,32 @@ public class NewickOutput {
     }
     
     /**
-     * Write extended Newick representation of graph to PrintStream pstream.
+     * Write extended Newick representation of inheritance graph contained in
+     * inheritance trajectory itrajectory to PrintStream pstream.
      * 
-     * @param graph Graph to write.
+     * @param itrajectory Inheritance trajectory containing graph
      * @param reverseTime Whether to traverse graph in reverse time.
      * @param pstream PrintStream used as destination for string representation.
      */
-    public static void write(InheritanceTrajectory graph,
+    public static void write(InheritanceTrajectory itrajectory,
             boolean reverseTime, PrintStream pstream) {
         
-        
-        pstream.println(new NewickOutput(graph, reverseTime));
+        pstream.println(new NewickOutput(itrajectory, reverseTime));
+    }
+    
+    /**
+     * Write extended Newick representation of inheritance trajectory ensemble
+     * iensemble to PrintStream pstream.
+     * 
+     * @param iensemble
+     * @param reverseTime
+     * @param pstream 
+     */
+    public static void write(InheritanceEnsemble iensemble,
+            boolean reverseTime, PrintStream pstream) {
+
+        for (InheritanceTrajectory itrajectory : iensemble.itrajectories)
+            pstream.println(new NewickOutput(itrajectory, reverseTime));
     }
     
     

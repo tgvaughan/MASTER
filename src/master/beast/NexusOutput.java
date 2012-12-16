@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import master.inheritance.InheritanceEnsemble;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -33,7 +34,7 @@ import java.util.logging.Logger;
         + " not tree-like, an annotated variant of the extended Newick format"
         + " of Cardona et al, BMC Bioinf. (2008) is used in place of the"
         + " traditional annotated Newick for the topology strings.")
-public class NexusOutput extends Plugin implements InheritanceTrajectoryOutput {
+public class NexusOutput extends Plugin implements InheritanceTrajectoryOutput, InheritanceEnsembleOutput {
     
     public Input<String> fileNameInput = new Input<String>("fileName",
             "Name of file to write to.",
@@ -52,6 +53,17 @@ public class NexusOutput extends Plugin implements InheritanceTrajectoryOutput {
     public void write(master.inheritance.InheritanceTrajectory itraj) {
         try {
             master.inheritance.NexusOutput.write(itraj,
+                    reverseTimeInput.get(),
+                    new PrintStream(fileNameInput.get()));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(NexusOutput.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void write(InheritanceEnsemble iensemble) {
+        try {
+            master.inheritance.NexusOutput.write(iensemble,
                     reverseTimeInput.get(),
                     new PrintStream(fileNameInput.get()));
         } catch (FileNotFoundException ex) {

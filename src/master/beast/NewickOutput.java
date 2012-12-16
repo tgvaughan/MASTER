@@ -24,13 +24,14 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import master.inheritance.InheritanceEnsemble;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Hamlet output writer capable of writing inheritance graph to"
         + " disk in extended Newick format of Cardona et al, BMC Bioinf. (2008).")
-public class NewickOutput extends Plugin implements InheritanceTrajectoryOutput {
+public class NewickOutput extends Plugin implements InheritanceTrajectoryOutput, InheritanceEnsembleOutput {
     
     public Input<String> fileNameInput = new Input<String>("fileName",
             "Name of file to write to.", Validate.REQUIRED);
@@ -48,6 +49,17 @@ public class NewickOutput extends Plugin implements InheritanceTrajectoryOutput 
     public void write(master.inheritance.InheritanceTrajectory itraj) {
         try {
             master.inheritance.NewickOutput.write(itraj,
+                    reverseTimeInput.get(),
+                    new PrintStream(fileNameInput.get()));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(NewickOutput.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void write(InheritanceEnsemble iensemble) {
+        try {
+            master.inheritance.NewickOutput.write(iensemble,
                     reverseTimeInput.get(),
                     new PrintStream(fileNameInput.get()));
         } catch (FileNotFoundException ex) {

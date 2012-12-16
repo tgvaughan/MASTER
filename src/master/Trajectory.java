@@ -16,6 +16,7 @@
  */
 package master;
 
+import beast.util.Randomizer;
 import com.google.common.collect.Lists;
 import java.util.List;
 
@@ -44,6 +45,12 @@ public class Trajectory {
 
         // Keep copy of simulation parameters with trajectory:
         this.spec = spec;
+        
+        // Set seed if defined:
+        if (spec.seed>=0 && !spec.seedUsed) {
+            Randomizer.setSeed(spec.seed);
+            spec.seedUsed = true;
+        }
 
         // Initialise sampled state and time lists:
         sampledStates = Lists.newArrayList();

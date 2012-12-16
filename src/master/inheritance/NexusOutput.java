@@ -81,19 +81,6 @@ public class NexusOutput extends NewickOutput {
         newickStr.append(":").append(branchLength);
     }
     
-    @Override
-    public String toString() {
-        StringBuilder nexusStr = new StringBuilder();
-        
-        nexusStr.append("#nexus\n\n")
-                .append("Begin trees;\n")
-                .append("tree TREE = ")
-                .append(newickStr)
-                .append("\nEnd;");
-        
-        return nexusStr.toString();
-    }
-    
     /**
      * Write extended Newick representation of graph to PrintStream pstream
      * with a NEXUS wrapper.  Note that in this representation nodes are
@@ -105,6 +92,43 @@ public class NexusOutput extends NewickOutput {
      */
     public static void write(InheritanceTrajectory graph,
             boolean reverseTime, PrintStream pstream) {
-        pstream.println(new NexusOutput(graph, reverseTime));
+        
+        StringBuilder nexusStr = new StringBuilder();
+        
+        nexusStr.append("#nexus\n\n")
+                .append("Begin trees;\n")
+                .append("tree TREE = ")
+                .append(new NexusOutput(graph, reverseTime))
+                .append("\nEnd;");
+        
+        pstream.println(nexusStr.toString());
+    }
+    
+    /**
+     * Write extended Newick representation of an ensemble of graphs to
+     * PrintStream pstream with a NEXUS wrapper.  Note that in this
+     * representation nodes are annotated with details of the population
+     * they belong to, and the reaction that generated them.
+     * 
+     * @param iensemble Ensemble of inheritance graphs to represent.
+     * @param reverseTime Whether to traverse tree in backward time.
+     * @param pstream PrintStream object to which result is sent.
+     */
+    public static void write(InheritanceEnsemble iensemble,
+            boolean reverseTime, PrintStream pstream) {
+                
+        StringBuilder nexusStr = new StringBuilder();
+        
+        nexusStr.append("#nexus\n\n")
+                .append("Begin trees;\n");
+        
+        for (int i=0; i<iensemble.itrajectories.size(); i++) {
+            InheritanceTrajectory thisTraj = iensemble.itrajectories.get(i);
+            nexusStr.append("tree TREE_" + i + " = ");
+            nexusStr.append(new NexusOutput(thisTraj, reverseTime));
+        }
+        nexusStr.append(nexusStr);
+        
+        pstream.println(nexusStr.toString());
     }
 }

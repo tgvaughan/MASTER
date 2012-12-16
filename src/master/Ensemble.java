@@ -44,8 +44,10 @@ public class Ensemble {
         this.spec = spec;
 
         // Set RNG seed unless seed<0:
-        if (spec.seed>=0)
+        if (spec.seed>=0 && !spec.seedUsed) {
             Randomizer.setSeed(spec.seed);
+            spec.seedUsed = true;
+        }
 
         // Initialise trajectory list:
         trajectories = new ArrayList<Trajectory>();

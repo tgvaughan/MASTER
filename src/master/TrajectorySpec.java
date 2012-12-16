@@ -33,6 +33,15 @@ public class TrajectorySpec {
     // Seed for RNG (negative number means use default seed):
     long seed;
     
+    /**
+     * Flag for keeping track of whether seed has already been used in this run. 
+     * Useful for allowing Ensemble to generate independent Trajectories
+     * without using the same seed.  Setting seed=-1 would be bad, as then
+     * we wouldn't be able to report what seed had been used in the output
+     * file.
+     */
+    boolean seedUsed;
+    
     // Initial state of system:
     PopulationState initPopulationState;
     
@@ -68,6 +77,7 @@ public class TrajectorySpec {
 
         // Use BEAST RNG seed unless specified:
         this.seed = -1;
+        this.seedUsed = false;
         
         // Initialise lists:
         populationEndConditions = Lists.newArrayList();
@@ -87,6 +97,14 @@ public class TrajectorySpec {
 
     public long getSeed() {
         return seed;
+    }
+    
+    public boolean isSeedUsed() {
+        return seedUsed;
+    }
+    
+    public void setSeedUsed() {
+        this.seedUsed = true;
     }
     
     public void setInitPopulationState(PopulationState initState) {

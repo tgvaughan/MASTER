@@ -38,21 +38,50 @@
           <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
         </div>
 
-        <p>This is a Java package aimed at providing a general means of creating
-simulators for models in theoretical population genetics.  Specifically, it is
-aimed at modelling the stochastic dynamics of structured populations.</p>
+        <p>MASTER is a Java package aimed at providing a general means
+of creating simulators for models in theoretical population genetics.
+Specifically, it is aimed at modelling the stochastic dynamics of
+structured and unstructured populations, and simulating inheritance
+trees and networks under these same models.</p>
 
-<p>MASTER can be used in one of two ways.  Firstly, the package can be imported
-into a Java project and used to easily assemble a simulation using a very
-small amount of code.  This is the most versitile option.</p>
+<h2>System Requirements</h2>
 
-<p>Secondly, the package can be used in conjunction with the phylogenetic inference
-software <a href="http://code.google.com/p/beast2/">BEAST</a> to specify birth-death
-model simulations via that system's XML format. This is the most user-friendly
-option.</p>
+<p>MASTER is a Java application, and is thus fundamentally
+  platform-agnostic.  In order to use it, v1.6 or later of the Java
+  Runtime Environment is required.  This probably exists on your
+  system already, but if not you may obtain
+  it <a href="http://www.java.com/en/download/index.jsp">here</a>.</p>
+
+<h2>Installation</h2>
+
+<p>Installation of MASTER is very straight-forward.  Simply extract
+the following archive:
+<ul>
+<li><a href="binaries/Master-1.0.zip">Master-1.0.zip</a></li>
+</ul>
+Once complete, the new folder "Master-1.0/" will contain a number of
+files. On systems running a modern Windows installation,
+double-clicking on "Master-1.0.jar" will bring up a file selector that
+you can use to select an XML input file describing a simulation.  On
+OS X and Linux computers, the shell script "master.sh" can be used to
+run Master from the command line, with the path to an XML input file
+given as a command line argument. (In this case, making a symbolic link
+to master.sh from a directory in your execution path like "/usr/local/bin/" will allow you to
+execute Master on the command line easily from other locations in your file system.)</p>
+
+<h2>Further Information</h2>
 
 <p>For further information and documentation, please refer to the MASTER
 <a href="http://www.github.com/tgvaughan/MASTER/wiki">wiki</a>.</p>
+
+<h2>Acknowledgements</h2>
+
+<p>Master is an add-on to
+  the fantastic <a href="http://beast2.cs.auckland.ac.nz/">BEAST 2</a>
+  phylogenetics inference system.  For ease of installation, BEAST 2
+  is currently bundled with the downloadable Master binary.  We owe a
+  great debt of thanks to the BEAST 2 developers for creating such a
+  wonderfully extensible system.</p>
 
 <p>Work on this project is made possible by generous funding from the
 <a href="http://www.allanwilsoncentre.ac.nz/">Allan Wilson Centre

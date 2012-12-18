@@ -20,7 +20,9 @@ This is the most user-friendly option.
 For further information and documentation, please refer to the Hamlet
 [wiki](http://www.github.com/tgvaughan/MASTER/wiki).
 
-Work on this project is made possible by generous funding from the
-[Allan Wilson Centre for Molecular Ecology and
-Epidemiology](http://www.allanwilsoncentre.ac.nz/).
+This software is free (as in freedom).  It is made available under the
+terms of the GNU General Public Licence version 3, which is contained
+in this directory in the file named COPYING.  Work on this project is
+made possible by generous funding from the [Allan Wilson Centre for
+Molecular Ecology and Epidemiology](http://www.allanwilsoncentre.ac.nz/).
 

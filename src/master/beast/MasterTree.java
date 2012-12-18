@@ -33,7 +33,7 @@ import java.util.Map;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Plugin which uses a Hamlet simulation to construct a BEAST 2 tree.")
-public class HamletTree extends Tree implements StateNodeInitialiser {
+public class MasterTree extends Tree implements StateNodeInitialiser {
     
     /*
      * XML inputs:
@@ -87,7 +87,7 @@ public class HamletTree extends Tree implements StateNodeInitialiser {
         
     master.inheritance.InheritanceTrajectorySpec spec;
     
-    public HamletTree() { }
+    public MasterTree() { }
     
     @Override
     public void initAndValidate() throws Exception {

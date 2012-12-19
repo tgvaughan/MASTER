@@ -38,11 +38,6 @@ public class Trajectory extends Runnable {
             "simulationTime",
             "The maximum length of time to simulate for. (Defaults to infinite.)");
     
-    public Input<Boolean> useEvenSamplingInput = new Input<Boolean>(
-            "useEvenSampling",
-            "Whether to use evenly spaced samples. (Defaults to false.)",
-            false);
-    
     public Input<Integer> nSamplesInput = new Input<Integer>(
             "nSamples",
             "Number of evenly spaced time points to sample state at.");
@@ -72,21 +67,9 @@ public class Trajectory extends Runnable {
     public Input<List<PopulationEndCondition>> endConditionsInput = new Input<List<PopulationEndCondition>>(
             "populationEndCondition",
             "Trajectory end condition based on population sizes.",
-            new ArrayList<PopulationEndCondition>());
+            new ArrayList<PopulationEndCondition>());    
     
-    // Moments groups:
-    public Input<List<MomentGroup>> momentGroupsInput = new Input<List<MomentGroup>>(
-            "momentGroup",
-            "Moment group to estimate from birth-death process.",
-            new ArrayList<MomentGroup>());
-    
-    // Individual moments:
-    public Input<List<Moment>> momentsInput = new Input<List<Moment>>(
-            "moment",
-            "Individual moment to estimate from birth-death process.",
-            new ArrayList<Moment>());
-    
-    
+    // Outputs:
     public Input<List<TrajectoryOutput>> outputsInput = new Input<List<TrajectoryOutput>>(
             "output",
             "Output writer used to write simulation output to disk.",
@@ -115,7 +98,7 @@ public class Trajectory extends Runnable {
             spec.setStepper(new master.GillespieStepper());
         
         // Default to unevenly spaced sampling times:
-        if (useEvenSamplingInput.get() || nSamplesInput.get() != null)
+        if (nSamplesInput.get() != null)
             spec.setEvenSampling(nSamplesInput.get());
         else
             spec.setUnevenSampling();

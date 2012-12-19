@@ -1,0 +1,79 @@
+<!-- Generate an ensemble of serially sampled structured coalescent trees for testing ColourTree MCMC sampler. -->
+
+<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+    <run spec='InheritanceEnsemble' nTraj="3"
+	 samplePopulationSizes="true"
+         verbosity='2'>
+
+        <model spec='InheritanceModel'>
+            <populationType spec='PopulationType' typeName='X' id='X' dim="2"/>
+
+            <reactionGroup spec='InheritanceReactionGroup' reactionGroupName='Coalescence'>
+                <reaction spec='InheritanceReaction' rate="0.5">
+                    2X[0]:1 -> X[0]:1
+                </reaction>
+                <reaction spec='InheritanceReaction' rate="0.5">
+                    2X[1]:1 -> X[1]:1
+                </reaction>
+            </reactionGroup>
+
+            <reactionGroup spec='InheritanceReactionGroup' reactionGroupName='Migration'>
+                <reaction spec='InheritanceReaction' rate="0.5">
+                    X[0] -> X[1]
+                </reaction>
+                <reaction spec='InheritanceReaction' rate="0.5">
+                    X[1] -> X[0]
+                </reaction>
+            </reactionGroup>
+
+        </model>
+
+        <initialState spec='InitState'>
+
+            <lineageSeedMultiple spec='MultipleIndividuals' copies="50">
+                <population spec='Population' type='@X' location="0"/>
+            </lineageSeedMultiple>
+            <lineageSeedMultiple spec='MultipleIndividuals' copies="50">
+                <population spec='Population' type='@X' location="1"/>
+            </lineageSeedMultiple>
+
+            <lineageSeedMultiple spec='MultipleIndividuals' copies="50" time="1">
+                <population spec='Population' type='@X' location="0" />
+            </lineageSeedMultiple>
+            <lineageSeedMultiple spec='MultipleIndividuals' copies="50" time="1">
+                <population spec='Population' type='@X' location="1" />
+            </lineageSeedMultiple>
+
+            <lineageSeedMultiple spec='MultipleIndividuals' copies="50" time="2">
+                <population spec='Population' type='@X' location="0" />
+            </lineageSeedMultiple>
+            <lineageSeedMultiple spec='MultipleIndividuals' copies="50" time="2">
+                <population spec='Population' type='@X' location="1" />
+            </lineageSeedMultiple>
+
+            <lineageSeedMultiple spec='MultipleIndividuals' copies="50" time="3">
+                <population spec='Population' type='@X' location="0" />
+            </lineageSeedMultiple>
+            <lineageSeedMultiple spec='MultipleIndividuals' copies="50" time="3">
+                <population spec='Population' type='@X' location="1" />
+            </lineageSeedMultiple>
+
+            <lineageSeedMultiple spec='MultipleIndividuals' copies="50" time="4">
+                <population spec='Population' type='@X' location="0" />
+            </lineageSeedMultiple>
+            <lineageSeedMultiple spec='MultipleIndividuals' copies="50" time="4">
+                <population spec='Population' type='@X' location="1" />
+            </lineageSeedMultiple>
+
+        </initialState>
+
+        <lineageEndCondition spec='LineageEndCondition' nLineages="1"/>
+
+        <output spec='NexusOutput' fileName='SSSCoalescentForest_out.nexus'
+		reverseTime="true"
+		collapseSingleChildNodes="false"
+		removeCurlies="false"/>
+
+	<output spec='JsonOutput' fileName='SSSCoalescentForest_out.json' />
+    </run>
+</beast>

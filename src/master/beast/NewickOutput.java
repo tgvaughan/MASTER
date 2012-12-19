@@ -40,6 +40,11 @@ public class NewickOutput extends Plugin implements InheritanceTrajectoryOutput,
             "Read graph in reverse time - useful for building coalescent trees.  (Default false.)",
             false);
     
+    public Input<Boolean> collapseSingleChildNodesInput = new Input<Boolean>(
+            "collapseSingleChildNodes",
+            "Prune nodes having a single child from output. (Default false.)",
+            false);
+
     public NewickOutput() { }
     
     @Override
@@ -50,6 +55,7 @@ public class NewickOutput extends Plugin implements InheritanceTrajectoryOutput,
         try {
             master.inheritance.NewickOutput.write(itraj,
                     reverseTimeInput.get(),
+                    collapseSingleChildNodesInput.get(),
                     new PrintStream(fileNameInput.get()));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NewickOutput.class.getName()).log(Level.SEVERE, null, ex);
@@ -61,6 +67,7 @@ public class NewickOutput extends Plugin implements InheritanceTrajectoryOutput,
         try {
             master.inheritance.NewickOutput.write(iensemble,
                     reverseTimeInput.get(),
+                    collapseSingleChildNodesInput.get(),
                     new PrintStream(fileNameInput.get()));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NewickOutput.class.getName()).log(Level.SEVERE, null, ex);

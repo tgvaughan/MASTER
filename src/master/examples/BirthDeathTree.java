@@ -109,7 +109,7 @@ public class BirthDeathTree {
 
 */
         JsonOutput.write(traj, new PrintStream("out.json"));        
-        NexusOutput.write(traj, false, new PrintStream("out.tree"));
+        NexusOutput.write(traj, false, false, new PrintStream("out.tree"));
     }
     
 }

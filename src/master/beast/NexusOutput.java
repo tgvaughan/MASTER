@@ -44,6 +44,16 @@ public class NexusOutput extends Plugin implements InheritanceTrajectoryOutput, 
             "Read graph in reverse time - useful for building coalescent trees.  (Default false.)",
             false);
     
+    public Input<Boolean> collapseSingleChildNodesInput = new Input<Boolean>(
+            "collapseSingleChildNodes",
+            "Prune nodes having a single child from output. (Default false.)",
+            false);
+
+    public Input<Boolean> removeCurlies = new Input<Boolean>("removeCurlies",
+            "Removes the curly brackets from the location attribute.  (Default false.)",
+            false);
+
+
     public NexusOutput() { }
     
     @Override
@@ -54,6 +64,8 @@ public class NexusOutput extends Plugin implements InheritanceTrajectoryOutput, 
         try {
             master.inheritance.NexusOutput.write(itraj,
                     reverseTimeInput.get(),
+                    collapseSingleChildNodesInput.get(),
+                    removeCurlies.get(),
                     new PrintStream(fileNameInput.get()));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NexusOutput.class.getName()).log(Level.SEVERE, null, ex);
@@ -65,6 +77,8 @@ public class NexusOutput extends Plugin implements InheritanceTrajectoryOutput, 
         try {
             master.inheritance.NexusOutput.write(iensemble,
                     reverseTimeInput.get(),
+                    collapseSingleChildNodesInput.get(),
+                    removeCurlies.get(),
                     new PrintStream(fileNameInput.get()));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NexusOutput.class.getName()).log(Level.SEVERE, null, ex);

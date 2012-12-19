@@ -91,7 +91,7 @@ public class CoalescentTree {
          * Write result to file:
          */
         
-        NexusOutput.write(traj, true, new PrintStream("out.tree"));
+        NexusOutput.write(traj, true, false, new PrintStream("out.tree"));
     }
     
 }

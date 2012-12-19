@@ -35,25 +35,33 @@ import java.util.Set;
 public class NewickOutput {
     
     InheritanceTrajectory graph;
+
     boolean reverseTime;
+    boolean collapseSingleChildNodes;
+    boolean removeCurlies;
     
     StringBuilder newickStr;
     Set<Node> rootNodes, leafNodes;
     Map<Node, String> leafLabels;
     Map<Node, Integer> hybridIDs;
-    
-    
+
+       
     /**
      * Create an extended Newick string representation of graph.
      * 
      * @param graph Graph to represent.
      * @param reverseTime True causes the graph to be read in the direction
      * from the latest nodes to the earliest.  Useful for coalescent trees.
+     * @param collapseSingleChildNodes 
+     * @param removeCurlies 
      */
-    public NewickOutput(InheritanceTrajectory graph, boolean reverseTime) {
+    public NewickOutput(InheritanceTrajectory graph, boolean reverseTime,
+            boolean collapseSingleChildNodes, boolean removeCurlies) {
 
         this.graph = graph;
         this.reverseTime = reverseTime;
+        this.collapseSingleChildNodes = collapseSingleChildNodes;
+        this.removeCurlies = removeCurlies;
         
         leafLabels = Maps.newHashMap();
         hybridIDs = Maps.newHashMap();
@@ -137,21 +145,26 @@ public class NewickOutput {
         else
             nextNodes = node.getChildren();
         
-        if (nextNodes.size()>0) {
-            newickStr.append("(");
-            boolean first = true;
-            for (Node next : nextNodes) {
-                if (!first)
-                    newickStr.append(",");
-                else
-                    first = false;
-                
-                subTreeToExtendedNewick(next, node, visitedHybrids);
+        if (nextNodes.size()==1 && collapseSingleChildNodes) {
+            subTreeToExtendedNewick(nextNodes.get(0), last, visitedHybrids);
+            
+        } else {
+            if (nextNodes.size()>0) {
+                newickStr.append("(");
+                boolean first = true;
+                for (Node next : nextNodes) {
+                    if (!first)
+                        newickStr.append(",");
+                    else
+                        first = false;
+                    
+                    subTreeToExtendedNewick(next, node, visitedHybrids);
+                }
+                newickStr.append(")");
             }
-            newickStr.append(")");
+            
+            addLabel(node, branchLength);
         }
-
-        addLabel(node, branchLength);
     }
     
     /**
@@ -260,12 +273,13 @@ public class NewickOutput {
      * 
      * @param itrajectory Inheritance trajectory containing graph
      * @param reverseTime Whether to traverse graph in reverse time.
+     * @param collapseSingleChildNodes 
      * @param pstream PrintStream used as destination for string representation.
      */
     public static void write(InheritanceTrajectory itrajectory,
-            boolean reverseTime, PrintStream pstream) {
+            boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
         
-        pstream.println(new NewickOutput(itrajectory, reverseTime));
+        pstream.println(new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes, false));
     }
     
     /**
@@ -274,13 +288,14 @@ public class NewickOutput {
      * 
      * @param iensemble
      * @param reverseTime
+     * @param collapseSingleChildNodes 
      * @param pstream 
      */
     public static void write(InheritanceEnsemble iensemble,
-            boolean reverseTime, PrintStream pstream) {
+            boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
 
         for (InheritanceTrajectory itrajectory : iensemble.itrajectories)
-            pstream.println(new NewickOutput(itrajectory, reverseTime));
+            pstream.println(new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes, false));
     }
     
     
@@ -307,6 +322,6 @@ public class NewickOutput {
 //                .addChild((new Node(X,0.5)).addChild(hybrid).addChild(new Node(X,2)));
         
         InheritanceTrajectory graph = new InheritanceTrajectory(root);        
-        write(graph, false, new PrintStream("out.tree"));
+        write(graph, false, false, new PrintStream("out.tree"));
     }
 }

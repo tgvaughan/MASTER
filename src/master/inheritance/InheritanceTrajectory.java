@@ -206,7 +206,7 @@ public class InheritanceTrajectory extends Trajectory {
                 break;
             }
 
-            // Choose reactionto implement
+            // Choose reaction to implement
             double u = Randomizer.nextDouble()*totalPropensity;
             boolean found = false;
             InheritanceReactionGroup chosenReactionGroup = null;

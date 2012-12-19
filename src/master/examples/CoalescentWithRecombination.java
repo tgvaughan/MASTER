@@ -105,6 +105,6 @@ public class CoalescentWithRecombination {
          * Write output in extended Newick format:
          */
         
-        NewickOutput.write(traj, true, new PrintStream("out.tree"));
+        NewickOutput.write(traj, true, false, new PrintStream("out.tree"));
     }
 }

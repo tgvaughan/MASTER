@@ -21,6 +21,7 @@ import beast.core.Input;
 import beast.core.StateNode;
 import beast.core.StateNodeInitialiser;
 import beast.evolution.alignment.Alignment;
+import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -202,6 +203,10 @@ public class MasterTree extends Tree implements StateNodeInitialiser {
                 
         // Tell BEAST tree what it's root is:
         setRoot(beastRoot);
+
+        // and init array representation!
+        initArrays();
+
     }
     
     /**
@@ -269,7 +274,7 @@ public class MasterTree extends Tree implements StateNodeInitialiser {
         beastNode.setHeight(Math.abs(hamletNode.getTime()-timeOffset));
         
         // Add children:
-        for (   master.inheritance.Node hamletChild : hamletChildren) {
+        for (master.inheritance.Node hamletChild : hamletChildren) {
             beast.evolution.tree.Node beastChild = new beast.evolution.tree.Node();
             assembleSubtree(hamletChild, beastChild, timeOffset, leafLabels);
             beastNode.addChild(beastChild);
@@ -290,7 +295,7 @@ public class MasterTree extends Tree implements StateNodeInitialiser {
      * @param beastRoot Root of BEAST tree.
      */
     public void initNodeNumbers(beast.evolution.tree.Node beastRoot) {
-        
+
         List<beast.evolution.tree.Node> leaves = getBeastLeaves(beastRoot);
 
         int nodeNr = 0;
@@ -300,19 +305,25 @@ public class MasterTree extends Tree implements StateNodeInitialiser {
                     throw new IllegalArgumentException("Alignment does not contain taxon named " + leaf.getID());
 
                 leaf.setNr(alignmentInput.get().getTaxonIndex(leaf.getID()));
-            } else
-                leaf.setNr(nodeNr++);
+            } else {
+                leaf.setNr(nodeNr);
+                nodeNr += 1;
+            }
         }
-        
+
         nodeNr = leaves.size();
         
         List<beast.evolution.tree.Node> nodes = Lists.newArrayList();
         List<beast.evolution.tree.Node> nodesPrime = Lists.newArrayList();
 
+        nodes.addAll(leaves);
+
+
         while(nodes.size()>1) {
             nodesPrime.clear();
             for (beast.evolution.tree.Node node : nodes) {
-                if (!nodesPrime.contains(node.getParent())) {
+
+                if (node.getParent() != null && !nodesPrime.contains(node.getParent()) && node.getParent().getNr() == 0) {
                     node.getParent().setNr(nodeNr++);
                     nodesPrime.add(node.getParent());
                 }

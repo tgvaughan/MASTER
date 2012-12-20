@@ -17,7 +17,7 @@ inference software [BEAST](http://code.google.com/p/beast2/) to
 specify birth-death model simulations via that system's XML format.
 This is the most user-friendly option.
 
-For further information and documentation, please refer to the Hamlet
+For further information and documentation, please refer to the MASTER
 [wiki](http://www.github.com/tgvaughan/MASTER/wiki).
 
 This software is free (as in freedom).  It is made available under the

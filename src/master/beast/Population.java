@@ -1,6 +1,5 @@
 package master.beast;
 
-import java.util.*;
 import beast.core.*;
 import beast.core.parameter.*;
 

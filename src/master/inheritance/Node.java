@@ -161,4 +161,7 @@ public class Node {
         return name;
     }
     
+    public Population getPopulation() {
+        return population;
+    }
 }

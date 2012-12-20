@@ -33,7 +33,8 @@ import java.util.Map;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-@Description("Plugin which uses a Hamlet simulation to construct a BEAST 2 tree.")
+@Description("Plugin which uses a MASTER simulation to construct a BEAST 2 tree."
+        + " This only works when MASTER output is tree-like.")
 public class MasterTree extends Tree implements StateNodeInitialiser {
     
     /*
@@ -160,19 +161,22 @@ public class MasterTree extends Tree implements StateNodeInitialiser {
         
         
         // Identify root and leaf nodes
+        // (Use the "child" of the root node to account for the fact that
+        // master always generates trees having an explicit end node.)
+        master.inheritance.Node masterRoot;
         if (reverseTime) {
             rootNodes = findEndNodes(itraj);
+            masterRoot = rootNodes.get(0).getParents().get(0);
             leafNodes = itraj.startNodes;
         } else {
             rootNodes = itraj.startNodes;
+            masterRoot = rootNodes.get(0).getChildren().get(0);
             leafNodes = findEndNodes(itraj);
         }
         
         if (rootNodes.size()!=1)
             throw new Exception("Cannot assemble BEAST tree with multiple roots.");
 
-        master.inheritance.Node hamletRoot = rootNodes.get(0);
-        
         // Assign a unique integer label to each unnamed leaf node and
         // identify time of node furthest from root:
         leafLabels = Maps.newHashMap();
@@ -185,7 +189,7 @@ public class MasterTree extends Tree implements StateNodeInitialiser {
             else
                 leafLabels.put(leaf, leaf.getName());
             
-            double thisHeightDiff = Math.abs(leaf.getTime()-hamletRoot.getTime());
+            double thisHeightDiff = Math.abs(leaf.getTime()-masterRoot.getTime());
             if (thisHeightDiff>largestHeightDiff) {
                 largestHeightDiff = thisHeightDiff;
                 youngestLeafTime = leaf.getTime();
@@ -196,7 +200,7 @@ public class MasterTree extends Tree implements StateNodeInitialiser {
         beast.evolution.tree.Node beastRoot = new beast.evolution.tree.Node();
         
         // Assemble Tree
-        assembleSubtree(hamletRoot, beastRoot, youngestLeafTime, leafLabels);
+        assembleSubtree(masterRoot, beastRoot, youngestLeafTime, leafLabels);
         
         // Set node numbers:
         initNodeNumbers(beastRoot);
@@ -239,56 +243,77 @@ public class MasterTree extends Tree implements StateNodeInitialiser {
             return;
         }
         
-        for (   master.inheritance.Node child : node.getChildren())
+        for (master.inheritance.Node child : node.getChildren())
             findEndNodesOnSubGraph(child, endNodes);
     }
     
     /**
-     * Assemble beast tree corresponding to Hamlet tree below hamletParent
+     * Assemble beast tree corresponding to MASTER tree below masterParent
      * and attach to beastParent. 
      * 
-     * @param hamletNode
+     * @param masterNode
      * @param beastNode 
      * @param timeOffset 
      * @param leafLabels 
      * @return 
      */
-    private void assembleSubtree(master.inheritance.Node hamletNode,
+    private void assembleSubtree(master.inheritance.Node masterNode,
             beast.evolution.tree.Node beastNode, double timeOffset,
             Map<master.inheritance.Node,String> leafLabels) {
         
         // Deal with potential time reversal:
-        List<   master.inheritance.Node> hamletChildren;
+        List<master.inheritance.Node> masterChildren;
         if (reverseTimeInput.get())
-            hamletChildren = hamletNode.getParents();
+            masterChildren = masterNode.getParents();
         else
-            hamletChildren = hamletNode.getChildren();
+            masterChildren = masterNode.getChildren();
         
         // Skip over single-child nodes:
-        if (collapseSingletonsInput.get() && hamletChildren.size() == 1) {
-            assembleSubtree(hamletChildren.get(0), beastNode, timeOffset, leafLabels);
+        if (collapseSingletonsInput.get() && masterChildren.size() == 1) {
+            assembleSubtree(masterChildren.get(0), beastNode, timeOffset, leafLabels);
             return;
         }
  
         // Set BEAST node height:
-        beastNode.setHeight(Math.abs(hamletNode.getTime()-timeOffset));
+        beastNode.setHeight(Math.abs(masterNode.getTime()-timeOffset));
         
         // Add children:
-        for (master.inheritance.Node hamletChild : hamletChildren) {
+        for (master.inheritance.Node masterChild : masterChildren) {
             beast.evolution.tree.Node beastChild = new beast.evolution.tree.Node();
-            assembleSubtree(hamletChild, beastChild, timeOffset, leafLabels);
+            assembleSubtree(masterChild, beastChild, timeOffset, leafLabels);
             beastNode.addChild(beastChild);
         }        
                 
         // Label leaves by setting appropriate node IDs:
-        if (hamletChildren.isEmpty())
-            beastNode.setID(leafLabels.get(hamletNode));
-
+        if (masterChildren.isEmpty())
+            beastNode.setID(leafLabels.get(masterNode));
+        
+        annotateNode(masterNode, beastNode);
+    }
+    
+    /**
+     * Copy MASTER node annotations to BEAST node.
+     * 
+     * @param masterNode
+     * @param beastNode 
+     */
+    private void annotateNode(master.inheritance.Node masterNode,
+            beast.evolution.tree.Node beastNode) {
+        
+        master.inheritance.Node annotationNode;
+        if (reverseTimeInput.get()) {
+            annotationNode = masterNode.getChildren().get(0);
+        } else {
+            annotationNode = masterNode;
+        }
+        
+        beastNode.setMetaData("type", annotationNode.getPopulation().getType().getName());
+        beastNode.setMetaData("location", annotationNode.getPopulation().getLocation());
     }
     
     /**
      *  Assign integer node numbers to BEAST tree nodes.  If an alignment
-     * is supplied, leaf node numbers are selected so that the Hamlet node
+     * is supplied, leaf node numbers are selected so that the MASTER node
      * labels match the taxon names.  An exception is thrown if no such
      * taxon exists.
      * 
@@ -317,7 +342,6 @@ public class MasterTree extends Tree implements StateNodeInitialiser {
         List<beast.evolution.tree.Node> nodesPrime = Lists.newArrayList();
 
         nodes.addAll(leaves);
-
 
         while(nodes.size()>1) {
             nodesPrime.clear();

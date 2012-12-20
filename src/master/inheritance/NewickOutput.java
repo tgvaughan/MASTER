@@ -38,7 +38,6 @@ public class NewickOutput {
 
     boolean reverseTime;
     boolean collapseSingleChildNodes;
-    boolean removeCurlies;
     
     StringBuilder newickStr;
     Set<Node> rootNodes, leafNodes;
@@ -53,15 +52,13 @@ public class NewickOutput {
      * @param reverseTime True causes the graph to be read in the direction
      * from the latest nodes to the earliest.  Useful for coalescent trees.
      * @param collapseSingleChildNodes 
-     * @param removeCurlies 
      */
     public NewickOutput(InheritanceTrajectory graph, boolean reverseTime,
-            boolean collapseSingleChildNodes, boolean removeCurlies) {
+            boolean collapseSingleChildNodes) {
 
         this.graph = graph;
         this.reverseTime = reverseTime;
         this.collapseSingleChildNodes = collapseSingleChildNodes;
-        this.removeCurlies = removeCurlies;
         
         leafLabels = Maps.newHashMap();
         hybridIDs = Maps.newHashMap();
@@ -279,7 +276,7 @@ public class NewickOutput {
     public static void write(InheritanceTrajectory itrajectory,
             boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
         
-        pstream.println(new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes, false));
+        pstream.println(new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes));
     }
     
     /**
@@ -295,7 +292,7 @@ public class NewickOutput {
             boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
 
         for (InheritanceTrajectory itrajectory : iensemble.itrajectories)
-            pstream.println(new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes, false));
+            pstream.println(new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes));
     }
     
     

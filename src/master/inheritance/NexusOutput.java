@@ -37,10 +37,11 @@ public class NexusOutput extends NewickOutput {
      * @param graph Graph to represent.
      * @param reverseTime True causes the graph to be read in the direction
      * from the latest nodes to the earliest.  Useful for coalescent trees.
+     * @param collapseSingleChildNodes 
      */
     public NexusOutput(InheritanceTrajectory graph, boolean reverseTime,
-            boolean collapseSingleChildNodes, boolean removeCurlies) {
-        super(graph, reverseTime, collapseSingleChildNodes, removeCurlies);
+            boolean collapseSingleChildNodes) {
+        super(graph, reverseTime, collapseSingleChildNodes);
     }
     
     @Override
@@ -67,15 +68,12 @@ public class NexusOutput extends NewickOutput {
         if (!branchNode.population.isScalar()) {
             newickStr.append(",location=");
 
-            if (!removeCurlies) newickStr.append("{");
-
             int[] loc = branchNode.population.getLocation();
             for (int i=0; i<loc.length; i++) {
                 if (i>0)
-                    newickStr.append(",");
+                    newickStr.append("_");
                 newickStr.append(loc[i]);
             }
-            if (!removeCurlies) newickStr.append("}");
         }
         if (node.reactionGroup != null && node.reactionGroup.getName() != null) {
             newickStr.append(",reaction=").append(node.reactionGroup.getName());
@@ -92,14 +90,15 @@ public class NexusOutput extends NewickOutput {
      * 
      * @param graph Graph to represent.
      * @param reverseTime Whether to traverse tree in backward time.
+     * @param collapseSingleChildNodes 
      * @param pstream PrintStream object to which result is sent.
      */
     public static void write(InheritanceTrajectory graph,
-            boolean reverseTime, boolean collapseSingleChildNodes, boolean removeCurlies, PrintStream pstream) {
+            boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
         
         pstream.println("#nexus\n\nBegin trees;");
         pstream.print("tree TREE = ");
-        pstream.println(new NexusOutput(graph, reverseTime, collapseSingleChildNodes, removeCurlies));
+        pstream.println(new NexusOutput(graph, reverseTime, collapseSingleChildNodes));
         pstream.println("End;");
     }
     
@@ -111,17 +110,18 @@ public class NexusOutput extends NewickOutput {
      * 
      * @param iensemble Ensemble of inheritance graphs to represent.
      * @param reverseTime Whether to traverse tree in backward time.
+     * @param collapseSingleChildNodes 
      * @param pstream PrintStream object to which result is sent.
      */
     public static void write(InheritanceEnsemble iensemble,
-            boolean reverseTime, boolean collapseSingleChildNodes, boolean removeCurlies, PrintStream pstream) {
+            boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
                 
         pstream.println("#nexus\n\nBegin trees;");
         
         for (int i=0; i<iensemble.itrajectories.size(); i++) {
             InheritanceTrajectory thisTraj = iensemble.itrajectories.get(i);
             pstream.print("tree TREE_" + i + " = ");
-            pstream.println(new NexusOutput(thisTraj, reverseTime, collapseSingleChildNodes, removeCurlies));
+            pstream.println(new NexusOutput(thisTraj, reverseTime, collapseSingleChildNodes));
         }
         pstream.println("End;");
     }

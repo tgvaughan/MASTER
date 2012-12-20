@@ -300,8 +300,11 @@ public class ReactionGroup {
                 if (!pop.isScalar()) {
                     sb.append("[");
                     int [] loc = pop.getLocation();
-                    for (int i=0; i<loc.length; i++)
+                    for (int i=0; i<loc.length; i++) {
+                        if (i>0)
+                            sb.append(',');
                         sb.append(loc[i]);
+                    }
                     sb.append("]");
                 }
             }
@@ -324,8 +327,11 @@ public class ReactionGroup {
                 if (!pop.isScalar()) {
                     sb.append("[");
                     int [] loc = pop.getLocation();
-                    for (int i=0; i<loc.length; i++)
+                    for (int i=0; i<loc.length; i++) {
+                        if (i>0)
+                            sb.append(',');
                         sb.append(loc[i]);
+                    }
                     sb.append("]");
                 }
             }

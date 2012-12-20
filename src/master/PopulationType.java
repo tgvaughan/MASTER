@@ -70,10 +70,17 @@ public class PopulationType implements Iterable<Population> {
     public int[] offsetToLoc(int offset) {
         int[] location = new int[dims.length];
         
+        int[] multipliers = new int[dims.length];
         int m=1;
-        for (int i=0; i<dims.length; i++) {
+        for (int i=0; i<multipliers.length; i++) {
+            multipliers[i] = m;
             m *= dims[i];
-            location[i] = offset%m;
+        }
+        
+        int remainder = offset;
+        for (int i=dims.length-1; i>=0; i--) {
+            location[i] = remainder/multipliers[i];
+            remainder = remainder%multipliers[i];
         }
         
         return location;

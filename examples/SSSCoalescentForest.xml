@@ -71,8 +71,7 @@
 
         <output spec='NexusOutput' fileName='SSSCoalescentForest_out.nexus'
 		reverseTime="true"
-		collapseSingleChildNodes="false"
-		removeCurlies="false"/>
+		collapseSingleChildNodes="false"/>
 
 	<output spec='JsonOutput' fileName='SSSCoalescentForest_out.json' />
     </run>

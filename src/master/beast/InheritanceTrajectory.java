@@ -101,7 +101,7 @@ public class InheritanceTrajectory extends Runnable {
         
         // Set population size options:
         if (samplePopulationSizesInput.get()) {
-            if (nSamplesInput.get() != null)
+            if (nSamplesInput.get()>=2)
                 spec.setEvenSampling(nSamplesInput.get());
             else
                 spec.setUnevenSampling(sampleAtNodesOnlyInput.get());

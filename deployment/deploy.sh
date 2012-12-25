@@ -15,7 +15,7 @@ mkdir $ojdir/lib
 cp ~/work/beast2/dist/beast2.jar $ojdir/main
 cp ~/work/beast2/lib/*.jar $ojdir/lib
 cp ~/work/MASTER/dist/MASTER.jar $ojdir/lib
-cp ~/work/MASTER/dist/lib/*.jar $ojdir/lib
+cp ~/work/MASTER/lib/*.jar $ojdir/lib
 
 cp one-jar-boot-0.97.jar $ojdir/
 cd $ojdir

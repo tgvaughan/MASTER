@@ -30,12 +30,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Plugin which uses a MASTER simulation to construct a BEAST 2 tree."
         + " This only works when MASTER output is tree-like.")
-public class MasterTree extends Tree implements StateNodeInitialiser {
+public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
     
     /*
      * XML inputs:
@@ -89,7 +88,7 @@ public class MasterTree extends Tree implements StateNodeInitialiser {
         
     master.inheritance.InheritanceTrajectorySpec spec;
     
-    public MasterTree() { }
+    public BeastTreeFromMaster() { }
     
     @Override
     public void initAndValidate() throws Exception {

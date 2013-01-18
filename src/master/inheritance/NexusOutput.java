@@ -78,6 +78,34 @@ public class NexusOutput extends NewickOutput {
         if (node.reactionGroup != null && node.reactionGroup.getName() != null) {
             newickStr.append(",reaction=").append(node.reactionGroup.getName());
         }
+        
+        // Add general annotations:
+        if (node.getAttributeNames() != null) {
+            for (String name : node.getAttributeNames()) {
+                Object value = node.getAttribute(name);
+                
+                if (value instanceof Integer) {
+                    newickStr.append("," + name + "=" + String.valueOf((Integer)value));
+                    continue;
+                }
+                
+                if (value instanceof Double) {
+                    newickStr.append("," + name + "=" + String.valueOf((Double)value));
+                    continue;
+                }
+                                
+                if (value instanceof Boolean) {
+                    newickStr.append("," + name + "=" + String.valueOf((Boolean)value));
+                    continue;
+                }
+                                
+                if (value instanceof String) {
+                    newickStr.append("," + name + "=" + (String)value);
+                    continue;
+                }
+            }
+        }
+        
         newickStr.append("]");
         
         newickStr.append(":").append(branchLength);

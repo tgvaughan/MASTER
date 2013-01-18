@@ -81,6 +81,13 @@ public class InheritanceEnsemble extends Runnable {
             "Trajectory end condition based on population sizes.",
             new ArrayList<PopulationEndCondition>());
     
+    // Post-processors:
+    public Input<List<InheritanceEnsemblePostProcessor>> postProcessorsInput =
+            new Input<List<InheritanceEnsemblePostProcessor>>(
+            "postProcessor",
+            "Inheritance ensemble post processor.",
+            new ArrayList<InheritanceEnsemblePostProcessor>());
+    
     // Lineage end conditions:
     public Input<List<LineageEndCondition>> lineageEndConditionsInput = new Input<List<LineageEndCondition>>(
             "lineageEndCondition",
@@ -149,7 +156,11 @@ public class InheritanceEnsemble extends Runnable {
         // Generate stochastic trajectory:
         master.inheritance.InheritanceEnsemble iensemble =
                 new master.inheritance.InheritanceEnsemble(spec);
-
+        
+        // Perform any requested post-processing:
+        for (InheritanceEnsemblePostProcessor postProc : postProcessorsInput.get())
+            postProc.process(iensemble);
+        
         // Write outputs:
         for (InheritanceEnsembleOutput output : outputsInput.get())
             output.write(iensemble);

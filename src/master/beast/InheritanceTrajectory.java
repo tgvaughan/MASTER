@@ -82,6 +82,14 @@ public class InheritanceTrajectory extends Runnable {
             "Trajectory end condition based on remaining lineages.",
             new ArrayList<LineageEndCondition>());
     
+    // Post-processors:
+    public Input<List<InheritanceTrajectoryPostProcessor>> postProcessorsInput =
+            new Input<List<InheritanceTrajectoryPostProcessor>>(
+            "postProcessor",
+            "Inheritance trajectory post processor.",
+            new ArrayList<InheritanceTrajectoryPostProcessor>());
+    
+    // Outputs:
     public Input<List<InheritanceTrajectoryOutput>> outputsInput
             = new Input<List<InheritanceTrajectoryOutput>>("output",
             "Output writer used to write results of simulation to disk.",
@@ -141,6 +149,10 @@ public class InheritanceTrajectory extends Runnable {
         // Generate stochastic trajectory:
         master.inheritance.InheritanceTrajectory itraj =
                 new master.inheritance.InheritanceTrajectory(spec);
+        
+        // Perform any requested post-processing:
+        for (InheritanceTrajectoryPostProcessor postProc : postProcessorsInput.get())
+            postProc.process(itraj);
 
         // Write outputs:
         for (InheritanceTrajectoryOutput output : outputsInput.get())

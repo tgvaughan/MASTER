@@ -1,4 +1,5 @@
-<!-- Generate an inheritance tree from the stochastic logistic model. -->
+<!-- Generate an inheritance tree from the stochastic logistic model, then prune all nodes
+except the ancestors of a randomly selected set of leaves. -->
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
     <run spec='InheritanceTrajectory'
@@ -23,7 +24,9 @@
         
         <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>      
         
-        <output spec='NexusOutput' fileName='StochasticLogisticTree_out.nexus'/>
-        <output spec='JsonOutput' fileName='StochasticLogisticTree_out.json'/>
+        <postProcessor spec='LineageSampler' nSamples="10" samplingTime="50" markOnly="false"/>
+        
+        <output spec='NexusOutput' fileName='SLTreeSampled_out.nexus' collapseSingleChildNodes="true"/>
+        <output spec='JsonOutput' fileName='SLTreeSampled_out.json'/>
     </run>
 </beast>

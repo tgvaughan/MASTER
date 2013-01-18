@@ -19,6 +19,7 @@ package master.inheritance;
 import beast.util.Randomizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -59,10 +60,10 @@ public class InheritanceTrajectory extends Trajectory {
     
     
     // Simulation state variables
-    List<Node> activeLineages, inactiveLineages;
-    PopulationState currentPopState;
-    double t;
-    int sidx;
+    private List<Node> activeLineages, inactiveLineages;
+    private PopulationState currentPopState;
+    private double t;
+    private int sidx;
     
     /**
      * Build an inheritance graph corrsponding to a set of lineages embedded
@@ -468,6 +469,38 @@ public class InheritanceTrajectory extends Trajectory {
     @Override
     public InheritanceTrajectorySpec getSpec() {
         return spec;
+    }
+    
+    /**
+     * Retrieve start nodes of inheritance graph.
+     * 
+     * @return list of start nodes
+     */
+    public List<Node> getStartNodes() {
+        return startNodes;
+    }
+    
+    /**
+     * Retrieve end nodes of inheritance graph.
+     * 
+     * @return list of end nodes
+     */
+    public List<Node> getEndNodes() {
+        List<Node> endNodes = new ArrayList<Node>();
+        for (Node startNode : startNodes)
+            getEndNodesRecurse(startNode, endNodes);
+        
+        return endNodes;
+    }
+    
+    private void getEndNodesRecurse(Node node, List<Node> endNodes) {
+        for (Node child : node.getChildren()) {
+            if (child.getChildren().isEmpty()) {
+                if (!endNodes.contains(child))
+                    endNodes.add(child);
+            } else
+                getEndNodesRecurse(child, endNodes);
+        }
     }
 
     /**

@@ -1,4 +1,4 @@
-<!-- Test stochastic simulation specification -->
+<!-- Simulate an inheritance tree from the SIR epidemic model -->
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
   <run spec='InheritanceTrajectory'
@@ -23,9 +23,11 @@
       <lineageSeed spec='Individual' population='@I'/>
     </initialState>
 
+    <!-- Simulation will terminate when no lineages remain -->
     <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>
     
-    <postProcessor spec='LineageSampler' nSamples="10" samplingTime="10" markOnly="false"/>
+    <!-- Randomly sample a sub-set of the lineages extant at time 10 -->
+    <postProcessor spec='LineageSampler' nSamples="10" samplingTime="10" markOnly="true"/>
     
     <output spec='NexusOutput' fileName='SIRTree_output.nexus'
 	    collapseSingleChildNodes="true"/>

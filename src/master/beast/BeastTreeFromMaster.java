@@ -68,6 +68,13 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
             "Trajectory end condition based on remaining lineages.",
             new ArrayList<LineageEndCondition>());
     
+    // Post-processors:
+    public Input<List<InheritanceTrajectoryPostProcessor>> postProcessorsInput =
+            new Input<List<InheritanceTrajectoryPostProcessor>>(
+            "postProcessor",
+            "Inheritance trajectory post processor.",
+            new ArrayList<InheritanceTrajectoryPostProcessor>());
+    
     // Outputs (May want to record the tree separately.)
     public Input<List<InheritanceTrajectoryOutput>> outputsInput = new Input<List<InheritanceTrajectoryOutput>>(
             "output",
@@ -130,6 +137,10 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         // Generate stochastic trajectory:
         master.inheritance.InheritanceTrajectory itraj =
                 new master.inheritance.InheritanceTrajectory(spec);
+        
+        // Perform any requested post-processing:
+        for (InheritanceTrajectoryPostProcessor postProc : postProcessorsInput.get())
+            postProc.process(itraj);
         
         // Write any outputs:
         for (InheritanceTrajectoryOutput output : outputsInput.get())

@@ -40,7 +40,7 @@ public class Individual extends Plugin {
             0.0);
     
     public Input<String> labelInput = new Input<String>("label",
-            "Optioal unique node label for use in generating "
+            "Optional unique node label for use in generating "
             + "Newick/NEXUS/BEAST output.");
     
     public Input<List<Individual>> childrenInput = new Input<List<Individual>>(

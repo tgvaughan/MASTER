@@ -116,17 +116,22 @@ public class NexusOutput extends NewickOutput {
      * with a NEXUS wrapper.  Note that in this representation nodes are
      * annotated with details of the population they belong to.
      * 
-     * @param graph Graph to represent.
+     * @param itraj Inheritance trajectory to represent.
      * @param reverseTime Whether to traverse tree in backward time.
      * @param collapseSingleChildNodes 
      * @param pstream PrintStream object to which result is sent.
      */
-    public static void write(InheritanceTrajectory graph,
+    public static void write(InheritanceTrajectory itraj,
             boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
         
         pstream.println("#nexus\n\nBegin trees;");
-        pstream.print("tree TREE = ");
-        pstream.println(new NexusOutput(graph, reverseTime, collapseSingleChildNodes));
+        
+        // Skip empty inheritance graphs:
+        if (!itraj.getStartNodes().isEmpty()) {
+            pstream.print("tree TREE = ");
+            pstream.println(new NexusOutput(itraj, reverseTime, collapseSingleChildNodes));
+        }
+        
         pstream.println("End;");
     }
     
@@ -148,6 +153,11 @@ public class NexusOutput extends NewickOutput {
         
         for (int i=0; i<iensemble.itrajectories.size(); i++) {
             InheritanceTrajectory thisTraj = iensemble.itrajectories.get(i);
+            
+            // Skip empty inheritance graphs:
+            if (thisTraj.getStartNodes().isEmpty())
+                continue;
+            
             pstream.print("tree TREE_" + i + " = ");
             pstream.println(new NexusOutput(thisTraj, reverseTime, collapseSingleChildNodes));
         }

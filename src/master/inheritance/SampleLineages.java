@@ -58,7 +58,11 @@ public class SampleLineages {
         
         // Label nodes belonging to sampled lineages:
         for (Node node : sampledNodes)
-            mark(node);
+            mark(node, reverseTime);
+        
+        // Set complimentary annotation on unsampled lineages:
+        for (Node node: rootNodes)
+            markFalse(node, reverseTime);
         
         if (markOnly)
             return;
@@ -78,7 +82,15 @@ public class SampleLineages {
                     itraj.getStartNodes().remove(leaf);
             }
         }
-
+        
+        // Remove any remaining unmarked root nodes:
+        List<Node> oldRootNodes = new ArrayList<Node>();
+        oldRootNodes.addAll(rootNodes);
+        for (Node root : oldRootNodes) {
+            if (!isMarked(root))
+                rootNodes.remove(root);
+        }
+        
     }
 
     /**
@@ -88,22 +100,38 @@ public class SampleLineages {
      * @return true if lineage has been sampled
      */
     private static boolean isMarked(Node node) {
-        Boolean mark = (Boolean) node.getAttribute("mark");
+        Boolean mark = (Boolean) node.getAttribute("marked");
         return mark != null && mark;
     }
 
     /**
-     * Mark node as belonging to a sampled lineage.
+     * Mark node and its ancestors as belonging to a sampled lineage.
      * 
      * @param node 
+     * @param reverseTime 
      */
-    private static void mark(Node node) {
+    private static void mark(Node node, boolean reverseTime) {
 
-        node.setAttribute("mark", true);
-        List<Node> parents = node.getParents();
-        if (parents.size() == 1) {
-            mark(parents.get(0));
-        }
+        node.setAttribute("marked", true);
+        List<Node> prevNodes = getPrev(node, reverseTime);
+        for (Node prev : prevNodes)
+            mark(prev, reverseTime);
+    }
+    
+    /**
+     * Explicitly unmark node and its decendents which do not
+     * belong to sampled lineages.
+     * 
+     * @param node
+     * @param reverseTime 
+     */
+    private static void markFalse(Node node, boolean reverseTime) {
+        if (!isMarked(node))
+            node.setAttribute("marked", false);
+        
+        List<Node> nextNodes = getNext(node, reverseTime);
+        for (Node next : nextNodes)
+            markFalse(next, reverseTime);
     }
 
     /**

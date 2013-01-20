@@ -26,7 +26,7 @@ except the ancestors of a randomly selected set of leaves. -->
         
         <postProcessor spec='LineageSampler' nSamples="10" samplingTime="50" markOnly="false"/>
         
-        <output spec='NexusOutput' fileName='SLTreeSampled_out.nexus' collapseSingleChildNodes="true"/>
+        <output spec='NexusOutput' fileName='SLTreeSampled_out.nexus' collapseSingleChildNodes="false"/>
         <output spec='JsonOutput' fileName='SLTreeSampled_out.json'/>
     </run>
 </beast>

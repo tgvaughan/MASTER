@@ -12,10 +12,10 @@ mkdir $ojdir
 mkdir $ojdir/main
 mkdir $ojdir/lib
 
-cp ~/code/beast_and_friends/beast2/dist/beast2.jar $ojdir/main
-cp ~/code/beast_and_friends/beast2/lib/*.jar $ojdir/lib
-cp ~/code/MASTER/dist/MASTER.jar $ojdir/lib
-cp ~/code/MASTER/lib/*.jar $ojdir/lib
+cp ~/work/beast2/dist/beast2.jar $ojdir/main
+cp ~/work/beast2/lib/*.jar $ojdir/lib
+cp ~/work/MASTER/dist/MASTER.jar $ojdir/lib
+cp ~/work/MASTER/lib/*.jar $ojdir/lib
 
 cp one-jar-boot-0.97.jar $ojdir/
 cd $ojdir
@@ -32,7 +32,7 @@ rm -rf $ojdir
 ardir=MASTER-$1
 mkdir $ardir
 mkdir $ardir/examples
-cp ../examples/*.xml $ardir/examples
+cp ../examples_release/*.xml $ardir/examples
 cp ../README.md $ardir/README
 cp ../COPYING $ardir/COPYING
 cp ../lib/LICENSE* $ardir/

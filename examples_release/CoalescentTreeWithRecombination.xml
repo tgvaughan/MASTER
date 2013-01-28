@@ -1,0 +1,25 @@
+<!-- Generate tree using a coalescent model with branching events. -->
+
+<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+    <run spec='InheritanceTrajectory'
+         verbosity='1'>
+        
+        <model spec='InheritanceModel'>
+            <population spec='Population' populationName='X' id='X'/>
+            <reaction spec='InheritanceReaction' reactionName='Coalescence' rate="1.0">
+                2X:1 -> X:1
+            </reaction>
+            <reaction spec='InheritanceReaction' reactionName='Recombination' rate="0.5">
+                X:1 -> 2X:1
+            </reaction>
+        </model>                
+
+        <initialState spec='InitState'>
+            <lineageSeedMultiple spec='MultipleIndividuals' population='@X' copies="20"/>
+        </initialState>
+        
+        <lineageEndCondition spec='LineageEndCondition' nLineages="1"/>
+                
+        <output spec='NexusOutput' fileName='CoalescentTreeWithRecombination_out.nexus' reverseTime="true"/>
+    </run>
+</beast>

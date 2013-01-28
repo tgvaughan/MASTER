@@ -1,0 +1,60 @@
+<!-- Estimate the dynamics of moments compartmental population sizes
+     using 1000 simulations from the SIR epidemic model. -->
+
+<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+    <run spec='EnsembleSummary'
+         simulationTime='50'
+         nSamples='1001'
+         nTraj='1000'
+         seed='53'>
+        
+        <stepper spec='TauLeapingStepper' stepSize="0.01"/>
+        <!--<stepper spec='GillespieStepper' />-->
+
+        <model spec='Model' id='model'>
+            <population spec='Population' id='S' populationName='S'/>
+            <population spec='Population' id='I' populationName='I'/>
+            <population spec='Population' id='R' populationName='R'/>
+
+            <reaction spec='Reaction' reactionName="Infection" rate="0.001">
+                S + I -> 2I
+            </reaction>
+
+            <reaction spec='Reaction' reactionName="Recovery" rate="0.5">
+                I -> R
+            </reaction>
+        </model>
+
+        <initialState spec='InitState'>
+            <populationSize spec='PopulationSize' population='@S' size='999'/>
+            <populationSize spec='PopulationSize' population='@I' size='1'/>
+            <populationSize spec='PopulationSize' population='@R' size='0'/>
+        </initialState>
+
+        <moment spec='Moment' momentName='S'>
+            <factor idref='S'/>
+        </moment>
+
+        <moment spec='Moment' momentName='I'>
+            <factor idref='I'/>
+        </moment>
+
+        <moment spec='Moment' momentName='R'>
+            <factor idref='R'/>
+        </moment>
+        
+        <momentGroup spec='MomentGroup' momentGroupName='N' sum="true">
+            <moment spec='Moment'>
+                <factor idref='S'/>
+            </moment>
+            <moment spec='Moment'>
+                <factor idref='I'/>
+            </moment>
+            <moment spec='Moment'>
+                <factor idref='R'/>
+            </moment>
+        </momentGroup>
+        
+        <output spec='JsonOutput' fileName='SIRSummary_out.json'/>
+    </run>
+</beast>

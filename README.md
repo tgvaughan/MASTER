@@ -4,7 +4,7 @@ MASTER: Moments And Stochastic Trees from Event Reactions
 This software aims to provide a general means of creating simulators
 for models in theoretical population genetics.  Specifically, it is
 designed for modelling the stochastic dynamics of structured
-populationas.  Additionally, it is capable of generating trees
+populations.  Additionally, it is capable of generating trees
 representing inheritance relationships amongst individuals in those
 populations.
 

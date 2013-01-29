@@ -3,50 +3,91 @@
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
     
-    <run spec='EnsembleSummary'
-         simulationTime='20'
-         nSamples='1001'
-         nTraj='100'>
-        
-        <stepper spec='TauLeapingStepper' stepSize="0.01"/>
-        <!--<stepper spec='GillespieStepper' />-->
+  <run spec='EnsembleSummary'
+       simulationTime='20'
+       nSamples='1001'
+       nTraj='1000'>
+    
+    <stepper spec='TauLeapingStepper' stepSize="0.01"/>
+    <!--<stepper spec='GillespieStepper' />-->
 
-        <model spec='Model' id='model'>
-            <populationType spec='PopulationType' typeName='X' dim='2 2' id='X'/>
-            <reactionGroup spec='ReactionGroup' reactionGroupName="Migration">
-                <reaction spec='Reaction' rate="0.1">
-                    X[0,0] -> X[1,0]
-                </reaction>
-                <reaction spec='Reaction' rate="0.2">
-                    X[1,0] -> X[0,0]
-                </reaction>
-            </reactionGroup>
-        </model>
+    <model spec='Model' id='model'>
+      <populationType spec='PopulationType' typeName='X' dim='2' id='X'/>
 
-        <initialState spec='InitState'>
-            <populationSize spec='PopulationSize' size='100'>
-                <population spec='Population' type='@X' location="0 0"/>
-            </populationSize>
-        </initialState>
+      <reactionGroup spec='ReactionGroup' reactionGroupName='Birth'>
+	<reaction spec='Reaction' rate="1.0">
+	  X[0] -> 2X[0]
+	</reaction>
+	<reaction spec='Reaction' rate="1.0">
+	  X[1] -> 2X[1]
+	</reaction>
+      </reactionGroup>
 
-        <momentGroup spec='MomentGroup' momentGroupName='X'>
-            <moment spec='Moment'>
-                <factor spec='Population' type="@X" location="0 0"/>
-            </moment>
-            <moment spec='Moment'>
-                <factor spec='Population' type="@X" location="1 0"/>
-            </moment>
-        </momentGroup>
-        
-        <momentGroup spec='MomentGroup' momentGroupName='N' sum="true">
-            <moment spec='Moment'>
-                <factor spec='Population' type="@X" location="0 0"/>
-            </moment>
-            <moment spec='Moment'>
-                <factor spec='Population' type="@X" location="1 0"/>
-            </moment>
-        </momentGroup>
-        
-        <output spec='JsonOutput' fileName='StructuredStochasticLogistic_out.json'/>
-    </run>
+      <reactionGroup spec='ReactionGroup' reactionGroupName='Competition'>
+	<reaction spec='Reaction' rate="0.01">
+	  2X[0] -> X[0]
+	</reaction>
+	<reaction spec='Reaction' rate="0.01">
+	  2X[1] -> X[1]
+	</reaction>
+      </reactionGroup>
+
+      <reactionGroup spec='ReactionGroup' reactionGroupName='Death'>
+	<reaction spec='Reaction' rate="0.2">
+	  X[0] -> 0
+	</reaction>
+	<reaction spec='Reaction' rate="0.2">
+	  X[1] -> 0
+	</reaction>
+      </reactionGroup>
+
+      <reactionGroup spec='ReactionGroup' reactionGroupName="Migration">	
+	<reaction spec='Reaction' rate="0.1">
+	  X[0] -> X[1]
+	</reaction>
+	<reaction spec='Reaction' rate="0.2">
+	  X[1] -> X[0]
+	</reaction>
+      </reactionGroup>
+    </model>
+    
+    <initialState spec='InitState'>
+      <populationSize spec='PopulationSize' size='1'>
+	<population spec='Population' type='@X' location="0"/>
+      </populationSize>
+    </initialState>
+
+    <populationEndCondition spec='PopulationEndCondition'
+			    threshold="0"
+			    exceedCondition="false"
+			    isRejection="true">
+      <population spec='Population' type='@X' location='0'/>
+      <population spec='Population' type='@X' location='1'/>
+    </populationEndCondition>
+    
+    <momentGroup spec='MomentGroup' momentGroupName='X'>
+      <moment spec='Moment'>
+	<factor spec='Population' type="@X" location="0"/>
+      </moment>
+      <moment spec='Moment'>
+	<factor spec='Population' type="@X" location="1"/>
+      </moment>
+    </momentGroup>
+
+    <moment spec='Moment' momentName='X1X2'>
+      <factor spec='Population' type="@X" location="0"/>
+      <factor spec='Population' type="@X" location="1"/>
+    </moment>
+    
+    <momentGroup spec='MomentGroup' momentGroupName='N' sum="true">
+      <moment spec='Moment'>
+	<factor spec='Population' type="@X" location="0"/>
+      </moment>
+      <moment spec='Moment'>
+	<factor spec='Population' type="@X" location="1"/>
+      </moment>
+    </momentGroup>
+    
+    <output spec='JsonOutput' fileName='StructuredStochasticLogistic_out.json'/>
+  </run>
 </beast>

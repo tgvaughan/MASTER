@@ -49,7 +49,6 @@
       <populationSize spec='PopulationSize' population='@X' size='2.5e11'/>
       <populationSize spec='PopulationSize' population='@V' size='1'/>
     </initialState>
-
     
     <moment spec='Moment' momentName='X'>
       <factor idref='X'/>

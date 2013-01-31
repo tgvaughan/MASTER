@@ -9,95 +9,108 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="javascripts/respond.js"></script>
     <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <!--[if lt IE 8]>
     <link rel="stylesheet" href="stylesheets/ie.css">
     <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    
   </head>
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/tgvaughan/MASTER">Fork me on GitHub</a></li>
-          <li class="downloads"><a href="binaries/Master-1.0.zip">Latest binary</a></li>
-          <li class="downloads"><a href="https://github.com/tgvaughan/Hamlet/tarball/master">Latest source</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
-
+    <div id="header">
+      <nav>
+        <li class="fork"><a href="https://github.com/tgvaughan/MASTER">GitHub
+            Repository</a></li>
+        <li class="downloads"><a href="binaries/Master-1.0.zip">Latest binary</a></li>
+        <li class="downloads"><a href="https://github.com/tgvaughan/Hamlet/tarball/master">Latest source</a></li>
+        <li class="title">DOWNLOADS</li>
+      </nav>
+    </div><!-- end header -->
+    
     <div class="wrapper">
-
+      
       <section>
         <div id="title">
-          <h1>MASTER</h1>
+          <!--<h1>MASTER</h1>-->
+	  <h1><img src="images/MASTER.png"/></h1>
           <p>Moments and Stochastic Trees from Event Reactions</p>
           <hr>
           <span class="credits left">Project maintained by <a href="https://github.com/tgvaughan">Tim Vaughan</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
         </div>
 
-        <p>MASTER is a Java package aimed at providing a general means
-of creating simulators for models in theoretical population genetics.
-Specifically, it is aimed at modelling the stochastic dynamics of
-structured and unstructured populations, and simulating inheritance
-trees and networks under these same models.</p>
+        <p>MASTER is a software package aimed at providing a general
+	  means of creating simulators for stochastic models of
+	  structured and ustructured population dynamics.  It also
+	  supports the simulation of inheritance trees and networks
+	  under these same models.</p>
 
-<h2>System Requirements</h2>
+	<h2>System Requirements</h2>
 
-<p>MASTER is a Java application, and is thus fundamentally
-  platform-agnostic.  In order to use it, v1.6 or later of the Java
-  Runtime Environment is required.  This probably exists on your
-  system already, but if not you may obtain
-  it <a href="http://www.java.com/en/download/index.jsp">here</a>.</p>
+	<p>MASTER is a Java application, and is thus fundamentally
+	  platform-agnostic.  In order to use it, v1.6 or later of the
+	  Java Runtime Environment is required.  This likely exists on
+	  your system already, but if not you may obtain
+	  it <a href="http://www.java.com/en/download/index.jsp">here</a>.</p>
 
-<h2>Installation</h2>
+	<h2>Installation</h2>
 
-<p>Installation of MASTER is very straight-forward.  Simply extract
-the following archive:
-<ul>
-<li><a href="binaries/MASTER-1.0.zip">MASTER-1.0.zip</a></li>
-</ul>
-Once complete, the new folder <code>MASTER-1.0/</code> will contain a
-number of files. On systems running modern Windows or OS X
-installations, double-clicking on <code>MASTER-1.0.jar</code> will
-bring up a file selector that you can use to select an XML input file
-describing a simulation.  On Linux computers, the shell
-script <code>master_linux.sh</code> can be used to run Master from the
-command line, with the path to an XML input file given as a command
-line argument. (In this case, making a symbolic link
-to <code>master_linux.sh</code> from a directory in your execution
-path like <code>usr/local/bin/</code> will allow you to execute MASTER
-on the command line easily from other locations in your file
-system.)</p>
+	<p>Installation of MASTER is very straight-forward.  Simply
+	  extract the following archive:
+	  <ul>
+	    <li><a href="binaries/MASTER-1.0.zip">MASTER-1.0.zip</a></li>
+	  </ul>
+	  Once complete, the new folder <code>MASTER-1.0/</code> will
+	  contain a number of files. On systems running modern Windows
+	  or OS X installations, double-clicking
+	  on <code>MASTER-1.0.jar</code> will bring up a file selector
+	  that you can use to select an XML input file describing a
+	  simulation.  On Linux computers, the shell
+	  script <code>master_linux.sh</code> can be used to run
+	  Master from the command line, with the path to an XML input
+	  file given as a command line argument. (In this case, making
+	  a symbolic link to <code>master_linux.sh</code> from a
+	  directory in your execution path
+	  like <code>usr/local/bin/</code> will allow you to execute
+	  MASTER on the command line easily from other locations in
+	  your file system.)</p>
 
-<h2>Examples</h2>
+	<h2>Examples</h2>
 
-<p>As well as the software itself, the binary archive above contains a
-  folder named <code>examples/</code> which itself contains 
-  example MASTER input files for performing a variety of different
-  kinds of simulations.  Note that if you use the graphical file
-  selector to run one of these, the output file(s) generated will be
-  left in the folder containing <code>MASTER-1.0.jar</code>.</p>
+	<p>As well as the software itself, the archive above contains
+	  a folder named <code>examples/</code> which itself contains
+	  example MASTER input files for performing a variety of
+	  different kinds of simulations.  Note that if you use the
+	  graphical file selector to run one of these, the output
+	  file(s) generated will be left in the folder
+	  containing <code>MASTER-1.0.jar</code>.</p>
 
-<h2>Further Information</h2>
+	<h2>Documentation</h2>
+	
+	<p>For the full documentation of MASTER and a number of
+	  helpful tutorials, please refer to the MASTER
+	  <a href="http://www.github.com/tgvaughan/MASTER/wiki">wiki</a>.</p>
 
-<p>For further information and documentation, please refer to the MASTER
-<a href="http://www.github.com/tgvaughan/MASTER/wiki">wiki</a>.</p>
+	<h2>Feedback, Feature Requests and Bug Reports</h2>
 
-<h2>Acknowledgements</h2>
+	<h2>Acknowledgements</h2>
 
-<p>MASTER is an add-on to
-  the fantastic <a href="http://beast2.cs.auckland.ac.nz/">BEAST 2</a>
-  phylogenetics inference system.  For ease of installation, BEAST 2
-  is currently bundled with the downloadable MASTER binary.  We owe a
-  great debt of thanks to the BEAST 2 developers for creating such a
-  wonderfully extensible system.</p>
+	<p>MASTER is an add-on to the
+	  fantastic <a href="http://beast2.cs.auckland.ac.nz/">BEAST
+	  2</a> phylogenetics inference system.  For ease of
+	  installation, BEAST 2 is currently bundled with the
+	  downloadable MASTER binary.  We owe a great debt of thanks
+	  to the BEAST 2 developers for creating such a wonderfully
+	  extensible system.</p>
+	
+	<center><a href="http://www.allanwilsoncentre.ac.nz/"><img src="images/AWC_logo.png"/></a></center>
 
-<p>Work on this project is made possible by generous funding from the
-<a href="http://www.allanwilsoncentre.ac.nz/">Allan Wilson Centre
-for Molecular Ecology and Epidemiology</a>.</p>
+	<br/>
+
+	<p>Work on this project is made possible by generous funding from the
+	  <a href="http://www.allanwilsoncentre.ac.nz/">Allan Wilson
+	    Centre for Molecular Ecology and Epidemiology</a>.</p>
+
       </section>
 
     </div>

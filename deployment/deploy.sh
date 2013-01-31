@@ -32,7 +32,7 @@ rm -rf $ojdir
 ardir=MASTER-$1
 mkdir $ardir
 mkdir $ardir/examples
-cp ../examples_release/*.xml $ardir/examples
+cp ../examples_release/* $ardir/examples
 cp ../README.md $ardir/README
 cp ../COPYING $ardir/COPYING
 cp ../lib/LICENSE* $ardir/

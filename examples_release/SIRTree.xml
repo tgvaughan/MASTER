@@ -10,7 +10,7 @@
       <population spec='Population' id='I' populationName='I'/>
       <population spec='Population' id='R' populationName='R'/>
       
-      <reaction spec='InheritanceReaction' reactionName="Infection" rate="0.001">
+      <reaction spec='InheritanceReaction' reactionName="Infection" rate="0.005">
 	S + I -> 2I
       </reaction>
       <reaction spec='InheritanceReaction' reactionName="Recovery" rate="0.2">
@@ -19,18 +19,16 @@
     </model>
     
     <initialState spec='InitState'>
-      <populationSize spec='PopulationSize' population='@S' size='999'/>
+      <populationSize spec='PopulationSize' population='@S' size='199'/>
       <lineageSeed spec='Individual' population='@I'/>
     </initialState>
 
     <!-- Simulation will terminate when no lineages remain -->
     <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>
     
-    <!-- Randomly sample a sub-set of the lineages extant at time 10 -->
-    <postProcessor spec='LineageSampler' nSamples="10" samplingTime="10" markOnly="true"/>
-    
-    <output spec='NexusOutput' fileName='SIRTree_output.nexus'
-	    collapseSingleChildNodes="true"/>
+    <output spec='NewickOutput' fileName='SIRTree_output.newick'/>
+    <output spec='NexusOutput' fileName='SIRTree_output.nexus'/>
     <output spec='JsonOutput' fileName='SIRTree_output.json'/>
   </run>
 </beast>
+

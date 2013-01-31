@@ -4,8 +4,7 @@ library(rjson)
 
 df <- fromJSON(file='StructuredStochasticLogistic_out.json')
 
-png('StructuredStochasticLogistic.png', width=800, height=400)
-par(mfcol=c(1,2))
+png('StructuredStochasticLogistic_mean.png', width=480, height=480)
 
 plot(df$t, df$X$mean[[1]], 'l', col='blue', lwd=2,
      ylim=c(0,2000),
@@ -26,10 +25,14 @@ legend('topleft', inset=.05,
        lty=c(1,1,2), lwd=c(2,2,1), col=c('blue','purple','black'))
 
 
+dev.off()
+
+
+png('StructuredStochasticLogistic_cov.png', width=480, height=480)
+
 plot(df$t, df$X1X2$mean[[1]]/df$X$mean[[1]]/df$X$mean[[2]],
      xlab='Time',
      ylab=expression(Cov[rel](N[1],N[2])), 'l', lwd=2,
      main='Inter-deme covariance dynamics')
 
 dev.off()
-

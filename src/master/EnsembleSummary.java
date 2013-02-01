@@ -17,6 +17,7 @@
 package master;
 
 import beast.util.Randomizer;
+import java.util.Date;
 
 /**
  * A class representing a collection of results obtained by estimating moments
@@ -31,9 +32,13 @@ public class EnsembleSummary {
 
     // Simulation specification:
     EnsembleSummarySpec spec;
+    
     // Ensemble-averaged state summaries:
     StateSummary[] stateSummaries;
 
+    // Total length of simulation time:
+    private double calculationTime;
+    
     /**
      * Assign simulation parameters and moment list to non-static fields,
      * performs the spec, recording the required summary statistics.
@@ -49,6 +54,9 @@ public class EnsembleSummary {
             Randomizer.setSeed(spec.seed);
             spec.seedUsed = true;
         }
+        
+        // Record time at start of calculation:
+        double startTime = (new Date()).getTime();
 
         // Derived spec parameters:
         double sampleDt = spec.getSampleDt();
@@ -117,6 +125,18 @@ public class EnsembleSummary {
         // Normalise state summaries:
         for (StateSummary summary : stateSummaries)
             summary.normalise();
+        
+        // Record total time of calculation:
+        calculationTime = Double.valueOf((new Date()).getTime() - startTime)/1e3;
+    }
+    
+    /**
+     * Retrieve total length of time (in seconds) taken by calculation.
+     * 
+     * @return calculation wall time
+     */
+    public double getCalculationTime() {
+        return calculationTime;
     }
 
 }

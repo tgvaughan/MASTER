@@ -62,6 +62,9 @@ public class JsonOutput {
         
         // Record spec parameters to object output:
         outputData.put("sim", spec);
+        
+        // Record calculation time length:
+        outputData.put("calculationTime", trajectory.getCalculationTime());
 
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -188,7 +191,7 @@ public class JsonOutput {
     }
     
     
-        /**
+    /**
      * Express a given trajectory ensemble as a JSON-formatted string and send
      * the result to a PrintStream.
      * 

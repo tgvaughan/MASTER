@@ -18,6 +18,7 @@ package master;
 
 import beast.util.Randomizer;
 import com.google.common.collect.Lists;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,6 +36,9 @@ public class Trajectory {
     
     // Simulation specification:
     private TrajectorySpec spec;
+    
+    // Wall time used in calculation:
+    private double calculationTime;
 
     /**
      * Generate trajectory of birth-death process.
@@ -51,6 +55,9 @@ public class Trajectory {
             Randomizer.setSeed(spec.seed);
             spec.seedUsed = true;
         }
+        
+        // Record time at start of simulation:
+        double startTime = (new Date()).getTime();
 
         // Initialise sampled state and time lists:
         sampledStates = Lists.newArrayList();
@@ -145,6 +152,9 @@ public class Trajectory {
                 sampleState(currentState, t);
             }
         }
+        
+        // Record length of time taken by calculation:
+        calculationTime = Double.valueOf((new Date()).getTime() - startTime)/1e3;
     }
     
     /**
@@ -163,6 +173,15 @@ public class Trajectory {
      */
     public TrajectorySpec getSpec() {
         return spec;
+    }
+    
+    /**
+     * Retrieve length of time (in seconds) taken by calculation.
+     * 
+     * @return total trajectory calculation time
+     */
+    public double getCalculationTime() {
+        return calculationTime;
     }
     
     /**

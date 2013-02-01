@@ -67,4 +67,17 @@ public class Ensemble {
         }
 
     }
+    
+    /**
+     * Retrieve total time (in seconds) taken by calculation.
+     * 
+     * @return length of time taken by calculation
+     */
+    public double getCalculationTime() {
+        double totalTime = 0.0;
+        for (Trajectory traj : trajectories)
+            totalTime += traj.getCalculationTime();
+        
+        return totalTime;
+    }
 }

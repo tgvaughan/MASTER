@@ -46,7 +46,7 @@ public class InheritanceTrajectory extends Runnable {
             false);
     
     public Input<Integer> nSamplesInput = new Input<Integer>(
-            "nPopSizeSamples",
+            "nSamples",
             "Number of evenly spaced population size samples to record. (Default 0: uneven sampling)",
             0);
     

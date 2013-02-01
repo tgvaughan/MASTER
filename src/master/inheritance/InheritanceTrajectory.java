@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import master.Population;
@@ -58,6 +59,8 @@ public class InheritanceTrajectory extends Trajectory {
     // Simulation specification.
     private InheritanceTrajectorySpec spec;    
     
+    // Lenght of time taken by calculation
+    private double calculationTime;
     
     // Simulation state variables
     private List<Node> activeLineages, inactiveLineages;
@@ -82,12 +85,15 @@ public class InheritanceTrajectory extends Trajectory {
         startNodes = Lists.newArrayList();
         for (Node startNode : spec.initNodes)
             startNodes.add(startNode.getCopy());
-        
+
         // Set seed if defined:
         if (spec.getSeed()>=0 && !spec.isSeedUsed()) {
             Randomizer.setSeed(spec.getSeed());
             spec.setSeedUsed();
         }
+        
+        // Record time at start of calculation:
+        double startTime = (new Date()).getTime();
         
         // Don't want to calculate this more than once:
         double sampleDt = 0.0;
@@ -251,6 +257,9 @@ public class InheritanceTrajectory extends Trajectory {
         // Fix final time of any remaining active lineages.
         for (Node node : activeLineages)
             node.setTime(t);
+        
+        // Record total time of calculation:
+        calculationTime = Double.valueOf((new Date()).getTime() - startTime)/1e3;
     }
     
     /**
@@ -469,6 +478,16 @@ public class InheritanceTrajectory extends Trajectory {
     @Override
     public InheritanceTrajectorySpec getSpec() {
         return spec;
+    }
+    
+    /**
+     * Retrieve total calculation time in seconds.
+     * 
+     * @return wall time of calculation
+     */
+    @Override
+    public double getCalculationTime() {
+        return calculationTime;
     }
     
     /**

@@ -18,6 +18,7 @@ package master.inheritance;
 
 import beast.util.Randomizer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -75,6 +76,19 @@ public class InheritanceEnsemble {
      */
     public List<InheritanceTrajectory> getTrajectories() {
         return itrajectories;
+    }
+    
+    /**
+     * Retrieve total time (in seconds) taken by calculation.
+     * 
+     * @return calculation wall time
+     */
+    public double getCalculationTime() {
+        double calculationTime = 0.0;
+        for (InheritanceTrajectory itraj : itrajectories)
+            calculationTime += itraj.getCalculationTime();
+        
+        return calculationTime;
     }
     
 }

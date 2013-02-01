@@ -25,6 +25,9 @@ public class Population {
     PopulationType type;
     int offset;
     
+    
+    private int hash;
+    
     /**
      * Create a new population specifier.
      * 
@@ -38,6 +41,11 @@ public class Population {
             this.offset = 0;
         else
             this.offset = populationType.locToOffset(location);
+        
+        // Precalculate hash code:
+        hash = 7;
+        hash = 89*hash+(this.type!=null ? this.type.hashCode() : 0);
+        hash = 89*hash+this.offset;
     }
     
     /**
@@ -81,7 +89,8 @@ public class Population {
         
         if (other instanceof Population) {
             Population otherPop = (Population)other;
-            result = ((type == otherPop.type) && (offset == otherPop.offset));
+            //result = ((type == otherPop.type) && (offset == otherPop.offset));
+            result = (hash == otherPop.hashCode());
         }
         
         return result;
@@ -89,9 +98,6 @@ public class Population {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 89*hash+(this.type!=null ? this.type.hashCode() : 0);
-        hash = 89*hash+this.offset;
         return hash;
     }    
     

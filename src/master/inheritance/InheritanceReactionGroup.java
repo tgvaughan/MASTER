@@ -17,9 +17,12 @@
 package master.inheritance;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import java.util.ArrayList;
 import master.Population;
 import master.ReactionGroup;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Reaction group additionally specifying inheritance relationships between
@@ -29,7 +32,7 @@ import java.util.List;
  */
 public class InheritanceReactionGroup extends ReactionGroup {
     
-    List<List<Node>> reactNodes, prodNodes;
+    List<Map<Population, List<Node>>> reactNodes, prodNodes;
     
     /**
      * Constructor with name.
@@ -61,7 +64,15 @@ public class InheritanceReactionGroup extends ReactionGroup {
      * @param nodes Nodes representing individual reactants.
      */
     public void addInheritanceReactantSchema(Node ... nodes) {
-        reactNodes.add(Lists.newArrayList(nodes));
+
+        Map<Population, List<Node>> reactNodesMap = Maps.newHashMap();
+        for (Node node : nodes) {
+            Population nodePop = node.getPopulation();
+            if (!reactNodesMap.containsKey(nodePop))
+                    reactNodesMap.put(nodePop, new ArrayList<Node>());
+            reactNodesMap.get(nodePop).add(node);
+        }
+        reactNodes.add(reactNodesMap);
         
         Population [] reactNodePops = new Population[nodes.length];
         for (int i=0; i<nodes.length; i++)
@@ -79,7 +90,14 @@ public class InheritanceReactionGroup extends ReactionGroup {
      * @param nodes Nodes representing individual products.
      */
     public void addInheritanceProductSchema(Node ... nodes) {
-        prodNodes.add(Lists.newArrayList(nodes));
+        
+        Map<Population, List<Node>> prodNodesMap = Maps.newHashMap();
+        for (Node node : nodes) {
+            Population nodePop = node.getPopulation();
+            if (!prodNodesMap.containsKey(nodePop))
+                prodNodesMap.put(nodePop, new ArrayList<Node>());
+            prodNodesMap.get(nodePop).add(node);
+        }
         
         Population [] prodNodePops = new Population[nodes.length];
         for (int i=0; i<nodes.length; i++)

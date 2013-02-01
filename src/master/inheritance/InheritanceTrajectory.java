@@ -63,7 +63,9 @@ public class InheritanceTrajectory extends Trajectory {
     private double calculationTime;
     
     // Simulation state variables
-    private List<Node> activeLineages, inactiveLineages;
+    private Map<Population,List<Node>> activeLineages;
+    private Map<Node, Node> nodesInvolved, nextLevelNodes;
+    private List<Node> inactiveLineages;
     private PopulationState currentPopState;
     private double t;
     private int sidx;
@@ -85,6 +87,10 @@ public class InheritanceTrajectory extends Trajectory {
         startNodes = Lists.newArrayList();
         for (Node startNode : spec.initNodes)
             startNodes.add(startNode.getCopy());
+        
+        // Create HashMaps:
+        nodesInvolved = Maps.newHashMap();
+        nextLevelNodes = Maps.newHashMap();
 
         // Set seed if defined:
         if (spec.getSeed()>=0 && !spec.isSeedUsed()) {
@@ -194,15 +200,18 @@ public class InheritanceTrajectory extends Trajectory {
                 }
             }
             
-            // Continue to on to next reactionGroup if lineage has been seeded
+            // Continue to on to next reaction if lineage has been seeded
             if (seedTimeExceeded) {
                 Node seedNode = inactiveLineages.get(0);
                 inactiveLineages.remove(0);
                 Node child = new Node(seedNode.population);
                 seedNode.addChild(child);
-                activeLineages.add(child);
-                currentPopState.add(seedNode.population, 1.0);
                 
+                if (!activeLineages.containsKey(child.getPopulation()))
+                    activeLineages.put(child.getPopulation(), new ArrayList<Node>());
+                activeLineages.get(child.getPopulation()).add(child);
+                
+                currentPopState.add(seedNode.population, 1.0);                
                 continue;
             }
             
@@ -236,12 +245,11 @@ public class InheritanceTrajectory extends Trajectory {
             }
 
             // Select lineages involved in chosen reaction:
-            Map<Node, Node> nodesInvolved = selectLineagesInvolved(activeLineages,
+            selectLineagesInvolved(activeLineages,
                 currentPopState, chosenReactionGroup, chosenReaction);
             
             // Implement changes to inheritance graph:
-            implementInheritanceReaction(activeLineages, nodesInvolved,
-                    chosenReactionGroup, t);
+            implementInheritanceReaction(activeLineages, chosenReactionGroup, t);
 
             // Implement state change due to reaction:
             currentPopState.implementReaction(chosenReactionGroup, chosenReaction, 1);
@@ -255,8 +263,9 @@ public class InheritanceTrajectory extends Trajectory {
         }
 
         // Fix final time of any remaining active lineages.
-        for (Node node : activeLineages)
-            node.setTime(t);
+        for (Population nodePop : activeLineages.keySet())
+            for (Node node : activeLineages.get(nodePop))
+                node.setTime(t);
         
         // Record total time of calculation:
         calculationTime = Double.valueOf((new Date()).getTime() - startTime)/1e3;
@@ -276,7 +285,7 @@ public class InheritanceTrajectory extends Trajectory {
         
         // Initialise active lineages with nodes present at start of simulation
         if (activeLineages == null)
-            activeLineages = Lists.newArrayList();
+            activeLineages = Maps.newHashMap();
         else
             activeLineages.clear();
         
@@ -287,14 +296,21 @@ public class InheritanceTrajectory extends Trajectory {
         
         for (Node node : startNodes) {
             node.getChildren().clear();
+
             if (node.getTime()>0.0) {
                 inactiveLineages.add(node);
             } else {
+                Population nodePop = node.getPopulation();
+                
                 node.setTime(0.0);
-                Node child = new Node(node.population);
+                Node child = new Node(nodePop);
                 node.addChild(child);
-                activeLineages.add(child);
-                currentPopState.add(node.population, 1.0);
+
+                if (!activeLineages.containsKey(nodePop))
+                    activeLineages.put(nodePop, new ArrayList<Node>());
+                activeLineages.get(nodePop).add(child);
+
+                currentPopState.add(nodePop, 1.0);
             }
         }
 
@@ -325,69 +341,43 @@ public class InheritanceTrajectory extends Trajectory {
      * Select lineages involved in reaction.  This is done by sampling
      * without replacement from the individuals present in the current state.
      * 
-     * @param activeLineages list of active lineages
+     * @param activeLineages population-partitioned list of active lineages
      * @param currentPopState current state of population sizes
      * @param chosenReactionGroup reaction group selected
      * @param chosenReaction integer index into reaction group specifying reactionGroup
      * @return Map from nodes involved to the corresponding reactant nodes.
      */
-    private Map<Node,Node> selectLineagesInvolved(
-            List<Node> activeLineages, PopulationState currentState,
+    private void selectLineagesInvolved(
+            Map<Population,List<Node>> activeLineages, PopulationState currentState,
             InheritanceReactionGroup chosenReactionGroup, int chosenReaction) {
 
-        Map<Population, Integer> popsSeen = Maps.newHashMap();
-        Map<Population, Integer> popsChosen = Maps.newHashMap();
-        Map<Node, Node> nodesInvolved = Maps.newHashMap();
-        for (Node node : activeLineages) {
-            if (!chosenReactionGroup.reactCounts
-                    .get(chosenReaction).containsKey(node.population))
+        nodesInvolved.clear();
+        for (Population reactPop : chosenReactionGroup.reactNodes.get(chosenReaction).keySet()) {
+            
+            if (!activeLineages.containsKey(reactPop))
                 continue;
-
-            // Calculate probability that lineage is involved in reaction:
-            int m = chosenReactionGroup.reactCounts
-                    .get(chosenReaction).get(node.population);
-            double N = currentState.get(node.population);
-
-            if (popsChosen.containsKey(node.population))
-                m -= popsChosen.get(node.population);
-
-            if (popsSeen.containsKey(node.population))
-                N -= popsSeen.get(node.population);
-
-            // Decide whether lineage is involved
-            if (Randomizer.nextDouble()<m/N) {
-
-                // Node is involved, select particular reactant node to use:
-                int idx = Randomizer.nextInt(m);
-                for (Node reactNode :
-                        chosenReactionGroup.reactNodes.get(chosenReaction)) {
-                    if (!reactNode.population.equals(node.population)
-                            || nodesInvolved.containsValue(reactNode))
-                        continue;
-
-                    if (idx==0) {
-                        nodesInvolved.put(node, reactNode);
-                        break;
-                    } else
-                        idx -= 1;
+            
+            // Total size of this population (including active lineages)
+            double N = currentState.get(reactPop);
+            
+            for (Node reactNode : chosenReactionGroup.reactNodes.get(chosenReaction).get(reactPop)) {
+                            
+                double l = Randomizer.nextDouble()*N;
+                if (l<activeLineages.get(reactPop).size()) {
+                    Node lineageNode = activeLineages.get(reactPop).get((int)l);
+                    nodesInvolved.put(lineageNode, reactNode);
+                    activeLineages.get(reactPop).remove(lineageNode);
+                    if (activeLineages.get(reactPop).isEmpty())
+                        activeLineages.remove(reactPop);
                 }
 
-                // Update popsChosen and popsSeen
-                if (popsChosen.containsKey(node.population))
-                    popsChosen.put(node.population,
-                            popsChosen.get(node.population)+1);
-                else
-                    popsChosen.put(node.population, 1);
-            }
+                // Stop here if we have no active lineages of this population
+                if (!activeLineages.containsKey(reactPop))
+                    break;
 
-            // Keep track of populations seen for future lineage selections:
-            if (popsSeen.containsKey(node.population))
-                popsSeen.put(node.population, popsSeen.get(node.population)+1);
-            else
-                popsSeen.put(node.population, 1);
+                N -= 1;
+            }
         }
-        
-        return nodesInvolved;
     }
 
     /**
@@ -398,12 +388,11 @@ public class InheritanceTrajectory extends Trajectory {
      * @param nodesInvolved map from active lineages involved to reactant nodes
      * @param t current time in simulation
      */
-    private void implementInheritanceReaction(List<Node> activeLineages,
-            Map<Node,Node> nodesInvolved,
+    private void implementInheritanceReaction(Map<Population,List<Node>> activeLineages,
             InheritanceReactionGroup reactionGroup, double t) {
        
         // Attach reactionGroup graph to inheritance graph
-        Map<Node, Node> nextLevelNodes = Maps.newHashMap();
+        nextLevelNodes.clear();
         for (Node node : nodesInvolved.keySet()) {
             Node reactNode = nodesInvolved.get(node);
 
@@ -415,7 +404,7 @@ public class InheritanceTrajectory extends Trajectory {
             }
         }
         
-        // Update activeLineages:
+        // Graph cleaning and activeLineages maintenance:
         for (Node node : nodesInvolved.keySet()) {
             
             if (node.children.size()==1
@@ -444,14 +433,17 @@ public class InheritanceTrajectory extends Trajectory {
                 node.setReactionGroup(reactionGroup);
             }
 
-            // Remove from active lineage list
-            activeLineages.remove(node);
-
             // Ensure any children are in active nodes list
-            for (Node child : node.children)
-                if (!activeLineages.contains(child))
-                    activeLineages.add(child);
-
+            for (Node child : node.children) {
+                Population pop = child.getPopulation();
+                if (!activeLineages.containsKey(pop)) {
+                    activeLineages.put(pop, new ArrayList<Node>());
+                    activeLineages.get(pop).add(child);
+                } else {
+                    if (!activeLineages.get(pop).contains(child))
+                        activeLineages.get(pop).add(child);
+                }
+            }
         }
 
         // Deal with multi-parent nodes:
@@ -459,11 +451,17 @@ public class InheritanceTrajectory extends Trajectory {
             if (node.parents.size()>1) {
                 node.setTime(t);
                 node.setReactionGroup(reactionGroup);
-                activeLineages.remove(node);
+                
+                activeLineages.get(node.getPopulation()).remove(node);
+                if (activeLineages.get(node.getPopulation()).isEmpty())
+                    activeLineages.remove(node.getPopulation());
 
                 Node child = new Node(node.population);
                 node.addChild(child);
-                activeLineages.add(child);
+                
+                if (!activeLineages.containsKey(child.getPopulation()))
+                    activeLineages.put(child.getPopulation(), new ArrayList<Node>());
+                activeLineages.get(child.getPopulation()).add(child);
             }
         
         }

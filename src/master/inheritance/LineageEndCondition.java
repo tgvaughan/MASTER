@@ -18,6 +18,7 @@ package master.inheritance;
 
 import master.Population;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A condition which is met when the simulation includes a specific
@@ -66,21 +67,22 @@ public class LineageEndCondition {
     }
 
     /**
-     * Returns true iff the given activeLineages list meets the end condition.
+     * Returns true iff the given activeLineages meets the end condition.
      * 
      * @param activeLineages
      * @return true if the end condition is met.
      */
-    public boolean isMet(List<Node> activeLineages) {
+    public boolean isMet(Map<Population,List<Node>> activeLineages) {
         int size;
-        if (pop == null)
-            size = activeLineages.size();
-        else {
+        if (pop == null) {
             size = 0;
-            for (Node node : activeLineages) {
-                if (node.population == pop)
-                    size += 1;
-            }            
+            for (List<Node> nodeList : activeLineages.values())
+                size += nodeList.size();
+        } else {
+            if (activeLineages.containsKey(pop))
+                size = activeLineages.get(pop).size();
+            else
+                size = 0;
         }
         
         return size == nlineages;

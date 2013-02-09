@@ -364,9 +364,10 @@ public class InheritanceTrajectory extends Trajectory {
                             
                 double l = Randomizer.nextDouble()*N;
                 if (l<activeLineages.get(reactPop).size()) {
-                    Node lineageNode = activeLineages.get(reactPop).get((int)l);
+                    int nodeIdx = (int)l;
+                    Node lineageNode = activeLineages.get(reactPop).get(nodeIdx);
                     nodesInvolved.put(lineageNode, reactNode);
-                    activeLineages.get(reactPop).remove(lineageNode);
+                    activeLineages.get(reactPop).remove(nodeIdx);
                     if (activeLineages.get(reactPop).isEmpty())
                         activeLineages.remove(reactPop);
                 }

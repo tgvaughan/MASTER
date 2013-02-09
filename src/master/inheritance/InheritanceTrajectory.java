@@ -245,11 +245,10 @@ public class InheritanceTrajectory extends Trajectory {
             }
 
             // Select lineages involved in chosen reaction:
-            selectLineagesInvolved(activeLineages,
-                currentPopState, chosenReactionGroup, chosenReaction);
+            selectLineagesInvolved(chosenReactionGroup, chosenReaction);
             
             // Implement changes to inheritance graph:
-            implementInheritanceReaction(activeLineages, chosenReactionGroup, t);
+            implementInheritanceReaction(chosenReactionGroup);
 
             // Implement state change due to reaction:
             currentPopState.implementReaction(chosenReactionGroup, chosenReaction, 1);
@@ -347,9 +346,7 @@ public class InheritanceTrajectory extends Trajectory {
      * @param chosenReaction integer index into reaction group specifying reactionGroup
      * @return Map from nodes involved to the corresponding reactant nodes.
      */
-    private void selectLineagesInvolved(
-            Map<Population,List<Node>> activeLineages, PopulationState currentState,
-            InheritanceReactionGroup chosenReactionGroup, int chosenReaction) {
+    private void selectLineagesInvolved(InheritanceReactionGroup chosenReactionGroup, int chosenReaction) {
 
         nodesInvolved.clear();
         for (Population reactPop : chosenReactionGroup.reactNodes.get(chosenReaction).keySet()) {
@@ -358,7 +355,7 @@ public class InheritanceTrajectory extends Trajectory {
                 continue;
             
             // Total size of this population (including active lineages)
-            double N = currentState.get(reactPop);
+            double N = currentPopState.get(reactPop);
             
             for (Node reactNode : chosenReactionGroup.reactNodes.get(chosenReaction).get(reactPop)) {
                             
@@ -385,12 +382,9 @@ public class InheritanceTrajectory extends Trajectory {
      * Update the graph and the activeLineages list according to the chosen
      * reactionGroup.
      * 
-     * @param activeLineages list of active lineages
      * @param nodesInvolved map from active lineages involved to reactant nodes
-     * @param t current time in simulation
      */
-    private void implementInheritanceReaction(Map<Population,List<Node>> activeLineages,
-            InheritanceReactionGroup reactionGroup, double t) {
+    private void implementInheritanceReaction(InheritanceReactionGroup reactionGroup) {
        
         // Attach reactionGroup graph to inheritance graph
         nextLevelNodes.clear();
@@ -437,12 +431,11 @@ public class InheritanceTrajectory extends Trajectory {
             // Ensure any children are in active nodes list
             for (Node child : node.children) {
                 Population pop = child.getPopulation();
-                if (!activeLineages.containsKey(pop)) {
-                    activeLineages.put(pop, new ArrayList<Node>());
+                if (!child.getFlag("active")) {
+                    if (!activeLineages.containsKey(pop))
+                        activeLineages.put(pop, new ArrayList<Node>());
                     activeLineages.get(pop).add(child);
-                } else {
-                    if (!activeLineages.get(pop).contains(child))
-                        activeLineages.get(pop).add(child);
+                    child.setFlag("active", true);
                 }
             }
         }

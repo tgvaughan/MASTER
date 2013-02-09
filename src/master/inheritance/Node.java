@@ -43,6 +43,7 @@ public class Node {
     // Height of this node.
     double time;
 
+    // Attributes for node annotation:
     Map<String, Object> attributes;
 
     // Reaction group (if any) associated with this node.
@@ -51,6 +52,9 @@ public class Node {
     // Unique name for this node:
     String name;
 
+    // Flags for use by graph generation algorithms:
+    Map<String, Boolean> flags;
+    
     /**
      * Constructor.
      *
@@ -99,6 +103,12 @@ public class Node {
         return copy;
     }
     
+    /**
+     * Set a named attribute for this node.
+     * 
+     * @param name
+     * @param value 
+     */
     public void setAttribute(String name, Object value) {
         if (attributes == null) {
             attributes = new HashMap<String, Object>();
@@ -106,8 +116,15 @@ public class Node {
         attributes.put(name, value);
     }
 
+    /**
+     * Retrieve named attribute for this node.  Returns null if named
+     * attribute has not been set.
+     * 
+     * @param name
+     * @return 
+     */
     public Object getAttribute(String name) {
-        if (attributes == null) {
+        if (attributes == null || !attributes.containsKey(name)) {
             return null;
         }
         return attributes.get(name);
@@ -121,6 +138,33 @@ public class Node {
             return attributes.keySet();
         else
             return null;
+    }
+    
+    /**
+     * Set named flag.
+     * 
+     * @param name
+     * @param value 
+     */
+    protected void setFlag(String name, boolean value) {
+        if (flags == null) {
+            flags = new HashMap<String, Boolean>();
+        }
+        flags.put(name, value);
+    }
+    
+    /**
+     * Retrieve state of named flag.  Returns false if flag has not
+     * been set.
+     * 
+     * @param name
+     * @return 
+     */
+    protected boolean getFlag(String name) {
+        if (flags == null || !flags.containsKey(name))
+            return false;
+        else
+            return flags.get(name);
     }
 
     /**

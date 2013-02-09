@@ -1,6 +1,4 @@
-<!-- Estimates population size moments from the stochastic version of
-     the basic model of within-host virus dynamics, conditioning on
-     chronic infection. -->
+<!-- Test stochastic simulation specification -->
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
   <run spec='EnsembleSummary'
@@ -49,6 +47,7 @@
       <populationSize spec='PopulationSize' population='@X' size='2.5e11'/>
       <populationSize spec='PopulationSize' population='@V' size='1'/>
     </initialState>
+
     
     <moment spec='Moment' momentName='X'>
       <factor idref='X'/>

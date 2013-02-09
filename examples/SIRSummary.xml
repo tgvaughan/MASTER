@@ -1,4 +1,5 @@
-<!-- Test stochastic simulation specification -->
+<!-- Estimate the dynamics of moments compartmental population sizes
+     using 1000 simulations from the SIR epidemic model. -->
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
     <run spec='EnsembleSummary'

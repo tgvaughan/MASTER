@@ -1,15 +1,10 @@
-<!-- Test stochastic simulation specification -->
+<!-- Generate a simulated compartmental population size history using
+     an implementation of the SIS epidemiological model. -->
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
-    <run spec='EnsembleSummary'
-         simulationTime='5'
-         nSamples='1001'
-         nTraj='1000'
-         seed='53'>
+    <run spec='Trajectory'
+         simulationTime='5'>
 
-        <stepper spec='TauLeapingStepper' stepSize="0.01"/>
-        <!-- <stepper spec='GillespieStepper' /> -->
-        
         <model spec='Model' id='model'>
             <population spec='Population' id='S' populationName='S'/>
             <population spec='Population' id='I' populationName='I'/>
@@ -26,14 +21,6 @@
             <populationSize spec='PopulationSize' population='@I' size='1'/>
         </initialState>
 
-        <moment spec='Moment' momentName='S'>
-            <factor idref='S'/>
-        </moment>
-        
-        <moment spec='Moment' momentName='I'>
-            <factor idref='I'/>
-        </moment>
-        
-        <output spec='JsonOutput' fileName='SIS_out.json'/>
+        <output spec='JsonOutput' fileName='SIS_output.json'/>
     </run>
 </beast>

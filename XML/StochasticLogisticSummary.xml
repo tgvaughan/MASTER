@@ -1,5 +1,4 @@
-<!-- Estimate moments of the size of a population evolving under
-     a stochastic logistic growth model. -->
+<!-- Test stochastic simulation specification -->
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
     <run spec='EnsembleSummary'
@@ -29,11 +28,6 @@
         <moment spec='Moment' momentName='X'>
             <factor idref='X'/>
         </moment>
-
-	<moment spec='Moment' momentName='Xsq'>
-	  <factor idref='X'/>
-	  <factor idref='X'/>
-	</moment>
         
         <output spec='JsonOutput' fileName='StochasticLogisticSummary_out.json'/>
     </run>

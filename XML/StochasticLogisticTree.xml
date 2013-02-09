@@ -1,5 +1,4 @@
-<!-- Generate an inheritance tree from the stochastic logistic model.
-     Note that population sizes are also sampled. -->
+<!-- Generate an inheritance tree from the stochastic logistic model. -->
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
     <run spec='InheritanceTrajectory'

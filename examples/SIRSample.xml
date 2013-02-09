@@ -1,4 +1,5 @@
-<!-- Test stochastic simulation specification -->
+<!-- Estimate moments under an SIR epidemiological model with an additional
+     "sampling" process as an alternative to recovery. -->
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
     <run spec='EnsembleSummary'

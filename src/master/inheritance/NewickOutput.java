@@ -39,7 +39,7 @@ public class NewickOutput {
     boolean reverseTime;
     boolean collapseSingleChildNodes;
     
-    StringBuilder newickStr;
+    PrintStream ps;
     Set<Node> rootNodes, leafNodes;
     Map<Node, String> leafLabels;
     Map<Node, Integer> hybridIDs;
@@ -54,11 +54,12 @@ public class NewickOutput {
      * @param collapseSingleChildNodes 
      */
     public NewickOutput(InheritanceTrajectory graph, boolean reverseTime,
-            boolean collapseSingleChildNodes) {
+            boolean collapseSingleChildNodes, PrintStream pstream) {
 
         this.graph = graph;
         this.reverseTime = reverseTime;
         this.collapseSingleChildNodes = collapseSingleChildNodes;
+        this.ps = pstream;
         
         leafLabels = Maps.newHashMap();
         hybridIDs = Maps.newHashMap();
@@ -92,11 +93,10 @@ public class NewickOutput {
             hybridIDs.put(hybrid, label++);
         
         Set<Node> visitedHybrids = Sets.newHashSet();        
-        newickStr = new StringBuilder();
         boolean first = true;
         for (Node node : rootNodes) {
             if (!first)
-                newickStr.append(",");
+                ps.append(",");
             else
                 first = false;
 
@@ -109,7 +109,7 @@ public class NewickOutput {
             subTreeToExtendedNewick(next, node, visitedHybrids);
         }
         
-        newickStr.append(";");
+        ps.append(";");
     }
     
 
@@ -147,17 +147,17 @@ public class NewickOutput {
             
         } else {
             if (nextNodes.size()>0) {
-                newickStr.append("(");
+                ps.append("(");
                 boolean first = true;
                 for (Node next : nextNodes) {
                     if (!first)
-                        newickStr.append(",");
+                        ps.append(",");
                     else
                         first = false;
                     
                     subTreeToExtendedNewick(next, node, visitedHybrids);
                 }
-                newickStr.append(")");
+                ps.append(")");
             }
             
             addLabel(node, branchLength);
@@ -173,13 +173,13 @@ public class NewickOutput {
     protected void addLabel(Node node, double branchLength) {
         
         if (leafLabels.containsKey(node))
-            newickStr.append(leafLabels.get(node));
+            ps.append(leafLabels.get(node));
         
         if (hybridIDs.containsKey(node))
-            newickStr.append("#").append(hybridIDs.get(node));
+            ps.append("#").append(String.valueOf(hybridIDs.get(node)));
         // note that we've omitted the optional "type" specifier
         
-        newickStr.append(":").append(branchLength);
+        ps.append(":").append(String.valueOf(branchLength));
     }
     
     /**
@@ -261,7 +261,7 @@ public class NewickOutput {
     
     @Override
     public String toString() {
-        return newickStr.toString();
+        return ps.toString();
     }
     
     /**
@@ -276,7 +276,11 @@ public class NewickOutput {
     public static void write(InheritanceTrajectory itrajectory,
             boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
         
-        pstream.println(new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes));
+        if (itrajectory.getSpec().getVerbosity()>0)
+            System.out.println("Writing Newick file...");
+        
+        new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes, pstream);
+        pstream.println();
     }
     
     /**
@@ -290,9 +294,15 @@ public class NewickOutput {
      */
     public static void write(InheritanceEnsemble iensemble,
             boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
+        
+        if (iensemble.getSpec().getVerbosity()>0)
+            System.out.println("Writing Newick file...");
 
-        for (InheritanceTrajectory itrajectory : iensemble.itrajectories)
-            pstream.println(new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes));
+        for (InheritanceTrajectory itrajectory : iensemble.itrajectories) {
+            new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes, pstream);
+            pstream.println();
+        }
+
     }
     
     

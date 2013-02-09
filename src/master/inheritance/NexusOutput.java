@@ -40,18 +40,18 @@ public class NexusOutput extends NewickOutput {
      * @param collapseSingleChildNodes 
      */
     public NexusOutput(InheritanceTrajectory graph, boolean reverseTime,
-            boolean collapseSingleChildNodes) {
-        super(graph, reverseTime, collapseSingleChildNodes);
+            boolean collapseSingleChildNodes, PrintStream pstream) {
+        super(graph, reverseTime, collapseSingleChildNodes, pstream);
     }
     
     @Override
     protected void addLabel(Node node, double branchLength) {
         
         if (leafLabels.containsKey(node))
-            newickStr.append(leafLabels.get(node));
+            ps.append(leafLabels.get(node));
         
         if (hybridIDs.containsKey(node))
-            newickStr.append("#").append(hybridIDs.get(node));
+            ps.append("#").append(String.valueOf(hybridIDs.get(node)));
         // note that we've omitted the optional "type" specifier
         
         // Annotations traditionally refer to the branch _above_ the node
@@ -63,20 +63,20 @@ public class NexusOutput extends NewickOutput {
         } else
             branchNode = node;
         
-        newickStr.append("[&");
-        newickStr.append("type=").append(branchNode.population.getType().getName());
+        ps.append("[&");
+        ps.append("type=").append(branchNode.population.getType().getName());
         if (!branchNode.population.isScalar()) {
-            newickStr.append(",location=");
+            ps.append(",location=");
 
             int[] loc = branchNode.population.getLocation();
             for (int i=0; i<loc.length; i++) {
                 if (i>0)
-                    newickStr.append("_");
-                newickStr.append(loc[i]);
+                    ps.append("_");
+                ps.append(String.valueOf(loc[i]));
             }
         }
         if (node.reactionGroup != null && node.reactionGroup.getName() != null) {
-            newickStr.append(",reaction=").append(node.reactionGroup.getName());
+            ps.append(",reaction=").append(node.reactionGroup.getName());
         }
         
         // Add general annotations:
@@ -85,30 +85,30 @@ public class NexusOutput extends NewickOutput {
                 Object value = node.getAttribute(name);
                 
                 if (value instanceof Integer) {
-                    newickStr.append("," + name + "=" + String.valueOf((Integer)value));
+                    ps.append("," + name + "=" + String.valueOf((Integer)value));
                     continue;
                 }
                 
                 if (value instanceof Double) {
-                    newickStr.append("," + name + "=" + String.valueOf((Double)value));
+                    ps.append("," + name + "=" + String.valueOf((Double)value));
                     continue;
                 }
                                 
                 if (value instanceof Boolean) {
-                    newickStr.append("," + name + "=" + String.valueOf((Boolean)value));
+                    ps.append("," + name + "=" + String.valueOf((Boolean)value));
                     continue;
                 }
                                 
                 if (value instanceof String) {
-                    newickStr.append("," + name + "=" + (String)value);
+                    ps.append("," + name + "=" + (String)value);
                     continue;
                 }
             }
         }
         
-        newickStr.append("]");
+        ps.append("]");
         
-        newickStr.append(":").append(branchLength);
+        ps.append(":").append(String.valueOf(branchLength));
     }
     
     /**
@@ -124,12 +124,16 @@ public class NexusOutput extends NewickOutput {
     public static void write(InheritanceTrajectory itraj,
             boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
         
+        if (itraj.getSpec().getVerbosity()>0)
+            System.out.println("Writing NEXUS file...");
+        
         pstream.println("#nexus\n\nBegin trees;");
         
         // Skip empty inheritance graphs:
         if (!itraj.getStartNodes().isEmpty()) {
             pstream.print("tree TREE = ");
-            pstream.println(new NexusOutput(itraj, reverseTime, collapseSingleChildNodes));
+            new NexusOutput(itraj, reverseTime, collapseSingleChildNodes, pstream);
+            pstream.println();
         }
         
         pstream.println("End;");
@@ -148,6 +152,9 @@ public class NexusOutput extends NewickOutput {
      */
     public static void write(InheritanceEnsemble iensemble,
             boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
+        
+        if (iensemble.getSpec().getVerbosity()>0)
+            System.out.println("Writing NEXUS file...");
                 
         pstream.println("#nexus\n\nBegin trees;");
         
@@ -159,7 +166,8 @@ public class NexusOutput extends NewickOutput {
                 continue;
             
             pstream.print("tree TREE_" + i + " = ");
-            pstream.println(new NexusOutput(thisTraj, reverseTime, collapseSingleChildNodes));
+            new NexusOutput(thisTraj, reverseTime, collapseSingleChildNodes, pstream);
+            pstream.println();
         }
         pstream.println("End;");
     }

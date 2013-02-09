@@ -3,7 +3,7 @@
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
 
   <run spec='InheritanceTrajectory'
-       simulationTime='20'
+       simulationTime='100'
        samplePopulationSizes="true"
        nSamples="1000"
        verbosity='1'>
@@ -13,7 +13,7 @@
       <reaction spec='InheritanceReaction' reactionName="Birth" rate="1.0">
 	X -> 2X
       </reaction>
-      <reaction spec='InheritanceReaction' reactionName="Death" rate="0.00003">
+      <reaction spec='InheritanceReaction' reactionName="Death" rate="0.00001">
 	2X -> X
       </reaction>
     </model>
@@ -24,6 +24,6 @@
     </initialState>
         
     <output spec='JsonOutput' fileName='complexityIG_out.json'/>
-    <output spec='NexusOutput' fileName='complexityIG_out.nexus'/>
+    <!--<output spec='NexusOutput' fileName='complexityIG_out.nexus'/>-->
   </run>
 </beast>

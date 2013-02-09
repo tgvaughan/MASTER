@@ -32,10 +32,10 @@ import java.util.Set;
 public class Node {
 
     // Parents of this node.
-    List<Node> parents;
+    List<Node> parents = new ArrayList<Node>(1);
 
     // Children of this node.
-    List<Node> children;
+    List<Node> children = new ArrayList<Node>(2);
 
     // Population to which the individual represented by this node belongs.
     Population population;
@@ -52,8 +52,8 @@ public class Node {
     // Unique name for this node:
     String name;
 
-    // Flags for use by graph generation algorithms:
-    Map<String, Boolean> flags;
+    // Flag use by graph generation algorithms:
+    private boolean flag = false;
     
     /**
      * Constructor.
@@ -65,9 +65,6 @@ public class Node {
 
         this.population = population;
         this.time = time;
-
-        parents = new ArrayList<Node>();
-        children = new ArrayList<Node>();
 
         reactionGroup = null;
         name = null;
@@ -81,9 +78,6 @@ public class Node {
     public Node(Population population) {
         this.population = population;
         this.time = -1;
-
-        parents = new ArrayList<Node>();
-        children = new ArrayList<Node>();
 
         reactionGroup = null;
         name = null;
@@ -141,30 +135,20 @@ public class Node {
     }
     
     /**
-     * Set named flag.
+     * Set value of node flag.  This flag is used to optimize a specific part
+     * of the graph generation algorithm.
      * 
-     * @param name
      * @param value 
      */
-    protected void setFlag(String name, boolean value) {
-        if (flags == null) {
-            flags = new HashMap<String, Boolean>();
-        }
-        flags.put(name, value);
+    protected void setFlag(boolean value) {
+        flag = value;
     }
     
     /**
-     * Retrieve state of named flag.  Returns false if flag has not
-     * been set.
-     * 
-     * @param name
-     * @return 
+     * @return State of node flag.  Flag is false by default.
      */
-    protected boolean getFlag(String name) {
-        if (flags == null || !flags.containsKey(name))
-            return false;
-        else
-            return flags.get(name);
+    protected boolean flagIsSet() {
+        return flag;
     }
 
     /**

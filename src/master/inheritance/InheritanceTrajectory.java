@@ -431,11 +431,11 @@ public class InheritanceTrajectory extends Trajectory {
             // Ensure any children are in active nodes list
             for (Node child : node.children) {
                 Population pop = child.getPopulation();
-                if (!child.getFlag("active")) {
+                if (!child.flagIsSet()) {
                     if (!activeLineages.containsKey(pop))
                         activeLineages.put(pop, new ArrayList<Node>());
                     activeLineages.get(pop).add(child);
-                    child.setFlag("active", true);
+                    child.setFlag(true);
                 }
             }
         }

@@ -134,6 +134,8 @@ public class NexusOutput extends NewickOutput {
             pstream.print("tree TREE = ");
             new NexusOutput(itraj, reverseTime, collapseSingleChildNodes, pstream);
             pstream.println();
+        } else {
+            System.out.println("Warning: NEXUS writer skipping empty graph.");
         }
         
         pstream.println("End;");

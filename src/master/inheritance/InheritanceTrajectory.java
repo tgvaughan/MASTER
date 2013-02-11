@@ -351,6 +351,7 @@ public class InheritanceTrajectory extends Trajectory {
         nodesInvolved.clear();
         for (Population reactPop : chosenReactionGroup.reactNodes.get(chosenReaction).keySet()) {
             
+            // Skip this population if no lineages remain:
             if (!activeLineages.containsKey(reactPop))
                 continue;
             
@@ -368,10 +369,6 @@ public class InheritanceTrajectory extends Trajectory {
                     if (activeLineages.get(reactPop).isEmpty())
                         activeLineages.remove(reactPop);
                 }
-
-                // Stop here if we have no active lineages of this population
-                if (!activeLineages.containsKey(reactPop))
-                    break;
 
                 N -= 1;
             }

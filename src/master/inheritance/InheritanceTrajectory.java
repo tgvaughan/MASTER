@@ -355,15 +355,21 @@ public class InheritanceTrajectory extends Trajectory {
             // Total size of this population (including active lineages)
             double N = currentPopState.get(reactPop);
             
+            List<Node> lineages = activeLineages.get(reactPop);            
             for (Node reactNode : chosenReactionGroup.reactNodes.get(chosenReaction).get(reactPop)) {
-                            
+                
                 double l = Randomizer.nextDouble()*N;
-                if (l<activeLineages.get(reactPop).size()) {
+                if (l<lineages.size()) {
                     int nodeIdx = (int)l;
-                    Node lineageNode = activeLineages.get(reactPop).get(nodeIdx);
+                    Node lineageNode = lineages.get(nodeIdx);
                     nodesInvolved.put(lineageNode, reactNode);
-                    activeLineages.get(reactPop).remove(nodeIdx);
-                    if (activeLineages.get(reactPop).isEmpty()) {
+                    
+                    //Speedy alternative to lineages.remove(nodeIdx)
+                    if (lineages.size()>1)
+                        lineages.set(nodeIdx, lineages.get(lineages.size()-1));
+                    lineages.remove(lineages.size()-1);
+                    
+                    if (lineages.isEmpty()) {
                         activeLineages.remove(reactPop);
                         break;
                     }

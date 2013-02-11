@@ -13,7 +13,7 @@
       <reaction spec='InheritanceReaction' reactionName="Birth" rate="1.0">
 	X -> 2X
       </reaction>
-      <reaction spec='InheritanceReaction' reactionName="Death" rate="0.00003">
+      <reaction spec='InheritanceReaction' reactionName="Death" rate="0.00001">
 	2X -> X
       </reaction>
     </model>

@@ -58,10 +58,7 @@ public class InheritanceTrajectory extends Trajectory {
     
     // Simulation specification.
     private InheritanceTrajectorySpec spec;    
-    
-    // Lenght of time taken by calculation
-    private double calculationTime;
-    
+
     // Simulation state variables
     private Map<Population,List<Node>> activeLineages;
     private Map<Node, Node> nodesInvolved, nextLevelNodes;
@@ -267,7 +264,7 @@ public class InheritanceTrajectory extends Trajectory {
                 node.setTime(t);
         
         // Record total time of calculation:
-        calculationTime = Double.valueOf((new Date()).getTime() - startTime)/1e3;
+        spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
     }
     
     /**
@@ -366,8 +363,10 @@ public class InheritanceTrajectory extends Trajectory {
                     Node lineageNode = activeLineages.get(reactPop).get(nodeIdx);
                     nodesInvolved.put(lineageNode, reactNode);
                     activeLineages.get(reactPop).remove(nodeIdx);
-                    if (activeLineages.get(reactPop).isEmpty())
+                    if (activeLineages.get(reactPop).isEmpty()) {
                         activeLineages.remove(reactPop);
+                        break;
+                    }
                 }
 
                 N -= 1;
@@ -467,16 +466,6 @@ public class InheritanceTrajectory extends Trajectory {
     @Override
     public InheritanceTrajectorySpec getSpec() {
         return spec;
-    }
-    
-    /**
-     * Retrieve total calculation time in seconds.
-     * 
-     * @return wall time of calculation
-     */
-    @Override
-    public double getCalculationTime() {
-        return calculationTime;
     }
     
     /**

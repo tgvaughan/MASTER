@@ -51,6 +51,9 @@ public class Ensemble {
 
         // Initialise trajectory list:
         trajectories = new ArrayList<Trajectory>();
+        
+        // Record time at start of simulation:
+        double startTime = (new Date()).getTime();
 
         // Generate trajectories:
         for (int traj = 0; traj<spec.nTraj; traj++) {
@@ -65,19 +68,18 @@ public class Ensemble {
             trajectories.add(thisTraj);
 
         }
+        
+        // Record total time taken by calculation:
+        spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
 
     }
-    
+
     /**
-     * Retrieve total time (in seconds) taken by calculation.
+     * Retrieve ensemble simulation specification.
      * 
-     * @return length of time taken by calculation
+     * @return EnsembleSpec object.
      */
-    public double getCalculationTime() {
-        double totalTime = 0.0;
-        for (Trajectory traj : trajectories)
-            totalTime += traj.getCalculationTime();
-        
-        return totalTime;
+    public EnsembleSpec getSpec() {
+        return spec;
     }
 }

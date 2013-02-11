@@ -64,6 +64,9 @@ public class TrajectorySpec {
     // Number of evenly spaced samples times.  Must be >=2.
     int nSamples;
     
+    // Wall time used for calculation:
+    double wallTime = 0;
+    
     /**
      * Constructor.
      */
@@ -237,5 +240,23 @@ public class TrajectorySpec {
      */
     public List<PopulationEndCondition> getPopulationEndConditions() {
         return populationEndConditions;
+    }
+    
+    /**
+     * Record total wall time taken by calculation in seconds.
+     * 
+     * @param seconds 
+     */
+    public void setWallTime(double seconds) {
+        wallTime = seconds;
+    }
+    
+    /**
+     * Retrieve total wall time used by calculation.
+     * 
+     * @return time taken by calculation
+     */
+    public double getWallTime() {
+        return wallTime;
     }
 }

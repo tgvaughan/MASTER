@@ -45,6 +45,9 @@ public class JsonOutput {
      */
     public static void write(Trajectory trajectory, PrintStream pstream) {
         
+        if (trajectory.getSpec().getVerbosity()>0)
+            System.out.println("Writing JSON output...");
+        
         HashMap<String, Object> outputData = Maps.newHashMap();
         
         TrajectorySpec spec = trajectory.getSpec();
@@ -62,9 +65,6 @@ public class JsonOutput {
         
         // Record spec parameters to object output:
         outputData.put("sim", spec);
-        
-        // Record calculation time length:
-        outputData.put("calculationTime", trajectory.getCalculationTime());
 
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -98,6 +98,10 @@ public class JsonOutput {
      * @param pstream PrintStream where output is sent.
      */
     public static void write(Ensemble ensemble, PrintStream pstream) {
+        
+        if (ensemble.getSpec().getVerbosity()>0)
+            System.out.println("Writing JSON output...");
+        
         HashMap<String, Object> outputData = Maps.newHashMap();
         
         EnsembleSpec spec = ensemble.spec;
@@ -139,6 +143,9 @@ public class JsonOutput {
      * @param pstream PrintStream where output is sent.
      */
     public static void write(EnsembleSummary ensembleSummary, PrintStream pstream) {
+        
+        if (ensembleSummary.getSpec().getVerbosity()>0)
+            System.out.println("Writing JSON output...");
 
         HashMap<String, Object> outputData = Maps.newHashMap();
         
@@ -200,6 +207,9 @@ public class JsonOutput {
      */
     public static void write(InheritanceEnsemble iensemble, PrintStream pstream) {
         HashMap<String, Object> outputData = Maps.newHashMap();
+        
+        if (iensemble.getSpec().getVerbosity()>0)
+            System.out.println("Writing JSON output...");
         
         InheritanceEnsembleSpec spec = iensemble.getSpec();
         

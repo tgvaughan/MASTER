@@ -46,6 +46,10 @@ public class InheritanceEnsemble {
         // Initialise inheritance trajectory list
         itrajectories = new ArrayList<InheritanceTrajectory>();
         
+                
+        // Record time at start of simulation:
+        double startTime = (new Date()).getTime();
+        
         // Generate trajectories:
         for (int traj=0; traj<spec.nTraj; traj++) {
             
@@ -58,6 +62,9 @@ public class InheritanceEnsemble {
             InheritanceTrajectory thisTraj = new InheritanceTrajectory(spec);
             itrajectories.add(thisTraj);
         }
+        
+        // Record length of time taken by calculation:
+        spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
     }
     
     /**
@@ -77,18 +84,4 @@ public class InheritanceEnsemble {
     public List<InheritanceTrajectory> getTrajectories() {
         return itrajectories;
     }
-    
-    /**
-     * Retrieve total time (in seconds) taken by calculation.
-     * 
-     * @return calculation wall time
-     */
-    public double getCalculationTime() {
-        double calculationTime = 0.0;
-        for (InheritanceTrajectory itraj : itrajectories)
-            calculationTime += itraj.getCalculationTime();
-        
-        return calculationTime;
-    }
-    
 }

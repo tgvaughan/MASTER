@@ -36,9 +36,6 @@ public class EnsembleSummary {
     // Ensemble-averaged state summaries:
     StateSummary[] stateSummaries;
 
-    // Total length of simulation time:
-    private double calculationTime;
-    
     /**
      * Assign simulation parameters and moment list to non-static fields,
      * performs the spec, recording the required summary statistics.
@@ -127,16 +124,15 @@ public class EnsembleSummary {
             summary.normalise();
         
         // Record total time of calculation:
-        calculationTime = Double.valueOf((new Date()).getTime() - startTime)/1e3;
-    }
-    
-    /**
-     * Retrieve total length of time (in seconds) taken by calculation.
-     * 
-     * @return calculation wall time
-     */
-    public double getCalculationTime() {
-        return calculationTime;
+        spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
     }
 
+    /**
+     * Retrieve ensemble simulation specification.
+     * 
+     * @return EnsembleSummarySpec object.
+     */
+    public EnsembleSummarySpec getSpec() {
+        return spec;
+    }
 }

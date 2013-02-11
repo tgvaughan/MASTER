@@ -36,9 +36,6 @@ public class Trajectory {
     
     // Simulation specification:
     private TrajectorySpec spec;
-    
-    // Wall time used in calculation:
-    private double calculationTime;
 
     /**
      * Generate trajectory of birth-death process.
@@ -154,7 +151,7 @@ public class Trajectory {
         }
         
         // Record length of time taken by calculation:
-        calculationTime = Double.valueOf((new Date()).getTime() - startTime)/1e3;
+        spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
     }
     
     /**
@@ -173,15 +170,6 @@ public class Trajectory {
      */
     public TrajectorySpec getSpec() {
         return spec;
-    }
-    
-    /**
-     * Retrieve length of time (in seconds) taken by calculation.
-     * 
-     * @return total trajectory calculation time
-     */
-    public double getCalculationTime() {
-        return calculationTime;
     }
     
     /**

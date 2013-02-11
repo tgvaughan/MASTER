@@ -20,6 +20,6 @@
         
         <lineageEndCondition spec='LineageEndCondition' nLineages="1"/>
                 
-        <output spec='NexusOutput' fileName='CoalescentTreeWithRecombination_out.nexus' reverseTime="true"/>
+        <output spec='NexusOutput' fileName='CoalescentTreeWithRecombination_output.nexus' reverseTime="true"/>
     </run>
 </beast>

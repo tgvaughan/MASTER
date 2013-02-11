@@ -22,6 +22,6 @@
             <populationSize spec='PopulationSize' population="@X" size='1'/>
         </initialState>
         
-        <output spec='JsonOutput' fileName='StochasticLogistic_out.json'/>
+        <output spec='JsonOutput' fileName='StochasticLogistic_output.json'/>
     </run>
 </beast>

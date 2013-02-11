@@ -24,7 +24,7 @@
         
         <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>      
         
-        <output spec='NexusOutput' fileName='StochasticLogisticTree_out.nexus'/>
-        <output spec='JsonOutput' fileName='StochasticLogisticTree_out.json'/>
+        <output spec='NexusOutput' fileName='StochasticLogisticTree_output.nexus'/>
+        <output spec='JsonOutput' fileName='StochasticLogisticTree_output.json'/>
     </run>
 </beast>

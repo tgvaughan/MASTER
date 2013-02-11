@@ -2,7 +2,7 @@
 
 library(rjson)
 
-df <- fromJSON(file='StructuredStochasticLogistic_out.json')
+df <- fromJSON(file='StructuredStochasticLogistic_output.json')
 
 png('StructuredStochasticLogistic_mean.png', width=480, height=480)
 

@@ -277,7 +277,7 @@ public class NewickOutput {
             boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
         
         if (itrajectory.getSpec().getVerbosity()>0)
-            System.out.println("Writing Newick file...");
+            System.out.println("Writing Newick output...");
         
         new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes, pstream);
         pstream.println();
@@ -296,7 +296,7 @@ public class NewickOutput {
             boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
         
         if (iensemble.getSpec().getVerbosity()>0)
-            System.out.println("Writing Newick file...");
+            System.out.println("Writing Newick output...");
 
         for (InheritanceTrajectory itrajectory : iensemble.itrajectories) {
             new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes, pstream);

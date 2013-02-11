@@ -88,6 +88,6 @@
       </moment>
     </momentGroup>
     
-    <output spec='JsonOutput' fileName='StructuredStochasticLogistic_out.json'/>
+    <output spec='JsonOutput' fileName='StructuredStochasticLogistic_output.json'/>
   </run>
 </beast>

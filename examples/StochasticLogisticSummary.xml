@@ -35,6 +35,6 @@
 	  <factor idref='X'/>
 	</moment>
         
-        <output spec='JsonOutput' fileName='StochasticLogisticSummary_out.json'/>
+        <output spec='JsonOutput' fileName='StochasticLogisticSummary_output.json'/>
     </run>
 </beast>

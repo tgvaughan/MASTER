@@ -125,7 +125,7 @@ public class NexusOutput extends NewickOutput {
             boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
         
         if (itraj.getSpec().getVerbosity()>0)
-            System.out.println("Writing NEXUS file...");
+            System.out.println("Writing NEXUS output...");
         
         pstream.println("#nexus\n\nBegin trees;");
         
@@ -156,7 +156,7 @@ public class NexusOutput extends NewickOutput {
             boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
         
         if (iensemble.getSpec().getVerbosity()>0)
-            System.out.println("Writing NEXUS file...");
+            System.out.println("Writing NEXUS output...");
                 
         pstream.println("#nexus\n\nBegin trees;");
         

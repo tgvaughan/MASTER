@@ -56,6 +56,6 @@
             <factor idref='R'/>
         </moment>
         
-        <output spec='JsonOutput' fileName='SIRSample_out.json'/>
+        <output spec='JsonOutput' fileName='SIRSample_output.json'/>
     </run>
 </beast>

@@ -24,6 +24,6 @@
     </initialState>
         
     <output spec='JsonOutput' fileName='complexityIG_out.json'/>
-    <!--<output spec='NexusOutput' fileName='complexityIG_out.nexus'/>-->
+    <output spec='NexusOutput' fileName='complexityIG_out.nexus'/>
   </run>
 </beast>

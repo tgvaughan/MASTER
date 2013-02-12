@@ -27,7 +27,7 @@
     <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>
     
     <!-- Randomly sample a sub-set of the lineages extant at time 10 -->
-    <postProcessor spec='LineageSampler' nSamples="10" samplingTime="10" markOnly="true"/>
+    <postProcessor spec='LineageSampler' nSamples="10" samplingTime="10" markOnly="false"/>
     
     <output spec='NexusOutput' fileName='SIRTree_output.nexus'
 	    collapseSingleChildNodes="true"/>

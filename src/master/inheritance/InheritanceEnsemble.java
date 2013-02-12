@@ -55,7 +55,7 @@ public class InheritanceEnsemble {
             
             // Report ensemble progress if verbosity is high enough:
             if (spec.getVerbosity()>0)
-                System.err.println("Generating inheritance trajectoy "
+                System.err.println("Generating inheritance trajectory "
                         + String.valueOf(traj+1) + " of "
                         + String.valueOf(spec.nTraj));
             

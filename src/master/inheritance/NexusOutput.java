@@ -63,21 +63,24 @@ public class NexusOutput extends NewickOutput {
         } else
             branchNode = node;
         
+
         ps.append("[&");
-        ps.append("type=").append(branchNode.population.getType().getName());
+        ps.format("type=\"%s\"", branchNode.population.getType().getName());
         if (!branchNode.population.isScalar()) {
-            ps.append(",location=");
+            ps.append(",location=\"");
 
             int[] loc = branchNode.population.getLocation();
             for (int i=0; i<loc.length; i++) {
                 if (i>0)
-                    ps.append("_");
+                    ps.append(" ");
                 ps.append(String.valueOf(loc[i]));
             }
+            
+            ps.append("\"");
         }
-        if (node.reactionGroup != null && node.reactionGroup.getName() != null) {
-            ps.append(",reaction=").append(node.reactionGroup.getName());
-        }
+        if (node.reactionGroup != null && node.reactionGroup.getName() != null)
+            ps.format(",reaction=\"%s\"", node.reactionGroup.getName());
+        ps.append(",time=").append(String.valueOf(node.getTime()));
         
         // Add general annotations:
         if (node.getAttributeNames() != null) {

@@ -18,7 +18,6 @@ package master.inheritance;
 
 import java.util.ArrayList;
 import java.util.List;
-import master.ReactionGroup;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -73,6 +72,10 @@ public class FilterLineages {
             if (!isMarked(node))
                 itraj.getStartNodes().remove(node);
         }
+        
+        // Clean graph of singleton nodes that don't represent state changes:
+        for (Node node : itraj.getStartNodes())
+            cleanSubGraph(node, reverseTime);
     }
     
     /**
@@ -135,7 +138,38 @@ public class FilterLineages {
         }
     }
     
-        /**
+    /**
+     * Clean graph below node of any singleton nodes which do not represent
+     * state changes.
+     * 
+     * @param node
+     * @param reverseTime 
+     */
+    private static void cleanSubGraph(Node node, boolean reverseTime) {
+        List<Node> nextNodes = getNext(node, reverseTime);
+        List<Node> prevNodes = getPrev(node, reverseTime);
+        
+        if (nextNodes.size() == 1 && prevNodes.size() == 1) {
+            Node parent = prevNodes.get(0);
+            Node child = nextNodes.get(0);
+            
+            if (node.getPopulation().equals(child.getPopulation())) {
+                getPrev(child, reverseTime).remove(node);
+                getPrev(child, reverseTime).add(parent);
+                
+                getNext(parent, reverseTime).remove(node);
+                getNext(parent, reverseTime).add(child);
+            }
+        }
+        
+        List<Node> nextNodesCopy = new ArrayList<Node>();
+        nextNodesCopy.addAll(nextNodes);
+
+        for (Node child : nextNodesCopy)
+            cleanSubGraph(child, reverseTime);
+    }
+    
+    /**
      * Obtain nodes decending from node, respecting chosen time direction.
      * 
      * @param node

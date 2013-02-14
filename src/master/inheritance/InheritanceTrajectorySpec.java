@@ -46,6 +46,9 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     // sampled following every reaction or only those reactions that
     // result in the generation of a node on the inheritance graph.
     boolean sampleStateAtNodes;
+    
+    // Stepper used in trajectory generation.
+    private InheritanceTrajectoryStepper stepper;
 
     
     /**
@@ -62,6 +65,9 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
         
         // Do not record population sizes by default:
         samplePopSizes = false;
+        
+        // Initialise stepper:
+        stepper = new InheritanceTrajectoryStepper();
     }
     
     /**
@@ -156,8 +162,8 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     }
     
     @Override
-    public Stepper getStepper() {
-        return new InheritanceTrajectoryStepper();
+    public InheritanceTrajectoryStepper getStepper() {
+        return stepper;
     }
     
     /**

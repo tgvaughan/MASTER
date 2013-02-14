@@ -249,6 +249,9 @@ public class InheritanceTrajectory extends Trajectory {
 
             // Implement state change due to reaction:
             currentPopState.implementReaction(chosenReactionGroup, chosenReaction, 1);
+            
+            // Update event counter:
+            spec.getStepper().incrementEventCount();
                          
             // Sample population sizes (unevenly) if necessary:
             if (spec.samplePopSizes && !spec.isSamplingEvenlySpaced()) {              

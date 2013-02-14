@@ -27,6 +27,8 @@ public class TauLeapingStepper extends Stepper {
     
     private double dt;
     
+    private double eventCount = 0;
+    
     /**
      * Construct a tau-leaping integrator
      * 
@@ -53,6 +55,9 @@ public class TauLeapingStepper extends Stepper {
 
             // Implement reactions:
             state.implementReaction(reaction, i, q);
+            
+            // Increment event counter:
+            eventCount += q;
         }
 
     }
@@ -76,7 +81,7 @@ public class TauLeapingStepper extends Stepper {
 
     @Override
     public String getAlgorithmName() {
-        return "Gillespie's tau-leaping algorithm";
+        return "Fixed time-step tau-leaping algorithm";
     }
     
     /**
@@ -86,6 +91,15 @@ public class TauLeapingStepper extends Stepper {
      */
     public double getTimeStepSize() {
         return dt;
+    }
+    
+    /**
+     * Retrieve number of events calculated.
+     * 
+     * @return eventcount
+     */
+    public double getEventCount() {
+        return eventCount;
     }
     
 }

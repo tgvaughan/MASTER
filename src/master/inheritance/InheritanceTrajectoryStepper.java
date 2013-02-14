@@ -27,6 +27,8 @@ import master.Stepper;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class InheritanceTrajectoryStepper extends Stepper {
+    
+    private double eventCount = 0;
 
     @Override
     public double step(PopulationState state, Model model, double maxStepSize) {
@@ -38,4 +40,20 @@ public class InheritanceTrajectoryStepper extends Stepper {
         return "Built-in graph stepper.";
     }
     
+    /**
+     * Retrieve total number of events computed.
+     * 
+     * @return eventCount;
+     */
+    public double getEventCount() {
+        return eventCount;
+    }
+    
+    /**
+     * Increment counter of total number of events computed during simulation\
+     * for inclusion in output files.
+     */
+    public void incrementEventCount() {
+        eventCount += 1;
+    }
 }

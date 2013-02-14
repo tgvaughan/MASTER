@@ -24,6 +24,8 @@ import beast.util.Randomizer;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class GillespieStepper extends Stepper {
+    
+    private double eventCount = 0;
 
     @Override
     public double step(PopulationState state, Model model, double maxDt) {
@@ -65,6 +67,9 @@ public class GillespieStepper extends Stepper {
             
         // Implement chosen reaction:
         state.implementReaction(chosenReactionGroup, chosenReaction, 1);
+        
+        // Increment event counter:
+        eventCount += 1;
 
         return dt;
     }
@@ -72,6 +77,15 @@ public class GillespieStepper extends Stepper {
     @Override
     public String getAlgorithmName() {
         return "Gillespie's stochastic simulation algorithm";
+    }
+    
+    /**
+     * Retrieve total number of events which have been simulated.
+     * 
+     * @return eventCount
+     */
+    public double getEventCount() {
+        return eventCount;
     }
     
 }

@@ -16,6 +16,7 @@
  */
 package master;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,38 +119,75 @@ public class SALStepper extends Stepper {
             }
         }
         
-        // Ensure map is initialised
+        // Ensure that corrections map is initialised
         if (corrections.isEmpty()) {
             for (ReactionGroup reactionGroup : model.reactionGroups) {
-                ArrayList<Double> list =  new ArrayList<Double>();
-                for (int i=0; i<reactionGroup.nReactions; i++)
-                    list.add(0.0);
-                corrections.put(reactionGroup, list);
+                List<Double> corrList = Lists.newArrayList();
+                for (int reaction=0; reaction<reactionGroup.nReactions; reaction++)
+                    corrList.add(0.0);
             }
         }
         
-        // Calculate propensity corrections:
-        for (ReactionGroup reactionGroup : model.getReactionGroups()) {
-            for (int i=0; i<reactionGroup.nReactions; i++) {
-                
-                // Ensure correction is initially zero:
-                corrections.get(reactionGroup).set(i, 0.0);
-                
-                // Abort if propensity zero:
-                if (!(reactionGroup.propensities.get(i)>0.0))
-                    continue;
-                
-                double acc = 0.0;
-                for (Population pop : reactionGroup.reactCounts.get(i).keySet()) {
-                    for (int m=0; m<reactionGroup.reactCounts.get(i).get(pop); m++) {
-                        acc += (1.0-m)/(state.get(pop)-m)*derivs.get(pop);
-                    }
+        // Incoporate propensity derivatives:
+        for (ReactionGroup reactionGroup : model.reactionGroups) {
+            List<Double> corrList = corrections.get(reactionGroup);
+            for (int reaction=0; reaction<reactionGroup.nReactions; reaction++) {
+                double thisCorr = 0.0;
+                for (Population pop : reactionGroup.reactCounts.get(reaction).keySet()) {
+                    if (derivs.containsKey(pop))
+                        thisCorr += propensityDeriv(state, reactionGroup, reaction, pop)*derivs.get(pop);
                 }
-                acc *= reactionGroup.propensities.get(i);                
-                corrections.get(reactionGroup).set(i, acc);
+                corrList.set(reaction, thisCorr);
             }
         }
+        
     }
+    
+    /**
+     * Calculates the derivative with respect to a particular state element
+     * of the propensity of a particular reaction.
+     * 
+     * @param state State at which the derivative is to be evaluated
+     * @param reactionGroup Reaction group whose propensity to differentiate
+     * @param reaction Member of reaction group
+     * @param pop Population dimension to take derivative in
+     * @return Derivative
+     */
+    private double propensityDeriv(PopulationState state,
+            ReactionGroup reactionGroup, int reaction,
+            Population pop) {
+        
+        if (!reactionGroup.reactCounts.get(reaction).containsKey(pop))
+            return 0.0;
+        
+        double acc = reactionGroup.rates.get(reaction);
+        
+        for (Population popPrime : reactionGroup.reactCounts.get(reaction).keySet()) {
+            if (popPrime == pop) {
+                
+                for (int m=0; m<reactionGroup.reactCounts.get(reaction).get(popPrime); m++)
+                    acc *= state.get(popPrime)-m;
+                
+            } else {
+                double sum = 0.0;
+
+                for (int m=0; m<reactionGroup.reactCounts.get(reaction).get(pop); m++) {
+                    double factor = 1.0;
+                    for (int mp=0; mp<reactionGroup.reactCounts.get(reaction).get(pop); mp++) {
+                        if (mp != m)
+                            factor *= state.get(pop)-mp;
+                        // else factor *= 1.0
+                    }
+                    sum += factor;
+                }
+                
+                acc *= sum;
+            }
+        }
+        
+        return acc;
+    }
+    
 
     @Override
     public String getAlgorithmName() {

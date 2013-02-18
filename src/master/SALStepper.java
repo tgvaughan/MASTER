@@ -18,7 +18,6 @@ package master;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import master.math.Poisson;
@@ -57,19 +56,19 @@ public class SALStepper extends Stepper {
      * @param state PopulationState to modify.
      * @param spec Simulation spec.
      */
-    public void leap(ReactionGroup reaction, PopulationState state, Model model, double thisdt) {
+    public void leap(ReactionGroup reactionGroup, PopulationState state, Model model, double thisdt) {
         
-        for (int i = 0; i<reaction.propensities.size(); i++) {
+        for (int i = 0; i<reactionGroup.propensities.size(); i++) {
             
             // Calculate corrected rate
-            double rho = reaction.propensities.get(i)*thisdt
-                    + 0.5*corrections.get(reaction).get(i)*thisdt*thisdt;
+            double rho = reactionGroup.propensities.get(i)*thisdt
+                    + 0.5*corrections.get(reactionGroup).get(i)*thisdt*thisdt;
 
             // Draw number of reactions to fire within time tau:
             double q = Poisson.nextDouble(rho);
 
             // Implement reactions:
-            state.implementReaction(reaction, i, q);
+            state.implementReaction(reactionGroup, i, q);
             
             // Increment event counter:
             eventCount += q;
@@ -125,6 +124,7 @@ public class SALStepper extends Stepper {
                 List<Double> corrList = Lists.newArrayList();
                 for (int reaction=0; reaction<reactionGroup.nReactions; reaction++)
                     corrList.add(0.0);
+                corrections.put(reactionGroup, corrList);
             }
         }
         
@@ -157,13 +157,24 @@ public class SALStepper extends Stepper {
             ReactionGroup reactionGroup, int reaction,
             Population pop) {
         
+        // Can stop here if reaction doesn't involve population:
         if (!reactionGroup.reactCounts.get(reaction).containsKey(pop))
             return 0.0;
         
+        // Short-cut if propensity is non-zero:
+        if (reactionGroup.propensities.get(reaction)>0.0) {
+            double sum = 0.0;
+            for (int m=0; m<reactionGroup.reactCounts.get(reaction).get(pop); m++)
+                sum += 1.0/(state.get(pop)-m);
+            return sum*reactionGroup.propensities.get(reaction);
+        }
+        
+        // Initialise accumulator:
         double acc = reactionGroup.rates.get(reaction);
         
+        // TODO: This calculation involves a lot of loops - can we optimize?
         for (Population popPrime : reactionGroup.reactCounts.get(reaction).keySet()) {
-            if (popPrime == pop) {
+            if (popPrime != pop) {
                 
                 for (int m=0; m<reactionGroup.reactCounts.get(reaction).get(popPrime); m++)
                     acc *= state.get(popPrime)-m;

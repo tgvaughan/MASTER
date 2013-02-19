@@ -40,6 +40,17 @@ public class PopulationState {
         // Initialise sub-population sizes:
         popSizes = Maps.newHashMap();
     }
+    
+    /**
+     * @return A fresh copy of the state.
+     */
+    public PopulationState getCopy() {
+        PopulationState copy = new PopulationState();
+        for (Population pop : popSizes.keySet())
+            copy.set(pop, popSizes.get(pop));
+        
+        return copy;
+    }
 
     /**
      * Copy constructor

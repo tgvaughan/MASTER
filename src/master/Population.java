@@ -80,7 +80,7 @@ public class Population {
      * @return true if population is the sole member of its type.
      */
     public boolean isScalar() {
-        return this.type.nPops==1;
+        return this.type.dims.length==0;
     }
     
     @Override
@@ -105,7 +105,7 @@ public class Population {
     public String toString() {
         StringBuilder sb = new StringBuilder(type.name);
         
-        if (type.nPops>1) {
+        if (!isScalar()) {
             sb.append("[");
             int[] loc = type.offsetToLoc(offset);
             for (int i=0; i<loc.length; i++) {

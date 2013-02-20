@@ -75,19 +75,26 @@ public class JsonOutput {
     }
     
     private static Object iterateOverLocs (List<PopulationState> sampledStates, PopulationType type, int[] loc, int depth) {
-        List<Object> nestedData = Lists.newArrayList();
-        for (int i=0; i<type.getDims()[depth]; i++) {
-            loc[depth] = i;
-            if (depth<type.getDims().length-1)
+
+        if (depth<type.getDims().length) {
+            List<Object> nestedData = Lists.newArrayList();
+            
+            for (int i=0; i<type.getDims()[depth]; i++) {
+                loc[depth] = i;
                 nestedData.add(iterateOverLocs(sampledStates, type, loc, depth+1));
-            else {
-                List<Object> stateList = Lists.newArrayList();
-                for (PopulationState state : sampledStates)
-                    stateList.add(state.get(new Population(type, loc)));
-                nestedData.add(stateList);
             }
+            
+            return nestedData;
+            
+        } else {
+            
+            List<Object> stateList = Lists.newArrayList();
+            for (PopulationState state : sampledStates)
+                stateList.add(state.get(new Population(type, loc)));
+
+            return stateList;
+            
         }
-        return nestedData;
     }
     
     /**

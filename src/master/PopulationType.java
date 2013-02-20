@@ -26,16 +26,10 @@ public class PopulationType implements Iterable<Population> {
     public PopulationType(String name, int... dims) {
         this.name = name;
 
-        if (dims.length==0) {
-            this.dims = new int[1];
-            this.dims[0] = 1;
-            nPops = 1;
-        } else {
-            this.dims = dims;
-            nPops = 1;
-            for (int i = 0; i<dims.length; i++)
-                nPops *= dims[i];
-        }
+        this.dims = dims;
+        nPops = 1;
+        for (int i = 0; i<dims.length; i++)
+            nPops *= dims[i];
     }
 
     /**
@@ -121,7 +115,7 @@ public class PopulationType implements Iterable<Population> {
      */
     @JsonIgnore
     public boolean isScalar() {
-        return nPops == 1;
+        return dims.length == 0;
     }
 
     @Override

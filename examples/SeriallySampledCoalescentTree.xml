@@ -6,17 +6,19 @@
          verbosity='2'>
         
         <model spec='InheritanceModel'>
-            <population spec='Population' populationName='X' id='X'/>
+            <population spec='Population' populationName='L' id='L'/>
+
+	    <!-- Coalescent process with N_e*g = 0.5 -->
             <reaction spec='InheritanceReaction' reactionName='Coalescence' rate="1.0">
-                2X:1 -> X:1
+                2L:1 -> L:1
             </reaction>
         </model>                
 
         <initialState spec='InitState'>
-            <lineageSeedMultiple spec='MultipleIndividuals' population='@X' copies="20"/>
-	    <lineageSeed spec='Individual' population='@X' time="1"/>
-	    <lineageSeed spec='Individual' population='@X' time="2"/>
-	    <lineageSeed spec='Individual' population='@X' time="3"/>
+            <lineageSeedMultiple spec='MultipleIndividuals' population='@L' copies="20"/>
+	    <lineageSeed spec='Individual' population='@L' time="1"/>
+	    <lineageSeed spec='Individual' population='@L' time="2"/>
+	    <lineageSeed spec='Individual' population='@L' time="3"/>
         </initialState>
         
         <lineageEndCondition spec='LineageEndCondition' nLineages="1"/>

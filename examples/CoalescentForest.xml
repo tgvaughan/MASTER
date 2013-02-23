@@ -18,6 +18,6 @@
         
         <lineageEndCondition spec='LineageEndCondition' nLineages="1"/>
                 
-        <output spec='NexusOutput' fileName='InheritanceEnsemble_output.nexus' reverseTime="true"/>
+        <output spec='NexusOutput' fileName='CoalescentForest_output.nexus' reverseTime="true"/>
     </run>
 </beast>

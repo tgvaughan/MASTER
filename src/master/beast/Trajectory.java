@@ -51,7 +51,7 @@ public class Trajectory extends Runnable {
             "State incrementing algorithm to use. (Default Gillespie.)");
     
     public Input<Integer> verbosityInput = new Input<Integer> (
-            "verbosity", "Level of verbosity to use (0-2).", 0);
+            "verbosity", "Level of verbosity to use (0-2).", 1);
     
     // Model:
     public Input<Model> modelInput = new Input<Model>("model",

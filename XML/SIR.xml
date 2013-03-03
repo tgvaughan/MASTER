@@ -2,8 +2,7 @@
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
   <run spec='Trajectory'
-       simulationTime='50'
-       verbosity="0">
+       simulationTime='50'>
       
     <model spec='Model' id='model'>
       <population spec='Population' id='S' populationName='S'/>

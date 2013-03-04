@@ -63,19 +63,28 @@
 	    <li><a href="binaries/MASTER-1.0.zip">MASTER-1.0.zip</a></li>
 	  </ul>
 	  Once complete, the new folder <code>MASTER-1.0/</code> will
-	  contain a number of files. On systems running modern Windows
-	  or OS X installations, double-clicking
-	  on <code>MASTER-1.0.jar</code> will bring up a file selector
-	  that you can use to select an XML input file describing a
-	  simulation.  On Linux computers, the shell
+	  contain a number of files, including a brief README,
+	  LICENSE.* files describing the conditions under which the
+	  components of MASTER are distributed, the Java JAR file and
+	  a shell script.</p>
+
+	<p>On systems running modern Windows or OS X installations,
+	  double-clicking on the file
+	  named <code>MASTER-1.0.jar</code> will bring up a file
+	  selector dialog box that you can use to select an XML input
+	  file describing a simulation.</p>
+
+	<p>On Linux computers, the shell
 	  script <code>master_linux.sh</code> can be used to run
 	  Master from the command line, with the path to an XML input
-	  file given as a command line argument. (In this case, making
-	  a symbolic link to <code>master_linux.sh</code> from a
-	  directory in your execution path
-	  like <code>usr/local/bin/</code> will allow you to execute
-	  MASTER on the command line easily from other locations in
-	  your file system.)</p>
+	  file given as a command line argument. Making a symbolic
+	  link to <code>master_linux.sh</code> from a directory in
+	  your execution path like <code>usr/local/bin/</code> will
+	  allow you to execute MASTER on the command line easily from
+	  other locations in your file system.  <b>Warning: running
+	  this script from a directory containing other JAR files may
+	  cause MASTER to inexplicably fail, producing no
+	  output.</b></p>
 
 	<h2>Examples</h2>
 

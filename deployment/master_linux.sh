@@ -2,7 +2,7 @@
 
 ONEJAR=_MASTERJAR_
 
-SCRIPTPATH=$(readlink $0)
+SCRIPTPATH=$(readlink -f $0)
 
 if [ -z "$SCRIPTPATH" ]; then
     MASTERDIR=$PWD

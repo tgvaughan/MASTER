@@ -16,8 +16,6 @@
  */
 package master;
 
-import master.math.Poisson;
-
 /**
  * Deterministic rate equation stepper.  Currently uses an implicit Runge-Kutta method.
  *

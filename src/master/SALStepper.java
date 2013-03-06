@@ -16,11 +16,11 @@
  */
 package master;
 
+import beast.util.Randomizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
 import java.util.List;
-import master.math.Poisson;
 
 /**
  * Implementation of Sehl et al.'s "step anticipation" tau-leaping
@@ -65,7 +65,7 @@ public class SALStepper extends Stepper {
                     + 0.5*corrections.get(reactionGroup).get(i)*thisdt*thisdt;
 
             // Draw number of reactions to fire within time tau:
-            double q = Poisson.nextDouble(rho);
+            double q = Randomizer.nextPoisson(rho);
 
             // Implement reactions:
             state.implementReaction(reactionGroup, i, q);

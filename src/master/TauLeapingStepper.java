@@ -16,7 +16,7 @@
  */
 package master;
 
-import master.math.Poisson;
+import beast.util.Randomizer;
 
 /**
  * Implementation of Gillespie's tau-leaping stochastic integrator.
@@ -51,7 +51,7 @@ public class TauLeapingStepper extends Stepper {
         for (int i = 0; i<reaction.propensities.size(); i++) {
 
             // Draw number of reactions to fire within time tau:
-            double q = Poisson.nextDouble(reaction.propensities.get(i)*thisdt);
+            double q = Randomizer.nextPoisson(reaction.propensities.get(i)*thisdt);
 
             // Implement reactions:
             state.implementReaction(reaction, i, q);

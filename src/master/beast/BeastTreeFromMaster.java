@@ -21,7 +21,6 @@ import beast.core.Input;
 import beast.core.StateNode;
 import beast.core.StateNodeInitialiser;
 import beast.evolution.alignment.Alignment;
-import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -166,7 +165,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
 
         boolean reverseTime = reverseTimeInput.get();
         
-        Map<master.inheritance.Node,String> leafLabels = Maps.newHashMap();
+        Map<master.inheritance.Node,String> leafLabels;
         List<master.inheritance.Node> rootNodes, leafNodes;
         
         

@@ -67,9 +67,12 @@ public class Trajectory {
             // Sample at evenly spaced times
 
             double sampleDt = spec.getSampleDt();
+            
+            // Sample initial state:
+            sampleState(currentState, 0.0);
 
             // Integration loop:
-            for (int sidx = 0; sidx<spec.nSamples; sidx++) {                
+            for (int sidx = 1; sidx<spec.nSamples; sidx++) {                
                 
                 // Check for end conditions:
                 PopulationEndCondition endConditionMet = null;
@@ -95,18 +98,23 @@ public class Trajectory {
                             +String.valueOf(sidx+1)+" of "
                             +String.valueOf(spec.nSamples));    
 
-                // Sample state:
-                sampleState(currentState, sampleDt*sidx);
 
                 // Integrate to next sample time:
                 double t = 0;
                 while (t<sampleDt)
                     t += spec.stepper.step(currentState, spec.model,
                             sampleDt-t);
+                
+                // Sample state:
+                sampleState(currentState, sampleDt*sidx);
+
 
             }
         } else {
             // Sample following every integration step
+            
+            // Sample initial state:
+            sampleState(currentState, 0.0);
 
             double t = 0;
             while (t<spec.simulationTime) {
@@ -137,7 +145,8 @@ public class Trajectory {
                         break;
                     }
                 }
-                                               
+
+                // Increment time
                 t += spec.stepper.step(currentState, spec.model,
                         spec.simulationTime-t);
                 
@@ -146,6 +155,7 @@ public class Trajectory {
                     System.err.println("Recording sample at time "
                             + String.valueOf(t)); 
                 
+                // Sample state
                 sampleState(currentState, t);
             }
         }

@@ -48,7 +48,8 @@ public class FilterLineages {
         
         // Mark lineages ancestral to nodes with matching reactionGroup
         for (Node node : leafNodes) {
-            if (node.getReactionGroup().getName().equals(reactionGroupName))
+            InheritanceReactionGroup leafRG = node.getReactionGroup();           
+            if (leafRG != null && leafRG.getName().equals(reactionGroupName))
                 mark(node, reverseTime);
         }
         

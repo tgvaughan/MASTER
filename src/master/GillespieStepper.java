@@ -39,7 +39,11 @@ public class GillespieStepper extends Stepper {
         }
 
         // Draw time of next reaction
-        double dt = Randomizer.nextExponential(totalPropensity);
+        double dt;
+        if (totalPropensity>0.0)
+            dt = Randomizer.nextExponential(totalPropensity);
+        else
+            dt = Double.POSITIVE_INFINITY;
         
         // Stop here if maxDt exceeded:
         if (dt>maxDt)

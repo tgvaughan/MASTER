@@ -29,7 +29,7 @@ import beast.core.Plugin;
 public class LineageFilter extends Plugin implements
         InheritanceTrajectoryPostProcessor, InheritanceEnsemblePostProcessor {
     
-    public Input<Reaction> reactionInput = new Input<Reaction>("reaction",
+    public Input<InheritanceReaction> reactionInput = new Input<InheritanceReaction>("reaction",
             "Reaction used to filter lineages.");
     
     public Input<Population> populationInput = new Input<Population>("population",

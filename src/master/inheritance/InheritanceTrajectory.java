@@ -261,7 +261,7 @@ public class InheritanceTrajectory extends Trajectory {
 
         }
 
-        // Fix final time of any remaining active lineages.
+        // Fix final time of any remaining active lineages:
         for (Population nodePop : activeLineages.keySet())
             for (Node node : activeLineages.get(nodePop))
                 node.setTime(t);

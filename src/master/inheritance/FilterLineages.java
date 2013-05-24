@@ -18,7 +18,6 @@ package master.inheritance;
 
 import java.util.ArrayList;
 import java.util.List;
-import master.Population;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -27,20 +26,33 @@ public class FilterLineages {
     
     public enum Rule {
         BY_REACTNAME, BY_POPTYPENAME,
-        BY_REACTNAME_INV, BY_POPTYPENAME_INV
+        BY_REACTNAME_DISCARD, BY_POPTYPENAME_DISCARD
     };
     
     /**
-     * Keep only those lineages terminating in a node satisfying the filter function.
+     * Keep only those lineages terminating in a node satisfying
+     * the filter rule.
      * 
-     * @param itraj Inheritance trajectory object
-     * @param filterFunc Function accepting node and string and returning boolean
-     * @param markOnly If true, mark lineages rather than pruning them.
-     * @param reverseTime If true, time increases in opposite direction
-     * to the Markov process which generated the graph.
+     * @param itraj inheritance trajectory containing graph to filter
+     * @param rule filtering rule
+     * @param name name of reaction or population used in rule
+     * @param markAnnotation annotation to use if graph is to be marked only
+     * @param leavesOnly only filter the leaf nodes
+     * @param noClean do not clean resulting singleton nodes
+     * @param reverseTime interpret the graph in reverse time
      */
     public static void filter(InheritanceTrajectory itraj,
-            Rule rule, String name, boolean markOnly, boolean noClean, boolean reverseTime) {
+            Rule rule, String name,
+            String markAnnotation, boolean leavesOnly,
+            boolean noClean, boolean reverseTime) {
+        
+        boolean markOnly;
+        if (markAnnotation != null)
+            markOnly = true;
+        else {
+            markAnnotation = "__mark__";
+            markOnly = false;
+        }
         
         // Get list of root and leaf nodes:
         List<Node> rootNodes, leafNodes;
@@ -52,58 +64,93 @@ public class FilterLineages {
             leafNodes = itraj.getEndNodes();
         }
         
+        // Pin existing singleton nodes:
+        for (Node node : rootNodes)
+            pinSingletons(node, reverseTime);
+        
         // Mark lineages ancestral to nodes with matching reactionGroup
         for (Node node : leafNodes) {
             switch (rule) {
                 case BY_POPTYPENAME:
-                    if (node.getPopulation() != null && node.getPopulation().getType().getName().equals(name))
-                        mark(node, reverseTime);
+                    if (node.getPopulation() != null
+                            && node.getPopulation().getType().getName().equals(name))
+                        mark(node, reverseTime, markAnnotation);
+                    else
+                        if (leavesOnly) {
+                            for(Node prev : getPrev(node, reverseTime))
+                                mark(prev, reverseTime, markAnnotation);
+                            
+                        }
                     break;
                     
-                case BY_POPTYPENAME_INV:
-                    if (!(node.getPopulation() != null && node.getPopulation().getType().getName().equals(name)))
-                        mark(node, reverseTime);
+                case BY_POPTYPENAME_DISCARD:
+                    if (!(node.getPopulation() != null
+                            && node.getPopulation().getType().getName().equals(name)))
+                        mark(node, reverseTime, markAnnotation);
+                    else
+                        if (leavesOnly) {
+                            for(Node prev : getPrev(node, reverseTime))
+                                mark(prev, reverseTime, markAnnotation);
+                            
+                        }
                     break;
                     
                 case BY_REACTNAME:
-                    if (node.getReactionGroup() != null && node.getReactionGroup().getName().equals(name))
-                        mark(node, reverseTime);
+                    if ((node.getReactionGroup() != null && node.getReactionGroup().getName().equals(name))
+                            || (node.getReactionGroup() == null && name.equals("NONE")))
+                        mark(node, reverseTime, markAnnotation);
+                    else
+                        if (leavesOnly) {
+                            for(Node prev : getPrev(node, reverseTime))
+                                mark(prev, reverseTime, markAnnotation);
+                            
+                        }
                     break;
                     
-                case BY_REACTNAME_INV:
-                    if (!(node.getReactionGroup() != null && node.getReactionGroup().getName().equals(name)))
-                        mark(node, reverseTime);
+                case BY_REACTNAME_DISCARD:
+                    if (!((node.getReactionGroup() != null && node.getReactionGroup().getName().equals(name))
+                            || (node.getReactionGroup() == null && name.equals("NONE"))))
+                        mark(node, reverseTime, markAnnotation);
+                    else
+                        if (leavesOnly) {
+                            for(Node prev : getPrev(node, reverseTime))
+                                mark(prev, reverseTime, markAnnotation);
+                            
+                        }
                     break;
             }
         }
         
         // Explicitly unmark lineages decending from unmarked root nodes
         for (Node node : rootNodes)
-            markFalse(node, reverseTime);
+            markFalse(node, reverseTime, markAnnotation);
         
         if (markOnly)
             return;
         
         // Prune unmarked lineages:
         for (Node node : leafNodes) {
-            if (!isMarked(node))
-                pruneLineage(node, reverseTime);
+            if (!isMarked(node, markAnnotation))
+                pruneLineage(node, reverseTime, markAnnotation);
         }
         
         // Remove any unmarked start nodes:
         List<Node> oldStartNodes = new ArrayList<Node>();
         oldStartNodes.addAll(itraj.getStartNodes());        
         for (Node node : oldStartNodes) {
-            if (!isMarked(node))
+            if (!isMarked(node, markAnnotation))
                 itraj.getStartNodes().remove(node);
         }
         
-        if (noClean)
-            return;
-        
         // Clean graph of singleton nodes that don't represent state changes:
-        for (Node node : itraj.getStartNodes())
-            cleanSubGraph(node, reverseTime);
+        if (!noClean)
+            for (Node node : rootNodes)
+                cleanSubGraph(node, reverseTime);
+        
+        // Remove pins and marks
+        for (Node node : rootNodes)
+            unPinSingletons(node, reverseTime, markAnnotation);
+        
     }
     
     /**
@@ -112,8 +159,8 @@ public class FilterLineages {
      * @param node
      * @return true if lineage has been sampled
      */
-    private static boolean isMarked(Node node) {
-        Boolean mark = (Boolean) node.getAttribute("marked");
+    private static boolean isMarked(Node node, String markAnnotation) {
+        Boolean mark = (Boolean) node.getAttribute(markAnnotation);
         return mark != null && mark;
     }
     
@@ -123,29 +170,30 @@ public class FilterLineages {
      * @param node 
      * @param reverseTime 
      */
-    private static void mark(Node node, boolean reverseTime) {
+    private static void mark(Node node, boolean reverseTime, String markAnnotation) {
 
-        node.setAttribute("marked", true);
+        node.setAttribute(markAnnotation, true);
         List<Node> prevNodes = getPrev(node, reverseTime);
         for (Node prev : prevNodes)
-            mark(prev, reverseTime);
+            mark(prev, reverseTime, markAnnotation);
     }
     
     /**
-     * Explicitly unmark node and its decendents which do not
+     * Explicitly unmark node and its descendants which do not
      * belong to sampled lineages.
      * 
      * @param node
      * @param reverseTime 
      */
-    private static void markFalse(Node node, boolean reverseTime) {
-        if (!isMarked(node))
-            node.setAttribute("marked", false);
+    private static void markFalse(Node node, boolean reverseTime, String markAnnotation) {
+        if (!isMarked(node, markAnnotation))
+            node.setAttribute(markAnnotation, false);
         
         List<Node> nextNodes = getNext(node, reverseTime);
         for (Node next : nextNodes)
-            markFalse(next, reverseTime);
+            markFalse(next, reverseTime, markAnnotation);
     }
+   
     
     /**
      * Discard ancestral nodes until a node marked as belonging to a
@@ -154,20 +202,56 @@ public class FilterLineages {
      * @param node
      * @param reverseTime 
      */
-    private static void pruneLineage(Node node, boolean reverseTime) {
+    private static void pruneLineage(Node node, boolean reverseTime, String markAnnotation) {
         List<Node> prevNodes = new ArrayList<Node>();
         prevNodes.addAll(getPrev(node, reverseTime));
         
         for (Node prev : prevNodes) {
             getPrev(node, reverseTime).remove(node);
             getNext(prev, reverseTime).remove(node);
-            if (!isMarked(prev))
-                pruneLineage(prev, reverseTime);
+            if (!isMarked(prev, markAnnotation))
+                pruneLineage(prev, reverseTime, markAnnotation);
         }
     }
     
     /**
-     * Clean graph below node of any singleton nodes which do not represent
+     * Pin existing singleton nodes in place.
+     * 
+     * @param node
+     * @param reverseTime 
+     */
+    private static void pinSingletons(Node node, boolean reverseTime) {
+        List<Node> nextNodes = getNext(node, reverseTime);
+        List<Node> prevNodes = getPrev(node, reverseTime);
+        
+        if (nextNodes.size() == 1 && prevNodes.size() == 1)
+            node.attributes.put("__pinned__", true);
+        
+        for (Node child : nextNodes)
+            pinSingletons(child, reverseTime);
+    }
+    
+    /**
+     * Remove node pins and marks.
+     * 
+     * @param node
+     * @param reverseTime 
+     * @param markAnnotation 
+     */
+    private static void unPinSingletons(Node node, boolean reverseTime, String markAnnotation) {
+
+        if (node.attributes.containsKey("__pinned__"))
+            node.attributes.remove("__pinned__");
+        
+        if (node.attributes.containsKey(markAnnotation))
+            node.attributes.remove(markAnnotation);
+
+        for (Node child : getNext(node, reverseTime))
+            unPinSingletons(child, reverseTime, markAnnotation);
+    }
+    
+    /**
+     * Clean graph below node of any unpinned singleton nodes which do not represent
      * state changes.
      * 
      * @param node
@@ -177,11 +261,13 @@ public class FilterLineages {
         List<Node> nextNodes = getNext(node, reverseTime);
         List<Node> prevNodes = getPrev(node, reverseTime);
         
-        if (nextNodes.size() == 1 && prevNodes.size() == 1) {
+        if (nextNodes.size() == 1 && prevNodes.size() == 1
+                && !node.attributes.containsKey("__pinned__")) {
             Node parent = prevNodes.get(0);
             Node child = nextNodes.get(0);
             
             if (node.getPopulation().equals(child.getPopulation())) {
+                
                 getPrev(child, reverseTime).remove(node);
                 getPrev(child, reverseTime).add(parent);
                 

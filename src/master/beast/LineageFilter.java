@@ -18,6 +18,7 @@ package master.beast;
 
 import beast.core.Description;
 import beast.core.Input;
+import beast.core.Input.Validate;
 import beast.core.Plugin;
 
 /**
@@ -29,17 +30,20 @@ import beast.core.Plugin;
 public class LineageFilter extends Plugin implements
         InheritanceTrajectoryPostProcessor, InheritanceEnsemblePostProcessor {
     
-    public Input<InheritanceReaction> reactionInput = new Input<InheritanceReaction>("reaction",
-            "Reaction used to filter lineages.");
+    public Input<String> reactNameInput = new Input<String>("reactionName",
+            "Name of reaction used to filter lineages.");
     
-    public Input<Population> populationInput = new Input<Population>("population",
-            "Population used to filter lineages.");
+    public Input<String> populationNameInput = new Input<String>("populationName",
+            "Name of population used to filter lineages.");
     
-    public Input<Boolean> invertInput = new Input<Boolean>("invert",
-            "Filter out lineages that DO match the name.", false);
+    public Input<Boolean> discardInput = new Input<Boolean>("discard",
+            "Discard (instead of keep) lineages that match the name.", false);
     
-    public Input<Boolean> markOnlyInput = new Input<Boolean>("markOnly",
-            "If true, unsampled lineages are NOT discarded. Default false.", false);
+    public Input<Boolean> leavesOnlyInput = new Input<Boolean>("leavesOnly",
+            "Only alter leaves.", false);
+    
+    public Input<String> markAnnotationInput = new Input<String>("markAnnotation",
+            "Mark using this annotation rather than pruning.");
     
     public Input<Boolean> noCleanInput = new Input<Boolean>("noClean",
             "Do not remove no-state-change nodes.", false);
@@ -53,38 +57,40 @@ public class LineageFilter extends Plugin implements
     @Override
     public void initAndValidate() {
         
-        if (reactionInput.get() != null) {
-            string = reactionInput.get().getName();
-            if (invertInput.get())
-                rule = master.inheritance.FilterLineages.Rule.BY_REACTNAME_INV;
+        if (reactNameInput.get() != null) {
+            string = reactNameInput.get();
+            if (discardInput.get())
+                rule = master.inheritance.FilterLineages.Rule.BY_REACTNAME_DISCARD;
             else
                 rule = master.inheritance.FilterLineages.Rule.BY_REACTNAME;
         }
         
-        if (populationInput.get() != null) {
-            string = populationInput.get().pop.getType().getName();
-            if (invertInput.get())
-                rule = master.inheritance.FilterLineages.Rule.BY_POPTYPENAME_INV;
+        if (populationNameInput.get() != null) {
+            string = populationNameInput.get();
+            if (discardInput.get())
+                rule = master.inheritance.FilterLineages.Rule.BY_POPTYPENAME_DISCARD;
             else
                 rule = master.inheritance.FilterLineages.Rule.BY_POPTYPENAME;
         }
-    
+        
         if (string == null)
             throw new IllegalArgumentException("Either reaction or population "
-                    + "input to LineageFilter must be specified.");
+                    + "name input to LineageFilter must be specified.");
     }
 
     @Override
     public void process(master.inheritance.InheritanceTrajectory itraj) {
         master.inheritance.FilterLineages.filter(itraj, rule, string,
-                markOnlyInput.get(), noCleanInput.get(), reverseTimeInput.get());
+                markAnnotationInput.get(), leavesOnlyInput.get(),
+                noCleanInput.get(), reverseTimeInput.get());
     }
 
     @Override
     public void process(master.inheritance.InheritanceEnsemble iensemble) {
         for (master.inheritance.InheritanceTrajectory itraj : iensemble.getTrajectories())
             master.inheritance.FilterLineages.filter(itraj, rule, string,
-                    markOnlyInput.get(), noCleanInput.get(), reverseTimeInput.get());
+                    markAnnotationInput.get(), leavesOnlyInput.get(),
+                    noCleanInput.get(), reverseTimeInput.get());
     }
     
 }

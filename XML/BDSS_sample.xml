@@ -1,0 +1,45 @@
+<!-- Estimate moments under an birth-death-serial sampling process -->
+
+<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+    <run spec='InheritanceTrajectory'
+         simulationTime='10'
+         seed='784'>
+
+        <!--<stepper spec='TauLeapingStepper' stepSize="0.01"/>  -->
+        <!-- <stepper spec='GillespieStepper' /> -->
+
+        <model spec='InheritanceModel' id='model'>
+            <population spec='Population' id='I' populationName='I'/>
+            <population spec='Population' id='I_sample' populationName='I_sample'/>
+            <population spec='Population' id='R' populationName='R'/>
+
+            <!-- infection reaction -->
+            <reaction spec='InheritanceReaction' reactionName="Infection" rate="0.75">
+                I -> 2I
+            </reaction>
+
+            <!-- recovery reaction -->
+            <reaction spec='InheritanceReaction' id="Recovery" reactionName="Recovery" rate="0.25">
+                I -> R
+            </reaction>
+
+            <!-- sampling reaction -->
+            <reaction spec='InheritanceReaction' reactionName="Sampling" rate="0.25">
+                I:1 -> I:1 + I_sample:1
+            </reaction>
+        </model>
+
+        <initialState spec='InitState'>
+            <lineageSeed spec='Individual' population='@I'/>
+        </initialState>
+
+	<postProcessor spec='LineageFilter' populationName="I_sample" discard="true" noClean="true" />
+	<postProcessor spec='LineageFilter' reactionName="NONE" discard="true" />
+	<postProcessor spec='LineageFilter' reactionName="Recovery" discard="true" leavesOnly="true"/>
+	<postProcessor spec='LineageFilter' reactionName="Infection" discard="true" />
+
+
+        <output spec='NexusOutput' fileName='bdss.nexus'/>
+        <output spec='JsonOutput' fileName='bdss.json'/>
+    </run>
+</beast>

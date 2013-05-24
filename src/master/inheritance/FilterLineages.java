@@ -18,23 +18,29 @@ package master.inheritance;
 
 import java.util.ArrayList;
 import java.util.List;
+import master.Population;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class FilterLineages {
     
+    public enum Rule {
+        BY_REACTNAME, BY_POPTYPENAME,
+        BY_REACTNAME_INV, BY_POPTYPENAME_INV
+    };
+    
     /**
-     * Keep only those lineages terminating in a reaction in reactionGroup.
+     * Keep only those lineages terminating in a node satisfying the filter function.
      * 
      * @param itraj Inheritance trajectory object
-     * @param reactionGroup Reaction group to keep
+     * @param filterFunc Function accepting node and string and returning boolean
      * @param markOnly If true, mark lineages rather than pruning them.
      * @param reverseTime If true, time increases in opposite direction
      * to the Markov process which generated the graph.
      */
-    public static void process(InheritanceTrajectory itraj,
-            String reactionGroupName, boolean markOnly, boolean reverseTime) {
+    public static void filter(InheritanceTrajectory itraj,
+            Rule rule, String name, boolean markOnly, boolean noClean, boolean reverseTime) {
         
         // Get list of root and leaf nodes:
         List<Node> rootNodes, leafNodes;
@@ -48,8 +54,27 @@ public class FilterLineages {
         
         // Mark lineages ancestral to nodes with matching reactionGroup
         for (Node node : leafNodes) {
-            if (node.getReactionGroup().getName().equals(reactionGroupName))
-                mark(node, reverseTime);
+            switch (rule) {
+                case BY_POPTYPENAME:
+                    if (node.getPopulation().getType().getName().equals(name))
+                        mark(node, reverseTime);
+                    break;
+                    
+                case BY_POPTYPENAME_INV:
+                    if (!node.getPopulation().getType().getName().equals(name))
+                        mark(node, reverseTime);
+                    break;
+                    
+                case BY_REACTNAME:
+                    if (node.getReactionGroup().getName().equals(name))
+                        mark(node, reverseTime);
+                    break;
+                    
+                case BY_REACTNAME_INV:
+                    if (!node.getReactionGroup().getName().equals(name))
+                        mark(node, reverseTime);
+                    break;
+            }
         }
         
         // Explicitly unmark lineages decending from unmarked root nodes
@@ -72,6 +97,9 @@ public class FilterLineages {
             if (!isMarked(node))
                 itraj.getStartNodes().remove(node);
         }
+        
+        if (noClean)
+            return;
         
         // Clean graph of singleton nodes that don't represent state changes:
         for (Node node : itraj.getStartNodes())

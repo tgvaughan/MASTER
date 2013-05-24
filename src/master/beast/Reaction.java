@@ -19,15 +19,11 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Plugin;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -110,10 +106,18 @@ public class Reaction extends Plugin {
         return products;
     }
     
+    /**
+     * Retrieve reaction rate.
+     * @return rate
+     */
     public double getRate() {
         return rate;
     }
     
+    /**
+     * Retrieve reaction name.
+     * @return name
+     */
     public String getName() {
         return name;
     }

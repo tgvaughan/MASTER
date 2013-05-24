@@ -87,7 +87,14 @@ public class StateSummary {
 			for (int i=0; i<thisMean.length; i++) {
 				thisMean[i] /= sampleNum;
 				thisStd[i] /= sampleNum;
-				thisStd[i] = Math.sqrt(thisStd[i] - thisMean[i]*thisMean[i]);
+
+                double thisMean2 = thisMean[i]*thisMean[i];
+                if (thisMean2>thisStd[i]) {
+                    // This can happen due to rounding errors when very large
+                    // populations are involved.
+                    thisStd[i] = 0.0;
+                } else
+                    thisStd[i] = Math.sqrt(thisStd[i] - thisMean2);
 			}
 		}
 	}

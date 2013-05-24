@@ -74,9 +74,12 @@ public class EnsembleSummary {
 
             // Initialise system state:
             PopulationState currentState = new PopulationState(spec.initPopulationState);
+            
+            // Record initial sample
+            stateSummaries[0].record(currentState);
 
             // Integration loop:
-            for (int sidx = 0; sidx<spec.nSamples; sidx++) {
+            for (int sidx = 1; sidx<spec.nSamples; sidx++) {
                 
                 // Check for end conditions:
                 boolean endConditionMet = false;
@@ -86,7 +89,7 @@ public class EnsembleSummary {
                         // Can immediately reject, as only rejection condtions
                         // allowed for ensemble summaries.
                         currentState = new PopulationState(spec.initPopulationState);
-                        sidx = -1;
+                        sidx = 0;
                         endConditionMet = true;
                         
                         // Report if necessary:
@@ -106,13 +109,13 @@ public class EnsembleSummary {
                             +String.valueOf(sidx+1)+" of "
                             +String.valueOf(spec.nSamples));
 
-                // Record sample:
-                stateSummaries[sidx].record(currentState);
-
                 // Integrate to next sample time:
                 double t = 0;
                 while (t<sampleDt)
                     t += spec.stepper.step(currentState, spec.model, sampleDt-t);
+                
+                // Record sample:
+                stateSummaries[sidx].record(currentState);
             }
             
             for (StateSummary summary : stateSummaries)

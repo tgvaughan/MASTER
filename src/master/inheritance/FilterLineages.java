@@ -56,22 +56,22 @@ public class FilterLineages {
         for (Node node : leafNodes) {
             switch (rule) {
                 case BY_POPTYPENAME:
-                    if (node.getPopulation().getType().getName().equals(name))
+                    if (node.getPopulation() != null && node.getPopulation().getType().getName().equals(name))
                         mark(node, reverseTime);
                     break;
                     
                 case BY_POPTYPENAME_INV:
-                    if (!node.getPopulation().getType().getName().equals(name))
+                    if (!(node.getPopulation() != null && node.getPopulation().getType().getName().equals(name)))
                         mark(node, reverseTime);
                     break;
                     
                 case BY_REACTNAME:
-                    if (node.getReactionGroup().getName().equals(name))
+                    if (node.getReactionGroup() != null && node.getReactionGroup().getName().equals(name))
                         mark(node, reverseTime);
                     break;
                     
                 case BY_REACTNAME_INV:
-                    if (!node.getReactionGroup().getName().equals(name))
+                    if (!(node.getReactionGroup() != null && node.getReactionGroup().getName().equals(name)))
                         mark(node, reverseTime);
                     break;
             }

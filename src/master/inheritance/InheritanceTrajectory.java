@@ -168,7 +168,7 @@ public class InheritanceTrajectory extends Trajectory {
             }
 
             // Draw time of next reactionGroup
-            if (totalPropensity > 0)
+            if (totalPropensity > 0.0)
                 t += Randomizer.nextExponential(totalPropensity);
             else
                 t = Double.POSITIVE_INFINITY;

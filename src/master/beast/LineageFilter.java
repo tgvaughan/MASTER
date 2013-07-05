@@ -27,8 +27,7 @@ import beast.core.Plugin;
 @Description("Inheritance trajectory and ensemble post-processor which filters"
         + " out lineages that do NOT terminate in a reaction belonging to"
         + " the named reaction group.")
-public class LineageFilter extends Plugin implements
-        InheritanceTrajectoryPostProcessor, InheritanceEnsemblePostProcessor {
+public class LineageFilter extends Plugin implements InheritancePostProcessor {
     
     public Input<String> reactNameInput = new Input<String>("reactionName",
             "Name of reaction used to filter lineages.");
@@ -57,6 +56,14 @@ public class LineageFilter extends Plugin implements
     @Override
     public void initAndValidate() {
         
+        if ((reactNameInput.get() != null) && (populationNameInput.get() != null))
+            throw new IllegalArgumentException("Only ONE of the reaction or population "
+                    + "name inputs to LineageFilter may be specified.");
+        
+        if ((reactNameInput.get() == null) && (populationNameInput.get() == null))
+            throw new IllegalArgumentException("Either reaction or population "
+                    + "name input to LineageFilter must be specified.");
+        
         if (reactNameInput.get() != null) {
             string = reactNameInput.get();
             if (discardInput.get())
@@ -73,9 +80,6 @@ public class LineageFilter extends Plugin implements
                 rule = master.inheritance.FilterLineages.Rule.BY_POPTYPENAME;
         }
         
-        if (string == null)
-            throw new IllegalArgumentException("Either reaction or population "
-                    + "name input to LineageFilter must be specified.");
     }
 
     @Override
@@ -83,14 +87,6 @@ public class LineageFilter extends Plugin implements
         master.inheritance.FilterLineages.filter(itraj, rule, string,
                 markAnnotationInput.get(), leavesOnlyInput.get(),
                 noCleanInput.get(), reverseTimeInput.get());
-    }
-
-    @Override
-    public void process(master.inheritance.InheritanceEnsemble iensemble) {
-        for (master.inheritance.InheritanceTrajectory itraj : iensemble.getTrajectories())
-            master.inheritance.FilterLineages.filter(itraj, rule, string,
-                    markAnnotationInput.get(), leavesOnlyInput.get(),
-                    noCleanInput.get(), reverseTimeInput.get());
     }
     
 }

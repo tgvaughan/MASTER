@@ -33,10 +33,10 @@
             <lineageSeed spec='Individual' population='@I'/>
         </initialState>
 
-	<postProcessor spec='LineageFilter' populationName="I_sample" discard="true" noClean="true" />
-	<postProcessor spec='LineageFilter' reactionName="NONE" discard="true" />
-	<postProcessor spec='LineageFilter' reactionName="Recovery" discard="true" leavesOnly="true"/>
-	<postProcessor spec='LineageFilter' reactionName="Infection" discard="true" />
+	<inheritancePostProcessor spec='LineageFilter' populationName="I_sample" discard="true" noClean="true" />
+	<inheritancePostProcessor spec='LineageFilter' reactionName="NONE" discard="true" />
+	<inheritancePostProcessor spec='LineageFilter' reactionName="Recovery" discard="true" leavesOnly="true"/>
+	<inheritancePostProcessor spec='LineageFilter' reactionName="Infection" discard="true" />
 
 
         <output spec='NexusOutput' fileName='bdss.nexus'/>

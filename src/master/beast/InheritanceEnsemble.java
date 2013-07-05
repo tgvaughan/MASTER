@@ -82,11 +82,11 @@ public class InheritanceEnsemble extends Runnable {
             new ArrayList<PopulationEndCondition>());
     
     // Post-processors:
-    public Input<List<InheritanceEnsemblePostProcessor>> postProcessorsInput =
-            new Input<List<InheritanceEnsemblePostProcessor>>(
-            "postProcessor",
-            "Inheritance ensemble post processor.",
-            new ArrayList<InheritanceEnsemblePostProcessor>());
+    public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
+            new Input<List<InheritancePostProcessor>>(
+            "inheritancePostProcessor",
+            "Post processor for inheritance graph.",
+            new ArrayList<InheritancePostProcessor>());
     
     // Lineage end conditions:
     public Input<List<LineageEndCondition>> lineageEndConditionsInput = new Input<List<LineageEndCondition>>(
@@ -122,8 +122,14 @@ public class InheritanceEnsemble extends Runnable {
         // Set maximum simulation time:
         if (simulationTimeInput.get() != null)
             spec.setSimulationTime(simulationTimeInput.get());
-        else
-            spec.setSimulationTime(Double.POSITIVE_INFINITY);
+        else {
+            if (popEndConditionsInput.get() == null && lineageEndConditionsInput.get() == null) {
+                throw new IllegalArgumentException("Must specify either a final simulation "
+                        + "time or one or more end conditions.");
+                
+            } else
+                spec.setSimulationTime(Double.POSITIVE_INFINITY);
+        }
         
         // Specify number of trajectories to generate:
         spec.setnTraj(nTrajInput.get());        
@@ -148,6 +154,7 @@ public class InheritanceEnsemble extends Runnable {
         
         // Set the level of verbosity:
         spec.setVerbosity(verbosityInput.get());
+        
     }
     
     @Override
@@ -158,8 +165,9 @@ public class InheritanceEnsemble extends Runnable {
                 new master.inheritance.InheritanceEnsemble(spec);
         
         // Perform any requested post-processing:
-        for (InheritanceEnsemblePostProcessor postProc : postProcessorsInput.get())
-            postProc.process(iensemble);
+        for (InheritancePostProcessor postProc : inheritancePostProcessorsInput.get())
+            for (master.inheritance.InheritanceTrajectory itraj : iensemble.getTrajectories())
+                postProc.process(itraj);
         
         // Write outputs:
         for (InheritanceEnsembleOutput output : outputsInput.get())

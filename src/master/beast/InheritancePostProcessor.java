@@ -21,7 +21,7 @@ package master.beast;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public interface InheritanceTrajectoryPostProcessor {
+public interface InheritancePostProcessor {
     
     public void process(master.inheritance.InheritanceTrajectory inheritanceTrajectory);
     

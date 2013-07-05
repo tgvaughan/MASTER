@@ -29,7 +29,7 @@ import beast.core.Plugin;
         + "chosen time, marks them, discards their decendents and (optionally) "
         + "prunes all remaining unmarked lineages.")
 public class LineageSampler extends Plugin implements
-        InheritanceTrajectoryPostProcessor, InheritanceEnsemblePostProcessor {
+        InheritancePostProcessor {
     
     public Input<Integer> nSamplesInput = new Input<Integer>("nSamples",
             "Number of lineages to sample", Validate.REQUIRED);
@@ -50,14 +50,6 @@ public class LineageSampler extends Plugin implements
     @Override
     public void process(master.inheritance.InheritanceTrajectory itraj) {
         master.inheritance.SampleLineages.process(itraj,
-                samplingTimeInput.get(), nSamplesInput.get(),
-                markOnlyInput.get(), reverseTimeInput.get());
-    }
-
-    @Override
-    public void process(master.inheritance.InheritanceEnsemble iensemble) {
-        for (master.inheritance.InheritanceTrajectory itraj : iensemble.getTrajectories())
-            master.inheritance.SampleLineages.process(itraj,
                 samplingTimeInput.get(), nSamplesInput.get(),
                 markOnlyInput.get(), reverseTimeInput.get());
     }

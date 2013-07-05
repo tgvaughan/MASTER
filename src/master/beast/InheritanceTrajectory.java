@@ -82,12 +82,14 @@ public class InheritanceTrajectory extends Runnable {
             "Trajectory end condition based on remaining lineages.",
             new ArrayList<LineageEndCondition>());
     
+
+    
     // Post-processors:
-    public Input<List<InheritanceTrajectoryPostProcessor>> postProcessorsInput =
-            new Input<List<InheritanceTrajectoryPostProcessor>>(
-            "postProcessor",
-            "Inheritance trajectory post processor.",
-            new ArrayList<InheritanceTrajectoryPostProcessor>());
+    public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
+            new Input<List<InheritancePostProcessor>>(
+            "inheritancePostProcessor",
+            "Post processor for inheritance graph.",
+            new ArrayList<InheritancePostProcessor>());
     
     // Outputs:
     public Input<List<InheritanceTrajectoryOutput>> outputsInput
@@ -151,8 +153,8 @@ public class InheritanceTrajectory extends Runnable {
                 new master.inheritance.InheritanceTrajectory(spec);
         
         // Perform any requested post-processing:
-        for (InheritanceTrajectoryPostProcessor postProc : postProcessorsInput.get())
-            postProc.process(itraj);
+        for (InheritancePostProcessor inheritancePostProc : inheritancePostProcessorsInput.get())
+            inheritancePostProc.process(itraj);
 
         // Write outputs:
         for (InheritanceTrajectoryOutput output : outputsInput.get())

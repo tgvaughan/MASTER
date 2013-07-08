@@ -314,9 +314,11 @@ public class InheritanceTrajectory extends Trajectory {
         }
 
         // Initialise sampling index and sample first state
-        sidx = 1;
-        if (spec.samplePopSizes)
+        if (spec.samplePopSizes) {
+            sidx = 1;
+            clearSamples();
             sampleState(currentPopState, 0.0);
+        }
         
         // Sort inactive lineages nodes in order of increasing seed time:
         Collections.sort(inactiveLineages, new Comparator<Node>() {

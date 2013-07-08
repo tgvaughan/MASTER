@@ -165,8 +165,8 @@ public class InheritanceEnsemble extends Runnable {
                 new master.inheritance.InheritanceEnsemble(spec);
         
         // Perform any requested post-processing:
-        for (InheritancePostProcessor postProc : inheritancePostProcessorsInput.get())
-            for (master.inheritance.InheritanceTrajectory itraj : iensemble.getTrajectories())
+        for (master.inheritance.InheritanceTrajectory itraj : iensemble.getTrajectories())
+            for (InheritancePostProcessor postProc : inheritancePostProcessorsInput.get())
                 postProc.process(itraj);
         
         // Write outputs:

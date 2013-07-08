@@ -12,10 +12,10 @@ mkdir $ojdir
 mkdir $ojdir/main
 mkdir $ojdir/lib
 
-cp ~/work/code/beast2/dist/beast2.jar $ojdir/main
-cp ~/work/code/beast2/lib/*.jar $ojdir/lib
-cp ~/work/code/MASTER/dist/MASTER.jar $ojdir/lib
-cp ~/work/code/MASTER/lib/*.jar $ojdir/lib
+cp ~/code/beast_and_friends/beast2/dist/beast2.jar $ojdir/main
+cp ~/code/beast_and_friends/beast2/lib/*.jar $ojdir/lib
+cp ~/code/beast_and_friends/MASTER/dist/MASTER.jar $ojdir/lib
+cp ~/code/beast_and_friends/MASTER/lib/*.jar $ojdir/lib
 
 cp one-jar-boot-0.97.jar $ojdir/
 cd $ojdir

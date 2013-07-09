@@ -26,7 +26,16 @@ public class SampleLineages {
      * to the Markov process which generated the graph.
      */
     public static void process(InheritanceTrajectory itraj,
-            double samplingTime, int nSamples, boolean markOnly, boolean reverseTime) {
+            double samplingTime, int nSamples, String markAnnotation,
+            boolean reverseTime) {
+        
+        boolean markOnly;
+        if (markAnnotation != null) {
+            markOnly = true;
+        } else {
+            markAnnotation = "__mark__";
+            markOnly = false;
+        }
         
         // Get list of root nodes (using chosen time direction):
         List<Node> rootNodes;
@@ -58,11 +67,11 @@ public class SampleLineages {
         
         // Label nodes belonging to sampled lineages:
         for (Node node : sampledNodes)
-            mark(node, reverseTime);
+            mark(node, reverseTime, markAnnotation);
         
         // Set complimentary annotation on unsampled lineages:
         for (Node node: rootNodes)
-            markFalse(node, reverseTime);
+            markFalse(node, reverseTime, markAnnotation);
         
         if (markOnly)
             return;
@@ -76,8 +85,8 @@ public class SampleLineages {
         
         // Discard unmarked lineages:
         for (Node leaf : leafNodes) {
-            if (!isMarked(leaf)) {
-                pruneLineage(leaf, reverseTime);
+            if (!isMarked(leaf, markAnnotation)) {
+                pruneLineage(leaf, reverseTime, markAnnotation);
                 if (reverseTime && itraj.getStartNodes().contains(leaf))
                     itraj.getStartNodes().remove(leaf);
             }
@@ -87,7 +96,7 @@ public class SampleLineages {
         List<Node> oldRootNodes = new ArrayList<Node>();
         oldRootNodes.addAll(rootNodes);
         for (Node root : oldRootNodes) {
-            if (!isMarked(root))
+            if (!isMarked(root, markAnnotation))
                 rootNodes.remove(root);
         }
         
@@ -99,8 +108,8 @@ public class SampleLineages {
      * @param node
      * @return true if lineage has been sampled
      */
-    private static boolean isMarked(Node node) {
-        Boolean mark = (Boolean) node.getAttribute("marked");
+    private static boolean isMarked(Node node, String markAnnotation) {
+        Boolean mark = (Boolean) node.getAttribute(markAnnotation);
         return mark != null && mark;
     }
 
@@ -110,28 +119,28 @@ public class SampleLineages {
      * @param node 
      * @param reverseTime 
      */
-    private static void mark(Node node, boolean reverseTime) {
+    private static void mark(Node node, boolean reverseTime, String markAnnotation) {
 
-        node.setAttribute("marked", true);
+        node.setAttribute(markAnnotation, true);
         List<Node> prevNodes = getPrev(node, reverseTime);
         for (Node prev : prevNodes)
-            mark(prev, reverseTime);
+            mark(prev, reverseTime, markAnnotation);
     }
     
     /**
-     * Explicitly unmark node and its decendents which do not
+     * Explicitly unmark node and its descendents which do not
      * belong to sampled lineages.
      * 
      * @param node
      * @param reverseTime 
      */
-    private static void markFalse(Node node, boolean reverseTime) {
-        if (!isMarked(node))
-            node.setAttribute("marked", false);
+    private static void markFalse(Node node, boolean reverseTime, String markAnnotation) {
+        if (!isMarked(node, markAnnotation))
+            node.setAttribute(markAnnotation, false);
         
         List<Node> nextNodes = getNext(node, reverseTime);
         for (Node next : nextNodes)
-            markFalse(next, reverseTime);
+            markFalse(next, reverseTime, markAnnotation);
     }
 
     /**
@@ -141,14 +150,14 @@ public class SampleLineages {
      * @param node
      * @param reverseTime 
      */
-    private static void pruneLineage(Node node, boolean reverseTime) {
+    private static void pruneLineage(Node node, boolean reverseTime, String markAnnotation) {
         List<Node> prevNodes = new ArrayList<Node>();
         prevNodes.addAll(getPrev(node, reverseTime));
         
         for (Node prev : prevNodes) {
             getNext(prev, reverseTime).remove(node);
-            if (!isMarked(prev))
-                pruneLineage(prev, reverseTime);
+            if (!isMarked(prev, markAnnotation))
+                pruneLineage(prev, reverseTime, markAnnotation);
         }
     }
 

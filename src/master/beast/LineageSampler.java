@@ -37,8 +37,8 @@ public class LineageSampler extends Plugin implements
     public Input<Double> samplingTimeInput = new Input<Double>("samplingTime",
             "Time at which sampling is to take place", Validate.REQUIRED);
   
-    public Input<Boolean> markOnlyInput = new Input<Boolean>("markOnly",
-            "If true, unsampled lineages are NOT discarded. Default false.", false);
+    public Input<String> markAnnotationInput = new Input<String>("markAnnotation",
+            "Mark using this annotation rather than pruning.");
     
     public Input<Boolean> reverseTimeInput = new Input<Boolean>("reverseTime",
             "Process inheritance graph in reverse time.  Default false.", false);
@@ -51,7 +51,7 @@ public class LineageSampler extends Plugin implements
     public void process(master.inheritance.InheritanceTrajectory itraj) {
         master.inheritance.SampleLineages.process(itraj,
                 samplingTimeInput.get(), nSamplesInput.get(),
-                markOnlyInput.get(), reverseTimeInput.get());
+                markAnnotationInput.get(), reverseTimeInput.get());
     }
     
 }

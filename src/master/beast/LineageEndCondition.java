@@ -24,7 +24,7 @@ import beast.core.Plugin;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-@Description("Lineage count end condition for a stochastic trajectory.")
+@Description("Lineage count end condition for an inheritance trajectory.")
 public class LineageEndCondition extends Plugin {
     
     public Input<Population> populationInput = new Input<Population>(

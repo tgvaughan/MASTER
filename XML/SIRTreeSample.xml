@@ -1,4 +1,5 @@
-<!-- Simulate an inheritance tree from the SIR epidemic model -->
+<!-- Simulate an inheritance tree from the SIR epidemic model,
+     demonstrating the LineageSampler post-processor. -->
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
   <run spec='InheritanceTrajectory'
@@ -27,10 +28,9 @@
     <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>
     
     <!-- Randomly sample a sub-set of the lineages extant at time 10 -->
-    <postProcessor spec='LineageSampler' nSamples="10" samplingTime="10" markOnly="false"/>
+    <inheritancePostProcessor spec='LineageSampler' nSamples="10" samplingTime="10" markAnnotation="sampled"/>
     
-    <output spec='NexusOutput' fileName='SIRTree_output.nexus'
-	    collapseSingleChildNodes="true"/>
-    <output spec='JsonOutput' fileName='SIRTree_output.json'/>
+    <output spec='NexusOutput' fileName='SIRTreeSample_output.nexus'/>
+    <output spec='JsonOutput' fileName='SIRTreeSample_output.json'/>
   </run>
 </beast>

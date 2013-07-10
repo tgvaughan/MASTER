@@ -66,6 +66,7 @@ public class InheritanceTrajectory extends Trajectory {
     private PopulationState currentPopState;
     private double t;
     private int sidx;
+    private int nTerminalNodes;
     
     /**
      * Build an inheritance graph corrsponding to a set of lineages embedded
@@ -119,6 +120,17 @@ public class InheritanceTrajectory extends Trajectory {
                     if (lineageEC.isMet(activeLineages)) {
                         conditionMet = true;
                         isRejection = lineageEC.isRejection();
+                        break;
+                    }
+                }
+            }
+            
+            // Check whether a leaf count end condition is met:
+            if (!conditionMet) {
+                for (LeafCountEndCondition leafEC : spec.getLeafCountEndConditions()) {
+                    if (leafEC.isMet(nTerminalNodes, activeLineages)) {
+                        conditionMet = true;
+                        isRejection = leafEC.isRejection();
                         break;
                     }
                 }
@@ -335,6 +347,9 @@ public class InheritanceTrajectory extends Trajectory {
                 return 0;
             }
         });
+        
+        // Reset terminal node count:
+        nTerminalNodes = 0;
     }
 
     
@@ -404,6 +419,10 @@ public class InheritanceTrajectory extends Trajectory {
                 
                 node.addChild(nextLevelNodes.get(reactChild));
             }
+            
+            // Increment terminal node counter as necessary:
+            if (reactNode.children.isEmpty())
+                nTerminalNodes += 1;
         }
         
         // Graph cleaning and activeLineages maintenance:

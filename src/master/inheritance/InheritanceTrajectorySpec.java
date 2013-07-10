@@ -38,6 +38,9 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     
     // Lineage end conditions:
     List<LineageEndCondition> lineageEndConditions;
+    
+    // Leaf count end conditions:
+    List<LeafCountEndCondition> leafCountEndConditions;
 
     // Record population size dynamics.
     boolean samplePopSizes;
@@ -58,6 +61,7 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
         super();
         
         lineageEndConditions = Lists.newArrayList();
+        leafCountEndConditions = Lists.newArrayList();
         
         // For inheritance graphs there is a sensible default
         // maximum simulation time.
@@ -114,12 +118,21 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     }
     
     /**
-     * Specify end condition besides exceeding simulation time.
+     * Incorporate lineage end condition.
      * 
      * @param endCondition 
      */
     public void addLineageEndCondition(LineageEndCondition endCondition) {
         this.lineageEndConditions.add(endCondition);
+    }
+    
+    /**
+     * Incorporate leaf count end condition.
+     * 
+     * @param endCondition 
+     */
+    public void addLeafCountEndCondition(LeafCountEndCondition endCondition) {
+        this.leafCountEndConditions.add(endCondition);
     }
     
     @Override
@@ -173,5 +186,14 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
      */
     public List<LineageEndCondition> getLineageEndConditions() {
         return lineageEndConditions;
+    }
+    
+    /**
+     * Retrieve list of leaf count end conditions currently in use.
+     * 
+     * @return list of leaf count end conditions.
+     */
+    public List<LeafCountEndCondition> getLeafCountEndConditions() {
+        return leafCountEndConditions;
     }
 }

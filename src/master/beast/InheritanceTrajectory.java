@@ -82,7 +82,11 @@ public class InheritanceTrajectory extends Runnable {
             "Trajectory end condition based on remaining lineages.",
             new ArrayList<LineageEndCondition>());
     
-
+    // Leaf count end conditions:
+    public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput = new Input<List<LeafCountEndCondition>>(
+            "leafCountEndCondition",
+            "Trajectory end condition based on number of terminal nodes generated.",
+            new ArrayList<LeafCountEndCondition>());
     
     // Post-processors:
     public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
@@ -136,6 +140,9 @@ public class InheritanceTrajectory extends Runnable {
         
         for (LineageEndCondition endCondition : lineageEndConditionsInput.get())
             spec.addLineageEndCondition(endCondition.endConditionObject);
+        
+        for (LeafCountEndCondition endCondition : leafCountEndConditionsInput.get())
+            spec.addLeafCountEndCondition(endCondition.endConditionObject);
 
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)

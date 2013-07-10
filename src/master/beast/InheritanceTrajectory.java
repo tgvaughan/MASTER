@@ -124,8 +124,15 @@ public class InheritanceTrajectory extends Runnable {
         // Set maximum simulation time:
         if (simulationTimeInput.get() != null)
             spec.setSimulationTime(simulationTimeInput.get());
-        else
-            spec.setSimulationTime(Double.POSITIVE_INFINITY);
+        else {
+            if (popEndConditionsInput.get() == null
+                    && lineageEndConditionsInput.get() == null
+                    && leafCountEndConditionsInput.get() == null) {
+                throw new IllegalArgumentException("Must specify either a final simulation "
+                        + "time or one or more end conditions.");
+            } else
+                spec.setSimulationTime(Double.POSITIVE_INFINITY);
+        }
         
         // Assemble initial state:
         master.PopulationState initState = new master.PopulationState();

@@ -81,19 +81,25 @@ public class InheritanceEnsemble extends Runnable {
             "Trajectory end condition based on population sizes.",
             new ArrayList<PopulationEndCondition>());
     
-    // Post-processors:
-    public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
-            new Input<List<InheritancePostProcessor>>(
-            "inheritancePostProcessor",
-            "Post processor for inheritance graph.",
-            new ArrayList<InheritancePostProcessor>());
-    
     // Lineage end conditions:
     public Input<List<LineageEndCondition>> lineageEndConditionsInput = new Input<List<LineageEndCondition>>(
             "lineageEndCondition",
             "Trajectory end condition based on remaining lineages.",
             new ArrayList<LineageEndCondition>());
     
+    // Leaf count end conditions:
+    public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput = new Input<List<LeafCountEndCondition>>(
+            "leafCountEndCondition",
+            "Trajectory end condition based on number of terminal nodes generated.",
+            new ArrayList<LeafCountEndCondition>());
+    
+    // Post-processors:
+    public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
+            new Input<List<InheritancePostProcessor>>(
+            "inheritancePostProcessor",
+            "Post processor for inheritance graph.",
+            new ArrayList<InheritancePostProcessor>());
+
     public Input<List<InheritanceEnsembleOutput>> outputsInput
             = new Input<List<InheritanceEnsembleOutput>>("output",
             "Output writer used to write results of simulation to disk.",
@@ -123,10 +129,11 @@ public class InheritanceEnsemble extends Runnable {
         if (simulationTimeInput.get() != null)
             spec.setSimulationTime(simulationTimeInput.get());
         else {
-            if (popEndConditionsInput.get() == null && lineageEndConditionsInput.get() == null) {
+            if (popEndConditionsInput.get() == null
+                    && lineageEndConditionsInput.get() == null
+                    && leafCountEndConditionsInput.get() == null) {
                 throw new IllegalArgumentException("Must specify either a final simulation "
                         + "time or one or more end conditions.");
-                
             } else
                 spec.setSimulationTime(Double.POSITIVE_INFINITY);
         }
@@ -147,6 +154,9 @@ public class InheritanceEnsemble extends Runnable {
         
         for (LineageEndCondition endCondition : lineageEndConditionsInput.get())
             spec.addLineageEndCondition(endCondition.endConditionObject);
+        
+        for (LeafCountEndCondition endCondition : leafCountEndConditionsInput.get())
+            spec.addLeafCountEndCondition(endCondition.endConditionObject);
 
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)

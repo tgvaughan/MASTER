@@ -25,30 +25,50 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A parser for strings specifying individual reactions.
+ * A parser for strings specifying individual inheritance reactions.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class ReactionStringParser {
     
-    private List<master.Population> reactants;
-    private List<master.Population> products;
+    // Outputs of the parser.  The `node ID' lists are used to
+    // assign inheritance relationships.
+    public List<Integer> reactantIDs, productIDs;
+    public List<String> reactantPopNames, productPopNames;
+    public List<List<Integer>> reactantLocs, productLocs;
+    public List<String> variableNames;
     
     private String string;
     private Map<String, master.PopulationType> popTypeMap;
-        
+    
+    // Available tokens:
     private enum Token {
-        SPACE, INT, POPLABEL, STARTLOC, ENDLOC, COMMA, PLUS, ARROW, END;
+        SPACE, INT, LABEL, STARTLOC, ENDLOC, COMMA, COLON, PLUS, ARROW, END;
     }
     
+    // Lists of tokens and values appearing in string:
     private List<Token> tokenList;
     private List<String> valueList;
     
-    private int parseIdx;
+    // This parser abuses fields by treating them as global variables:
+    private int parseIdx;    
+    private int nextNodeID;
+    private Map<master.PopulationType,Integer> seenTypeIDs;
     
-    public ReactionStringParser(String string, List<master.PopulationType> popTypes) throws ParseException {
+    /**
+     * Assemble lists of reactant and product nodes by parsing a
+     * (hopefully) human-readable string.
+     * 
+     * @param string String to parse
+     * @param popTypes List of population types. Needed to interpret population
+     * labels occurring in string.
+     * 
+     * @throws ParseException Tries to be a tiny bit informative when things go wrong.
+     */
+    public ReactionStringParser(String string,
+            List<master.PopulationType> popTypes, List<Range> ranges) throws ParseException {
        
-        this.string = string.trim();
+        this.string = string.trim();        
         
         // Construct map from pop type names to pop type objects.
         popTypeMap = Maps.newHashMap();
@@ -57,25 +77,29 @@ public class ReactionStringParser {
         
         doLex();
         doRecursiveDecent();
+        
+        
+        // Create inheritance relationships:
+//        for (int r=0; r<reactants.size(); r++) {
+//            for (int p=0; p<products.size(); p++) {
+//                if (productIDs.get(p)==reactantIDs.get(r)) {
+//                    reactants.get(r).addChild(products.get(p));
+//                }
+//            }
+//        }
     }    
     
-    public master.Population[] getReactants() {
-        return reactants.toArray(new master.Population[0]);
-    }
-    
-    public master.Population[] getProducts() {
-        return products.toArray(new master.Population[0]);
-    }
-    
+
     private void doLex() throws ParseException {
         
         Map<Token, Pattern> tokenPatterns = Maps.newHashMap();
                
         tokenPatterns.put(Token.SPACE, Pattern.compile("\\s+"));
         tokenPatterns.put(Token.INT, Pattern.compile("\\d+"));
-        tokenPatterns.put(Token.POPLABEL, Pattern.compile("[a-zA-Z_]\\w*"));
+        tokenPatterns.put(Token.LABEL, Pattern.compile("[a-zA-Z_]\\w*"));
         tokenPatterns.put(Token.STARTLOC, Pattern.compile("\\["));
         tokenPatterns.put(Token.ENDLOC, Pattern.compile("\\]"));
+        tokenPatterns.put(Token.COLON, Pattern.compile(":"));
         tokenPatterns.put(Token.COMMA, Pattern.compile(","));        
         tokenPatterns.put(Token.PLUS, Pattern.compile("\\+"));
         tokenPatterns.put(Token.ARROW, Pattern.compile("->"));
@@ -135,24 +159,32 @@ public class ReactionStringParser {
     private void doRecursiveDecent() throws ParseException {
         parseIdx = 0;
         
-        reactants = Lists.newArrayList();
-        products = Lists.newArrayList();
-                
-        ruleS(reactants);
+        reactantIDs = Lists.newArrayList();
+        productIDs = Lists.newArrayList();
+        reactantPopNames = Lists.newArrayList();
+        productPopNames = Lists.newArrayList();
+        reactantLocs = Lists.newArrayList();
+        productLocs = Lists.newArrayList();
+        
+        nextNodeID = 0;
+        seenTypeIDs = Maps.newHashMap();
+        
+        ruleS(true);
         acceptToken(Token.ARROW, true);
-        ruleS(products);
+        
+        ruleS(false);
         acceptToken(Token.END, true);
     }
     
     /**
      * S -> zero | PQ
      * 
-     * @param poplist
+     * @param processingReactants 
      * @throws ParseException 
      */
-    private void ruleS(List<master.Population> poplist) throws ParseException {
+    private void ruleS(boolean processingReactants) throws ParseException {
         
-        // Deal special case of "0":
+        // Deal special case of "0"
         if (acceptToken(Token.INT, false)) {
             if (valueList.get(parseIdx-1).equals("0"))
                 return;
@@ -162,47 +194,85 @@ public class ReactionStringParser {
             }
         }
 
-        ruleP(poplist);
-        ruleQ(poplist);
+        ruleP(processingReactants);
+        ruleQ(processingReactants);
     }    
     
     /**
      * Q -> plus PQ | eps
      * 
-     * @param poplist
+     * @param processingReactants 
      * @throws ParseException 
      */
-    private void ruleQ(List<master.Population> poplist) throws ParseException {
+    private void ruleQ(boolean processingReactants) throws ParseException {
         if (acceptToken(Token.PLUS, false)) {
-            ruleP(poplist);
-            ruleQ(poplist);
+            ruleP(processingReactants);
+            ruleQ(processingReactants);
         }
         // else accept epsilon
     }
     
     /**
-     * P -> FLD
-     * @param poplist
+     * P -> FLDI
+     * 
+     * @param processingReactants 
      * @throws ParseException 
      */
-    private void ruleP(List<master.Population> poplist) throws ParseException {
+    private void ruleP(boolean processingReactants) throws ParseException {
         int factor = ruleF();
         String popName = ruleL();
-        int[] loc = ruleD();
+        List<Integer>loc = ruleD();
+        int chosenid = ruleI();
         
         // Check that population specifier name exists:
         if (!popTypeMap.containsKey(popName))
             throw new ParseException("Unknown population type name '"
                     + popName + "' encountered in reaction string.", parseIdx);
         
+        master.PopulationType popType = popTypeMap.get(popName);
+        
         // Ensure location is valid if given.
-        if (loc.length>0 && !popTypeMap.get(popName).containsLocation(loc))
-            throw new ParseException("Population type '" + popName
-                    + "' does not contain specified location.", parseIdx);
+//        if (loc.length>0 && !popTypeMap.get(popName).containsLocation(loc))
+//            throw new ParseException("Population type '" + popName
+//                    + "' does not contain specified location.", parseIdx);
         
+        for (int i=0; i<factor; i++) {
+            if (processingReactants) {
+                reactantPopNames.add(popName);
+                reactantLocs.add(loc);
+            } else {
+                productPopNames.add(popName);
+                productLocs.add(loc);
+            }
+        }
         
-        for (int i=0; i<factor; i++)
-            poplist.add(new master.Population(popTypeMap.get(popName), loc));
+        // Automatic assignment of inheritance relationships.
+        // This default behaviour is to make the first reactant node of a given
+        // type the parent of all product nodes of the same type.
+        int id;
+        
+        for (int i=0; i<factor; i++) {
+            if (chosenid<0) {
+                if (processingReactants) {
+                    id = nextNodeID++;
+                    if (!seenTypeIDs.containsKey(popType))
+                        seenTypeIDs.put(popType, id);
+                } else {
+                    if (seenTypeIDs.containsKey(popType))
+                        id = seenTypeIDs.get(popType);
+                    else
+                        id = nextNodeID++;
+                }
+            } else {
+                id = chosenid;
+            }
+        
+            if (processingReactants)
+                reactantIDs.add(id);
+            else
+                productIDs.add(id);
+        }
+        
     }
     
     /**
@@ -224,7 +294,7 @@ public class ReactionStringParser {
      * @throws ParseException 
      */
     private String ruleL() throws ParseException {
-        acceptToken(Token.POPLABEL, true);
+        acceptToken(Token.LABEL, true);
         return valueList.get(parseIdx-1);
     }
     
@@ -234,32 +304,55 @@ public class ReactionStringParser {
      * @return
      * @throws ParseException 
      */
-    private int[] ruleD() throws ParseException {
-        List<Integer> locList = Lists.newArrayList();
+    private List<Integer> ruleD() throws ParseException {
+        List<String> locList = Lists.newArrayList();
         if (acceptToken(Token.STARTLOC, false)) {
-            acceptToken(Token.INT, true);
-            locList.add(Integer.parseInt(valueList.get(parseIdx-1)));
+            acceptToken(Token.LABEL, true);
+            locList.add(valueList.get(parseIdx-1));
             ruleM(locList);
             acceptToken(Token.ENDLOC, true);
         }
         
-        int [] loc = new int[locList.size()];
-        for (int i=0; i<loc.length; i++)
-            loc[i] = locList.get(i);
+        List<Integer> loc = Lists.newArrayList();
+        for (int i=0; i<locList.size(); i++) {
+            try {
+                loc.add(Integer.parseInt(locList.get(i)));
+            } catch (NumberFormatException e) {
+                if (!variableNames.contains(locList.get(i)))
+                    variableNames.add(locList.get(i));
+                loc.add(-variableNames.indexOf(locList.get(i)));
+            }
+        }
         
         return loc;
     }
     
+    /**
+     * I -> : int | eps
+     * 
+     * @return
+     * @throws ParseException 
+     */
+    private int ruleI() throws ParseException {
+        int id;
+        if (acceptToken(Token.COLON, false)) {
+            acceptToken(Token.INT, true);
+            id = Integer.parseInt(valueList.get(parseIdx-1));
+        } else
+            id = -1;
+        
+        return id;
+    }
     /**
      * M -> comma M | eps
      * 
      * @param loc
      * @throws ParseException 
      */
-    private void ruleM(List<Integer> locList) throws ParseException {
+    private void ruleM(List<String> locList) throws ParseException {
         if (acceptToken(Token.COMMA, false)) {
             acceptToken(Token.INT, true);
-            locList.add(Integer.parseInt(valueList.get(parseIdx-1)));
+            locList.add(valueList.get(parseIdx-1));
             ruleM(locList);
         }
         // else accept epsilon

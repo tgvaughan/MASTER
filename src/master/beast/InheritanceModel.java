@@ -67,29 +67,29 @@ public class InheritanceModel extends Plugin {
 
         // Add reaction groups to model:
         for (InheritanceReactionGroup reactGroup : inheritanceReactionGroupsInput.get()) {
-            reactGroup.postProcessing(model.getPopulationTypes());
-            model.addInheritanceReactionGroup(reactGroup.inheritanceReactionGroup);
+            reactGroup.addToModel(model);
         }
 
         // Add individual reactions to model:
         for (InheritanceReaction react : inheritanceReactionsInput.get()) {
 
-            master.inheritance.InheritanceReaction reaction;
-            if (react.getName()!=null)
-                reaction = new master.inheritance.InheritanceReaction(react.getName());
-            else
-                reaction = new master.inheritance.InheritanceReaction();
-
-            react.parseStrings(model.getPopulationTypes());
-            reaction.setInheritanceReactantSchema(react.getReactants());
-            reaction.setInheritanceProductSchema(react.getProducts());
-
-            if (react.getRate()>=0)
-                reaction.addRate(react.getRate());
-            else
-                throw new RuntimeException("Reaction does not specify reaction rate.");
-            
-            model.addInheritanceReaction(reaction);
+            react.addToModel(model);
+//            master.inheritance.InheritanceReaction reaction;
+//            if (react.getName()!=null)
+//                reaction = new master.inheritance.InheritanceReaction(react.getName());
+//            else
+//                reaction = new master.inheritance.InheritanceReaction();
+//
+//            react.parseStrings(model.getPopulationTypes());
+//            reaction.setInheritanceReactantSchema(react.getReactants());
+//            reaction.setInheritanceProductSchema(react.getProducts());
+//
+//            if (react.getRate()>=0)
+//                reaction.addRate(react.getRate());
+//            else
+//                throw new RuntimeException("Reaction does not specify reaction rate.");
+//            
+//            model.addInheritanceReaction(reaction);
         }
         
     }

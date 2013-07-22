@@ -18,6 +18,7 @@ package master.beast;
 
 import beast.core.Description;
 import beast.core.Input;
+import beast.core.Input.Validate;
 import beast.core.Plugin;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -37,19 +38,13 @@ public class Reaction extends Plugin {
     public Input<Double> rateInput = new Input<Double>("rate",
             "Individual reaction rate. (Only used if group rate unset.)");
     
-    public Input<List<Population>> reactantsInput = new Input<List<Population>>(
-            "reactant",
-            "Individual reactant populations.",
-            new ArrayList<Population>());
-    
-    public Input<List<Population>> productsInput = new Input<List<Population>>(
-            "product",
-            "Individual product populations.",
-            new ArrayList<Population>());
+    public Input<List<Range>> rangesInput = new Input<List<Range>>("range",
+            "Define multiple reactions for different values of a variable.",
+            new ArrayList<Range>());
     
     public Input<String> reactionStringInput = new Input<String>(
             "value",
-            "Alternative string description of reaction. (Overrides reactant and product elements.)");
+            "String description of reaction.", Validate.REQUIRED);
     
     // Reactant and product schemata
     private master.Population [] reactants, products;
@@ -71,18 +66,6 @@ public class Reaction extends Plugin {
             name = nameInput.get();
         else
             name = null;
-        
-        if (reactionStringInput.get() == null) {
-            int nReactants = reactantsInput.get().size();
-            reactants = new master.Population[nReactants];
-            for (int i=0; i<nReactants; i++)
-                reactants[i] = reactantsInput.get().get(i).pop;
-            
-            int nProducts = productsInput.get().size();
-            products = new master.Population[nProducts];
-            for (int i=0; i<nProducts; i++)
-                products[i] = productsInput.get().get(i).pop;
-        }
 
     }
     
@@ -90,9 +73,7 @@ public class Reaction extends Plugin {
         if (reactionStringInput.get() != null) {
             try {
                 ReactionStringParser parser = new ReactionStringParser(
-                        reactionStringInput.get(), popTypes);
-                reactants = parser.getReactants();
-                products = parser.getProducts();
+                        reactionStringInput.get(), popTypes, rangesInput.get());
             } catch (ParseException ex) {
                 Logger.getLogger(Reaction.class.getName()).log(Level.SEVERE, null, ex);
             }

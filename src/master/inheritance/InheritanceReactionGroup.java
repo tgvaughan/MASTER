@@ -98,6 +98,7 @@ public class InheritanceReactionGroup extends ReactionGroup {
                 prodNodesMap.put(nodePop, new ArrayList<Node>());
             prodNodesMap.get(nodePop).add(node);
         }
+        prodNodes.add(prodNodesMap);
         
         Population [] prodNodePops = new Population[nodes.length];
         for (int i=0; i<nodes.length; i++)

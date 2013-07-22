@@ -88,21 +88,23 @@ public class InheritanceReaction extends Plugin {
             
             for (int vidx=0; vidx<i; vidx++) {
                 if (fromString.equals(variableNames.get(vidx))) {
-                    fromValues.set(i, -vidx);
+                    fromValues.add(-(1+vidx));
                     fromFound = true;
+                    break;
                 }
                 
                 if (toString.equals(variableNames.get(vidx))) {
-                    toValues.set(i, -vidx);
+                    toValues.add(-(1+vidx));
                     toFound = true;
+                    break;
                 }
             }
             
             if (!fromFound)
-                fromValues.set(i, Integer.parseInt(fromString));
+                fromValues.add(Integer.parseInt(fromString));
 
             if (!toFound)
-                toValues.set(i, Integer.parseInt(toString));
+                toValues.add(Integer.parseInt(toString));
         }
         
     }
@@ -133,7 +135,7 @@ public class InheritanceReaction extends Plugin {
                 if (loc.get(locIdx)>=0)
                     flattenedLoc[locIdx] = loc.get(locIdx);
                 else {
-                    String variableName = reactionVariableNames.get(-loc.get(locIdx));
+                    String variableName = reactionVariableNames.get(-loc.get(locIdx)-1);
                     if (variableNames.contains(variableName)) {
                         flattenedLoc[locIdx] = indices[variableNames.indexOf(variableName)];
                     } else {
@@ -151,79 +153,8 @@ public class InheritanceReaction extends Plugin {
     }
     
 
-    private void addToModelLoop(int depth, int [] indices, ReactionStringParser parser,
-            master.inheritance.InheritanceModel model) throws ParseException {
-        
-        if (depth==indices.length) {
-            
-            List<master.inheritance.Node> reactants = getEntityList(indices,
-                    parser.reactantPopNames, parser.reactantLocs,
-                    parser.variableNames, model.getPopulationTypes());
-            List<master.inheritance.Node> products = getEntityList(indices,
-                    parser.productPopNames, parser.productLocs,
-                    parser.variableNames, model.getPopulationTypes());
-            
-            for (int r=0; r<reactants.size(); r++) {
-                int reactID = parser.reactantIDs.get(r);
-                for (int p=0; p<products.size(); p++) {
-                    int prodID = parser.productIDs.get(p);
-                    if (prodID == reactID)
-                        reactants.get(r).addChild(products.get(p));
-                }
-            }
-            
-            master.inheritance.InheritanceReaction reaction;
-            if (name != null)
-                reaction = new master.inheritance.InheritanceReaction(name + (reactionIndex++));
-            else
-                reaction = new master.inheritance.InheritanceReaction();
-                
-            reaction.addInheritanceReactantSchema((master.inheritance.Node[])reactants.toArray());
-            reaction.addInheritanceProductSchema((master.inheritance.Node[])products.toArray());
-            reaction.setRate(rate);
-            model.addInheritanceReaction(reaction);
-            
-        } else {
-            int from;
-            if (fromValues.get(depth)<0)
-                from = indices[-fromValues.get(depth)];
-            else
-                from = fromValues.get(depth);
-
-            int to;
-            if (toValues.get(depth)<0)
-                to = indices[-toValues.get(depth)];
-            else
-                to = toValues.get(depth);
-            
-            for (int i=from; i<=to; i++) {
-                indices[depth] = i;
-                addToModelLoop(depth+1, indices, parser, model);
-            }
-
-        }
-    }
-        
-    public void addToModel(master.inheritance.InheritanceModel model) throws ParseException {
-        
-        if (rate<0) {
-            throw new RuntimeException("No reaction rate specified.");
-        }
-        
-        ReactionStringParser parser = null;
-        try {
-            parser = new ReactionStringParser(reactionStringInput.get(),
-                    model.getPopulationTypes(), rangesInput.get());
-        } catch (ParseException ex) {
-            Logger.getLogger(InheritanceReaction.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        int [] indices = new int[rangesInput.get().size()];
-        addToModelLoop(0, indices, parser, model);
-        
-    }
     
-    private void addToGroupLoop(int depth, int [] indices, ReactionStringParser parser,
+    private void rangeLoop(int depth, int [] indices, ReactionStringParser parser,
             master.inheritance.InheritanceModel model,
             master.inheritance.InheritanceReactionGroup group) throws ParseException {
         
@@ -245,9 +176,26 @@ public class InheritanceReaction extends Plugin {
                 }
             }
 
-            group.addInheritanceReactantSchema(reactants.toArray(new master.inheritance.Node[0]));
-            group.addInheritanceProductSchema(products.toArray(new master.inheritance.Node[0]));
-            group.addRate(rate);
+            if (group != null) {
+                
+                group.addInheritanceReactantSchema(reactants.toArray(new master.inheritance.Node[0]));
+                group.addInheritanceProductSchema(products.toArray(new master.inheritance.Node[0]));
+                group.addRate(rate);
+                
+            } else {
+                
+                master.inheritance.InheritanceReaction reaction;
+                if (name != null)
+                    reaction = new master.inheritance.InheritanceReaction(name + (reactionIndex++));
+                else
+                    reaction = new master.inheritance.InheritanceReaction();
+                
+                reaction.addInheritanceReactantSchema((master.inheritance.Node[])reactants.toArray());
+                reaction.addInheritanceProductSchema((master.inheritance.Node[])products.toArray());
+                reaction.setRate(rate);
+                model.addInheritanceReaction(reaction);
+                
+            }
             
         } else {
             int from;
@@ -264,11 +212,32 @@ public class InheritanceReaction extends Plugin {
             
             for (int i=from; i<=to; i++) {
                 indices[depth] = i;
-                addToGroupLoop(depth+1, indices, parser, model, group);
+                rangeLoop(depth+1, indices, parser, model, group);
             }
 
         }
     }
+    
+
+    public void addToModel(master.inheritance.InheritanceModel model) throws ParseException {
+        
+        if (rate<0) {
+            throw new RuntimeException("No reaction rate specified.");
+        }
+        
+        ReactionStringParser parser = null;
+        try {
+            parser = new ReactionStringParser(reactionStringInput.get(),
+                    model.getPopulationTypes(), rangesInput.get());
+        } catch (ParseException ex) {
+            Logger.getLogger(InheritanceReaction.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        int [] indices = new int[rangesInput.get().size()];
+        rangeLoop(0, indices, parser, model, null);
+        
+    }
+    
     
     public void addToGroup(master.inheritance.InheritanceModel model,
             master.inheritance.InheritanceReactionGroup group, Double groupRate) throws ParseException {
@@ -290,7 +259,7 @@ public class InheritanceReaction extends Plugin {
         }
         
         int [] indices = new int[rangesInput.get().size()];
-        addToGroupLoop(0, indices, parser, model, group);
+        rangeLoop(0, indices, parser, model, group);
         
     }
         

@@ -8,7 +8,15 @@
 
             <reactionGroup spec='InheritanceReactionGroup' reactionGroupName='Coalescence'>
 	      <reaction spec='InheritanceReaction' rate="0.071428"> <!-- N=7 -->
-                2X[hi]:1 -> X[0]:1
+              <range spec='Range' variableName="q" from="0" to="4"/>
+                2X[q]:1 -> X[q]:1
+	      </reaction>
+            </reactionGroup>
+            <reactionGroup spec='InheritanceReactionGroup' reactionGroupName='Migration'>
+	      <reaction spec='InheritanceReaction' rate="0.01"> <!-- N=7 -->
+              <range spec='Range' variableName="q" from="0" to="4"/>
+              <range spec='Range' variableName="p" from="0" to="q"/>
+                X[q] -> X[p]
 	      </reaction>
             </reactionGroup>
         </model>                

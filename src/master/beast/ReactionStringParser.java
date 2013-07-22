@@ -314,7 +314,7 @@ public class ReactionStringParser {
                 acceptToken(Token.LABEL, true);
                 if (!variableNames.contains(valueList.get(parseIdx-1)))
                     variableNames.add(valueList.get(parseIdx-1));
-                locList.add(-variableNames.indexOf(valueList.get(parseIdx-1)));
+                locList.add(-(1+variableNames.indexOf(valueList.get(parseIdx-1))));
             }
 
             ruleM(locList);
@@ -354,7 +354,7 @@ public class ReactionStringParser {
                 acceptToken(Token.LABEL, true);
                 if (!variableNames.contains(valueList.get(parseIdx-1)))
                     variableNames.add(valueList.get(parseIdx-1));
-                locList.add(-variableNames.indexOf(valueList.get(parseIdx-1)));
+                locList.add(-(1+variableNames.indexOf(valueList.get(parseIdx-1))));
             }
             ruleM(locList);
         }

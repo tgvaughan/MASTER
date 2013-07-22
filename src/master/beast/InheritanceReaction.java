@@ -86,29 +86,53 @@ public class InheritanceReaction extends Plugin {
             boolean fromFound = false;
             boolean toFound = false;
             
-            for (int vidx=0; vidx<i; vidx++) {
-                if (fromString.equals(variableNames.get(vidx))) {
-                    fromValues.add(-(1+vidx));
-                    fromFound = true;
-                    break;
+            if (variableNames.contains(fromString)) {
+                if (variableNames.indexOf(fromString)<i) {
+                    fromValues.add(-(1+variableNames.indexOf(fromString)));
+                } else {
+                    throw new RuntimeException("Range boundaries can only refer "
+                            + "to variables of earlier ranges, not later ones.");
                 }
-                
-                if (toString.equals(variableNames.get(vidx))) {
-                    toValues.add(-(1+vidx));
-                    toFound = true;
-                    break;
+            } else {
+                try {
+                    fromValues.add(Integer.parseInt(fromString));
+                } catch (NumberFormatException ex) {
+                    throw new RuntimeException("Range 'from' value must be "
+                            + "a number or range variable.");
                 }
             }
             
-            if (!fromFound)
-                fromValues.add(Integer.parseInt(fromString));
+            if (variableNames.contains(toString)) {
+                if (variableNames.indexOf(toString)<i) {
+                    toValues.add(-(1+variableNames.indexOf(toString)));
+                } else {
+                    throw new RuntimeException("Range boundaries can only refer "
+                            + "to variables of earlier ranges, not later ones.");
+                }
+            } else {
+                try {
+                    toValues.add(Integer.parseInt(toString));
+                } catch (NumberFormatException ex) {
+                    throw new RuntimeException("Range 'to' value must be "
+                            + "a number or range variable.");
+                }
+            }
 
-            if (!toFound)
-                toValues.add(Integer.parseInt(toString));
         }
         
     }
     
+    /**
+     * Assemble list of reactant or product nodes.
+     * 
+     * @param indices values of range variables
+     * @param popNames list of population names identified by parser
+     * @param locs list of locations (unflattened) identified by parser
+     * @param reactionVariableNames list of variable names identified by parser
+     * @param popTypes list of population types present in model
+     * @return list of nodes
+     * @throws ParseException 
+     */
     private List<master.inheritance.Node> getEntityList(int [] indices,
             List<String> popNames, List<List<Integer>> locs,
             List<String> reactionVariableNames,
@@ -153,7 +177,17 @@ public class InheritanceReaction extends Plugin {
     }
     
 
-    
+    /**
+     * Recursion used to loop over range variables and assemble reaction
+     * for each combination.
+     * 
+     * @param depth current recursion depth
+     * @param indices list of range variable values
+     * @param parser result of parsing reaction string
+     * @param model model to which reactions are to be added
+     * @param group reaction group to which reactions are to be added (may be null)
+     * @throws ParseException 
+     */
     private void rangeLoop(int depth, int [] indices, ReactionStringParser parser,
             master.inheritance.InheritanceModel model,
             master.inheritance.InheritanceReactionGroup group) throws ParseException {
@@ -200,13 +234,13 @@ public class InheritanceReaction extends Plugin {
         } else {
             int from;
             if (fromValues.get(depth)<0)
-                from = indices[-fromValues.get(depth)];
+                from = indices[-fromValues.get(depth)-1];
             else
                 from = fromValues.get(depth);
 
             int to;
             if (toValues.get(depth)<0)
-                to = indices[-toValues.get(depth)];
+                to = indices[-toValues.get(depth)-1];
             else
                 to = toValues.get(depth);
             
@@ -219,6 +253,13 @@ public class InheritanceReaction extends Plugin {
     }
     
 
+    /**
+     * Add reactions specified by reaction string and range inputs directly
+     * to model.
+     * 
+     * @param model Inheritance model
+     * @throws ParseException 
+     */
     public void addToModel(master.inheritance.InheritanceModel model) throws ParseException {
         
         if (rate<0) {
@@ -238,7 +279,15 @@ public class InheritanceReaction extends Plugin {
         
     }
     
-    
+    /**
+     * Add reactions specified by reaction string and range inputs to chosen
+     * reaction group inside of model.
+     * 
+     * @param model Inheritance model
+     * @param group Reaction group
+     * @param groupRate Optional fixed group rate for reactions.
+     * @throws ParseException 
+     */
     public void addToGroup(master.inheritance.InheritanceModel model,
             master.inheritance.InheritanceReactionGroup group, Double groupRate) throws ParseException {
         

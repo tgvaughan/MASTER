@@ -13,9 +13,9 @@
 	      </reaction>
             </reactionGroup>
             <reactionGroup spec='InheritanceReactionGroup' reactionGroupName='Migration'>
-	      <reaction spec='InheritanceReaction' rate="0.01"> <!-- N=7 -->
+	      <reaction spec='InheritanceReaction' rate="0.1"> <!-- N=7 -->
               <range spec='Range' variableName="q" from="0" to="4"/>
-              <range spec='Range' variableName="p" from="0" to="q"/>
+              <range spec='Range' variableName="p" from="q" to="4"/>
                 X[q] -> X[p]
 	      </reaction>
             </reactionGroup>

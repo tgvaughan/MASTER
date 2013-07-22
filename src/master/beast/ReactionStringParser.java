@@ -165,6 +165,7 @@ public class ReactionStringParser {
         productPopNames = Lists.newArrayList();
         reactantLocs = Lists.newArrayList();
         productLocs = Lists.newArrayList();
+        variableNames = Lists.newArrayList();
         
         nextNodeID = 0;
         seenTypeIDs = Maps.newHashMap();
@@ -299,32 +300,28 @@ public class ReactionStringParser {
     }
     
     /**
-     * D -> [ int M ] | eps
+     * D -> [ int | label | M ] | eps
      * 
      * @return
      * @throws ParseException 
      */
     private List<Integer> ruleD() throws ParseException {
-        List<String> locList = Lists.newArrayList();
+        List<Integer> locList = Lists.newArrayList();
         if (acceptToken(Token.STARTLOC, false)) {
-            acceptToken(Token.LABEL, true);
-            locList.add(valueList.get(parseIdx-1));
+            if (acceptToken(Token.INT, false)) {
+                locList.add(Integer.parseInt(valueList.get(parseIdx-1)));
+            } else {
+                acceptToken(Token.LABEL, true);
+                if (!variableNames.contains(valueList.get(parseIdx-1)))
+                    variableNames.add(valueList.get(parseIdx-1));
+                locList.add(-variableNames.indexOf(valueList.get(parseIdx-1)));
+            }
+
             ruleM(locList);
             acceptToken(Token.ENDLOC, true);
         }
         
-        List<Integer> loc = Lists.newArrayList();
-        for (int i=0; i<locList.size(); i++) {
-            try {
-                loc.add(Integer.parseInt(locList.get(i)));
-            } catch (NumberFormatException e) {
-                if (!variableNames.contains(locList.get(i)))
-                    variableNames.add(locList.get(i));
-                loc.add(-variableNames.indexOf(locList.get(i)));
-            }
-        }
-        
-        return loc;
+        return locList;
     }
     
     /**
@@ -349,10 +346,16 @@ public class ReactionStringParser {
      * @param loc
      * @throws ParseException 
      */
-    private void ruleM(List<String> locList) throws ParseException {
+    private void ruleM(List<Integer> locList) throws ParseException {
         if (acceptToken(Token.COMMA, false)) {
-            acceptToken(Token.INT, true);
-            locList.add(valueList.get(parseIdx-1));
+            if (acceptToken(Token.INT, false)) {
+                locList.add(Integer.parseInt(valueList.get(parseIdx-1)));
+            } else {
+                acceptToken(Token.LABEL, true);
+                if (!variableNames.contains(valueList.get(parseIdx-1)))
+                    variableNames.add(valueList.get(parseIdx-1));
+                locList.add(-variableNames.indexOf(valueList.get(parseIdx-1)));
+            }
             ruleM(locList);
         }
         // else accept epsilon

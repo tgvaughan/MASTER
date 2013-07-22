@@ -53,6 +53,8 @@ public class InheritanceReaction extends Plugin {
     
     private List<String> variableNames;
     private List<Integer> fromValues, toValues;
+    
+    private int reactionIndex = 0;
 
     public InheritanceReaction() { }
     
@@ -105,81 +107,81 @@ public class InheritanceReaction extends Plugin {
         
     }
     
-    private void loopOverVariables(int depth, int [] indices, ReactionStringParser parser,
+    private List<master.inheritance.Node> getEntityList(int [] indices,
+            List<String> popNames, List<List<Integer>> locs,
+            List<String> reactionVariableNames,
+            List<master.PopulationType> popTypes) throws ParseException {
+        
+        List<master.inheritance.Node> entities = Lists.newArrayList();
+
+        for (int entityIdx=0; entityIdx<popNames.size(); entityIdx++) {
+            // Substitute variable names for values:
+            String popTypeName = popNames.get(entityIdx);
+            List<Integer> loc = locs.get(entityIdx);
+            
+            master.PopulationType popType = null;
+            for (master.PopulationType thisPopType : popTypes)
+                if (thisPopType.getName().equals(popTypeName))
+                    popType = thisPopType;
+            
+            if (popType == null)
+                throw new ParseException("Unidentified reactant population type '"
+                        + popTypeName + "'.", 0);
+            
+            int [] flattenedLoc = new int[loc.size()];
+            for (int locIdx=0; locIdx<loc.size(); locIdx++) {
+                if (loc.get(locIdx)>=0)
+                    flattenedLoc[locIdx] = loc.get(locIdx);
+                else {
+                    String variableName = reactionVariableNames.get(-loc.get(locIdx));
+                    if (variableNames.contains(variableName)) {
+                        flattenedLoc[locIdx] = indices[variableNames.indexOf(variableName)];
+                    } else {
+                        throw new ParseException("Undefined range variable '"
+                                + variableName + "'.", 0);
+                    }
+                }
+            }
+                
+            master.Population population = new master.Population(popType, flattenedLoc);
+            entities.add(new master.inheritance.Node(population));
+        }
+            
+        return entities;
+    }
+    
+
+    private void addToModelLoop(int depth, int [] indices, ReactionStringParser parser,
             master.inheritance.InheritanceModel model) throws ParseException {
+        
         if (depth==indices.length) {
             
-            List<master.inheritance.Node> reactants = Lists.newArrayList();
-
-            for (int r=0; r<parser.reactantPopNames.size(); r++) {
-                // Substitute variable names for values:
-                String popTypeName = parser.reactantPopNames.get(r);
-                List<Integer> loc = parser.reactantLocs.get(r);
-
-                master.PopulationType popType = null;
-                for (master.PopulationType thisPopType : model.getPopulationTypes())
-                    if (thisPopType.getName().equals(popTypeName))
-                        popType = thisPopType;
-                
-                if (popType == null)
-                    throw new ParseException("Unidentified reactant population type '"
-                            + popTypeName + "'.", 0);
-                
-                int [] flattenedLoc = new int[loc.size()];
-                for (int locIdx=0; locIdx<loc.size(); locIdx++) {
-                    if (loc.get(locIdx)>0)
-                        flattenedLoc[locIdx] = loc.get(locIdx);
-                    else {
-                        String variableName = parser.variableNames.get(-loc.get(locIdx));
-                        if (variableNames.contains(variableName)) {
-                            flattenedLoc[locIdx] = indices[variableNames.indexOf(variableName)];
-                        } else {
-                            throw new ParseException("Undefined range variable '"
-                                    + variableName + "'.", 0);
-                        }
-                    }
+            List<master.inheritance.Node> reactants = getEntityList(indices,
+                    parser.reactantPopNames, parser.reactantLocs,
+                    parser.variableNames, model.getPopulationTypes());
+            List<master.inheritance.Node> products = getEntityList(indices,
+                    parser.productPopNames, parser.productLocs,
+                    parser.variableNames, model.getPopulationTypes());
+            
+            for (int r=0; r<reactants.size(); r++) {
+                int reactID = parser.reactantIDs.get(r);
+                for (int p=0; p<products.size(); p++) {
+                    int prodID = parser.productIDs.get(p);
+                    if (prodID == reactID)
+                        reactants.get(r).addChild(products.get(p));
                 }
-                
-                master.Population population = new master.Population(popType, flattenedLoc);
-                reactants.add(new master.inheritance.Node(population));
             }
             
-            List<master.inheritance.Node> products = Lists.newArrayList();
-
-            for (int p=0; p<parser.productPopNames.size(); p++) {
-                // Substitute variable names for values:
-                String popTypeName = parser.productPopNames.get(p);
-                List<Integer> loc = parser.productLocs.get(p);
-
-                master.PopulationType popType = null;
-                for (master.PopulationType thisPopType : model.getPopulationTypes())
-                    if (thisPopType.getName().equals(popTypeName))
-                        popType = thisPopType;
+            master.inheritance.InheritanceReaction reaction;
+            if (name != null)
+                reaction = new master.inheritance.InheritanceReaction(name + (reactionIndex++));
+            else
+                reaction = new master.inheritance.InheritanceReaction();
                 
-                if (popType == null)
-                    throw new ParseException("Unidentified product population type '"
-                            + popTypeName + "'.", 0);
-                
-                int [] flattenedLoc = new int[loc.size()];
-                for (int locIdx=0; locIdx<loc.size(); locIdx++) {
-                    if (loc.get(locIdx)>0)
-                        flattenedLoc[locIdx] = loc.get(locIdx);
-                    else {
-                        String variableName = parser.variableNames.get(-loc.get(locIdx));
-                        if (variableNames.contains(variableName)) {
-                            flattenedLoc[locIdx] = indices[variableNames.indexOf(variableName)];
-                        } else {
-                            throw new ParseException("Undefined range variable '"
-                                    + variableName + "'.", 0);
-                        }
-                    }
-                }
-                
-                master.Population population = new master.Population(popType, flattenedLoc);
-                products.add(new master.inheritance.Node(population));
-                
-                
-            }
+            reaction.addInheritanceReactantSchema((master.inheritance.Node[])reactants.toArray());
+            reaction.addInheritanceProductSchema((master.inheritance.Node[])products.toArray());
+            reaction.setRate(rate);
+            model.addInheritanceReaction(reaction);
             
         } else {
             int from;
@@ -196,27 +198,99 @@ public class InheritanceReaction extends Plugin {
             
             for (int i=from; i<=to; i++) {
                 indices[depth] = i;
-                loopOverVariables(depth+1, indices, parser, model);
+                addToModelLoop(depth+1, indices, parser, model);
+            }
+
+        }
+    }
+        
+    public void addToModel(master.inheritance.InheritanceModel model) throws ParseException {
+        
+        if (rate<0) {
+            throw new RuntimeException("No reaction rate specified.");
+        }
+        
+        ReactionStringParser parser = null;
+        try {
+            parser = new ReactionStringParser(reactionStringInput.get(),
+                    model.getPopulationTypes(), rangesInput.get());
+        } catch (ParseException ex) {
+            Logger.getLogger(InheritanceReaction.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        int [] indices = new int[rangesInput.get().size()];
+        addToModelLoop(0, indices, parser, model);
+        
+    }
+    
+    private void addToGroupLoop(int depth, int [] indices, ReactionStringParser parser,
+            master.inheritance.InheritanceModel model,
+            master.inheritance.InheritanceReactionGroup group) throws ParseException {
+        
+        if (depth==indices.length) {
+            
+            List<master.inheritance.Node> reactants = getEntityList(indices,
+                    parser.reactantPopNames, parser.reactantLocs,
+                    parser.variableNames, model.getPopulationTypes());
+            List<master.inheritance.Node> products = getEntityList(indices,
+                    parser.productPopNames, parser.productLocs,
+                    parser.variableNames, model.getPopulationTypes());
+            
+            for (int r=0; r<reactants.size(); r++) {
+                int reactID = parser.reactantIDs.get(r);
+                for (int p=0; p<products.size(); p++) {
+                    int prodID = parser.productIDs.get(p);
+                    if (prodID == reactID)
+                        reactants.get(r).addChild(products.get(p));
+                }
+            }
+
+            group.addInheritanceReactantSchema(reactants.toArray(new master.inheritance.Node[0]));
+            group.addInheritanceProductSchema(products.toArray(new master.inheritance.Node[0]));
+            group.addRate(rate);
+            
+        } else {
+            int from;
+            if (fromValues.get(depth)<0)
+                from = indices[-fromValues.get(depth)];
+            else
+                from = fromValues.get(depth);
+
+            int to;
+            if (toValues.get(depth)<0)
+                to = indices[-toValues.get(depth)];
+            else
+                to = toValues.get(depth);
+            
+            for (int i=from; i<=to; i++) {
+                indices[depth] = i;
+                addToGroupLoop(depth+1, indices, parser, model, group);
             }
 
         }
     }
     
-    public void addToModel(master.inheritance.InheritanceModel model) {
-        
-        
-    }
-    
     public void addToGroup(master.inheritance.InheritanceModel model,
-            master.inheritance.InheritanceReactionGroup group) {
+            master.inheritance.InheritanceReactionGroup group, Double groupRate) throws ParseException {
         
+        if (groupRate != null) {
+          rate = groupRate;
+        } else {
+            if (rate<0)
+                throw new RuntimeException("Neither reaction nor its enclosing "
+                        + "group specify rate.");
+        }
+        
+        ReactionStringParser parser = null;
         try {
-            ReactionStringParser parser =
-                    new ReactionStringParser(reactionStringInput.get(),
+            parser = new ReactionStringParser(reactionStringInput.get(),
                     model.getPopulationTypes(), rangesInput.get());
         } catch (ParseException ex) {
             Logger.getLogger(InheritanceReaction.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        int [] indices = new int[rangesInput.get().size()];
+        addToGroupLoop(0, indices, parser, model, group);
         
     }
         

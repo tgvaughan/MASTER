@@ -19,8 +19,11 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Plugin;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -47,7 +50,7 @@ public class InheritanceReactionGroup extends Plugin {
     @Override
     public void initAndValidate() { };
     
-    public void addToModel(master.inheritance.InheritanceModel model) {
+    public void addToModel(master.inheritance.InheritanceModel model) throws ParseException {
         
         if (nameInput.get()==null)
             inheritanceReactionGroup = new master.inheritance.InheritanceReactionGroup();
@@ -55,21 +58,10 @@ public class InheritanceReactionGroup extends Plugin {
             inheritanceReactionGroup = new master.inheritance.InheritanceReactionGroup(nameInput.get());
 
         // Add reactions to reaction group:
-        for (InheritanceReaction react : reactionsInput.get()) {
-            
-            react.addToGroup(model, inheritanceReactionGroup);
-//            react.parseStrings(popTypes);
-//            inheritanceReactionGroup.addInheritanceReactantSchema(react.getReactants());
-//            inheritanceReactionGroup.addInheritanceProductSchema(react.getProducts());
-//            
-//            if (rateInput.get() != null)
-//                inheritanceReactionGroup.addRate(rateInput.get());
-//            else {
-//                if (react.getRate()>=0)
-//                    inheritanceReactionGroup.addRate(react.getRate());
-//                else
-//                    throw new RuntimeException("Neither reaction group nor reaction specify reaction rate.");
-//            }
-        }
+        for (InheritanceReaction react : reactionsInput.get())
+            react.addToGroup(model, inheritanceReactionGroup, rateInput.get());
+        
+        // Add reaction group to model.
+        model.addInheritanceReactionGroup(inheritanceReactionGroup);
     }
 }

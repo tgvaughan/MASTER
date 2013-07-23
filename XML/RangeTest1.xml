@@ -1,3 +1,4 @@
+<!-- Testing use of range element for inheritance reactions. -->
 
 <beast version='2.0' namespace='master.beast:beast.core.parameter'>
     <run spec='InheritanceTrajectory'
@@ -8,7 +9,7 @@
 
             <reactionGroup spec='InheritanceReactionGroup' reactionGroupName='Coalescence'>
 	      <reaction spec='InheritanceReaction' rate="0.071428"> <!-- N=7 -->
-              <range spec='Range' variableName="q" from="0" to="4"/>
+		<range spec='Range' variableName="q" from="0" to="4"/>
                 2X[q]:1 -> X[q]:1
 	      </reaction>
             </reactionGroup>
@@ -29,6 +30,6 @@
         
         <lineageEndCondition spec='LineageEndCondition' nLineages="1"/>
                 
-        <output spec='NexusOutput' fileName='RangeTest_out.nexus' reverseTime="true"/>
+        <output spec='NexusOutput' fileName='RangeTest1_out.nexus' reverseTime="true"/>
     </run>
 </beast>

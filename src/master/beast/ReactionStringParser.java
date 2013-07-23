@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A parser for strings specifying individual inheritance reactions.
+ * A parser for strings specifying reactions and inheritance reactions.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
@@ -77,16 +77,7 @@ public class ReactionStringParser {
         
         doLex();
         doRecursiveDecent();
-        
-        
-        // Create inheritance relationships:
-//        for (int r=0; r<reactants.size(); r++) {
-//            for (int p=0; p<products.size(); p++) {
-//                if (productIDs.get(p)==reactantIDs.get(r)) {
-//                    reactants.get(r).addChild(products.get(p));
-//                }
-//            }
-//        }
+
     }    
     
 

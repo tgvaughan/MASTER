@@ -17,6 +17,7 @@
 package master.beast;
 
 import beast.core.*;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -44,7 +45,7 @@ public class ReactionGroup extends Plugin {
     @Override
     public void initAndValidate() { };
         
-    public void postProcessing(List<master.PopulationType> popTypes) {
+    public void addToModel(master.Model model) throws ParseException {
         
         if (nameInput.get()==null)
             reactionGroup = new master.ReactionGroup();
@@ -52,20 +53,10 @@ public class ReactionGroup extends Plugin {
             reactionGroup = new master.ReactionGroup(nameInput.get());
 
         // Add reactions to reaction group:
-        for (Reaction react : reactionsInput.get()) {
-            
-            react.parseStrings(popTypes);
-            reactionGroup.addReactantSchema(react.getReactants());
-            reactionGroup.addProductSchema(react.getProducts());
-            
-            if (rateInput.get() != null)
-                reactionGroup.addRate(rateInput.get());
-            else {
-                if (react.getRate()>=0)
-                    reactionGroup.addRate(react.getRate());
-                else
-                    throw new RuntimeException("Neither reaction group nor reaction specify reaction rate.");
-            }
-        }
+        for (Reaction react : reactionsInput.get())
+            react.addToGroup(model, reactionGroup, rateInput.get());
+
+        // Add reaction group to model:
+        model.addReactionGroup(reactionGroup);
     }
 }

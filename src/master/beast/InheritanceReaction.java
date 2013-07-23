@@ -82,9 +82,6 @@ public class InheritanceReaction extends Plugin {
         for (int i=0; i<rangesInput.get().size(); i++) {
             String fromString = rangesInput.get().get(i).getFrom();
             String toString = rangesInput.get().get(i).getTo();
-
-            boolean fromFound = false;
-            boolean toFound = false;
             
             if (variableNames.contains(fromString)) {
                 if (variableNames.indexOf(fromString)<i) {
@@ -224,8 +221,8 @@ public class InheritanceReaction extends Plugin {
                 else
                     reaction = new master.inheritance.InheritanceReaction();
                 
-                reaction.addInheritanceReactantSchema((master.inheritance.Node[])reactants.toArray());
-                reaction.addInheritanceProductSchema((master.inheritance.Node[])products.toArray());
+                reaction.addInheritanceReactantSchema(reactants.toArray(new master.inheritance.Node[0]));
+                reaction.addInheritanceProductSchema(products.toArray(new master.inheritance.Node[0]));
                 reaction.setRate(rate);
                 model.addInheritanceReaction(reaction);
                 

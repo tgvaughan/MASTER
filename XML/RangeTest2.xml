@@ -1,0 +1,30 @@
+<!-- Testing use of range elements for non-inheritance reactions. -->
+
+<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+    
+    <run spec='Trajectory'
+         simulationTime='20'>
+        
+        <!--<stepper spec='TauLeapingStepper' stepSize="0.01"/>-->
+        <stepper spec='GillespieStepper' />
+
+        <model spec='Model' id='model'>
+            <populationType spec='PopulationType' typeName='X' dim='10 10' id='X'/>
+            <reactionGroup spec='ReactionGroup' reactionGroupName="Migration">
+                <reaction spec='Reaction' rate="0.1">
+		  <range spec='Range' variableName="i" from="0" to="9"/>
+		  <range spec='Range' variableName="j" from="0" to="9"/>
+                    X[i,j] -> X[j,i]
+                </reaction>
+            </reactionGroup>
+        </model>
+
+        <initialState spec='InitState'>
+            <populationSize spec='PopulationSize' size='100'>
+                <population spec='Population' type='@X' location="0 5"/>
+            </populationSize>
+        </initialState>
+        
+        <output spec='JsonOutput' fileName='RangeTest2_out.json'/>
+    </run>
+</beast>

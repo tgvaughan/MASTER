@@ -39,7 +39,7 @@
 	<inheritancePostProcessor spec='LineageFilter' reactionName="Infection" discard="true" />
 
 
-        <output spec='NexusOutput' fileName='bdss.nexus'/>
-        <output spec='JsonOutput' fileName='bdss.json'/>
+        <output spec='NexusOutput' fileName='BDSS_sample_out.nexus'/>
+        <output spec='JsonOutput' fileName='BDSS_sample_out.json'/>
     </run>
 </beast>

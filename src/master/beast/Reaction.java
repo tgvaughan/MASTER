@@ -207,9 +207,12 @@ public class Reaction extends Plugin {
             } else {
                 
                 master.Reaction reaction;
-                if (name != null)
-                    reaction = new master.Reaction(name + (reactionIndex++));
-                else
+                if (name != null) {
+                    if (reactionIndex>0)
+                        reaction = new master.Reaction(name + reactionIndex);
+                    else
+                        reaction = new master.Reaction(name);
+                } else
                     reaction = new master.Reaction();
                 
                 reaction.addReactantSchema(reactants.toArray(new master.Population[0]));
@@ -218,6 +221,8 @@ public class Reaction extends Plugin {
                 model.addReaction(reaction);
                 
             }
+            
+            reactionIndex += 1;
             
         } else {
             int from;

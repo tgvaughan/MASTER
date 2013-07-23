@@ -216,9 +216,12 @@ public class InheritanceReaction extends Plugin {
             } else {
                 
                 master.inheritance.InheritanceReaction reaction;
-                if (name != null)
-                    reaction = new master.inheritance.InheritanceReaction(name + (reactionIndex++));
-                else
+                if (name != null) {
+                    if (reactionIndex>0)
+                        reaction = new master.inheritance.InheritanceReaction(name + reactionIndex);
+                    else
+                        reaction = new master.inheritance.InheritanceReaction(name);
+                } else
                     reaction = new master.inheritance.InheritanceReaction();
                 
                 reaction.addInheritanceReactantSchema(reactants.toArray(new master.inheritance.Node[0]));
@@ -227,6 +230,8 @@ public class InheritanceReaction extends Plugin {
                 model.addInheritanceReaction(reaction);
                 
             }
+            
+            reactionIndex += 1;
             
         } else {
             int from;

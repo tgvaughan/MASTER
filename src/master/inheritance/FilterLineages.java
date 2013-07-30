@@ -225,7 +225,7 @@ public class FilterLineages {
         List<Node> prevNodes = getPrev(node, reverseTime);
         
         if (nextNodes.size() == 1 && prevNodes.size() == 1)
-            node.attributes.put("__pinned__", true);
+            node.setAttribute("__pinned__", true);
         
         for (Node child : nextNodes)
             pinSingletons(child, reverseTime);
@@ -240,10 +240,10 @@ public class FilterLineages {
      */
     private static void unPinSingletons(Node node, boolean reverseTime, String markAnnotation) {
 
-        if (node.attributes.containsKey("__pinned__"))
+        if (node.getAttributeNames().contains("__pinned__"))
             node.attributes.remove("__pinned__");
         
-        if (node.attributes.containsKey(markAnnotation))
+        if (node.getAttributeNames().contains(markAnnotation))
             node.attributes.remove(markAnnotation);
 
         for (Node child : getNext(node, reverseTime))

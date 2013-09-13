@@ -19,13 +19,13 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("A range of values an element of a location vector may take.")
-public class Range extends Plugin {
+public class Range extends BEASTObject {
     
     public Input<String> variableNameInput = new Input<String>("variableName",
             "Name of variable.", Validate.REQUIRED);

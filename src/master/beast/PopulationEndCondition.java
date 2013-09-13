@@ -19,7 +19,7 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +27,7 @@ import java.util.List;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Population size end condition for a stochastic trajectory.")
-public class PopulationEndCondition extends Plugin {
+public class PopulationEndCondition extends BEASTObject {
     
     public Input<List<Population>> populationInput = new Input<List<Population>>(
             "population",

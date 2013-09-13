@@ -16,9 +16,9 @@
  */
 package master.beast;
 
+import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Input;
-import beast.core.Plugin;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +27,7 @@ import java.util.List;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Group of moments to estimate from the simulated trajectories.")
-public class MomentGroup extends Plugin {
+public class MomentGroup extends BEASTObject {
     
     public Input<String> nameInput = new Input<String>("momentGroupName",
             "Name of moment group.", Input.Validate.REQUIRED);

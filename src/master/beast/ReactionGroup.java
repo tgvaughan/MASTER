@@ -24,7 +24,7 @@ import java.util.*;
  * @author Tim Vaughan
  */
 @Description("Group of reactions in the birth-death model.")
-public class ReactionGroup extends Plugin {
+public class ReactionGroup extends BEASTObject {
 
     public Input<String> nameInput = new Input<String>("reactionGroupName",
             "Reaction group name");

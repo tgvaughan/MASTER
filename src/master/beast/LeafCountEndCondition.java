@@ -18,13 +18,13 @@ package master.beast;
 
 import beast.core.Description;
 import beast.core.Input;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Leaf count end condition for an inheritance trajectory.")
-public class LeafCountEndCondition extends Plugin {
+public class LeafCountEndCondition extends BEASTObject {
     
     public Input<Integer> nLeavesInput = new Input<Integer>(
             "nLeaves",

@@ -16,10 +16,10 @@
  */
 package master.beast;
 
+import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.List;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Specifies multiple individuals having identical characteristics.")
-public class MultipleIndividuals extends Plugin {
+public class MultipleIndividuals extends BEASTObject {
     
     public Input<Population> populationInput = new Input<Population>(
             "population",

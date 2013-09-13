@@ -24,7 +24,7 @@ import java.util.List;
  * @author Tim Vaughan
  */
 @Description("Specification of a summary statistic to calculate.")
-public class Moment extends Plugin {
+public class Moment extends BEASTObject {
     
     public Input<String> nameInput = new Input<String>("momentName",
             "Name of moment. (Overridden by moment group name.)");

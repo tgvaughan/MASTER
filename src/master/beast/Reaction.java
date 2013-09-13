@@ -19,7 +19,7 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 import com.google.common.collect.Lists;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Individual reaction in an inheritance-tracking birth-death model.")
-public class Reaction extends Plugin {
+public class Reaction extends BEASTObject {
             
     public Input<String> nameInput = new Input<String>("reactionName",
             "Name of reaction. (Not used for grouped reactions.)");

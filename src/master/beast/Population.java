@@ -10,7 +10,7 @@ import beast.core.parameter.*;
  *
  */
 @Description("Specific population of a chosen type.")
-public class Population extends Plugin {
+public class Population extends BEASTObject {
 
     public Input<PopulationType> typeInput = new Input<PopulationType>(
             "type",

@@ -19,7 +19,7 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -32,7 +32,7 @@ import master.inheritance.InheritanceEnsemble;
 @Description("Hamlet output writer capable of writing population size samples"
         + " from all kinds of trajectories and ensembles to disk as a"
         + " JSON-formatted file.")
-public class JsonOutput extends Plugin implements
+public class JsonOutput extends BEASTObject implements
         TrajectoryOutput,
         EnsembleOutput,
         EnsembleSummaryOutput,

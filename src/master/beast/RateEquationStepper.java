@@ -19,15 +19,15 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 
 /**
- * Plugin for specifying deterministic integration of the rate equations.
+ * Object for specifying deterministic integration of the rate equations.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Deterministic rate equation integrator.")
-public class RateEquationStepper extends Plugin implements Stepper {
+public class RateEquationStepper extends BEASTObject implements Stepper {
     
     public Input<Double> stepSizeInput = new Input<Double>("stepSize",
             "Length of integration time step.", Validate.REQUIRED);

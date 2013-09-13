@@ -18,18 +18,16 @@ package master.beast;
 
 import beast.core.Description;
 import beast.core.Input;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Group of reactions in an inheritance-tracking birth-death model.")
-public class InheritanceReactionGroup extends Plugin {
+public class InheritanceReactionGroup extends BEASTObject {
     
     public Input<String> nameInput = new Input<String>("reactionGroupName",
             "Reaction group name");

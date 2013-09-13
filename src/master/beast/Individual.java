@@ -19,7 +19,7 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +28,7 @@ import java.util.List;
  */
 @Description("Plugin representing an individual member of a population.  Used"
         + "for specifying inheritance in reactions.")
-public class Individual extends Plugin {
+public class Individual extends BEASTObject {
     
     public Input<Population> populationInput = new Input<Population>(
             "population",

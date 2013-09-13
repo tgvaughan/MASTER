@@ -4,13 +4,13 @@ import beast.core.*;
 import java.util.*;
 
 /**
- * Beast 2 plugin representing a general birth-death model.
+ * Beast 2 object representing a general birth-death model.
  *
  * @author Tim Vaughan
  *
  */
 @Description("Specification of a birth-death model.")
-public class Model extends Plugin {
+public class Model extends BEASTObject {
 
     public Input<List<PopulationType>> populationTypesInput = new Input<List<PopulationType>>(
             "populationType",

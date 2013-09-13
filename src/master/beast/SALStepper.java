@@ -19,7 +19,7 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 
 /**
  * Plugin for specifying use of the SAL algorithm.
@@ -27,7 +27,7 @@ import beast.core.Plugin;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Step anticipation tau-leaping stochastic integration algorithm.")
-public class SALStepper extends Plugin implements Stepper {
+public class SALStepper extends BEASTObject implements Stepper {
     
     public Input<Double> stepSizeInput = new Input<Double>("stepSize",
             "Length of integration time step.", Validate.REQUIRED);

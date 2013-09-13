@@ -19,13 +19,13 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Lineage count end condition for an inheritance trajectory.")
-public class LineageEndCondition extends Plugin {
+public class LineageEndCondition extends BEASTObject {
     
     public Input<Population> populationInput = new Input<Population>(
             "population",

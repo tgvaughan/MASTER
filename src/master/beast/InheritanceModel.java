@@ -18,7 +18,7 @@ package master.beast;
 
 import beast.core.Description;
 import beast.core.Input;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +26,7 @@ import java.util.List;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Specification of a birth-death model with inheritance relationships.")
-public class InheritanceModel extends Plugin {
+public class InheritanceModel extends BEASTObject {
     
     public Input<List<PopulationType>> populationTypesInput = new Input<List<PopulationType>>(
             "populationType",

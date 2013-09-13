@@ -19,7 +19,7 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -28,7 +28,7 @@ import beast.core.Plugin;
         + "samples (without replacement) from the set of lineages traversing a "
         + "chosen time, marks them, discards their decendents and (optionally) "
         + "prunes all remaining unmarked lineages.")
-public class LineageSampler extends Plugin implements
+public class LineageSampler extends BEASTObject implements
         InheritancePostProcessor {
     
     public Input<Integer> nSamplesInput = new Input<Integer>("nSamples",

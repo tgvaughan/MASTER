@@ -19,7 +19,7 @@ package master.beast;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -34,7 +34,7 @@ import master.inheritance.InheritanceEnsemble;
         + " not tree-like, an annotated variant of the extended Newick format"
         + " of Cardona et al, BMC Bioinf. (2008) is used in place of the"
         + " traditional annotated Newick for the topology strings.")
-public class NexusOutput extends Plugin implements InheritanceTrajectoryOutput, InheritanceEnsembleOutput {
+public class NexusOutput extends BEASTObject implements InheritanceTrajectoryOutput, InheritanceEnsembleOutput {
     
     public Input<String> fileNameInput = new Input<String>("fileName",
             "Name of file to write to.",

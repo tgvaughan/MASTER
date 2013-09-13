@@ -16,10 +16,10 @@
  */
 package master.beast;
 
+import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import beast.core.Plugin;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -31,7 +31,7 @@ import master.inheritance.InheritanceEnsemble;
  */
 @Description("Hamlet output writer capable of writing inheritance graph to"
         + " disk in extended Newick format of Cardona et al, BMC Bioinf. (2008).")
-public class NewickOutput extends Plugin implements InheritanceTrajectoryOutput, InheritanceEnsembleOutput {
+public class NewickOutput extends BEASTObject implements InheritanceTrajectoryOutput, InheritanceEnsembleOutput {
     
     public Input<String> fileNameInput = new Input<String>("fileName",
             "Name of file to write to.", Validate.REQUIRED);

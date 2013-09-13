@@ -4,13 +4,13 @@ import beast.core.*;
 import java.util.*;
 
 /**
- * Beast 2 plugin representing initial system state.
+ * Beast 2 object representing initial system state.
  *
  * @author Tim Vaughan
  *
  */
 @Description("Specification of initial system state.")
-public class InitState extends Plugin {
+public class InitState extends BEASTObject {
 
     public Input<List<PopulationSize>> popSizesInput = new Input<List<PopulationSize>>(
             "populationSize",

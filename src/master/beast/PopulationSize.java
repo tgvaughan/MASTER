@@ -3,13 +3,13 @@ package master.beast;
 import beast.core.*;
 
 /**
- * Beast 2 plugin for specifying the size of a population.
+ * Beast 2 object for specifying the size of a population.
  *
  * @author Tim Vaughan
  *
  */
 @Description("Size of a particular population.")
-public class PopulationSize extends Plugin {
+public class PopulationSize extends BEASTObject {
 
     public Input<Population> populationInput = new Input<Population>(
             "population", "Population whose size to specify.",

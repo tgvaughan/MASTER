@@ -18,8 +18,7 @@ package master.beast;
 
 import beast.core.Description;
 import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.Plugin;
+import beast.core.BEASTObject;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -27,7 +26,7 @@ import beast.core.Plugin;
 @Description("Inheritance trajectory and ensemble post-processor which filters"
         + " out lineages that do NOT terminate in a reaction belonging to"
         + " the named reaction group.")
-public class LineageFilter extends Plugin implements InheritancePostProcessor {
+public class LineageFilter extends BEASTObject implements InheritancePostProcessor {
     
     public Input<String> reactNameInput = new Input<String>("reactionName",
             "Name of reaction used to filter lineages.");

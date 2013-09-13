@@ -10,7 +10,7 @@ import beast.core.parameter.*;
  *
  */
 @Description("Population type involved in a birth-death model.")
-public class PopulationType extends Plugin {
+public class PopulationType extends BEASTObject {
 
     public Input<String> nameInput = new Input<String>("typeName", "Name of population");
     public Input<IntegerParameter> dimsInput = new Input<IntegerParameter>("dim",

@@ -16,6 +16,7 @@
  */
 package master.beast;
 
+import beast.core.Citation;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.StateNode;
@@ -33,6 +34,9 @@ import java.util.Map;
  */
 @Description("Plugin which uses a MASTER simulation to construct a BEAST 2 tree."
         + " This only works when MASTER output is tree-like.")
+@Citation("Tim Vaughan and Alexei Drummond, 'A Stochastic Simulator of "
+        + "Birth–Death Master Equations with Application to Phylodynamics'. "
+        + "Mol Biol Evol (2013) 30 (6): 1480-1493.")
 public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
     
     /*

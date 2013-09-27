@@ -27,6 +27,9 @@ import java.util.*;
 @Description("Simulates a number of trajectories under a stochastic"
         + " birth-death model, summarizing the results in terms of"
         + " moment estimates.")
+@Citation("Tim Vaughan and Alexei Drummond, 'A Stochastic Simulator of "
+        + "Birth–Death Master Equations with Application to Phylodynamics'. "
+        + "Mol Biol Evol (2013) 30 (6): 1480-1493.")
 public class EnsembleSummary extends Runnable {
 
     /*

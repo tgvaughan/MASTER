@@ -16,6 +16,7 @@
  */
 package master.beast;
 
+import beast.core.Citation;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
@@ -29,6 +30,9 @@ import java.util.List;
  */
 @Description("Simulates a number of trajectories under a stochastic"
         + " birth-death model.")
+@Citation("Tim Vaughan and Alexei Drummond, 'A Stochastic Simulator of "
+        + "Birth–Death Master Equations with Application to Phylodynamics'. "
+        + "Mol Biol Evol (2013) 30 (6): 1480-1493.")
 public class Ensemble extends Runnable {
     
     /*

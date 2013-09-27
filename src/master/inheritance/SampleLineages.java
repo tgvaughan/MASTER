@@ -179,7 +179,7 @@ public class SampleLineages {
         
         for (Node next : nextNodes) {
             if (next.getTime()*timeFactor >= samplingTime*timeFactor) {
-                Node newNode = new Node(node.getPopulation(), samplingTime);
+                Node newNode = new Node(next.getPopulation(), samplingTime);
                 getNext(node, reverseTime).remove(next);
                 getPrev(next, reverseTime).remove(node);
                 getNext(node, reverseTime).add(newNode);

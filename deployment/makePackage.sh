@@ -36,7 +36,7 @@ cp ../lib/*.jar $FULLNAME/lib
 # Create version.xml
 cat <<EOF > $FULLNAME/version.xml
 <addon name="$PKGNAME" version="$VERSION">
-    <depends on="beast2" atleast="2.0.2"/>
+    <depends on="beast2" atleast="2.0.3"/>
 </addon>
 EOF
 

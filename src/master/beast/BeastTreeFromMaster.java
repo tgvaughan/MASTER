@@ -397,12 +397,10 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
     }
 
     @Override
-    public List<StateNode> getInitialisedStateNodes() {
-        List<StateNode> stateNodes = new ArrayList<StateNode>();
+    public void getInitialisedStateNodes(List<StateNode> stateNodes) {
         if (m_initial.get() != null) {
             stateNodes.add(m_initial.get());
         }
-        return stateNodes;
     }
 
 }

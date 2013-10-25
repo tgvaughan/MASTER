@@ -62,11 +62,12 @@ public class ReactionStringParser {
      * @param string String to parse
      * @param popTypes List of population types. Needed to interpret population
      * labels occurring in string.
+     * @param ranges List of ranges
      * 
      * @throws ParseException Tries to be a tiny bit informative when things go wrong.
      */
     public ReactionStringParser(String string,
-            List<master.PopulationType> popTypes, List<Range> ranges) throws ParseException {
+            List<master.PopulationType> popTypes) throws ParseException {
        
         this.string = string.trim();        
         

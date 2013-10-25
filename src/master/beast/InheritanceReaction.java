@@ -271,7 +271,7 @@ public class InheritanceReaction extends BEASTObject {
         ReactionStringParser parser = null;
         try {
             parser = new ReactionStringParser(reactionStringInput.get(),
-                    model.getPopulationTypes(), rangesInput.get());
+                    model.getPopulationTypes());
         } catch (ParseException ex) {
             Logger.getLogger(InheritanceReaction.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -304,7 +304,7 @@ public class InheritanceReaction extends BEASTObject {
         ReactionStringParser parser = null;
         try {
             parser = new ReactionStringParser(reactionStringInput.get(),
-                    model.getPopulationTypes(), rangesInput.get());
+                    model.getPopulationTypes());
         } catch (ParseException ex) {
             Logger.getLogger(InheritanceReaction.class.getName()).log(Level.SEVERE, null, ex);
         }

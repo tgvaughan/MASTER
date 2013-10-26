@@ -16,6 +16,7 @@
  */
 package master;
 
+import beast.core.Input;
 import beast.util.Randomizer;
 
 /**
@@ -25,9 +26,22 @@ import beast.util.Randomizer;
  */
 public class TauLeapingStepper extends Stepper {
     
+    public Input<Double> stepSizeInput = new Input<Double>("stepSize",
+            "Length of integration time step.", Input.Validate.REQUIRED);
+    
     private double dt;
     
     private double eventCount = 0;
+    
+    /**
+     * Default constructor (required by BEAST).
+     */
+    public TauLeapingStepper() { }
+    
+    @Override
+    public void initAndValidate() {
+        dt = stepSizeInput.get();
+    }
     
     /**
      * Construct a tau-leaping integrator

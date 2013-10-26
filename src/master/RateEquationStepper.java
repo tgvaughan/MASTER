@@ -16,6 +16,8 @@
  */
 package master;
 
+import beast.core.Input;
+
 /**
  * Deterministic rate equation stepper.  Currently uses an implicit Runge-Kutta method.
  *
@@ -23,14 +25,30 @@ package master;
  */
 public class RateEquationStepper extends Stepper {
     
+    public Input<Double> stepSizeInput = new Input<Double>("stepSize",
+            "Length of integration time step.", Input.Validate.REQUIRED);
+    
+    public Input<Integer> iterationsInput = new Input<Integer>("iterations",
+            "Num of iterations used to solve for implicit term. (Default 3.)",
+            3);
+    
     private double dt;    
     private int maxIter;
+    
+    public RateEquationStepper() { }
+    
+    @Override
+    public void initAndValidate() {
+        dt = stepSizeInput.get();
+        maxIter = iterationsInput.get();
+    }
     
     /**
      * Construct a tau-leaping integrator
      * 
      * @param integrationTimeStep Size of time step to use in integration
      * algorithm. (Doesn't need to be a multiple of the desired sampling rate.)
+     * @param maxIter
      */
     public RateEquationStepper(double integrationTimeStep, int maxIter) {
         this.dt = integrationTimeStep;

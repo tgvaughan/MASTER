@@ -138,4 +138,13 @@ public class EnsembleSummary {
     public EnsembleSummarySpec getSpec() {
         return spec;
     }
+
+    /**
+     * Return array of state summaries.
+     * 
+     * @return StateSummary array.
+     */
+    public StateSummary[] getStateSummaries() {
+        return stateSummaries;
+    }
 }

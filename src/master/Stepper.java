@@ -16,13 +16,15 @@
  */
 package master;
 
+import beast.core.BEASTObject;
+
 /**
  * Abstract base class for algorithms which increment the system state
  * under the chosen reaction scheme.
  * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public abstract class Stepper {
+public abstract class Stepper extends BEASTObject {
 
     /**
      * Use the stochastic integration algorithm to increment the state

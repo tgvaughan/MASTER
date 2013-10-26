@@ -16,6 +16,7 @@
  */
 package master.beast;
 
+import master.outputs.InheritanceEnsembleOutput;
 import beast.core.Citation;
 import beast.core.Description;
 import beast.core.Input;

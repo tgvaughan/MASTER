@@ -16,10 +16,17 @@
  */
 package master;
 
+import master.outputs.TrajectoryOutput;
+import beast.core.BEASTObject;
+import beast.core.Input;
+import beast.core.Runnable;
 import beast.util.Randomizer;
 import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import master.beast.InitState;
+import master.beast.PopulationSize;
 
 /**
  * Class of objects representing trajectories through the state space of the
@@ -28,8 +35,55 @@ import java.util.List;
  * @author Tim Vaughan
  *
  */
-public class Trajectory {
+public class Trajectory extends Runnable {
 
+    /*
+     * XML inputs:
+     */
+    
+    // Spec parameters:
+    public Input<Double> simulationTimeInput = new Input<Double>(
+            "simulationTime",
+            "The maximum length of time to simulate for. (Defaults to infinite.)");
+    
+    public Input<Integer> nSamplesInput = new Input<Integer>(
+            "nSamples",
+            "Number of evenly spaced time points to sample state at.");
+    
+    public Input<Integer> seedInput = new Input<Integer>(
+            "seed",
+            "Seed for RNG.");
+    
+    public Input<Stepper> stepperInput = new Input<Stepper>(
+            "stepper",
+            "State incrementing algorithm to use. (Default Gillespie.)",
+            new GillespieStepper());
+    
+    public Input<Integer> verbosityInput = new Input<Integer> (
+            "verbosity", "Level of verbosity to use (0-2).", 1);
+    
+    // Model:
+    public Input<Model> modelInput = new Input<Model>("model",
+            "The specific model to simulate.",
+            Input.Validate.REQUIRED);
+    
+    // Initial state:
+    public Input<InitState> initialStateInput = new Input<InitState>("initialState",
+            "Initial state of system.",
+            Input.Validate.REQUIRED);
+    
+    // End conditions:
+    public Input<List<master.beast.PopulationEndCondition>> endConditionsInput = new Input<List<master.beast.PopulationEndCondition>>(
+            "populationEndCondition",
+            "Trajectory end condition based on population sizes.",
+            new ArrayList<master.beast.PopulationEndCondition>());    
+    
+    // Outputs:
+    public Input<List<TrajectoryOutput>> outputsInput = new Input<List<TrajectoryOutput>>(
+            "output",
+            "Output writer used to write simulation output to disk.",
+            new ArrayList<TrajectoryOutput>());
+    
     // List of sampled states:
     List<PopulationState> sampledStates;
     List<Double> sampledTimes;
@@ -37,16 +91,66 @@ public class Trajectory {
     // Simulation specification:
     private TrajectorySpec spec;
 
+    
+    @Override
+    public void initAndValidate() {
+        spec = new master.TrajectorySpec();
+
+        // Incorporate model:
+        spec.setModel(modelInput.get());
+        
+        // Default to Gillespie stepper
+        if (stepperInput.get() != null)
+            spec.setStepper(stepperInput.get());
+        else
+            spec.setStepper(new master.GillespieStepper());
+        
+        // Default to unevenly spaced sampling times:
+        if (nSamplesInput.get() != null)
+            spec.setEvenSampling(nSamplesInput.get());
+        else
+            spec.setUnevenSampling();
+        
+        // Set maximum simulation time:
+        if (simulationTimeInput.get() != null)
+            spec.setSimulationTime(simulationTimeInput.get());
+        else
+            spec.setSimulationTime(Double.POSITIVE_INFINITY);
+        
+        // Assemble initial state:
+        master.PopulationState initState = new master.PopulationState();
+        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
+            initState.set(popSize.pop, popSize.size);
+        spec.setInitPopulationState(initState);
+        
+        // Incorporate any end conditions:
+        for (master.beast.PopulationEndCondition endCondition : endConditionsInput.get())
+            spec.addPopSizeEndCondition(endCondition.endConditionObject);
+
+        // Set seed if provided, otherwise use default BEAST seed:
+        if (seedInput.get()!=null)
+            spec.setSeed(seedInput.get());
+        
+        // Set the level of verbosity:
+        spec.setVerbosity(verbosityInput.get());
+    }
+
+    @Override
+    public void run() throws Exception {
+        
+        // Generate stochastic trajectory:
+        simulate();
+
+        // Write outputs:
+        for (TrajectoryOutput output : outputsInput.get())
+            output.write(this);
+    }
+    
     /**
      * Generate trajectory of birth-death process.
-     *
-     * @param spec Simulation specification.
      */
-    public Trajectory(TrajectorySpec spec) {
+    public void simulate() {
 
-        // Keep copy of simulation parameters with trajectory:
-        this.spec = spec;
-        
         // Set seed if defined:
         if (spec.seed>=0 && !spec.seedUsed) {
             Randomizer.setSeed(spec.seed);
@@ -174,6 +278,14 @@ public class Trajectory {
     }
     
     /**
+     * Old constructor.
+     */
+    public Trajectory(TrajectorySpec spec) {
+        this.spec = spec;
+        simulate();
+    }
+    
+    /**
      * Retrieve trajectory simulation specification.
      * 
      * @return TrajectorySpec object.
@@ -199,5 +311,20 @@ public class Trajectory {
     public final void clearSamples() {
         sampledStates.clear();
         sampledTimes.clear();
+    }
+
+    
+    /**
+     * @return Sampled states.
+     */
+    public List<PopulationState> getSampledStates() {
+        return sampledStates;
+    }
+
+    /**
+     * @return Sampled times.
+     */
+    public List<Double> getSampledTimes() {
+        return sampledTimes;
     }
 }

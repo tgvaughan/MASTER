@@ -16,7 +16,7 @@
  */
 package master.examples;
 
-import master.JsonOutput;
+import master.outputs.JsonOutput;
 import master.Population;
 import master.PopulationState;
 import master.inheritance.InheritanceModel;
@@ -108,7 +108,7 @@ public class BirthDeathTree {
          * Write results both as JSON file and a newick tree:
 
 */
-        JsonOutput.write(traj, new PrintStream("out.json"));        
+        (new JsonOutput("out.json")).write(traj);
         NexusOutput.write(traj, false, false, new PrintStream("out.tree"));
     }
     

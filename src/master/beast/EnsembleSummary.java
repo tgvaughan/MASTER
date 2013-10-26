@@ -16,6 +16,7 @@
  */
 package master.beast;
 
+import master.outputs.EnsembleSummaryOutput;
 import beast.core.*;
 import beast.core.Input.Validate;
 import beast.core.Runnable;

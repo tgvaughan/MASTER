@@ -16,6 +16,8 @@
  */
 package master.beast;
 
+import master.outputs.InheritanceEnsembleOutput;
+import master.outputs.InheritanceTrajectoryOutput;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;

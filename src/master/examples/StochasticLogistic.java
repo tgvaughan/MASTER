@@ -16,7 +16,7 @@
  */
 package master.examples;
 
-import master.JsonOutput;
+import master.outputs.JsonOutput;
 import master.Model;
 import master.Population;
 import master.PopulationEndCondition;
@@ -99,7 +99,7 @@ public class StochasticLogistic {
          * Write result to JSON-formatted output file:
          */
         
-        JsonOutput.write(trajectory, new PrintStream("out.json"));
+        (new JsonOutput("out.json")).write(trajectory);
         
     }
 }

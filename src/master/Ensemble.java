@@ -82,4 +82,13 @@ public class Ensemble {
     public EnsembleSpec getSpec() {
         return spec;
     }
+
+    /**
+     * @return trajectories
+     */
+    public List<Trajectory> getTrajectories() {
+        return trajectories;
+    }
+    
+    
 }

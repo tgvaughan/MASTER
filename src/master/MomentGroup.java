@@ -156,4 +156,13 @@ public class MomentGroup {
             summary[s] = estimate;
         }
     }
+
+    /**
+     * Retrieve name of moment group.
+     * 
+     * @return moment group name
+     */
+    public String getName() {
+        return name;
+    }
 }

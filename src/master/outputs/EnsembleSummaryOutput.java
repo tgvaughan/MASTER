@@ -14,27 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.beast;
-
-import beast.core.Description;
-import beast.core.BEASTObject;
+package master.outputs;
 
 /**
- * Object for specifying Gillespie's stochastic simulation algorithm in Hamlet.
+ * Interface for plugins used to write ensemble summaries to disk.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-@Description("Gillespie's original stochastic simulation algorithm.")
-public class GillespieStepper extends BEASTObject implements Stepper {
+public interface EnsembleSummaryOutput {
     
-    public GillespieStepper() { };
-    
-    @Override
-    public void initAndValidate() { };
-
-    @Override
-    public master.Stepper getStepperObject() {
-        return new master.GillespieStepper();
-    }
+    public void write(master.EnsembleSummary ensemblesum);
     
 }

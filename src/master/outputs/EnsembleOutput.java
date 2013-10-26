@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.beast;
+package master.outputs;
 
 /**
- * Interface for plugins used to write inheritance trajectories to disk.
- *
+ * Interface for plugins used to write ensembles to disk.
+ * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public interface InheritanceTrajectoryOutput {
+public interface EnsembleOutput {
     
-    public void write (master.inheritance.InheritanceTrajectory inheritanceTrajectory);
+    public void write(master.Ensemble ensemble);
     
 }

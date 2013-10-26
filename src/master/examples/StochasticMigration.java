@@ -2,7 +2,7 @@ package master.examples;
 
 import master.EnsembleSummary;
 import master.EnsembleSummarySpec;
-import master.JsonOutput;
+import master.outputs.JsonOutput;
 import master.Model;
 import master.MomentGroup;
 import master.PopulationType;
@@ -106,6 +106,6 @@ public class StochasticMigration {
          * Dump results to JSON-formatted output file:
          */
 
-        JsonOutput.write(ensemble, new PrintStream("out.json"));
+        (new JsonOutput("out.json")).write(ensemble);
     }
 }

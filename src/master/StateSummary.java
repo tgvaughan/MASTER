@@ -20,82 +20,97 @@ import com.google.common.collect.*;
 import java.util.*;
 
 /**
- * Class representing an ensemble of states summarised in
- * terms of moment estimates.
- * 
+ * Class representing an ensemble of states summarised in terms of moment
+ * estimates.
+ *
  * @author Tim Vaughan
  *
  */
 public class StateSummary {
 
-	Map<MomentGroup,double[]> mean, std;
-        Map<MomentGroup,double[]> summaries;
-	int sampleNum;
+    Map<MomentGroup, double[]> mean, std;
+    private Map<MomentGroup, double[]> summaries;
+    int sampleNum;
 
-	/**
-	 * Create new state summary using a given list of moment groups.
-	 * 
-	 * @param momentGroups List of moments groups to use to summarise states.
-	 */
-	public StateSummary (List<MomentGroup> momentGroups) {
+    /**
+     * Create new state summary using a given list of moment groups.
+     *
+     * @param momentGroups List of moments groups to use to summarise states.
+     */
+    public StateSummary(List<MomentGroup> momentGroups) {
 
-		mean = Maps.newHashMap();
-		std = Maps.newHashMap();
-                summaries = Maps.newHashMap();
+        mean = Maps.newHashMap();
+        std = Maps.newHashMap();
+        summaries = Maps.newHashMap();
 
-		for (MomentGroup moment : momentGroups) {
-			mean.put(moment, new double[moment.summationGroups.size()]);
-			std.put(moment, new double[moment.summationGroups.size()]);
-                        summaries.put(moment, new double[moment.summationGroups.size()]);
-		}
-
-		sampleNum = 0;
-	}
-
-	/**
-	 * Add a new state to the summary.
-	 * 
-	 * @param state
-	 */
-	public void record(PopulationState state) {
-		for (MomentGroup momentGroup : mean.keySet())
-			momentGroup.getSummary(state, summaries.get(momentGroup));
-	}
-      
-        /**
-         * Incorporate latest summaries into mean
-         * and variance estimates.
-         */
-        public void accept() {
-            for (MomentGroup momentGroup : mean.keySet()) {
-                for (int i=0; i<mean.get(momentGroup).length; i++) {
-                    double summary = summaries.get(momentGroup)[i];
-                    mean.get(momentGroup)[i] += summary;
-                    std.get(momentGroup)[i] += summary*summary;
-                }
-            }
-            sampleNum += 1;
+        for (MomentGroup moment : momentGroups) {
+            mean.put(moment, new double[moment.summationGroups.size()]);
+            std.put(moment, new double[moment.summationGroups.size()]);
+            summaries.put(moment, new double[moment.summationGroups.size()]);
         }
 
-	/**
-	 * Normalise the summary.
-	 */
-	public void normalise() {
-		for (MomentGroup momentGroup : mean.keySet()) {
-			double[] thisMean = mean.get(momentGroup);
-			double[] thisStd = std.get(momentGroup);
-			for (int i=0; i<thisMean.length; i++) {
-				thisMean[i] /= sampleNum;
-				thisStd[i] /= sampleNum;
+        sampleNum = 0;
+    }
 
-                double thisMean2 = thisMean[i]*thisMean[i];
-                if (thisMean2>thisStd[i]) {
+    /**
+     * Add a new state to the summary.
+     *
+     * @param state
+     */
+    public void record(PopulationState state) {
+        for (MomentGroup momentGroup : mean.keySet()) {
+            momentGroup.getSummary(state, summaries.get(momentGroup));
+        }
+    }
+
+    /**
+     * Incorporate latest summaries into mean and variance estimates.
+     */
+    public void accept() {
+        for (MomentGroup momentGroup : mean.keySet()) {
+            for (int i = 0; i < mean.get(momentGroup).length; i++) {
+                double summary = summaries.get(momentGroup)[i];
+                mean.get(momentGroup)[i] += summary;
+                std.get(momentGroup)[i] += summary * summary;
+            }
+        }
+        sampleNum += 1;
+    }
+
+    /**
+     * Normalise the summary.
+     */
+    public void normalise() {
+        for (MomentGroup momentGroup : mean.keySet()) {
+            double[] thisMean = mean.get(momentGroup);
+            double[] thisStd = std.get(momentGroup);
+            for (int i = 0; i < thisMean.length; i++) {
+                thisMean[i] /= sampleNum;
+                thisStd[i] /= sampleNum;
+
+                double thisMean2 = thisMean[i] * thisMean[i];
+                if (thisMean2 > thisStd[i]) {
                     // This can happen due to rounding errors when very large
                     // populations are involved.
                     thisStd[i] = 0.0;
-                } else
+                } else {
                     thisStd[i] = Math.sqrt(thisStd[i] - thisMean2);
-			}
-		}
-	}
+                }
+            }
+        }
+    }
+
+    /**
+     * @return means for each moment group
+     */
+    public Map<MomentGroup, double[]> getMean() {
+        return mean;
+    }
+
+    /**
+     * @return Standard deviations for each moment group
+     */
+    public Map<MomentGroup, double[]> getStd() {
+        return std;
+    }
 }

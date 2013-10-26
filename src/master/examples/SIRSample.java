@@ -3,7 +3,7 @@ package master.examples;
 import master.EnsembleSummary;
 import master.EnsembleSummarySpec;
 import master.GillespieStepper;
-import master.JsonOutput;
+import master.outputs.JsonOutput;
 import master.Model;
 import master.Moment;
 import master.Population;
@@ -109,6 +109,6 @@ public class SIRSample {
          * Dump results (JSON):
          */
 
-        JsonOutput.write(ensemble, new PrintStream("out.json"));
+        (new JsonOutput("out.json")).write(ensemble);
     }
 }

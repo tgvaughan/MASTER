@@ -14,15 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.beast;
+package master.outputs;
+
+import master.Trajectory;
 
 /**
- * Interface for plugins used to write ensembles to disk.
+ * Interface for plugins used to write trajectories to disk.
  * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public interface EnsembleOutput {
+public interface TrajectoryOutput {
     
-    public void write(master.Ensemble ensemble);
+    public void write(Trajectory traj);
     
 }

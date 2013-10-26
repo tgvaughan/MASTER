@@ -16,6 +16,7 @@
  */
 package master;
 
+import beast.core.Input;
 import beast.util.Randomizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -30,11 +31,22 @@ import java.util.List;
  */
 public class SALStepper extends Stepper {
     
+    public Input<Double> stepSizeInput = new Input<Double>("stepSize",
+            "Length of integration time step.", Input.Validate.REQUIRED);
+
+    
     private double dt;    
     private double eventCount = 0;
     
     private HashMap<ReactionGroup, List<Double>> corrections;
     private HashMap<Population, Double> derivs;
+    
+    public SALStepper() { }
+    
+    @Override
+    public void initAndValidate() {
+        dt = stepSizeInput.get();
+    }
     
     /**
      * Construct a tau-leaping integrator

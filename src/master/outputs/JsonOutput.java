@@ -14,17 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master;
+package master.outputs;
 
+import beast.core.BEASTObject;
+import beast.core.Input;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import master.Ensemble;
+import master.EnsembleSpec;
+import master.EnsembleSummary;
+import master.EnsembleSummarySpec;
+import master.MomentGroup;
+import master.Population;
+import master.PopulationState;
+import master.PopulationType;
+import master.StateSummary;
+import master.Trajectory;
+import master.TrajectorySpec;
 import master.inheritance.InheritanceEnsemble;
 import master.inheritance.InheritanceEnsembleSpec;
+import master.inheritance.InheritanceTrajectory;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -34,16 +49,45 @@ import org.codehaus.jackson.map.ObjectMapper;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class JsonOutput {
+public class JsonOutput extends BEASTObject implements
+        TrajectoryOutput, 
+        EnsembleOutput,
+        EnsembleSummaryOutput,
+        InheritanceTrajectoryOutput,
+        InheritanceEnsembleOutput {
+    
+    public Input<String> fileNameInput = new Input<String>("fileName",
+            "Name of file to write to.", Input.Validate.REQUIRED);
+    
+    PrintStream pstream;
+    
+    /**
+     * Default constructor.
+     */
+    public JsonOutput() { }
+    
+    /**
+     * Constructor for non-beast usage.
+     * @param fileName
+     * @throws FileNotFoundException 
+     */
+    public JsonOutput(String fileName) throws FileNotFoundException {
+        pstream = new PrintStream(fileName);
+    }
+    
+    @Override
+    public void initAndValidate() throws FileNotFoundException {
+        pstream = new PrintStream(fileNameInput.get());
+    }
     
     /**
      * Express a given trajectory as a JSON-formatted string and send the
      * result to a PrintStream.
      * 
      * @param trajectory Trajectory to dump.
-     * @param pstream PrintStream where output is sent.
      */
-    public static void write(Trajectory trajectory, PrintStream pstream) {
+    @Override
+    public void write(Trajectory trajectory) {
         
         if (trajectory.getSpec().getVerbosity()>0)
             System.out.println("Writing JSON output...");
@@ -51,9 +95,9 @@ public class JsonOutput {
         HashMap<String, Object> outputData = Maps.newHashMap();
         
         TrajectorySpec spec = trajectory.getSpec();
-        List<PopulationState> sampledStates = trajectory.sampledStates;
+        List<PopulationState> sampledStates = trajectory.getSampledStates();
         
-        for (PopulationType type : spec.model.getPopulationTypes()) {
+        for (PopulationType type : spec.getModel().getPopulationTypes()) {
             int[] loc = new int[type.getDims().length];
             for (int d=0; d<loc.length; d++)
                 loc[d] = 0;
@@ -61,7 +105,7 @@ public class JsonOutput {
         }
         
         // Add list of sampling times to output object:
-        outputData.put("t", trajectory.sampledTimes);
+        outputData.put("t", trajectory.getSampledTimes());
         
         // Record spec parameters to object output:
         outputData.put("sim", spec);
@@ -74,7 +118,16 @@ public class JsonOutput {
         }
     }
     
-    private static Object iterateOverLocs (List<PopulationState> sampledStates, PopulationType type, int[] loc, int depth) {
+    /**
+     * Private method for iteration over locations.
+     * 
+     * @param sampledStates
+     * @param type
+     * @param loc
+     * @param depth
+     * @return 
+     */
+    private Object iterateOverLocs (List<PopulationState> sampledStates, PopulationType type, int[] loc, int depth) {
 
         if (depth<type.getDims().length) {
             List<Object> nestedData = Lists.newArrayList();
@@ -102,23 +155,23 @@ public class JsonOutput {
      * the result to a PrintStream.
      * 
      * @param ensemble Trajectory ensemble to dump.
-     * @param pstream PrintStream where output is sent.
      */
-    public static void write(Ensemble ensemble, PrintStream pstream) {
+    @Override
+    public void write(Ensemble ensemble) {
         
         if (ensemble.getSpec().getVerbosity()>0)
             System.out.println("Writing JSON output...");
         
         HashMap<String, Object> outputData = Maps.newHashMap();
         
-        EnsembleSpec spec = ensemble.spec;
+        EnsembleSpec spec = ensemble.getSpec();
         
         List<Object> trajData = Lists.newArrayList();
-        for (Trajectory trajectory : ensemble.trajectories) {
+        for (Trajectory trajectory : ensemble.getTrajectories()) {
             HashMap<String, Object> thisTrajData = Maps.newHashMap();
-            List<PopulationState> sampledStates = trajectory.sampledStates;
+            List<PopulationState> sampledStates = trajectory.getSampledStates();
         
-            for (PopulationType type : spec.model.getPopulationTypes()) {
+            for (PopulationType type : spec.getModel().getPopulationTypes()) {
                 int[] loc = new int[type.getDims().length];
                 for (int d=0; d<loc.length; d++)
                     loc[d] = 0;
@@ -126,7 +179,7 @@ public class JsonOutput {
             }
         
             // Add list of sampling times to output object:
-            thisTrajData.put("t", trajectory.sampledTimes);
+            thisTrajData.put("t", trajectory.getSampledTimes());
             trajData.add(thisTrajData);
         }
         outputData.put("trajectories", trajData);
@@ -147,43 +200,43 @@ public class JsonOutput {
      * the result to a PrintStream.
      *
      * @param ensembleSummary Ensemble summary to dump.
-     * @param pstream PrintStream where output is sent.
      */
-    public static void write(EnsembleSummary ensembleSummary, PrintStream pstream) {
+    @Override
+    public void write(EnsembleSummary ensembleSummary) {
         
         if (ensembleSummary.getSpec().getVerbosity()>0)
             System.out.println("Writing JSON output...");
 
         HashMap<String, Object> outputData = Maps.newHashMap();
         
-        EnsembleSummarySpec spec = ensembleSummary.spec;
-        StateSummary[] stateSummaries = ensembleSummary.stateSummaries;
+        EnsembleSummarySpec spec = ensembleSummary.getSpec();
+        StateSummary[] stateSummaries = ensembleSummary.getStateSummaries();
 
         // Construct an object containing the summarized
         // data.  Heirarchy is moment->[mean/std]->schema->estimate.
 
-        for (MomentGroup moment : spec.momentGroups) {
+        for (MomentGroup moment : spec.getMomentGroups()) {
             HashMap<String, Object> momentData = Maps.newHashMap();
 
             ArrayList<Object> meanData = new ArrayList<Object>();
-            for (int schema = 0; schema<stateSummaries[0].mean.get(moment).length; schema++) {
+            for (int schema = 0; schema<stateSummaries[0].getMean().get(moment).length; schema++) {
                 ArrayList<Double> schemaData = Lists.newArrayList();
-                for (int sidx = 0; sidx<stateSummaries.length; sidx++)
-                    schemaData.add(stateSummaries[sidx].mean.get(moment)[schema]);
+                for (StateSummary stateSummary : stateSummaries)
+                    schemaData.add(stateSummary.getMean().get(moment)[schema]);
                 meanData.add(schemaData);
             }
             momentData.put("mean", meanData);
 
             ArrayList<Object> stdData = Lists.newArrayList();
-            for (int schema = 0; schema<stateSummaries[0].std.get(moment).length; schema++) {
+            for (int schema = 0; schema<stateSummaries[0].getStd().get(moment).length; schema++) {
                 ArrayList<Double> schemaData = Lists.newArrayList();
-                for (int sidx = 0; sidx<stateSummaries.length; sidx++)
-                    schemaData.add(stateSummaries[sidx].std.get(moment)[schema]);
+                for (StateSummary stateSummary : stateSummaries)
+                    schemaData.add(stateSummary.getStd().get(moment)[schema]);
                 stdData.add(schemaData);
             }
             momentData.put("std", stdData);
 
-            outputData.put(moment.name, momentData);
+            outputData.put(moment.getName(), momentData);
         }
 
         // Add list of sampling times to output object:
@@ -209,10 +262,10 @@ public class JsonOutput {
      * Express a given trajectory ensemble as a JSON-formatted string and send
      * the result to a PrintStream.
      * 
-     * @param ensemble Trajectory ensemble to dump.
-     * @param pstream PrintStream where output is sent.
+     * @param iensemble Trajectory ensemble to dump.
      */
-    public static void write(InheritanceEnsemble iensemble, PrintStream pstream) {
+    @Override
+    public void write(InheritanceEnsemble iensemble) {
         HashMap<String, Object> outputData = Maps.newHashMap();
         
         if (iensemble.getSpec().getVerbosity()>0)
@@ -223,7 +276,7 @@ public class JsonOutput {
         List<Object> trajData = Lists.newArrayList();
         for (Trajectory trajectory : iensemble.getTrajectories()) {
             HashMap<String, Object> thisTrajData = Maps.newHashMap();
-            List<PopulationState> sampledStates = trajectory.sampledStates;
+            List<PopulationState> sampledStates = trajectory.getSampledStates();
         
             for (PopulationType type : spec.getModel().getPopulationTypes()) {
                 int[] loc = new int[type.getDims().length];
@@ -233,7 +286,7 @@ public class JsonOutput {
             }
         
             // Add list of sampling times to output object:
-            thisTrajData.put("t", trajectory.sampledTimes);
+            thisTrajData.put("t", trajectory.getSampledTimes());
             trajData.add(thisTrajData);
         }
         outputData.put("trajectories", trajData);
@@ -247,5 +300,10 @@ public class JsonOutput {
         } catch (IOException ex) {
             System.err.println(ex);
         }
+    }
+
+    @Override
+    public void write(InheritanceTrajectory inheritanceTrajectory) {
+        write((Trajectory)inheritanceTrajectory);
     }
 }

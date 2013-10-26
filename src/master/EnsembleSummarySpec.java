@@ -70,4 +70,11 @@ public class EnsembleSummarySpec extends EnsembleSpec {
         
         super.addPopSizeEndCondition(endCondition);
     }
+
+    /**
+     * @return List of moment groups.
+     */
+    public List<MomentGroup> getMomentGroups() {
+        return momentGroups;
+    }
 }

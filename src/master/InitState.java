@@ -1,7 +1,9 @@
-package master.beast;
+package master;
 
 import beast.core.*;
 import java.util.*;
+import master.beast.Individual;
+import master.beast.MultipleIndividuals;
 
 /**
  * Beast 2 object representing initial system state.

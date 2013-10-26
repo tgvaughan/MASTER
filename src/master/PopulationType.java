@@ -1,5 +1,9 @@
 package master;
 
+import beast.core.BEASTObject;
+import beast.core.Input;
+import beast.core.Input.Validate;
+import beast.core.parameter.IntegerParameter;
 import java.util.Iterator;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
@@ -11,11 +15,39 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * @author Tim Vaughan
  *
  */
-public class PopulationType implements Iterable<Population> {
-
+public class PopulationType extends BEASTObject implements Iterable<Population> {
+    
+    public Input<String> nameInput = new Input<String>("typeName",
+            "Name of population", Validate.REQUIRED);
+    public Input<IntegerParameter> dimsInput = new Input<IntegerParameter>("dim",
+            "Vector containing the dimensions of an n-D array of individual populations of this type.");
+    
     String name; // Population type name
     int[] dims; // Bounds of vectors specifying individual populations
     int nPops; // Total number of populations posessing this type
+    
+    /**
+     * Default constructor.
+     */
+    public PopulationType() { }
+    
+    @Override
+    public void initAndValidate() {
+        
+        name = nameInput.get();
+        
+        if (dimsInput.get()!=null)
+            dims = new int[0];
+        else {
+            dims = new int[dimsInput.get().getDimension()];
+            for (int i = 0; i<dims.length; i++)
+                dims[i] = dimsInput.get().getValue(i);
+        }
+        
+        nPops = 1;
+        for (int i=0; i<dims.length; i++)
+            nPops *= dims[i];
+    }
     
     /**
      * Define a population type.
@@ -25,10 +57,10 @@ public class PopulationType implements Iterable<Population> {
      */
     public PopulationType(String name, int... dims) {
         this.name = name;
-
         this.dims = dims;
+        
         nPops = 1;
-        for (int i = 0; i<dims.length; i++)
+        for (int i=0; i<dims.length; i++)
             nPops *= dims[i];
     }
 

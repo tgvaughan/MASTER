@@ -17,7 +17,6 @@
 package master;
 
 import master.outputs.TrajectoryOutput;
-import beast.core.BEASTObject;
 import beast.core.Input;
 import beast.core.Runnable;
 import beast.util.Randomizer;
@@ -25,8 +24,6 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import master.beast.InitState;
-import master.beast.PopulationSize;
 
 /**
  * Class of objects representing trajectories through the state space of the
@@ -73,10 +70,10 @@ public class Trajectory extends Runnable {
             Input.Validate.REQUIRED);
     
     // End conditions:
-    public Input<List<master.beast.PopulationEndCondition>> endConditionsInput = new Input<List<master.beast.PopulationEndCondition>>(
+    public Input<List<PopulationEndCondition>> endConditionsInput = new Input<List<PopulationEndCondition>>(
             "populationEndCondition",
             "Trajectory end condition based on population sizes.",
-            new ArrayList<master.beast.PopulationEndCondition>());    
+            new ArrayList<PopulationEndCondition>());    
     
     // Outputs:
     public Input<List<TrajectoryOutput>> outputsInput = new Input<List<TrajectoryOutput>>(
@@ -118,13 +115,13 @@ public class Trajectory extends Runnable {
             spec.setSimulationTime(Double.POSITIVE_INFINITY);
         
         // Assemble initial state:
-        master.PopulationState initState = new master.PopulationState();
+        PopulationState initState = new PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
             initState.set(popSize.pop, popSize.size);
         spec.setInitPopulationState(initState);
         
         // Incorporate any end conditions:
-        for (master.beast.PopulationEndCondition endCondition : endConditionsInput.get())
+        for (PopulationEndCondition endCondition : endConditionsInput.get())
             spec.addPopSizeEndCondition(endCondition.endConditionObject);
 
         // Set seed if provided, otherwise use default BEAST seed:

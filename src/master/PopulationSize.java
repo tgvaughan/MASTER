@@ -1,4 +1,4 @@
-package master.beast;
+package master;
 
 import beast.core.*;
 
@@ -20,7 +20,7 @@ public class PopulationSize extends BEASTObject {
             Input.Validate.REQUIRED);
     
     // True population object:
-    master.Population pop;
+    Population pop;
     
     // Size of this population:
     double size;
@@ -31,7 +31,7 @@ public class PopulationSize extends BEASTObject {
 
 	@Override
     public void initAndValidate() throws Exception {
-        pop = populationInput.get().pop;
+        pop = populationInput.get();
         size = sizeInput.get();
     }
 }

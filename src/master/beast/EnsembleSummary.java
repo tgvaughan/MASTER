@@ -16,6 +16,8 @@
  */
 package master.beast;
 
+import master.InitState;
+import master.PopulationSize;
 import master.outputs.EnsembleSummaryOutput;
 import beast.core.*;
 import beast.core.Input.Validate;

@@ -16,7 +16,10 @@
  */
 package master;
 
+import beast.core.BEASTObject;
+import beast.core.Input;
 import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +29,27 @@ import java.util.List;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class PopulationEndCondition {
+public class PopulationEndCondition extends BEASTObject {
+    
+    public Input<List<Population>> populationInput = new Input<List<Population>>(
+            "population",
+            "Population whose size to base end condition on.",
+            new ArrayList<Population>());
+    
+    public Input<Double> thresholdInput = new Input<Double>(
+            "threshold",
+            "Population size threshold at which condition is met.",
+            Input.Validate.REQUIRED);
+    
+    public Input<Boolean> exceedCondInput = new Input<Boolean>(
+            "exceedCondition",
+            "Whether condition is size>=threshold. False implies <=threshold.",
+            Input.Validate.REQUIRED);
+    
+    public Input<Boolean> rejectionInput = new Input<Boolean>(
+            "isRejection",
+            "Whether condition causes trajectory rejection. (Default false.)",
+            false);
     
     List<Population> pops;
     double threshold;

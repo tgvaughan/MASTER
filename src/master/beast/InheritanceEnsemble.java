@@ -16,6 +16,8 @@
  */
 package master.beast;
 
+import master.InitState;
+import master.PopulationSize;
 import master.outputs.InheritanceEnsembleOutput;
 import beast.core.Citation;
 import beast.core.Description;

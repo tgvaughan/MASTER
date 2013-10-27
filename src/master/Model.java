@@ -16,6 +16,8 @@
  */
 package master;
 
+import beast.core.BEASTObject;
+import beast.core.Input;
 import java.util.*;
 
 /**
@@ -25,13 +27,53 @@ import java.util.*;
  * @author Tim Vaughan
  *
  */
-public class Model {
+public class Model extends BEASTObject {
+    
+    public Input<List<PopulationType>> populationTypesInput = new Input<List<PopulationType>>(
+            "populationType",
+            "Population type involved in the birth-death process.",
+            new ArrayList<PopulationType>());
+    
+    public Input<List<Population>> populationsInput = new Input<List<Population>>(
+            "population",
+            "Population involved in the birth-death process.",
+            new ArrayList<Population>());
+    
+    public Input<List<ReactionGroup>> reactionGroupsInput = new Input<List<ReactionGroup>>(
+            "reactionGroup",
+            "Group of reactions involved in the birth-death process.",
+            new ArrayList<ReactionGroup>());
+    
+    public Input<List<Reaction>> reactionsInput = new Input<List<Reaction>>(
+            "reaction",
+            "Individual reactions involved in the birth-death process.",
+            new ArrayList<Reaction>());
 
     // Population types in model:
     List<PopulationType> types;
     
     // Reaction groups:
     List<ReactionGroup> reactionGroups;
+    
+    @Override
+    public void initAndValidate() throws Exception {
+
+        // Add population types to model:
+        for (PopulationType popType : populationTypesInput.get())
+            addPopulationType(popType);
+        
+        // Add population types corresponding to individual populations to model:
+        for (Population pop : populationsInput.get())
+            addPopulation(pop);
+
+        // Add reaction groups to model:
+        for (ReactionGroup reactGroup : reactionGroupsInput.get())
+            addReactionGroup(reactGroup);
+
+        // Add individual reactions to model:
+        for (Reaction react : reactionsInput.get())
+            addReaction(react);
+    }
 
     /**
      * Model constructor.

@@ -1,5 +1,7 @@
 package master;
 
+import beast.core.BEASTObject;
+import beast.core.Input;
 import com.google.common.collect.*;
 import java.util.*;
 import org.codehaus.jackson.annotate.JsonValue;
@@ -12,8 +14,28 @@ import org.codehaus.jackson.annotate.JsonValue;
  * @author Tim Vaughan
  *
  */
-public class ReactionGroup {
+public class ReactionGroup extends BEASTObject {
+    
+    public Input<String> reactionGroupNameInput = new Input<String>("reactionGroupName",
+            "Reaction group name");
+    
+    public Input<Double> rateInput = new Input<Double>("rate",
+            "Group reaction rate. (Overrides individual reaction rates.)");
+    
+    public Input<List<Reaction>> reactionsInput = new Input<List<Reaction>>(
+            "reaction",
+            "Individual reaction within group.",
+            new ArrayList<Reaction>());
 
+    public Input<List<Range>> rangesInput = new Input<List<Range>>("range",
+            "Define multiple reactions for different values of a variable.",
+            new ArrayList<Range>());
+    
+    public Input<String> reactionStringInput = new Input<String>(
+            "value",
+            "String description of reaction.");
+
+    
     public String reactionGroupName;
     public List<Map<Population,Integer>> reactCounts, prodCounts, deltaCounts;
     public List<Double> rates, propensities;

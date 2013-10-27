@@ -122,7 +122,7 @@ public class Trajectory extends Runnable {
         
         // Incorporate any end conditions:
         for (PopulationEndCondition endCondition : endConditionsInput.get())
-            spec.addPopSizeEndCondition(endCondition.endConditionObject);
+            spec.addPopSizeEndCondition(endCondition);
 
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)

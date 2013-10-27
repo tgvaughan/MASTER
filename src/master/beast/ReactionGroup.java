@@ -36,7 +36,7 @@ public class ReactionGroup extends BEASTObject {
             "reaction",
             "Individual reaction within group.",
             new ArrayList<Reaction>());
-
+    
     // True reaction object:
     master.ReactionGroup reactionGroup;
 

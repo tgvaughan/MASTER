@@ -14,21 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.beast;
+package master.inheritance;
 
-import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import com.google.common.collect.Lists;
+import beast.core.BEASTObject;
 import java.util.ArrayList;
 import java.util.List;
+import master.Population;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-@Description("Specifies multiple individuals having identical characteristics.")
-public class MultipleIndividuals extends BEASTObject {
+@Description("Plugin representing an individual member of a population.  Used"
+        + "for specifying inheritance in reactions.")
+public class Individual extends BEASTObject {
     
     public Input<Population> populationInput = new Input<Population>(
             "population",
@@ -36,21 +37,37 @@ public class MultipleIndividuals extends BEASTObject {
             Validate.REQUIRED);    
     
     public Input<Double> timeInput = new Input<Double>("time",
-            "Time at which individual comes into existance. (optional)",
+            "Time at which individual comes into existance. (Default 0.0)",
             0.0);
-
-    public Input<Integer> nCopiesInput = new Input<Integer>("copies",
-            "Number of individuals to specify.",
-            Validate.REQUIRED);
     
-    List<master.inheritance.Node> nodes;
+    public Input<String> labelInput = new Input<String>("label",
+            "Optional unique node label for use in generating "
+            + "Newick/NEXUS/BEAST output.");
     
-    public MultipleIndividuals() { }
+    public Input<List<Individual>> childrenInput = new Input<List<Individual>>(
+            "child",
+            "An individual which is a child of this one.",
+            new ArrayList<Individual>());
+    
+    Node node;
+    
+    public Individual() { }
     
     @Override
     public void initAndValidate() {
-        nodes = Lists.newArrayList();
-        for (int i=0; i<nCopiesInput.get(); i++)
-            nodes.add(new master.inheritance.Node(populationInput.get().pop, timeInput.get()));
+        
+        node = new master.inheritance.Node(populationInput.get(), timeInput.get());
+        if (labelInput.get() != null)
+            node.setName(labelInput.get());
+        
+        for (Individual child : childrenInput.get())
+            node.addChild(child.node);
+    }
+
+    /**
+     * @return Node object
+     */
+    public Node getNode() {
+        return node;
     }
 }

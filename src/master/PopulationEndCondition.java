@@ -55,22 +55,14 @@ public class PopulationEndCondition extends BEASTObject {
     double threshold;
     boolean exceed, rejection;
     
-    /**
-     * Create new population end condition which is met when pop exceeds
-     * or dips below threshold, depending on the value of exceedCond.
-     * 
-     * @param pop Population threshold to watch.
-     * @param threshold Population threshold at which condition is met.
-     * @param exceedCond True creates condition met when population >= threshold.
-     * @param rejection True creates a rejection end condition.
-     */
-    public PopulationEndCondition(Population pop, double threshold, boolean exceedCond,
-            boolean rejection) {
-        this.pops = Lists.newArrayList();
-        pops.add(pop);
-        this.threshold = threshold;
-        this.rejection = rejection;
-        this.exceed = exceedCond;
+    public PopulationEndCondition() { }
+    
+    @Override
+    public void initAndValidate() {
+        pops = populationInput.get();
+        threshold = thresholdInput.get();
+        exceed = exceedCondInput.get();
+        rejection = rejectionInput.get();
     }
     
     /**
@@ -86,8 +78,8 @@ public class PopulationEndCondition extends BEASTObject {
     public PopulationEndCondition(double threshold, boolean exceedCond, boolean rejection, Population ... pops) {
         this.pops = Lists.newArrayList(pops);
         this.threshold = threshold;
-        this.rejection = rejection;
         this.exceed = exceedCond;
+        this.rejection = rejection;
     }
 
     public boolean isMet(PopulationState currentState) {

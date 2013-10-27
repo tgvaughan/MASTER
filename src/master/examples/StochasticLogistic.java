@@ -87,7 +87,7 @@ public class StochasticLogistic {
         spec.setModel(model);
         spec.setInitPopulationState(initState);
         spec.setVerbosity(2);
-        spec.addPopSizeEndCondition(new PopulationEndCondition(X, 10, true, false));
+        spec.addPopSizeEndCondition(new PopulationEndCondition(10, true, false, X));
 
         /*
          * Generate trajectory

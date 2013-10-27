@@ -1,15 +1,14 @@
 package master;
 
+import master.inheritance.MultipleIndividuals;
+import master.inheritance.Individual;
 import beast.core.*;
 import java.util.*;
-import master.beast.Individual;
-import master.beast.MultipleIndividuals;
 
 /**
  * Beast 2 object representing initial system state.
  *
  * @author Tim Vaughan
- *
  */
 @Description("Specification of initial system state.")
 public class InitState extends BEASTObject {
@@ -37,9 +36,9 @@ public class InitState extends BEASTObject {
     public void initAndValidate() {
         initNodes = new ArrayList<master.inheritance.Node>();
         for (Individual individual : lineageSeedsInput.get())
-            initNodes.add(individual.node);
+            initNodes.add(individual.getNode());
         
         for (MultipleIndividuals multi : multipleLineageSeedsInput.get())
-            initNodes.addAll(multi.nodes);            
+            initNodes.addAll(multi.getNodes());            
     }
 }

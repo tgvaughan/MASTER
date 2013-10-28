@@ -261,7 +261,7 @@ public class Trajectory extends Runnable {
             }
         }
         
-        // Record length of time taken by calculation:
+        // Record length of time (in seconds) taken by calculation:
         spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
     }
     

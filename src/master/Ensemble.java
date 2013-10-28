@@ -16,8 +16,11 @@
  */
 package master;
 
+import beast.core.Input;
 import beast.util.Randomizer;
+import beast.core.Runnable;
 import java.util.*;
+import master.outputs.EnsembleOutput;
 
 /**
  * A class representing an ensemble of stochastic trajectories through the state
@@ -26,13 +29,140 @@ import java.util.*;
  * @author Tim Vaughan
  *
  */
-public class Ensemble {
+public class Ensemble extends Runnable {
+    
+        /*
+     * XML inputs:
+     */
+    // Spec parameters:
+    public Input<Double> simulationTimeInput = new Input<Double>(
+            "simulationTime",
+            "The length of time to simulate. (Defaults to infinite.)");
+    
+    public Input<Boolean> useEvenSamplingInput = new Input<Boolean>(
+            "useEvenSampling",
+            "Whether to use evenly spaced samples. (Defaults to false.)",
+            false);
+    
+    public Input<Integer> nSamplesInput = new Input<Integer>(
+            "nSamples",
+            "Number of evenly spaced time points to sample state at.");
+    
+    public Input<Integer> nTrajInput = new Input<Integer>(
+            "nTraj",
+            "Number of trajectories to generate.",
+            Input.Validate.REQUIRED);
+    
+    public Input<Integer> seedInput = new Input<Integer>(
+            "seed",
+            "Seed for RNG.");
+    
+    public Input<Stepper> stepperInput = new Input<Stepper>(
+            "stepper",
+            "State incrementing algorithm to use. (Default Gillespie.)");
+    
+    public Input<Integer> verbosityInput = new Input<Integer> (
+            "verbosity", "Level of verbosity to use (0-3).", 1);
+    
+    // Model:
+    public Input<Model> modelInput = new Input<Model>("model",
+            "The specific model to simulate.",
+            Input.Validate.REQUIRED);
+    
+    // Initial state:
+    public Input<InitState> initialStateInput = new Input<InitState>("initialState",
+            "Initial state of system.",
+            Input.Validate.REQUIRED);
+    
+    // End conditions:
+    public Input<List<PopulationEndCondition>> endConditionsInput = new Input<List<PopulationEndCondition>>(
+            "populationEndCondition",
+            "Trajectory end condition based on population sizes.",
+            new ArrayList<PopulationEndCondition>());
+    
+    // Moments groups:
+    public Input<List<master.beast.MomentGroup>> momentGroupsInput = new Input<List<master.beast.MomentGroup>>(
+            "momentGroup",
+            "Moment group to estimate from birth-death process.",
+            new ArrayList<master.beast.MomentGroup>());
+    
+    // Individual moments:
+    public Input<List<master.beast.Moment>> momentsInput = new Input<List<master.beast.Moment>>(
+            "moment",
+            "Individual moment to estimate from birth-death process.",
+            new ArrayList<master.beast.Moment>());
+    
+    
+    public Input<List<EnsembleOutput>> outputsInput = new Input<List<EnsembleOutput>>(
+            "output",
+            "Output writer used to write simulation output to disk.",
+            new ArrayList<EnsembleOutput>());
 
     // The ensemble is a large number of trajectories:
     ArrayList<Trajectory> trajectories;
     
     // Local record of simulation spec:
     EnsembleSpec spec;
+    
+    public Ensemble() { }
+    
+    @Override
+    public void initAndValidate() {
+        spec = new master.EnsembleSpec();
+
+        // Incorporate model:
+        spec.setModel(modelInput.get());
+        
+        // Default to Gillespie stepper
+        if (stepperInput.get() != null)
+            spec.setStepper(stepperInput.get());
+        else
+            spec.setStepper(new master.GillespieStepper());
+        
+        // Default to unevenly spaced sampling times:
+        if (useEvenSamplingInput.get())
+            spec.setEvenSampling(nSamplesInput.get());
+        else
+            spec.setUnevenSampling();
+        
+        // Set maximum simulation time:
+        if (simulationTimeInput.get() != null)
+            spec.setSimulationTime(simulationTimeInput.get());
+        else
+            spec.setSimulationTime(Double.POSITIVE_INFINITY);
+        
+        // Specify number of trajectories to generate:
+        spec.setnTraj(nTrajInput.get());
+        
+        // Assemble initial state:
+        master.PopulationState initState = new master.PopulationState();
+        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
+            initState.set(popSize.pop, popSize.size);
+        spec.setInitPopulationState(initState);
+                        
+        // Incorporate any end conditions:
+        for (PopulationEndCondition endCondition : endConditionsInput.get())
+            spec.addPopSizeEndCondition(endCondition);
+
+        // Set seed if provided, otherwise use default BEAST seed:
+        if (seedInput.get()!=null)
+            spec.setSeed(seedInput.get());
+        
+        // Set the level of verbosity:
+        spec.setVerbosity(verbosityInput.get());
+    }
+    
+    @Override
+    public void run() throws Exception {
+
+        // Generate stochastic trajectory:
+        master.Ensemble ensemble =
+                new master.Ensemble(spec);
+
+        // Write outputs:
+        for (EnsembleOutput output : outputsInput.get())
+            output.write(ensemble);        
+    }
 
     /**
      * Generate trajectory ensemble.
@@ -69,7 +199,7 @@ public class Ensemble {
 
         }
         
-        // Record total time taken by calculation:
+        // Record total time (in seconds) taken by calculation:
         spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
 
     }

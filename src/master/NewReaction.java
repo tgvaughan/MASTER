@@ -8,7 +8,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import master.beast.InheritanceReaction;
-import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * Class of objects describing the reactions which occur between the various
@@ -39,9 +38,9 @@ public class NewReaction extends BEASTObject {
     public double rate = -1.0;
     public double propensity;
     
-    private List<Range> ranges;
-    private List<String> rangeVariableNames;
-    private List<Integer> rangeFromValues, rangeToValues;
+    private final List<Range> ranges;
+    private final List<String> rangeVariableNames;
+    private final List<Integer> rangeFromValues, rangeToValues;
     
     /**
      * Constructor without name.
@@ -104,19 +103,17 @@ public class NewReaction extends BEASTObject {
     }
     
     /**
+     * Attempt to determine reaction schema from string representation.
      * 
-     * @param schemaString
-     * @param popTypes 
+     * @param schemaString string to parse.
+     * @param popTypes list of population types present in model.
+     * @throws java.text.ParseException 
      */
-    public void setSchemaFromString(String schemaString, List<PopulationType> popTypes) {
+    public void setSchemaFromString(String schemaString, List<PopulationType> popTypes) throws ParseException {
         
-        ReactionStringParser parser = null;
-        try {
-            parser = new ReactionStringParser(schemaString, popTypes);
-        } catch (ParseException ex) {
-            Logger.getLogger(InheritanceReaction.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        ReactionStringParser parser = new ReactionStringParser(schemaString, popTypes);
+        setReactantSchema((Population[])parser.getReactantPops().toArray());
+        setProductSchema((Population[])parser.getReactantPops().toArray());
     }
     
     /**
@@ -306,10 +303,10 @@ public class NewReaction extends BEASTObject {
         if (depth==indices.length) {
             
             List<master.Population> reactants = getEntityList(indices,
-                    parser.reactantPopTypes, parser.reactantLocs,
+                    parser.getReactantPops(), parser.reactantLocs,
                     parser.variableNames, model.getPopulationTypes());
             List<master.Population> products = getEntityList(indices,
-                    parser.productPopTypes, parser.productLocs,
+                    parser.getProductPops(), parser.productLocs,
                     parser.variableNames, model.getPopulationTypes());
             
 

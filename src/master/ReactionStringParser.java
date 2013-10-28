@@ -33,10 +33,8 @@ public class ReactionStringParser {
     
     // Outputs of the parser.  The `node ID' lists are used to
     // assign inheritance relationships.
-    public List<Integer> reactantIDs, productIDs;
-    public List<PopulationType> reactantPopTypes, productPopTypes;
-    public List<List<Integer>> reactantLocs, productLocs;
-    public List<String> variableNames;
+    private List<Integer> reactantIDs, productIDs;
+    private List<Population> reactantPops, productPops;
     
     private final String string;
     private final Map<String, PopulationType> popTypeMap;
@@ -66,7 +64,7 @@ public class ReactionStringParser {
      * @throws ParseException Tries to be a tiny bit informative when things go wrong.
      */
     public ReactionStringParser(String string,
-            List<master.PopulationType> popTypes) throws ParseException {
+            List<PopulationType> popTypes) throws ParseException {
        
         this.string = string.trim();        
         
@@ -79,7 +77,35 @@ public class ReactionStringParser {
         doRecursiveDecent();
 
     }    
+
+
+    /**
+     * @return Reactant population schema
+     */
+    public List<Population> getReactantPops() {
+        return reactantPops;
+    }
+
+    /**
+     * @return Product population schema
+     */
+    public List<Population> getProductPops() {
+        return productPops;
+    }
     
+    /**
+     * @return Inheritance IDs of populations in reactant schema
+     */
+    public List<Integer> getReactantIDs() {
+        return reactantIDs;
+    }
+
+    /**
+     * @return Inheritance IDs of populations in product schema
+     */
+    public List<Integer> getProductIDs() {
+        return productIDs;
+    }
 
     private void doLex() throws ParseException {
         
@@ -152,11 +178,8 @@ public class ReactionStringParser {
         
         reactantIDs = Lists.newArrayList();
         productIDs = Lists.newArrayList();
-        reactantPopTypes = Lists.newArrayList();
-        productPopTypes = Lists.newArrayList();
-        reactantLocs = Lists.newArrayList();
-        productLocs = Lists.newArrayList();
-        variableNames = Lists.newArrayList();
+        reactantPops = Lists.newArrayList();
+        productPops = Lists.newArrayList();
         
         nextNodeID = 0;
         seenTypeIDs = Maps.newHashMap();
@@ -213,7 +236,7 @@ public class ReactionStringParser {
     private void ruleP(boolean processingReactants) throws ParseException {
         int factor = ruleF();
         String popName = ruleL();
-        List<Integer>loc = ruleD();
+        List<Integer>locList = ruleD();
         int chosenid = ruleI();
         
         // Check that population specifier name exists:
@@ -222,15 +245,16 @@ public class ReactionStringParser {
                     + popName + "' encountered in reaction string.", parseIdx);
         
         PopulationType popType = popTypeMap.get(popName);
+        int[] loc = new int[locList.size()];
+        for (int i=0; i<loc.length; i++)
+            loc[i] = locList.get(i);
+        Population pop = new Population(popType, loc);
         
         for (int i=0; i<factor; i++) {
-            if (processingReactants) {
-                reactantPopTypes.add(popType);
-                reactantLocs.add(loc);
-            } else {
-                productPopTypes.add(popType);
-                productLocs.add(loc);
-            }
+            if (processingReactants)
+                reactantPops.add(pop);
+            else
+                productPops.add(pop);
         }
         
         // Automatic assignment of inheritance relationships.
@@ -294,15 +318,8 @@ public class ReactionStringParser {
     private List<Integer> ruleD() throws ParseException {
         List<Integer> locList = Lists.newArrayList();
         if (acceptToken(Token.STARTLOC, false)) {
-            if (acceptToken(Token.INT, false)) {
-                locList.add(Integer.parseInt(valueList.get(parseIdx-1)));
-            } else {
-                acceptToken(Token.LABEL, true);
-                if (!variableNames.contains(valueList.get(parseIdx-1)))
-                    variableNames.add(valueList.get(parseIdx-1));
-                locList.add(-(1+variableNames.indexOf(valueList.get(parseIdx-1))));
-            }
-
+            acceptToken(Token.INT, true);
+            locList.add(Integer.parseInt(valueList.get(parseIdx-1)));
             ruleM(locList);
             acceptToken(Token.ENDLOC, true);
         }
@@ -334,14 +351,8 @@ public class ReactionStringParser {
      */
     private void ruleM(List<Integer> locList) throws ParseException {
         if (acceptToken(Token.COMMA, false)) {
-            if (acceptToken(Token.INT, false)) {
-                locList.add(Integer.parseInt(valueList.get(parseIdx-1)));
-            } else {
-                acceptToken(Token.LABEL, true);
-                if (!variableNames.contains(valueList.get(parseIdx-1)))
-                    variableNames.add(valueList.get(parseIdx-1));
-                locList.add(-(1+variableNames.indexOf(valueList.get(parseIdx-1))));
-            }
+            acceptToken(Token.INT, true);
+            locList.add(Integer.parseInt(valueList.get(parseIdx-1)));
             ruleM(locList);
         }
         // else accept epsilon

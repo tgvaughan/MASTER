@@ -40,21 +40,21 @@ public class Model extends BEASTObject {
             "Population involved in the birth-death process.",
             new ArrayList<Population>());
     
-    public Input<List<NewReactionGroup>> reactionGroupsInput = new Input<List<NewReactionGroup>>(
+    public Input<List<ReactionGroup>> reactionGroupsInput = new Input<List<ReactionGroup>>(
             "reactionGroup",
             "Group of reactions involved in the birth-death process.",
-            new ArrayList<NewReactionGroup>());
+            new ArrayList<ReactionGroup>());
     
-    public Input<List<NewReaction>> reactionsInput = new Input<List<NewReaction>>(
+    public Input<List<Reaction>> reactionsInput = new Input<List<Reaction>>(
             "reaction",
             "Individual reactions involved in the birth-death process.",
-            new ArrayList<NewReaction>());
+            new ArrayList<Reaction>());
 
     // Population types in model:
     List<PopulationType> types;
     
     // Reactions:
-    List<NewReaction> reactions;
+    List<Reaction> reactions;
     
     @Override
     public void initAndValidate() throws Exception {
@@ -68,13 +68,13 @@ public class Model extends BEASTObject {
             addPopulation(pop);
 
         // Add reaction groups to model:
-        for (NewReactionGroup reactGroup: reactionGroupsInput.get()) {
-            for (NewReaction react : reactGroup.getReactions())
+        for (ReactionGroup reactGroup: reactionGroupsInput.get()) {
+            for (Reaction react : reactGroup.getReactions())
                 reactions.addAll(react.getAllReactions(types));
         }
 
         // Add individual reactions to model:
-        for (NewReaction react : reactionsInput.get()) {
+        for (Reaction react : reactionsInput.get()) {
             //addReaction(react);
             reactions.addAll(react.getAllReactions(types));
         }
@@ -131,7 +131,7 @@ public class Model extends BEASTObject {
      * 
      * @param react 
      */
-    public void addReaction(NewReaction react) {
+    public void addReaction(Reaction react) {
         reactions.add(react);
     }       
 
@@ -142,7 +142,7 @@ public class Model extends BEASTObject {
         return types;
     }
 
-    public List<NewReaction> getReactions() {
+    public List<Reaction> getReactions() {
         return reactions;
     }
 }

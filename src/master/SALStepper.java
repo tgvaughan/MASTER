@@ -38,7 +38,7 @@ public class SALStepper extends Stepper {
     private double dt;    
     private double eventCount = 0;
     
-    private HashMap<NewReaction, Double> corrections;
+    private HashMap<Reaction, Double> corrections;
     private HashMap<Population, Double> derivs;
     
     public SALStepper() { }
@@ -70,7 +70,7 @@ public class SALStepper extends Stepper {
      * @param model
      * @param thisdt
      */
-    public void leap(NewReaction reaction, PopulationState state, Model model, double thisdt) {
+    public void leap(Reaction reaction, PopulationState state, Model model, double thisdt) {
         
         // Calculate corrected rate
         double rho = reaction.propensity*thisdt
@@ -93,14 +93,14 @@ public class SALStepper extends Stepper {
         double thisdt = Math.min(dt, maxStepSize);
             
         // Calculate propensities based on starting state:
-        for (NewReaction reaction : model.reactions)
+        for (Reaction reaction : model.reactions)
             reaction.calcPropensity(state);
         
         // Estimate second order corrections:
         calcCorrections(model, state);
         
         // Update state according to these rates:
-        for (NewReaction reaction : model.reactions)
+        for (Reaction reaction : model.reactions)
             leap(reaction, state, model, thisdt);
             
         return thisdt;
@@ -116,7 +116,7 @@ public class SALStepper extends Stepper {
 
         // Time derivatives of rate equations:
         derivs.clear();
-        for (NewReaction reaction : model.getReactions()) {
+        for (Reaction reaction : model.getReactions()) {
             for (Population pop : reaction.deltaCount.keySet()) {
                 double old = 0;
                 if (derivs.containsKey(pop))
@@ -129,12 +129,12 @@ public class SALStepper extends Stepper {
         
         // Ensure that corrections map is initialised
         if (corrections.isEmpty()) {
-            for (NewReaction reaction : model.reactions)
+            for (Reaction reaction : model.reactions)
                 corrections.put(reaction, 0.0);
         }
         
         // Incoporate propensity derivatives:
-        for (NewReaction reaction : model.reactions) {
+        for (Reaction reaction : model.reactions) {
             double thisCorr = 0.0;
             for (Population pop : reaction.reactCount.keySet()) {
                 if (derivs.containsKey(pop))
@@ -155,7 +155,7 @@ public class SALStepper extends Stepper {
      * @return Derivative
      */
     private double propensityDeriv(PopulationState state,
-            NewReaction reaction, Population pop) {
+            Reaction reaction, Population pop) {
         
         // Can stop here if reaction doesn't involve population:
         if (!reaction.reactCount.containsKey(pop))

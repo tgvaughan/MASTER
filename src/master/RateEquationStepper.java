@@ -62,19 +62,19 @@ public class RateEquationStepper extends Stepper {
             
         PopulationState statePrime = state.getCopy();
         for (int i=0; i<maxIter; i++) {
-            for (NewReaction reaction : model.reactions)
+            for (Reaction reaction : model.reactions)
                 reaction.calcPropensity(statePrime);
             
             if (i>0)
                 statePrime = state.getCopy();
             
-            for (NewReaction reaction : model.reactions) {
+            for (Reaction reaction : model.reactions) {
                 statePrime.implementReaction(reaction,
                         reaction.propensity*0.5*thisdt);
             }
         }
         
-        for (NewReaction reaction : model.reactions) {
+        for (Reaction reaction : model.reactions) {
             reaction.calcPropensity(statePrime);
             state.implementReaction(reaction, reaction.propensity*thisdt);
         }

@@ -1,18 +1,31 @@
+/*
+ * Copyright (C) 2013 Tim Vaughan <tgvaughan@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package master;
 
 import beast.core.BEASTObject;
 import beast.core.Input;
-import com.google.common.collect.*;
-import java.util.*;
-import org.codehaus.jackson.annotate.JsonValue;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Class of objects describing the reactions which occur between the various
- * populations in the model. Reactions may involve both scalar and structured
- * populations.
- *
- * @author Tim Vaughan
- *
+ * Group of reactions.
+ * 
+ * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class ReactionGroup extends BEASTObject {
     
@@ -26,355 +39,21 @@ public class ReactionGroup extends BEASTObject {
             "reaction",
             "Individual reaction within group.",
             new ArrayList<Reaction>());
-
-    public String reactionGroupName;
-    public List<Map<Population,Integer>> reactCounts, prodCounts, deltaCounts;
-    public List<Double> rates, propensities;
-    public int nReactions;
     
-    /**
-     * Constructor without name.
-     */
-    public ReactionGroup() {
-        
-        // Ensure lists are defined:
-        reactCounts = Lists.newArrayList();
-        prodCounts = Lists.newArrayList();
-
-        rates = Lists.newArrayList();
-    }   
+    public ReactionGroup() { }
     
     @Override
     public void initAndValidate() {
         
+        if (rateInput.get() != null)
+            for (Reaction react : reactionsInput.get())
+                react.setRate(rateInput.get());
     }
     
     /**
-     * Constructor with name.
+     * @return list of reactions in group
      */
-    public ReactionGroup(String reactionGroupName) {
-        
-        // Ensure lists are defined:
-        reactCounts = Lists.newArrayList();
-        prodCounts = Lists.newArrayList();
-
-        rates = Lists.newArrayList();
-        
-        this.reactionGroupName = reactionGroupName;
+    public List<Reaction> getReactions() {
+        return reactionsInput.get();
     }
-    
-
-
-    /**
-     * Define a particular schema by listing the individual
-     * reactants involved in a reaction.
-     *
-     * @param pops	varargs list of reactant populations.
-     */
-    public void addReactantSchema(Population ... pops) {
-
-        // Record unique sub-population counts:
-        reactCounts.add(getPopCount(pops));
-
-    }
-    
-    /**
-     * Define a particular schema by listing the individual
-     * products involved in a reaction.
-     *
-     * @param pops	varargs list of product populations.
-     */
-    public void addProductSchema(Population ... pops) {
-
-        // Record unique population counts:
-        prodCounts.add(getPopCount(pops));
-    }
-    
-    /**
-     * Internal method which takes a list of populations and constructs
-     * a map from the populations to their multiplicity in the list.
-     * 
-     * @param pops List of populations.
-     * @return Map from populations to their list multiplicity.
-     */
-    private Map<Population, Integer> getPopCount(Population ... pops) {
-
-        // Condense provided schema into a map of the form
-        // SubPop->count, where count is the number of times
-        // that specific offset appears as a reactant/product in this schema.
-        Map<Population, Integer> popCount = Maps.newHashMap();
-        
-        for (Population pop : pops) {   
-            
-            if (!popCount.containsKey(pop))
-                popCount.put(pop, 1);
-            else {
-                int val = popCount.get(pop);
-                popCount.put(pop, val+1);
-            }
-        }
-
-        return popCount;
-    }
-
-    /**
-     * Adds rate of specific reaction.
-     *
-     * @param rate
-     */
-    public void addRate(double rate) {
-        rates.add(rate);
-    }
-    
-    /**
-     * Clear defined reactant schemas:
-     */
-    public void clearReactantSchemas() {
-        reactCounts.clear();
-    }
-    
-    /**
-     * Clear defined product schemas:
-     */
-    public void clearProductSchemas() {
-        prodCounts.clear();
-    }
-    
-    /**
-     * Clear defined reaction rates:
-     */
-    public void clearRates() {
-        rates.clear();
-    }
-
-    /**
-     * Uses a single value to populate the rate list.
-     *
-     * Useful for defining collections of reactions which occur
-     * at the same rate, or for specifying the rate of reactions involving
-     * un-structured populations only.
-     *
-     * @param rate
-     */
-    public void setGroupRate(double rate) {
-
-        rates.clear();
-        for (int i = 0; i<reactCounts.size(); i++)
-            rates.add(rate);
-    }
-
-    /**
-     * Perform that part of the initialization process which can only be
-     * completed once the reaction schema is in place.
-     *
-     * Also performs validation of the specified schema.
-     */
-    public void postSpecInit() {
-
-        // Perform sanity check on schema:
-        if ((reactCounts.size()!=prodCounts.size())
-                ||(reactCounts.size()!=rates.size()))
-            throw new IllegalArgumentException("Inconsistent number of schemas and/or rates.");
-
-        // Central record of number of sub-population reaction schemas:
-        nReactions = rates.size();
-        
-        // Preallocate memory for reaction propensities:
-        propensities = Lists.newArrayList(rates);
-
-        // Pre-calculate reaction-induced changes to sub-population sizes:
-        calcDeltas();
-
-    }
-    
-    /**
-     * Pre-calculate reaction-induced changes to population sizes.
-     *
-     * Determines the difference between each reactant and product
-     * schema defined in reactCounts and prodCounts.
-     */
-    private void calcDeltas() {
-
-        deltaCounts = Lists.newArrayList();
-
-        // Loosely, calculate deltas=prodLocSchema-reactLocSchema.
-
-        for (int i = 0; i<nReactions; i++) {
-            Map<Population, Integer> deltaCount = Maps.newHashMap();
-            
-            for (Population pop : reactCounts.get(i).keySet()) 
-                deltaCount.put(pop, -reactCounts.get(i).get(pop));
-            
-            for (Population pop : prodCounts.get(i).keySet()) {
-                if (!deltaCount.containsKey(pop))
-                    deltaCount.put(pop, prodCounts.get(i).get(pop));
-                else {
-                    int val = deltaCount.get(pop);
-                    val += prodCounts.get(i).get(pop);
-                    deltaCount.put(pop, val);
-                }
-            }
-
-            deltaCounts.add(deltaCount);
-        }
-    }
-
-    /**
-     * Calculate instantaneous reaction rates (propensities) for a given system
-     * state.
-     *
-     * @param state	PopulationState used to calculate propensities.
-     */
-    public void calcPropensities(PopulationState state) {
-        
-        for (int i = 0; i<nReactions; i++) {
-            double thisProp = rates.get(i);
-
-            for (Population pop : reactCounts.get(i).keySet()) {
-                for (int m = 0; m<reactCounts.get(i).get(pop); m++)
-                    thisProp *= state.get(pop)-m;
-            }
-
-            propensities.set(i, thisProp);
-        }        
-    }
-    
-    /**
-     * Retrieve name of reaction group optionally provided during
-     * specification.
-     * 
-     * @return reaction group name
-     */
-    public String getName() {
-        return reactionGroupName;
-    }
-
-    @Override
-    public String toString() {
-
-        // Construct reaction string
-        StringBuilder sb = new StringBuilder();
-        if (reactionGroupName != null)
-            sb.append(reactionGroupName).append(": ");
-        
-        if (!reactCounts.get(0).isEmpty()) {
-            boolean first = true;
-            for (Population pop : reactCounts.get(0).keySet()) {
-                if (!first)
-                    sb.append(" + ");
-                else
-                    first = false;
-                
-                if (reactCounts.get(0).get(pop)>1)
-                    sb.append(reactCounts.get(0).get(pop));
-                sb.append(pop.type.name);
-                if (!pop.isScalar())
-                    sb.append("[]");
-            }
-        } else
-            sb.append("0");
-        
-        sb.append(" -> ");
-        
-        if (!prodCounts.get(0).isEmpty()) {
-            boolean first = true;
-            for (Population pop : prodCounts.get(0).keySet()) {
-                if (!first)
-                    sb.append(" + ");
-                else
-                    first = false;
-                
-                if (prodCounts.get(0).get(pop)>1)
-                    sb.append(prodCounts.get(0).get(pop));
-                sb.append(pop.type.name);
-                if (!pop.isScalar())
-                    sb.append("[]");
-            }
-        } else
-            sb.append("0");
-
-        return sb.toString();
-
-    }
-    
-        
-    /*
-     * Methods for JSON object mapper
-     */
-    
-    public String reactionToString(int react) {
-        // Construct reaction string
-        StringBuilder sb = new StringBuilder();
- 
-        if (!reactCounts.get(react).isEmpty()) {
-            boolean first = true;
-            for (Population pop : reactCounts.get(react).keySet()) {
-                if (!first)
-                    sb.append(" + ");
-                else
-                    first = false;
-                
-                if (reactCounts.get(react).get(pop)>1)
-                    sb.append(reactCounts.get(react).get(pop));
-                sb.append(pop.type.name);
-                if (!pop.isScalar()) {
-                    sb.append("[");
-                    int [] loc = pop.getLocation();
-                    for (int i=0; i<loc.length; i++) {
-                        if (i>0)
-                            sb.append(',');
-                        sb.append(loc[i]);
-                    }
-                    sb.append("]");
-                }
-            }
-        } else
-            sb.append("0");
-        
-        sb.append(" -> ");
-        
-        if (!prodCounts.get(react).isEmpty()) {
-            boolean first = true;
-            for (Population pop : prodCounts.get(react).keySet()) {
-                if (!first)
-                    sb.append(" + ");
-                else
-                    first = false;
-                
-                if (prodCounts.get(react).get(pop)>1)
-                    sb.append(prodCounts.get(react).get(pop));
-                sb.append(pop.type.name);
-                if (!pop.isScalar()) {
-                    sb.append("[");
-                    int [] loc = pop.getLocation();
-                    for (int i=0; i<loc.length; i++) {
-                        if (i>0)
-                            sb.append(',');
-                        sb.append(loc[i]);
-                    }
-                    sb.append("]");
-                }
-            }
-        } else
-            sb.append("0");
-
-        return sb.toString();
-    }
-    
-    @JsonValue
-    public Map<String, Object> jsonObject() {
-        
-        Map<String, Object> jsonMap = Maps.newHashMap();
-        if (reactionGroupName != null)
-            jsonMap.put("name", reactionGroupName);
-        
-        List<String> reactStringList = Lists.newArrayList();
-        for (int react=0; react<nReactions; react++)
-            reactStringList.add(reactionToString(react));
-        
-        jsonMap.put("reactions", reactStringList);
-        
-        return jsonMap;
-    }
-
 }

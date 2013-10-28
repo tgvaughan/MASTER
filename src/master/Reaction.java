@@ -1,34 +1,25 @@
-/*
- * Copyright (C) 2012 Tim Vaughan <tgvaughan@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package master;
 
+import beast.core.BEASTObject;
 import beast.core.Input;
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import master.beast.InheritanceReaction;
 
 /**
- * A Reaction is a special ReactionGroup containing only a single reaction
- * schema.
+ * Class of objects describing the reactions which occur between the various
+ * populations in the model. Reactions may involve both scalar and structured
+ * populations.
  *
- * @author Tim Vaughan <tgvaughan@gmail.com>
+ * @author Tim Vaughan
+ *
  */
-public class Reaction extends ReactionGroup {
+public class Reaction extends BEASTObject {
     
     public Input<String> nameInput = new Input<String>("reactionName",
             "Name of reaction. (Not used for grouped reactions.)");
@@ -43,173 +34,79 @@ public class Reaction extends ReactionGroup {
     public Input<String> reactionStringInput = new Input<String>(
             "value",
             "String description of reaction.", Input.Validate.REQUIRED);
+
+    public String reactionName;
+    public Map<Population,Integer> reactCount, prodCount, deltaCount;
+    public double rate = -1.0;
+    public double propensity;
     
-    private List<String> variableNames;
-    private List<Integer> fromValues, toValues;
-    
-    private int reactionIndex = 0;
+    private final List<Range> ranges;
+    private final List<String> rangeVariableNames;
+    private final List<Integer> rangeFromValues, rangeToValues;
     
     /**
-     * Create Reaction with no name.
+     * Constructor without name.
      */
     public Reaction() {
-        super();
-    }
+        ranges = Lists.newArrayList();
+        rangeVariableNames = Lists.newArrayList();
+        rangeFromValues = Lists.newArrayList();
+        rangeToValues = Lists.newArrayList();
+    }   
     
     @Override
     public void initAndValidate() {
-                    
+        reactionName = nameInput.get();
+        
         if (rateInput.get() != null)
             rate = rateInput.get();
-        else
-            rate = -1;
+        
+        ranges.addAll(rangesInput.get());
+        for (Range range : ranges)
+            rangeVariableNames.add(range.getVariableName());
 
-        if (nameInput.get() != null)
-            name = nameInput.get();
-        else
-            name = null;
+        for (Range range : ranges) {
+            String fromStr = range.fromInput.get();
+            if(rangeVariableNames.contains(fromStr))
+                rangeFromValues.add(-(rangeVariableNames.indexOf(fromStr)+1));
+            else
+                rangeFromValues.add(Integer.parseInt(fromStr));
+
+            String toStr = range.toInput.get();
+            if (rangeVariableNames.contains(toStr))
+                rangeToValues.add(-(rangeVariableNames.indexOf(toStr)+1));
+            else
+                rangeToValues.add(Integer.parseInt(toStr));
+        }
+    }
+    
+    /**
+     * Obtain list containing this reaction, or the reactions implied
+     * by the ranges given.
+     * 
+     * @param populationTypes
+     * @return list of reactions
+     */
+    public List<Reaction> getAllReactions(List<PopulationType> populationTypes) {
+        List<Reaction> reactions = Lists.newArrayList();
         
-        variableNames = Lists.newArrayList();
-        fromValues = Lists.newArrayList();
-        toValues = Lists.newArrayList();
-        
-        for (int i=0; i<rangesInput.get().size(); i++) {
-            variableNames.add(rangesInput.get().get(i).getVariableName());
+        if (ranges.isEmpty()) {
+            try {
+                setSchemaFromString(reactionName, populationTypes);
+            } catch (ParseException ex) {
+                Logger.getLogger(Reaction.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            calcDelta();
+            reactions.add(this);
+        } else {
+            int [] indices = new int[ranges.size()];
+            rangeLoop(0, indices, populationTypes, reactions);
         }
         
-        for (int i=0; i<rangesInput.get().size(); i++) {
-            String fromString = rangesInput.get().get(i).getFrom();
-            String toString = rangesInput.get().get(i).getTo();
-            
-            if (variableNames.contains(fromString)) {
-                if (variableNames.indexOf(fromString)<i) {
-                    fromValues.add(-(1+variableNames.indexOf(fromString)));
-                } else {
-                    throw new RuntimeException("Range boundaries can only refer "
-                            + "to variables of earlier ranges, not later ones.");
-                }
-            } else {
-                try {
-                    fromValues.add(Integer.parseInt(fromString));
-                } catch (NumberFormatException ex) {
-                    throw new RuntimeException("Range 'from' value must be "
-                            + "a number or range variable.");
-                }
-            }
-            
-            if (variableNames.contains(toString)) {
-                if (variableNames.indexOf(toString)<i) {
-                    toValues.add(-(1+variableNames.indexOf(toString)));
-                } else {
-                    throw new RuntimeException("Range boundaries can only refer "
-                            + "to variables of earlier ranges, not later ones.");
-                }
-            } else {
-                try {
-                    toValues.add(Integer.parseInt(toString));
-                } catch (NumberFormatException ex) {
-                    throw new RuntimeException("Range 'to' value must be "
-                            + "a number or range variable.");
-                }
-            }
-
-        }
-        
+        return reactions;
     }
     
-    /**
-     * Create Reaction with name.
-     * 
-     * @param reactionName 
-     */
-    public Reaction(String reactionName) {
-        super(reactionName);
-    }
     
-    /**
-     * Define reaction reactant schema.
-     * 
-     * @param pops 
-     */
-    public void setReactantSchema(Population ... pops) {
-        reactCounts.clear();
-        addReactantSchema(pops);
-    }
-    
-    /**
-     * Define reaction product schema.
-     * 
-     * @param pops 
-     */
-    public void setProductSchema(Population ... pops) {
-        prodCounts.clear();
-        addProductSchema(pops);
-    }
-    
-    /**
-     * Set reaction rate.
-     * 
-     * @param rate 
-     */
-    public void setRate(double rate) {
-        rates.clear();
-        rates.add(rate);
-    }
-    
-    /**
-     * Assemble list of reactant or product nodes.
-     * 
-     * @param indices values of range variables
-     * @param popNames list of population names identified by parser
-     * @param locs list of locations (unflattened) identified by parser
-     * @param reactionVariableNames list of variable names identified by parser
-     * @param popTypes list of population types present in model
-     * @return list of nodes
-     * @throws ParseException 
-     */
-    private List<master.Population> getEntityList(int [] indices,
-            List<String> popNames, List<List<Integer>> locs,
-            List<String> reactionVariableNames,
-            List<master.PopulationType> popTypes) throws ParseException {
-        
-        List<master.Population> entities = Lists.newArrayList();
-
-        for (int entityIdx=0; entityIdx<popNames.size(); entityIdx++) {
-            // Substitute variable names for values:
-            String popTypeName = popNames.get(entityIdx);
-            List<Integer> loc = locs.get(entityIdx);
-            
-            master.PopulationType popType = null;
-            for (master.PopulationType thisPopType : popTypes)
-                if (thisPopType.getName().equals(popTypeName))
-                    popType = thisPopType;
-            
-            if (popType == null)
-                throw new ParseException("Unidentified reactant population type '"
-                        + popTypeName + "'.", 0);
-            
-            int [] flattenedLoc = new int[loc.size()];
-            for (int locIdx=0; locIdx<loc.size(); locIdx++) {
-                if (loc.get(locIdx)>=0)
-                    flattenedLoc[locIdx] = loc.get(locIdx);
-                else {
-                    String variableName = reactionVariableNames.get(-loc.get(locIdx)-1);
-                    if (variableNames.contains(variableName)) {
-                        flattenedLoc[locIdx] = indices[variableNames.indexOf(variableName)];
-                    } else {
-                        throw new ParseException("Undefined range variable '"
-                                + variableName + "'.", 0);
-                    }
-                }
-            }
-                
-            entities.add(new master.Population(popType, flattenedLoc));
-        }
-            
-        return entities;
-    }
-    
-
     /**
      * Recursion used to loop over range variables and assemble reaction
      * for each combination.
@@ -221,65 +118,306 @@ public class Reaction extends ReactionGroup {
      * @param group reaction group to which reactions are to be added (may be null)
      * @throws ParseException 
      */
-    private void rangeLoop(int depth, int [] indices, ReactionStringParser parser,
-            master.Model model,
-            master.ReactionGroup group) throws ParseException {
+    private void rangeLoop(int depth, int [] indices,
+            List<PopulationType> populationTypes,
+            List<Reaction> reactions) {
         
+
         if (depth==indices.length) {
             
-            List<master.Population> reactants = getEntityList(indices,
-                    parser.reactantPopNames, parser.reactantLocs,
-                    parser.variableNames, model.getPopulationTypes());
-            List<master.Population> products = getEntityList(indices,
-                    parser.productPopNames, parser.productLocs,
-                    parser.variableNames, model.getPopulationTypes());
-            
-
-            if (group != null) {
-                
-                group.addReactantSchema(reactants.toArray(new master.Population[0]));
-                group.addProductSchema(products.toArray(new master.Population[0]));
-                group.addRate(rate);
-                
-            } else {
-                
-                master.Reaction reaction;
-                if (name != null) {
-                    if (reactionIndex>0)
-                        reaction = new master.Reaction(name + reactionIndex);
-                    else
-                        reaction = new master.Reaction(name);
-                } else
-                    reaction = new master.Reaction();
-                
-                reaction.addReactantSchema(reactants.toArray(new master.Population[0]));
-                reaction.addProductSchema(products.toArray(new master.Population[0]));
-                reaction.setRate(rate);
-                model.addReaction(reaction);
-                
+            // Make required replacements in reaction schema string
+            String schemaString = reactionStringInput.get();
+            for (int rangeIdx = 0; rangeIdx < ranges.size(); rangeIdx++) {
+                String var = rangeVariableNames.get(rangeIdx);
+                int val = indices[rangeIdx];
+                schemaString = schemaString.replace("["+var+"]", "["+val+"]")
+                        .replace("["+var+",", "["+val+",")
+                        .replace(","+var+"]", ","+val+"]")
+                        .replace(","+var+",", ","+val+",");
             }
             
-            reactionIndex += 1;
+            // Assemble reaction
+            Reaction reaction;
+            if (reactionName != null) {
+                if (reactions.size()>0)
+                    reaction = new Reaction(reactionName + reactions.size());
+                else
+                    reaction = new Reaction(reactionName);
+            } else
+                reaction = new Reaction();
+            
+            reaction.setRate(rate);
+            
+            try {
+                reaction.setSchemaFromString(schemaString, populationTypes);
+            } catch (ParseException ex) {
+                Logger.getLogger(Reaction.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            reactions.add(reaction);
             
         } else {
             int from;
-            if (fromValues.get(depth)<0)
-                from = indices[-fromValues.get(depth)-1];
+            if (rangeFromValues.get(depth)<0)
+                from = indices[-rangeFromValues.get(depth)-1];
             else
-                from = fromValues.get(depth);
+                from = rangeFromValues.get(depth);
 
             int to;
-            if (toValues.get(depth)<0)
-                to = indices[-toValues.get(depth)-1];
+            if (rangeToValues.get(depth)<0)
+                to = indices[-rangeToValues.get(depth)-1];
             else
-                to = toValues.get(depth);
+                to = rangeToValues.get(depth);
             
             for (int i=from; i<=to; i++) {
                 indices[depth] = i;
-                rangeLoop(depth+1, indices, parser, model, group);
+                rangeLoop(depth+1, indices, populationTypes, reactions);
             }
 
         }
     }
     
+    /**
+     * Constructor with name.
+     * 
+     * @param reactionGroupName
+     */
+    public Reaction(String reactionGroupName) {
+        this.reactionName = reactionGroupName;
+        
+        ranges = Lists.newArrayList();
+        rangeVariableNames = Lists.newArrayList();
+        rangeFromValues = Lists.newArrayList();
+        rangeToValues = Lists.newArrayList();
+    }
+    
+
+
+    /**
+     * Define a particular schema by listing the individual
+     * reactants involved in a reaction.
+     *
+     * @param pops varargs list of reactant populations.
+     */
+    public void setReactantSchema(Population ... pops) {
+
+        // Record unique sub-population counts:
+        reactCount = getPopCount(pops);
+
+    }
+    
+    /**
+     * Define a particular schema by listing the individual
+     * products involved in a reaction.
+     *
+     * @param pops varargs list of product populations.
+     */
+    public void setProductSchema(Population ... pops) {
+
+        // Record unique population counts:
+        prodCount = getPopCount(pops);
+    }
+    
+    /**
+     * Attempt to determine reaction schema from string representation.
+     * 
+     * @param schemaString string to parse.
+     * @param popTypes list of population types present in model.
+     * @throws java.text.ParseException 
+     */
+    public void setSchemaFromString(String schemaString, List<PopulationType> popTypes) throws ParseException {
+        
+        ReactionStringParser parser = new ReactionStringParser(schemaString, popTypes);
+        setReactantSchema((Population[])parser.getReactantPops().toArray());
+        setProductSchema((Population[])parser.getReactantPops().toArray());
+    }
+    
+    /**
+     * Add range.  Causes multiple reactions to be added to model.
+     * 
+     * @param range Range object.
+     */
+    public void addRange(Range range) {
+        ranges.add(range);
+    }
+    
+    /**
+     * Internal method which takes a list of populations and constructs
+     * a map from the populations to their multiplicity in the list.
+     * 
+     * @param pops List of populations.
+     * @return Map from populations to their list multiplicity.
+     */
+    private Map<Population, Integer> getPopCount(Population ... pops) {
+
+        // Condense provided schema into a map of the form
+        // SubPop->count, where count is the number of times
+        // that specific offset appears as a reactant/product in this schema.
+        Map<Population, Integer> popCount = Maps.newHashMap();
+        
+        for (Population pop : pops) {   
+            
+            if (!popCount.containsKey(pop))
+                popCount.put(pop, 1);
+            else {
+                int val = popCount.get(pop);
+                popCount.put(pop, val+1);
+            }
+        }
+
+        return popCount;
+    }
+
+    /**
+     * Adds rate of specific reaction.
+     *
+     * @param rate
+     */
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
+    
+
+    /**
+     * Perform that part of the initialization process which can only be
+     * completed once the reaction schema is in place.
+     *
+     * Also performs validation of the specified schema.
+     */
+    public void postSpecInit() {
+
+        // Perform sanity check on schema:
+        if (reactCount == null || prodCount == null || rate < 0.0)
+            throw new IllegalArgumentException("Inconsistent number of schemas and/or rates.");
+
+        // Pre-calculate reaction-induced changes to sub-population sizes:
+        calcDelta();
+
+    }
+    
+    /**
+     * Pre-calculate reaction-induced changes to population sizes.
+     *
+     * Determines the difference between each reactant and product
+     * schema defined in reactCounts and prodCounts.
+     */
+    private void calcDelta() {
+
+        // Loosely, calculate deltas=prodLocSchema-reactLocSchema.
+
+        deltaCount = Maps.newHashMap();
+            
+        for (Population pop : reactCount.keySet()) 
+            deltaCount.put(pop, -reactCount.get(pop));
+            
+        for (Population pop : prodCount.keySet()) {
+            if (!deltaCount.containsKey(pop))
+                deltaCount.put(pop, prodCount.get(pop));
+            else {
+                int val = deltaCount.get(pop);
+                val += prodCount.get(pop);
+                deltaCount.put(pop, val);
+            }
+        }
+    }
+
+    /**
+     * Calculate instantaneous reaction rates (propensities) for a given system
+     * state.
+     *
+     * @param state	PopulationState used to calculate propensities.
+     */
+    public void calcPropensity(PopulationState state) {
+        
+        propensity = rate;
+
+        for (Population pop : reactCount.keySet()) {
+            for (int m = 0; m<reactCount.get(pop); m++)
+                propensity *= state.get(pop)-m;
+        }
+    }
+    
+    /**
+     * Retrieve name of reaction group optionally provided during
+     * specification.
+     * 
+     * @return reaction group name
+     */
+    public String getName() {
+        return reactionName;
+    }
+   
+    
+
+
+
+    
+    /*
+     * Methods for JSON object mapper
+     */
+    
+    @Override
+    public String toString() {
+
+        // Construct reaction string
+        StringBuilder sb = new StringBuilder();
+        if (reactionName != null)
+            sb.append(reactionName).append(": ");
+        
+        if (!reactCount.isEmpty()) {
+            boolean first = true;
+            for (Population pop : reactCount.keySet()) {
+                if (!first)
+                    sb.append(" + ");
+                else
+                    first = false;
+                
+                if (reactCount.get(pop)>1)
+                    sb.append(reactCount.get(pop));
+                sb.append(pop.type.name);
+                if (!pop.isScalar()) {
+                    sb.append("[");
+                    int [] loc = pop.getLocation();
+                    for (int i=0; i<loc.length; i++) {
+                        if (i>0)
+                            sb.append(',');
+                        sb.append(loc[i]);
+                    }
+                    sb.append("]");
+                }
+            }
+        } else
+            sb.append("0");
+        
+        sb.append(" -> ");
+        
+        if (!prodCount.isEmpty()) {
+            boolean first = true;
+            for (Population pop : prodCount.keySet()) {
+                if (!first)
+                    sb.append(" + ");
+                else
+                    first = false;
+                
+                if (prodCount.get(pop)>1)
+                    sb.append(prodCount.get(pop));
+                sb.append(pop.type.name);
+                if (!pop.isScalar()) {
+                    sb.append("[");
+                    int [] loc = pop.getLocation();
+                    for (int i=0; i<loc.length; i++) {
+                        if (i>0)
+                            sb.append(',');
+                        sb.append(loc[i]);
+                    }
+                    sb.append("]");
+                }
+            }
+        } else
+            sb.append("0");
+
+        return sb.toString();
+
+    }
+
 }

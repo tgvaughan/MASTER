@@ -32,7 +32,7 @@ public class GillespieStepper extends Stepper {
         
         // Calculate propensities
         double totalPropensity = 0.0;
-        for (NewReaction reaction : model.reactions) {
+        for (Reaction reaction : model.reactions) {
             reaction.calcPropensity(state);
             totalPropensity += reaction.propensity;
         }
@@ -51,8 +51,8 @@ public class GillespieStepper extends Stepper {
         // Choose reaction to implement
         double u = Randomizer.nextDouble()*totalPropensity;
 
-        NewReaction chosenReaction = null;
-        for (NewReaction reaction : model.reactions) {                
+        Reaction chosenReaction = null;
+        for (Reaction reaction : model.reactions) {                
             u -= reaction.propensity;
             if (u<0) { 
                 chosenReaction = reaction;

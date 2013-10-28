@@ -62,7 +62,7 @@ public class TauLeapingStepper extends Stepper {
      * @param model
      * @param thisdt
      */
-    public void leap(NewReaction reaction, PopulationState state, Model model, double thisdt) {
+    public void leap(Reaction reaction, PopulationState state, Model model, double thisdt) {
         
         // Draw number of reactions to fire within time tau:
         double q = Randomizer.nextPoisson(reaction.propensity*thisdt);
@@ -81,11 +81,11 @@ public class TauLeapingStepper extends Stepper {
         double thisdt = Math.min(dt, maxStepSize);
             
         // Calculate transition rates based on starting state:
-        for (NewReaction reaction : model.reactions)
+        for (Reaction reaction : model.reactions)
             reaction.calcPropensity(state);
 
         // Update state according to these rates:
-        for (NewReaction reaction : model.reactions)
+        for (Reaction reaction : model.reactions)
             leap(reaction, state, model, thisdt);
             
         return thisdt;

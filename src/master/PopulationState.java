@@ -123,7 +123,7 @@ public class PopulationState {
      * @param reactionIndex
      * @param q Number of times for reaction to fire.
      */
-    public void implementReaction(NewReaction reaction, double q) {
+    public void implementReaction(Reaction reaction, double q) {
         for (Population pop : reaction.deltaCount.keySet())
             addNoNeg(pop, q*reaction.deltaCount.get(pop));
     }

@@ -57,23 +57,21 @@ public class TauLeapingStepper extends Stepper {
      * Generate appropriate random state change according to Gillespie's
      * tau-leaping algorithm.
      *
+     * @param reaction
      * @param state PopulationState to modify.
-     * @param spec	Simulation spec.
+     * @param model
+     * @param thisdt
      */
-    public void leap(ReactionGroup reaction, PopulationState state, Model model, double thisdt) {
+    public void leap(NewReaction reaction, PopulationState state, Model model, double thisdt) {
         
-        for (int i = 0; i<reaction.propensities.size(); i++) {
+        // Draw number of reactions to fire within time tau:
+        double q = Randomizer.nextPoisson(reaction.propensity*thisdt);
 
-            // Draw number of reactions to fire within time tau:
-            double q = Randomizer.nextPoisson(reaction.propensities.get(i)*thisdt);
-
-            // Implement reactions:
-            state.implementReaction(reaction, i, q);
+        // Implement reactions:
+        state.implementReaction(reaction, q);
             
-            // Increment event counter:
-            eventCount += q;
-        }
-
+        // Increment event counter:
+        eventCount += q;
     }
     
     @Override
@@ -83,11 +81,11 @@ public class TauLeapingStepper extends Stepper {
         double thisdt = Math.min(dt, maxStepSize);
             
         // Calculate transition rates based on starting state:
-        for (ReactionGroup reaction : model.reactions)
-            reaction.calcPropensities(state);
+        for (NewReaction reaction : model.reactions)
+            reaction.calcPropensity(state);
 
         // Update state according to these rates:
-        for (ReactionGroup reaction : model.reactions)
+        for (NewReaction reaction : model.reactions)
             leap(reaction, state, model, thisdt);
             
         return thisdt;

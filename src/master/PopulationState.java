@@ -32,8 +32,6 @@ public class PopulationState {
 
     /**
      * Constructor
-     *
-     * @param model Model defining the state space.
      */
     public PopulationState() {
 
@@ -125,9 +123,9 @@ public class PopulationState {
      * @param reactionIndex
      * @param q Number of times for reaction to fire.
      */
-    public void implementReaction(ReactionGroup reactionGroup, int reactionIndex, double q) {
-        for (Population pop : reactionGroup.deltaCounts.get(reactionIndex).keySet())
-            addNoNeg(pop, q*reactionGroup.deltaCounts.get(reactionIndex).get(pop));
+    public void implementReaction(NewReaction reaction, double q) {
+        for (Population pop : reaction.deltaCount.keySet())
+            addNoNeg(pop, q*reaction.deltaCount.get(pop));
     }
     
     @JsonValue

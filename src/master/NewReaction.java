@@ -230,59 +230,7 @@ public class NewReaction extends BEASTObject {
     public String getName() {
         return reactionName;
     }
-    
-    /**
-     * Assemble list of reactant or product nodes.
-     * 
-     * @param indices values of range variables
-     * @param schemaPopTypes list of population names identified by parser
-     * @param schemaLocs list of locations (unflattened) identified by parser
-     * @param reactionVariableNames list of variable names identified by parser
-     * @param popTypes list of population types present in model
-     * @return list of nodes
-     * @throws ParseException 
-     */
-    private List<master.Population> getEntityList(int [] indices,
-            List<PopulationType> schemaPopTypes, List<List<Integer>> schemaLocs,
-            List<String> reactionVariableNames,
-            List<master.PopulationType> popTypes) throws ParseException {
-        
-        List<master.Population> entities = Lists.newArrayList();
-
-        for (int entityIdx=0; entityIdx<schemaPopTypes.size(); entityIdx++) {
-            // Substitute variable names for values:
-            PopulationType schemaPopType = schemaPopTypes.get(entityIdx);
-            List<Integer> loc = schemaLocs.get(entityIdx);
-            
-            master.PopulationType popType = null;
-            for (master.PopulationType thisPopType : popTypes)
-                if (thisPopType.equals(schemaPopType))
-                    popType = thisPopType;
-            
-            if (popType == null)
-                throw new ParseException("Unidentified reactant population type '"
-                        + schemaPopType + "'.", 0);
-            
-            int [] flattenedLoc = new int[loc.size()];
-            for (int locIdx=0; locIdx<loc.size(); locIdx++) {
-                if (loc.get(locIdx)>=0)
-                    flattenedLoc[locIdx] = loc.get(locIdx);
-                else {
-                    String variableName = reactionVariableNames.get(-loc.get(locIdx)-1);
-                    if (rangeVariableNames.contains(variableName)) {
-                        flattenedLoc[locIdx] = indices[rangeVariableNames.indexOf(variableName)];
-                    } else {
-                        throw new ParseException("Undefined range variable '"
-                                + variableName + "'.", 0);
-                    }
-                }
-            }
-                
-            entities.add(new master.Population(popType, flattenedLoc));
-        }
-            
-        return entities;
-    }
+   
     
 
     /**

@@ -32,10 +32,9 @@ public class GillespieStepper extends Stepper {
         
         // Calculate propensities
         double totalPropensity = 0.0;
-        for (ReactionGroup reactionGroup : model.reactions) {
-            reactionGroup.calcPropensities(state);
-            for (double propensity : reactionGroup.propensities)
-                totalPropensity += propensity;
+        for (NewReaction reaction : model.reactions) {
+            reaction.calcPropensity(state);
+            totalPropensity += reaction.propensity;
         }
 
         // Draw time of next reaction
@@ -51,26 +50,18 @@ public class GillespieStepper extends Stepper {
             
         // Choose reaction to implement
         double u = Randomizer.nextDouble()*totalPropensity;
-        boolean found = false;
-        ReactionGroup chosenReactionGroup = null;
-        int chosenReaction = 0;
-        for (ReactionGroup reactionGroup : model.reactions) {
-                
-            for (int reaction=0; reaction<reactionGroup.propensities.size(); reaction++) {
-                u -= reactionGroup.propensities.get(reaction);
-                if (u<0) { 
-                    found = true;
-                    chosenReactionGroup = reactionGroup;
-                    chosenReaction = reaction;
-                    break;
-                }
-            }
-            if (found)
+
+        NewReaction chosenReaction = null;
+        for (NewReaction reaction : model.reactions) {                
+            u -= reaction.propensity;
+            if (u<0) { 
+                chosenReaction = reaction;
                 break;
+            }
         }
             
         // Implement chosen reaction:
-        state.implementReaction(chosenReactionGroup, chosenReaction, 1);
+        state.implementReaction(chosenReaction, 1);
         
         // Increment event counter:
         eventCount += 1;

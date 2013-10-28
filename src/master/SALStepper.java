@@ -38,7 +38,7 @@ public class SALStepper extends Stepper {
     private double dt;    
     private double eventCount = 0;
     
-    private HashMap<ReactionGroup, List<Double>> corrections;
+    private HashMap<NewReaction, Double> corrections;
     private HashMap<Population, Double> derivs;
     
     public SALStepper() { }
@@ -65,26 +65,25 @@ public class SALStepper extends Stepper {
      * Generate appropriate random state change according to Sehl's
      * step anticipation tau-leaping algorithm.
      *
+     * @param reaction
      * @param state PopulationState to modify.
-     * @param spec Simulation spec.
+     * @param model
+     * @param thisdt
      */
-    public void leap(ReactionGroup reactionGroup, PopulationState state, Model model, double thisdt) {
+    public void leap(NewReaction reaction, PopulationState state, Model model, double thisdt) {
         
-        for (int i = 0; i<reactionGroup.propensities.size(); i++) {
-            
-            // Calculate corrected rate
-            double rho = reactionGroup.propensities.get(i)*thisdt
-                    + 0.5*corrections.get(reactionGroup).get(i)*thisdt*thisdt;
+        // Calculate corrected rate
+        double rho = reaction.propensity*thisdt
+                + 0.5*corrections.get(reaction)*thisdt*thisdt;
 
-            // Draw number of reactions to fire within time tau:
-            double q = Randomizer.nextPoisson(rho);
+        // Draw number of reactions to fire within time tau:
+        double q = Randomizer.nextPoisson(rho);
 
-            // Implement reactions:
-            state.implementReaction(reactionGroup, i, q);
-            
-            // Increment event counter:
-            eventCount += q;
-        }
+        // Implement reactions:
+        state.implementReaction(reaction, q);
+        
+        // Increment event counter:
+        eventCount += q;
 
     }
     
@@ -94,14 +93,14 @@ public class SALStepper extends Stepper {
         double thisdt = Math.min(dt, maxStepSize);
             
         // Calculate propensities based on starting state:
-        for (ReactionGroup reactionGroup : model.reactions)
-            reactionGroup.calcPropensities(state);
+        for (NewReaction reaction : model.reactions)
+            reaction.calcPropensity(state);
         
         // Estimate second order corrections:
         calcCorrections(model, state);
         
         // Update state according to these rates:
-        for (ReactionGroup reaction : model.reactions)
+        for (NewReaction reaction : model.reactions)
             leap(reaction, state, model, thisdt);
             
         return thisdt;
@@ -117,42 +116,32 @@ public class SALStepper extends Stepper {
 
         // Time derivatives of rate equations:
         derivs.clear();
-        for (ReactionGroup reactionGroup : model.getReactions()) {
-            for (int i=0; i<reactionGroup.nReactions; i++) {
-                for (Population pop : reactionGroup.deltaCounts.get(i).keySet()) {
-                    double old = 0;
-                    if (derivs.containsKey(pop))
-                        old = derivs.get(pop);
-                    derivs.put(pop, old
-                            + reactionGroup.propensities.get(i)
-                            *reactionGroup.deltaCounts.get(i).get(pop));
-                }
+        for (NewReaction reaction : model.getReactions()) {
+            for (Population pop : reaction.deltaCount.keySet()) {
+                double old = 0;
+                if (derivs.containsKey(pop))
+                    old = derivs.get(pop);
+                derivs.put(pop, old
+                        + reaction.propensity
+                                *reaction.deltaCount.get(pop));
             }
         }
         
         // Ensure that corrections map is initialised
         if (corrections.isEmpty()) {
-            for (ReactionGroup reactionGroup : model.reactions) {
-                List<Double> corrList = Lists.newArrayList();
-                for (int reaction=0; reaction<reactionGroup.nReactions; reaction++)
-                    corrList.add(0.0);
-                corrections.put(reactionGroup, corrList);
-            }
+            for (NewReaction reaction : model.reactions)
+                corrections.put(reaction, 0.0);
         }
         
         // Incoporate propensity derivatives:
-        for (ReactionGroup reactionGroup : model.reactions) {
-            List<Double> corrList = corrections.get(reactionGroup);
-            for (int reaction=0; reaction<reactionGroup.nReactions; reaction++) {
-                double thisCorr = 0.0;
-                for (Population pop : reactionGroup.reactCounts.get(reaction).keySet()) {
-                    if (derivs.containsKey(pop))
-                        thisCorr += propensityDeriv(state, reactionGroup, reaction, pop)*derivs.get(pop);
-                }
-                corrList.set(reaction, thisCorr);
+        for (NewReaction reaction : model.reactions) {
+            double thisCorr = 0.0;
+            for (Population pop : reaction.reactCount.keySet()) {
+                if (derivs.containsKey(pop))
+                    thisCorr += propensityDeriv(state, reaction, pop)*derivs.get(pop);
             }
+            corrections.put(reaction, thisCorr);
         }
-        
     }
     
     /**
@@ -160,43 +149,42 @@ public class SALStepper extends Stepper {
      * of the propensity of a particular reaction.
      * 
      * @param state State at which the derivative is to be evaluated
-     * @param reactionGroup Reaction group whose propensity to differentiate
-     * @param reaction Member of reaction group
+     * @param reaction Reaction group whose propensity to differentiate
+     * @param r Member of reaction group
      * @param pop Population dimension to take derivative in
      * @return Derivative
      */
     private double propensityDeriv(PopulationState state,
-            ReactionGroup reactionGroup, int reaction,
-            Population pop) {
+            NewReaction reaction, Population pop) {
         
         // Can stop here if reaction doesn't involve population:
-        if (!reactionGroup.reactCounts.get(reaction).containsKey(pop))
+        if (!reaction.reactCount.containsKey(pop))
             return 0.0;
         
         // Short-cut if propensity is non-zero:
-        if (reactionGroup.propensities.get(reaction)>0.0) {
+        if (reaction.propensity>0.0) {
             double sum = 0.0;
-            for (int m=0; m<reactionGroup.reactCounts.get(reaction).get(pop); m++)
+            for (int m=0; m<reaction.reactCount.get(pop); m++)
                 sum += 1.0/(state.get(pop)-m);
-            return sum*reactionGroup.propensities.get(reaction);
+            return sum*reaction.propensity;
         }
         
         // Initialise accumulator:
-        double acc = reactionGroup.rates.get(reaction);
+        double acc = reaction.rate;
         
         // TODO: This calculation involves a lot of loops - can we optimize?
-        for (Population popPrime : reactionGroup.reactCounts.get(reaction).keySet()) {
+        for (Population popPrime : reaction.reactCount.keySet()) {
             if (popPrime != pop) {
                 
-                for (int m=0; m<reactionGroup.reactCounts.get(reaction).get(popPrime); m++)
+                for (int m=0; m<reaction.reactCount.get(popPrime); m++)
                     acc *= state.get(popPrime)-m;
                 
             } else {
                 double sum = 0.0;
-
-                for (int m=0; m<reactionGroup.reactCounts.get(reaction).get(pop); m++) {
+                
+                for (int m=0; m<reaction.reactCount.get(pop); m++) {
                     double factor = 1.0;
-                    for (int mp=0; mp<reactionGroup.reactCounts.get(reaction).get(pop); mp++) {
+                    for (int mp=0; mp<reaction.reactCount.get(pop); mp++) {
                         if (mp != m)
                             factor *= state.get(pop)-mp;
                         // else factor *= 1.0
@@ -211,7 +199,7 @@ public class SALStepper extends Stepper {
         return acc;
     }
     
-
+    
     @Override
     public String getAlgorithmName() {
         return "Fixed time-step SAL algorithm";

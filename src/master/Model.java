@@ -68,10 +68,16 @@ public class Model extends BEASTObject {
             addPopulation(pop);
 
         // Add reaction groups to model:
+        for (NewReactionGroup reactGroup: reactionGroupsInput.get()) {
+            for (NewReaction react : reactGroup.getReactions())
+                reactions.addAll(react.getAllReactions(types));
+        }
 
         // Add individual reactions to model:
-        for (NewReaction react : reactionsInput.get())
-            addReaction(react);
+        for (NewReaction react : reactionsInput.get()) {
+            //addReaction(react);
+            reactions.addAll(react.getAllReactions(types));
+        }
     }
 
     /**
@@ -126,7 +132,7 @@ public class Model extends BEASTObject {
      * @param react 
      */
     public void addReaction(NewReaction react) {
-        reactions.addAll(react.getAllReactions());
+        reactions.add(react);
     }       
 
     /*

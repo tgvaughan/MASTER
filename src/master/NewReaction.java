@@ -7,6 +7,8 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import master.beast.InheritanceReaction;
 
 /**
@@ -54,11 +56,125 @@ public class NewReaction extends BEASTObject {
     
     @Override
     public void initAndValidate() {
-        
         reactionName = nameInput.get();
         
         if (rateInput.get() != null)
             rate = rateInput.get();
+        
+        ranges.addAll(rangesInput.get());
+        for (Range range : ranges)
+            rangeVariableNames.add(range.getVariableName());
+
+        for (Range range : ranges) {
+            String fromStr = range.fromInput.get();
+            if(rangeVariableNames.contains(fromStr))
+                rangeFromValues.add(-(rangeVariableNames.indexOf(fromStr)+1));
+            else
+                rangeFromValues.add(Integer.parseInt(fromStr));
+
+            String toStr = range.toInput.get();
+            if (rangeVariableNames.contains(toStr))
+                rangeToValues.add(-(rangeVariableNames.indexOf(toStr)+1));
+            else
+                rangeToValues.add(Integer.parseInt(toStr));
+        }
+    }
+    
+    /**
+     * Obtain list containing this reaction, or the reactions implied
+     * by the ranges given.
+     * 
+     * @param populationTypes
+     * @return list of reactions
+     */
+    public List<NewReaction> getAllReactions(List<PopulationType> populationTypes) {
+        List<NewReaction> reactions = Lists.newArrayList();
+        
+        if (ranges.isEmpty()) {
+            try {
+                setSchemaFromString(reactionName, populationTypes);
+            } catch (ParseException ex) {
+                Logger.getLogger(NewReaction.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            calcDelta();
+            reactions.add(this);
+        } else {
+            int [] indices = new int[ranges.size()];
+            rangeLoop(0, indices, populationTypes, reactions);
+        }
+        
+        return reactions;
+    }
+    
+    
+    /**
+     * Recursion used to loop over range variables and assemble reaction
+     * for each combination.
+     * 
+     * @param depth current recursion depth
+     * @param indices list of range variable values
+     * @param parser result of parsing reaction string
+     * @param model model to which reactions are to be added
+     * @param group reaction group to which reactions are to be added (may be null)
+     * @throws ParseException 
+     */
+    private void rangeLoop(int depth, int [] indices,
+            List<PopulationType> populationTypes,
+            List<NewReaction> reactions) {
+        
+
+        if (depth==indices.length) {
+            
+            // Make required replacements in reaction schema string
+            String schemaString = reactionStringInput.get();
+            for (int rangeIdx = 0; rangeIdx < ranges.size(); rangeIdx++) {
+                String var = rangeVariableNames.get(rangeIdx);
+                int val = indices[rangeIdx];
+                schemaString = schemaString.replace("["+var+"]", "["+val+"]")
+                        .replace("["+var+",", "["+val+",")
+                        .replace(","+var+"]", ","+val+"]")
+                        .replace(","+var+",", ","+val+",");
+            }
+            
+            // Assemble reaction
+            NewReaction reaction;
+            if (reactionName != null) {
+                if (reactions.size()>0)
+                    reaction = new NewReaction(reactionName + reactions.size());
+                else
+                    reaction = new NewReaction(reactionName);
+            } else
+                reaction = new NewReaction();
+            
+            reaction.setRate(rate);
+            
+            try {
+                reaction.setSchemaFromString(schemaString, populationTypes);
+            } catch (ParseException ex) {
+                Logger.getLogger(NewReaction.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            reactions.add(reaction);
+            
+        } else {
+            int from;
+            if (rangeFromValues.get(depth)<0)
+                from = indices[-rangeFromValues.get(depth)-1];
+            else
+                from = rangeFromValues.get(depth);
+
+            int to;
+            if (rangeToValues.get(depth)<0)
+                to = indices[-rangeToValues.get(depth)-1];
+            else
+                to = rangeToValues.get(depth);
+            
+            for (int i=from; i<=to; i++) {
+                indices[depth] = i;
+                rangeLoop(depth+1, indices, populationTypes, reactions);
+            }
+
+        }
     }
     
     /**
@@ -233,96 +349,8 @@ public class NewReaction extends BEASTObject {
    
     
 
-    /**
-     * Recursion used to loop over range variables and assemble reaction
-     * for each combination.
-     * 
-     * @param depth current recursion depth
-     * @param indices list of range variable values
-     * @param parser result of parsing reaction string
-     * @param model model to which reactions are to be added
-     * @param group reaction group to which reactions are to be added (may be null)
-     * @throws ParseException 
-     */
-    private void rangeLoop(int depth, int [] indices, ReactionStringParser parser,
-            master.Model model,
-            master.ReactionGroup group) throws ParseException {
-        
-        if (depth==indices.length) {
-            
-            List<master.Population> reactants = getEntityList(indices,
-                    parser.getReactantPops(), parser.reactantLocs,
-                    parser.variableNames, model.getPopulationTypes());
-            List<master.Population> products = getEntityList(indices,
-                    parser.getProductPops(), parser.productLocs,
-                    parser.variableNames, model.getPopulationTypes());
-            
 
-            if (group != null) {
-                
-                group.addReactantSchema(reactants.toArray(new master.Population[0]));
-                group.addProductSchema(products.toArray(new master.Population[0]));
-                group.addRate(rate);
-                
-            } else {
-                
-                Reaction reaction;
-                if (name != null) {
-                    if (reactionIndex>0)
-                        reaction = new master.Reaction(name + reactionIndex);
-                    else
-                        reaction = new master.Reaction(name);
-                } else
-                    reaction = new master.Reaction();
-                
-                reaction.addReactantSchema(reactants.toArray(new master.Population[0]));
-                reaction.addProductSchema(products.toArray(new master.Population[0]));
-                reaction.setRate(rate);
-                model.addReaction(reaction);
-                
-            }
-            
-            reactionIndex += 1;
-            
-        } else {
-            int from;
-            if (rangeFromValues.get(depth)<0)
-                from = indices[-rangeFromValues.get(depth)-1];
-            else
-                from = rangeFromValues.get(depth);
 
-            int to;
-            if (rangeToValues.get(depth)<0)
-                to = indices[-rangeToValues.get(depth)-1];
-            else
-                to = rangeToValues.get(depth);
-            
-            for (int i=from; i<=to; i++) {
-                indices[depth] = i;
-                rangeLoop(depth+1, indices, parser, model, group);
-            }
-
-        }
-    }
-
-    /**
-     * Obtain list containing this reaction, or the reactions implied
-     * by the ranges given.
-     * 
-     * @return list of reactions
-     */
-    public List<NewReaction> getAllReactions() {
-        List<NewReaction> reactions = Lists.newArrayList();
-        
-        if (ranges.isEmpty()) {
-            calcDelta();
-            reactions.add(this);
-        } else {
-
-        }
-        
-        return reactions;
-    }
     
     /*
      * Methods for JSON object mapper

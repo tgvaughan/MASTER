@@ -16,8 +16,13 @@
  */
 package master;
 
+import beast.core.Input;
+import beast.core.Runnable;
 import beast.util.Randomizer;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import master.outputs.EnsembleSummaryOutput;
 
 /**
  * A class representing a collection of results obtained by estimating moments
@@ -28,13 +33,143 @@ import java.util.Date;
  * @author Tim Vaughan
  *
  */
-public class EnsembleSummary {
+public class EnsembleSummary extends Runnable {
+    
+    /*
+     * XML inputs:
+     */
+    
+    // Spec parameters:
+    public Input<Double> simulationTimeInput = new Input<Double>(
+            "simulationTime",
+            "The length of time to simulate.",
+            Input.Validate.REQUIRED);
+    public Input<Integer> nSamplesInput = new Input<Integer>(
+            "nSamples",
+            "Number of evenly spaced time points to sample state at.", Input.Validate.REQUIRED);
+    public Input<Integer> nTrajInput = new Input<Integer>(
+            "nTraj",
+            "Number of trajectories to generate.",
+            Input.Validate.REQUIRED);
+    public Input<Integer> seedInput = new Input<Integer>(
+            "seed",
+            "Seed for RNG.");
+    public Input<Stepper> stepperInput = new Input<Stepper>(
+            "stepper",
+            "State stepping algorithm to use.");
+    
+    public Input<Integer> verbosityInput = new Input<Integer> (
+            "verbosity", "Level of verbosity to use (0-3).", 1);
+    
+    // Model:
+    public Input<Model> modelInput = new Input<Model>("model",
+            "The specific model to simulate.");
+    
+    // Initial state:
+    public Input<InitState> initialStateInput = new Input<InitState>("initialState",
+            "Initial state of system.");
+    
+    // End conditions:
+    public Input<List<PopulationEndCondition>> endConditionsInput =
+            new Input<List<PopulationEndCondition>>("populationEndCondition",
+            "Trajectory end condition based on population sizes.",
+            new ArrayList<PopulationEndCondition>());
+    
+    // Moments groups:
+    public Input<List<MomentGroup>> momentGroupsInput = new Input<List<MomentGroup>>(
+            "momentGroup",
+            "Moment group to estimate from birth-death process.",
+            new ArrayList<master.beast.MomentGroup>());
+    
+    // Individual moments:
+    public Input<List<Moment>> momentsInput = new Input<List<Moment>>(
+            "moment",
+            "Individual moment to estimate from birth-death process.",
+            new ArrayList<master.beast.Moment>());
+    
+    
+    public Input<List<EnsembleSummaryOutput>> outputsInput = new Input<List<EnsembleSummaryOutput>>(
+            "output",
+            "Output writer used to write simulation output to disk.",
+            new ArrayList<EnsembleSummaryOutput>());
+    
 
     // Simulation specification:
     EnsembleSummarySpec spec;
     
     // Ensemble-averaged state summaries:
     StateSummary[] stateSummaries;
+    
+        public EnsembleSummary() { }
+
+    @Override
+    public void initAndValidate() throws Exception {
+
+        spec = new master.EnsembleSummarySpec();
+
+        // Incorporate model:
+        spec.setModel(modelInput.get());
+        
+        // Default to Gillespie stepper
+        if (stepperInput.get() != null)
+            spec.setStepper(stepperInput.get());
+        else
+            spec.setStepper(new GillespieStepper());
+
+        // Ensemble summaries must have finite end time and even sampling:
+        spec.setSimulationTime(simulationTimeInput.get());
+        spec.setEvenSampling(nSamplesInput.get());
+        
+        // Specify number of trajectories to generate:
+        spec.setnTraj(nTrajInput.get());
+        
+        // Assemble initial state:
+        master.PopulationState initState = new master.PopulationState();
+        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
+            initState.set(popSize.pop, popSize.size);
+        spec.setInitPopulationState(initState);
+        
+        // Incorporate any end conditions:
+        for (PopulationEndCondition endCondition : endConditionsInput.get())
+            spec.addPopSizeEndCondition(endCondition);
+
+        // Check for zero-lenght moment and moment group lists (no point to calculation!)
+        if (momentGroupsInput.get().isEmpty() && momentsInput.get().isEmpty())
+            throw new IllegalArgumentException("EnsembleSummary doesn't specfy any moments!");
+        
+        // Add moments and moment groups:
+        for (master.beast.MomentGroup momentGroup : momentGroupsInput.get())
+            spec.addMomentGroup(momentGroup.momentGroup);
+        
+        for (master.beast.Moment moment : momentsInput.get()) {
+            if (moment.name == null)
+                throw new RuntimeException("Moment doesn't specify name.");
+            
+            spec.addMoment(new master.Moment(moment.name,
+                    moment.factorial, moment.factors));
+        }
+
+        // Set seed if provided, otherwise use default BEAST seed:
+        if (seedInput.get()!=null)
+            spec.setSeed(seedInput.get());
+        
+        // Set the level of verbosity:
+        spec.setVerbosity(verbosityInput.get());
+    }
+
+    @Override
+    public void run() throws Exception {
+
+        // Generate ensemble of stochastic trajectories and estimate
+        // specified moments:
+        master.EnsembleSummary ensemble =
+                new master.EnsembleSummary(spec);
+
+        // Write outputs:
+        for (EnsembleSummaryOutput output : outputsInput.get())
+            output.write(ensemble);
+        
+    }
 
     /**
      * Assign simulation parameters and moment list to non-static fields,

@@ -31,9 +31,10 @@ import master.outputs.EnsembleOutput;
  */
 public class Ensemble extends Runnable {
     
-        /*
-     * XML inputs:
-     */
+    /*
+    * XML inputs:
+    */
+    
     // Spec parameters:
     public Input<Double> simulationTimeInput = new Input<Double>(
             "simulationTime",

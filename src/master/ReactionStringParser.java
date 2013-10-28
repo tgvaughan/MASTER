@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.beast;
+package master;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -34,12 +34,12 @@ public class ReactionStringParser {
     // Outputs of the parser.  The `node ID' lists are used to
     // assign inheritance relationships.
     public List<Integer> reactantIDs, productIDs;
-    public List<String> reactantPopNames, productPopNames;
+    public List<PopulationType> reactantPopTypes, productPopTypes;
     public List<List<Integer>> reactantLocs, productLocs;
     public List<String> variableNames;
     
-    private String string;
-    private Map<String, master.PopulationType> popTypeMap;
+    private final String string;
+    private final Map<String, PopulationType> popTypeMap;
     
     // Available tokens:
     private enum Token {
@@ -62,7 +62,6 @@ public class ReactionStringParser {
      * @param string String to parse
      * @param popTypes List of population types. Needed to interpret population
      * labels occurring in string.
-     * @param ranges List of ranges
      * 
      * @throws ParseException Tries to be a tiny bit informative when things go wrong.
      */
@@ -153,8 +152,8 @@ public class ReactionStringParser {
         
         reactantIDs = Lists.newArrayList();
         productIDs = Lists.newArrayList();
-        reactantPopNames = Lists.newArrayList();
-        productPopNames = Lists.newArrayList();
+        reactantPopTypes = Lists.newArrayList();
+        productPopTypes = Lists.newArrayList();
         reactantLocs = Lists.newArrayList();
         productLocs = Lists.newArrayList();
         variableNames = Lists.newArrayList();
@@ -222,19 +221,14 @@ public class ReactionStringParser {
             throw new ParseException("Unknown population type name '"
                     + popName + "' encountered in reaction string.", parseIdx);
         
-        master.PopulationType popType = popTypeMap.get(popName);
-        
-        // Ensure location is valid if given.
-//        if (loc.length>0 && !popTypeMap.get(popName).containsLocation(loc))
-//            throw new ParseException("Population type '" + popName
-//                    + "' does not contain specified location.", parseIdx);
+        PopulationType popType = popTypeMap.get(popName);
         
         for (int i=0; i<factor; i++) {
             if (processingReactants) {
-                reactantPopNames.add(popName);
+                reactantPopTypes.add(popType);
                 reactantLocs.add(loc);
             } else {
-                productPopNames.add(popName);
+                productPopTypes.add(popType);
                 productLocs.add(loc);
             }
         }

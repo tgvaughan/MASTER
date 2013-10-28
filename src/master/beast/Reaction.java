@@ -16,6 +16,7 @@
  */
 package master.beast;
 
+import master.ReactionStringParser;
 import master.Range;
 import beast.core.Description;
 import beast.core.Input;

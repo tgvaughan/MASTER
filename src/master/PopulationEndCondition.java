@@ -63,6 +63,10 @@ public class PopulationEndCondition extends BEASTObject {
         threshold = thresholdInput.get();
         exceed = exceedCondInput.get();
         rejection = rejectionInput.get();
+        
+        if (pops.isEmpty())
+            throw new IllegalArgumentException("Need at least one population "
+                    + "for population end condition.");
     }
     
     /**
@@ -80,6 +84,7 @@ public class PopulationEndCondition extends BEASTObject {
         this.threshold = threshold;
         this.exceed = exceedCond;
         this.rejection = rejection;
+
     }
 
     public boolean isMet(PopulationState currentState) {

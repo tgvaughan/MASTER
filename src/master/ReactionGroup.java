@@ -16,7 +16,7 @@ import org.codehaus.jackson.annotate.JsonValue;
  */
 public class ReactionGroup extends BEASTObject {
     
-    public Input<String> reactionGroupNameInput = new Input<String>("reactionGroupName",
+    public Input<String> nameInput = new Input<String>("reactionGroupName",
             "Reaction group name");
     
     public Input<Double> rateInput = new Input<Double>("rate",
@@ -27,19 +27,27 @@ public class ReactionGroup extends BEASTObject {
             "Individual reaction within group.",
             new ArrayList<Reaction>());
 
-    public Input<List<Range>> rangesInput = new Input<List<Range>>("range",
-            "Define multiple reactions for different values of a variable.",
-            new ArrayList<Range>());
-    
-    public Input<String> reactionStringInput = new Input<String>(
-            "value",
-            "String description of reaction.");
-
-    
     public String reactionGroupName;
     public List<Map<Population,Integer>> reactCounts, prodCounts, deltaCounts;
     public List<Double> rates, propensities;
     public int nReactions;
+    
+    /**
+     * Constructor without name.
+     */
+    public ReactionGroup() {
+        
+        // Ensure lists are defined:
+        reactCounts = Lists.newArrayList();
+        prodCounts = Lists.newArrayList();
+
+        rates = Lists.newArrayList();
+    }   
+    
+    @Override
+    public void initAndValidate() {
+        
+    }
     
     /**
      * Constructor with name.
@@ -55,17 +63,7 @@ public class ReactionGroup extends BEASTObject {
         this.reactionGroupName = reactionGroupName;
     }
     
-    /**
-     * Constructor without name.
-     */
-    public ReactionGroup() {
-        
-        // Ensure lists are defined:
-        reactCounts = Lists.newArrayList();
-        prodCounts = Lists.newArrayList();
 
-        rates = Lists.newArrayList();
-    }   
 
     /**
      * Define a particular schema by listing the individual

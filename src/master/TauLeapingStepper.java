@@ -83,11 +83,11 @@ public class TauLeapingStepper extends Stepper {
         double thisdt = Math.min(dt, maxStepSize);
             
         // Calculate transition rates based on starting state:
-        for (ReactionGroup reaction : model.reactionGroups)
+        for (ReactionGroup reaction : model.reactions)
             reaction.calcPropensities(state);
 
         // Update state according to these rates:
-        for (ReactionGroup reaction : model.reactionGroups)
+        for (ReactionGroup reaction : model.reactions)
             leap(reaction, state, model, thisdt);
             
         return thisdt;

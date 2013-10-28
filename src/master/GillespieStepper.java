@@ -32,7 +32,7 @@ public class GillespieStepper extends Stepper {
         
         // Calculate propensities
         double totalPropensity = 0.0;
-        for (ReactionGroup reactionGroup : model.reactionGroups) {
+        for (ReactionGroup reactionGroup : model.reactions) {
             reactionGroup.calcPropensities(state);
             for (double propensity : reactionGroup.propensities)
                 totalPropensity += propensity;
@@ -54,7 +54,7 @@ public class GillespieStepper extends Stepper {
         boolean found = false;
         ReactionGroup chosenReactionGroup = null;
         int chosenReaction = 0;
-        for (ReactionGroup reactionGroup : model.reactionGroups) {
+        for (ReactionGroup reactionGroup : model.reactions) {
                 
             for (int reaction=0; reaction<reactionGroup.propensities.size(); reaction++) {
                 u -= reactionGroup.propensities.get(reaction);

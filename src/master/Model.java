@@ -18,6 +18,7 @@ package master;
 
 import beast.core.BEASTObject;
 import beast.core.Input;
+import com.google.common.collect.Lists;
 import java.util.*;
 
 /**
@@ -39,21 +40,21 @@ public class Model extends BEASTObject {
             "Population involved in the birth-death process.",
             new ArrayList<Population>());
     
-    public Input<List<ReactionGroup>> reactionGroupsInput = new Input<List<ReactionGroup>>(
+    public Input<List<NewReactionGroup>> reactionGroupsInput = new Input<List<NewReactionGroup>>(
             "reactionGroup",
             "Group of reactions involved in the birth-death process.",
-            new ArrayList<ReactionGroup>());
+            new ArrayList<NewReactionGroup>());
     
-    public Input<List<Reaction>> reactionsInput = new Input<List<Reaction>>(
+    public Input<List<NewReaction>> reactionsInput = new Input<List<NewReaction>>(
             "reaction",
             "Individual reactions involved in the birth-death process.",
-            new ArrayList<Reaction>());
+            new ArrayList<NewReaction>());
 
     // Population types in model:
     List<PopulationType> types;
     
-    // Reaction groups:
-    List<ReactionGroup> reactionGroups;
+    // Reactions:
+    List<NewReaction> reactions;
     
     @Override
     public void initAndValidate() throws Exception {
@@ -67,11 +68,9 @@ public class Model extends BEASTObject {
             addPopulation(pop);
 
         // Add reaction groups to model:
-        for (ReactionGroup reactGroup : reactionGroupsInput.get())
-            addReactionGroup(reactGroup);
 
         // Add individual reactions to model:
-        for (Reaction react : reactionsInput.get())
+        for (NewReaction react : reactionsInput.get())
             addReaction(react);
     }
 
@@ -79,8 +78,8 @@ public class Model extends BEASTObject {
      * Model constructor.
      */
     public Model() {
-        types = new ArrayList<PopulationType>();
-        reactionGroups = new ArrayList<ReactionGroup>();
+        types = Lists.newArrayList();
+        reactions = Lists.newArrayList();
     }
 
     /**
@@ -120,25 +119,14 @@ public class Model extends BEASTObject {
         for (Population pop : pops)
             addPopulation(pop);
     }
-
-    /**
-     * Add reaction group to model.
-     *
-     * @param reactGroup Reaction to add.
-     */
-    public void addReactionGroup(ReactionGroup reactGroup) {
-        reactGroup.postSpecInit();
-        reactionGroups.add(reactGroup);
-    }
     
     /**
      * Add reaction to model.
      * 
      * @param react 
      */
-    public void addReaction(Reaction react) {
-        react.postSpecInit();
-        reactionGroups.add(react);
+    public void addReaction(NewReaction react) {
+        reactions.addAll(react.getAllReactions());
     }       
 
     /*
@@ -148,7 +136,7 @@ public class Model extends BEASTObject {
         return types;
     }
 
-    public List<ReactionGroup> getReactionGroups() {
-        return reactionGroups;
+    public List<NewReaction> getReactions() {
+        return reactions;
     }
 }

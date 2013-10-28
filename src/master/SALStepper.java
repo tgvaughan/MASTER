@@ -94,14 +94,14 @@ public class SALStepper extends Stepper {
         double thisdt = Math.min(dt, maxStepSize);
             
         // Calculate propensities based on starting state:
-        for (ReactionGroup reactionGroup : model.reactionGroups)
+        for (ReactionGroup reactionGroup : model.reactions)
             reactionGroup.calcPropensities(state);
         
         // Estimate second order corrections:
         calcCorrections(model, state);
         
         // Update state according to these rates:
-        for (ReactionGroup reaction : model.reactionGroups)
+        for (ReactionGroup reaction : model.reactions)
             leap(reaction, state, model, thisdt);
             
         return thisdt;
@@ -117,7 +117,7 @@ public class SALStepper extends Stepper {
 
         // Time derivatives of rate equations:
         derivs.clear();
-        for (ReactionGroup reactionGroup : model.getReactionGroups()) {
+        for (ReactionGroup reactionGroup : model.getReactions()) {
             for (int i=0; i<reactionGroup.nReactions; i++) {
                 for (Population pop : reactionGroup.deltaCounts.get(i).keySet()) {
                     double old = 0;
@@ -132,7 +132,7 @@ public class SALStepper extends Stepper {
         
         // Ensure that corrections map is initialised
         if (corrections.isEmpty()) {
-            for (ReactionGroup reactionGroup : model.reactionGroups) {
+            for (ReactionGroup reactionGroup : model.reactions) {
                 List<Double> corrList = Lists.newArrayList();
                 for (int reaction=0; reaction<reactionGroup.nReactions; reaction++)
                     corrList.add(0.0);
@@ -141,7 +141,7 @@ public class SALStepper extends Stepper {
         }
         
         // Incoporate propensity derivatives:
-        for (ReactionGroup reactionGroup : model.reactionGroups) {
+        for (ReactionGroup reactionGroup : model.reactions) {
             List<Double> corrList = corrections.get(reactionGroup);
             for (int reaction=0; reaction<reactionGroup.nReactions; reaction++) {
                 double thisCorr = 0.0;

@@ -30,7 +30,7 @@ import master.Ensemble;
 import master.EnsembleSpec;
 import master.EnsembleSummary;
 import master.EnsembleSummarySpec;
-import master.MomentGroup;
+import master.NewMoment;
 import master.Population;
 import master.PopulationState;
 import master.PopulationType;
@@ -215,7 +215,7 @@ public class JsonOutput extends BEASTObject implements
         // Construct an object containing the summarized
         // data.  Heirarchy is moment->[mean/std]->schema->estimate.
 
-        for (MomentGroup moment : spec.getMomentGroups()) {
+        for (NewMoment moment : spec.getMomentGroups()) {
             HashMap<String, Object> momentData = Maps.newHashMap();
 
             ArrayList<Object> meanData = new ArrayList<Object>();

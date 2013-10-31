@@ -22,7 +22,7 @@ import master.EnsembleSummarySpec;
 import master.outputs.JsonOutput;
 import master.Model;
 import master.Moment;
-import master.MomentGroup;
+import master.NewMoment;
 import master.Population;
 import master.PopulationState;
 import master.PopulationType;
@@ -219,8 +219,8 @@ public class HypermutHIV {
          */
 
         Moment mX = new Moment("X", X);
-        MomentGroup mY = new MomentGroup("Y");
-        MomentGroup mV = new MomentGroup("V");
+        NewMoment mY = new NewMoment("Y");
+        NewMoment mV = new NewMoment("V");
 
         for (int totMut = 0; totMut<=hTrunc+La3; totMut++) {
             mY.newSum();

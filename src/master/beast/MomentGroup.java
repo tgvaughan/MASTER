@@ -42,14 +42,14 @@ public class MomentGroup extends BEASTObject {
             "moment", "Individual moment in group.",
             new ArrayList<Moment>());
     
-    master.MomentGroup momentGroup;
+    master.NewMoment momentGroup;
     
     public MomentGroup() { };
     
     @Override
     public void initAndValidate() {
 
-        momentGroup = new master.MomentGroup(nameInput.get(), factorialInput.get());
+        momentGroup = new master.NewMoment(nameInput.get(), factorialInput.get());
         
         if (sumInput.get()) {
             momentGroup.newSum();

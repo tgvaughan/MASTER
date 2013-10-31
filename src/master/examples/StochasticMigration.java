@@ -4,7 +4,7 @@ import master.EnsembleSummary;
 import master.EnsembleSummarySpec;
 import master.outputs.JsonOutput;
 import master.Model;
-import master.MomentGroup;
+import master.NewMoment;
 import master.PopulationType;
 import master.ReactionGroup;
 import master.PopulationState;
@@ -59,12 +59,12 @@ public class StochasticMigration {
          */
 
         // <X>
-        MomentGroup momentX = new MomentGroup("X");
+        NewMoment momentX = new NewMoment("X");
         momentX.addSchema(subA);
         momentX.addSchema(subB);
 
         // <Xa + Xb>
-        MomentGroup momentN = new MomentGroup("N");
+        NewMoment momentN = new NewMoment("N");
         momentN.newSum();
         momentN.addSubSchemaToSum(subA);
         momentN.addSubSchemaToSum(subB);

@@ -21,7 +21,7 @@ package master;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class Moment extends MomentGroup {
+public class Moment extends NewMoment {
     
     /**
      * Create a single factorial moment.

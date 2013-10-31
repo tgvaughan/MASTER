@@ -5,7 +5,7 @@ import master.EnsembleSummarySpec;
 import master.outputs.JsonOutput;
 import master.Model;
 import master.Moment;
-import master.MomentGroup;
+import master.NewMoment;
 import master.PopulationType;
 import master.ReactionGroup;
 import master.PopulationState;
@@ -141,8 +141,8 @@ public class NeutralHIVEvolution {
          */
 
         Moment mX = new Moment("X", X);
-        MomentGroup mY = new MomentGroup("Y");
-        MomentGroup mV = new MomentGroup("V");
+        NewMoment mY = new NewMoment("Y");
+        NewMoment mV = new NewMoment("V");
 
         for (int h = 0; h<=hTrunc; h++) {
             Population Y = new Population(Ytype, h);

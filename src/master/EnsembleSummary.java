@@ -76,16 +76,16 @@ public class EnsembleSummary extends Runnable {
             new ArrayList<PopulationEndCondition>());
     
     // Moments groups:
-    public Input<List<MomentGroup>> momentGroupsInput = new Input<List<MomentGroup>>(
+    public Input<List<NewMomentGroup>> momentGroupsInput = new Input<List<NewMomentGroup>>(
             "momentGroup",
             "Moment group to estimate from birth-death process.",
-            new ArrayList<master.beast.MomentGroup>());
+            new ArrayList<NewMomentGroup>());
     
     // Individual moments:
-    public Input<List<Moment>> momentsInput = new Input<List<Moment>>(
+    public Input<List<NewMoment>> momentsInput = new Input<List<NewMoment>>(
             "moment",
             "Individual moment to estimate from birth-death process.",
-            new ArrayList<master.beast.Moment>());
+            new ArrayList<NewMoment>());
     
     
     public Input<List<EnsembleSummaryOutput>> outputsInput = new Input<List<EnsembleSummaryOutput>>(
@@ -141,12 +141,11 @@ public class EnsembleSummary extends Runnable {
         for (master.beast.MomentGroup momentGroup : momentGroupsInput.get())
             spec.addMomentGroup(momentGroup.momentGroup);
         
-        for (master.beast.Moment moment : momentsInput.get()) {
+        for (NewMoment moment : momentsInput.get()) {
             if (moment.name == null)
                 throw new RuntimeException("Moment doesn't specify name.");
             
-            spec.addMoment(new master.Moment(moment.name,
-                    moment.factorial, moment.factors));
+            spec.addMoment(moment);
         }
 
         // Set seed if provided, otherwise use default BEAST seed:

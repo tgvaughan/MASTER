@@ -21,7 +21,7 @@ function new_readlink() {
     echo $RESULT
 }
 
-ONEJAR=_MASTERJAR_
+JARFILE=_MASTERJAR_
 
 SCRIPTPATH=$(new_readlink $0)
 
@@ -31,6 +31,6 @@ else
     MASTERDIR=$(dirname "$SCRIPTPATH")
 fi
 
-java -jar "$MASTERDIR"/$ONEJAR $@
+java -jar "$MASTERDIR"/$JARFILE $@
 
 

@@ -1,0 +1,50 @@
+<!-- Simulate an inheritance tree from the SIR epidemic model -->
+
+<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+  <run spec='InheritanceTrajectory'
+       samplePopulationSizes="true"
+       verbosity="1">
+
+    <model spec='InheritanceModel' id='model'>
+      <population spec='Population' id='S' populationName='S'/>
+      <population spec='Population' id='I' populationName='I'/>
+      <population spec='Population' id='I_sample' populationName='I_sample'/>
+      <population spec='Population' id='R' populationName='R'/>
+      
+      <reaction spec='InheritanceReaction' reactionName="Infection" rate=".0135">
+		S + I -> 2I
+      </reaction>
+      <reaction spec='InheritanceReaction' reactionName="Recovery" rate="90">
+		I -> R
+      </reaction>
+      <reaction spec='InheritanceReaction' reactionName="LoseImmunity" rate="30">
+		R -> S
+      </reaction>
+
+	 <!-- sampling reaction -->
+	 <reaction spec='InheritanceReaction' reactionName="Sampling" rate="10">
+		I -> I_sample
+	 </reaction>
+
+    </model>
+    
+    <initialState spec='InitState'>
+      <populationSize spec='PopulationSize' population='@S' size='9999'/>
+      <populationSize spec='PopulationSize' population='@I_sample' size='0'/>
+      <populationSize spec='PopulationSize' population='@R' size='0'/>
+      <lineageSeed spec='Individual' population='@I'/>
+    </initialState>
+
+    <populationEndCondition spec='PopulationEndCondition' threshold="20" exceedCondition="true"
+				population='@I_sample'/>
+				
+    <lineageEndCondition spec='LineageEndCondition' population="@I" nLineages="0" isRejection="true"/>
+    
+    <inheritancePostProcessor spec="LineageFilter" reactionName="Sampling"/>
+    
+    <output spec='NewickOutput' fileName='SIRSTree_output.newick'/>
+    <output spec='NexusOutput' fileName='SIRSTree_output.nexus'/>
+    <output spec='JsonOutput' fileName='SIRSTree_output.json'/>
+  </run>
+</beast>
+

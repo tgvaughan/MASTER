@@ -11,7 +11,7 @@ fi
 PKGNAME=MASTER
 VERSION=$1
 
-FULLNAME=$PKGNAME-$VERSION
+FULLNAME=$PKGNAME.addon.v$VERSION
 rm -rf $FULLNAME $FULLNAME.zip
 mkdir $FULLNAME
 mkdir $FULLNAME/examples
@@ -20,7 +20,7 @@ mkdir $FULLNAME/doc
 
 # Create source jar file
 pushd ..
-jar cf $FULLNAME.src.jar src test
+jar cf $FULLNAME.src.jar src #test
 popd
 mv ../$FULLNAME.src.jar $FULLNAME
 
@@ -32,11 +32,14 @@ cp ../dist/$PKGNAME.jar $FULLNAME/lib
 cp ../lib/*.jar $FULLNAME/lib
 
 # Copy over documentation
+cp ../README.md $FULLNAME/README
+cp ../COPYING $FULLNAME/
+cp ../lib/LICENSE* $FULLNAME/
 
 # Create version.xml
 cat <<EOF > $FULLNAME/version.xml
 <addon name="$PKGNAME" version="$VERSION">
-    <depends on="beast2" atleast="2.0.3"/>
+    <depends on="beast2" atleast="2.1.0"/>
 </addon>
 EOF
 

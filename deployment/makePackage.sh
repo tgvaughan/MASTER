@@ -44,5 +44,7 @@ cat <<EOF > $FULLNAME/version.xml
 EOF
 
 # Create archive and clean up
-zip -r $FULLNAME.zip $FULLNAME
+cd $FULLNAME
+zip -r ../$FULLNAME.zip .
+cd ..
 rm -rf $FULLNAME

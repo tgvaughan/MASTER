@@ -74,6 +74,19 @@ public class Trajectory {
             // Integration loop:
             for (int sidx = 1; sidx<spec.nSamples; sidx++) {                
                 
+                // Report trajectory progress:
+                if (spec.verbosity>1)
+                    System.err.println("Recording sample time point "
+                            +String.valueOf(sidx+1)+" of "
+                            +String.valueOf(spec.nSamples));    
+
+
+                // Integrate to next sample time:
+                double t = 0;
+                while (t<sampleDt)
+                    t += spec.stepper.step(currentState, spec.model,
+                            sampleDt-t);
+
                 // Check for end conditions:
                 PopulationEndCondition endConditionMet = null;
                 for (PopulationEndCondition endCondition : spec.populationEndConditions) {
@@ -92,19 +105,6 @@ public class Trajectory {
                         break;
                 }
                 
-                // Report trajectory progress:
-                if (spec.verbosity>1)
-                    System.err.println("Recording sample time point "
-                            +String.valueOf(sidx+1)+" of "
-                            +String.valueOf(spec.nSamples));    
-
-
-                // Integrate to next sample time:
-                double t = 0;
-                while (t<sampleDt)
-                    t += spec.stepper.step(currentState, spec.model,
-                            sampleDt-t);
-                
                 // Sample state:
                 sampleState(currentState, sampleDt*sidx);
 
@@ -118,6 +118,10 @@ public class Trajectory {
 
             double t = 0;
             while (t<spec.simulationTime) {
+                
+                // Increment time
+                t += spec.stepper.step(currentState, spec.model,
+                        spec.simulationTime-t);
                 
                 // Check for end conditions:
                 PopulationEndCondition endConditionMet = null;
@@ -145,10 +149,6 @@ public class Trajectory {
                         break;
                     }
                 }
-
-                // Increment time
-                t += spec.stepper.step(currentState, spec.model,
-                        spec.simulationTime-t);
                 
                 // Report trajectory progress:
                 if (spec.verbosity>1)

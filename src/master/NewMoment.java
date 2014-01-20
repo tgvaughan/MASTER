@@ -23,7 +23,7 @@ import java.util.*;
 
 /**
  * Class of objects representing a group of moments to be estimated from
- * system state ensemble. Very similar to ReactionGroup class in design.
+ * system state ensemble.
  *
  * @author Tim Vaughan
  *
@@ -45,11 +45,11 @@ public class NewMoment extends BEASTObject {
     // Name of moment - used in output file:
     String name;
     
-    // Specification of moment:
-    Map<Population, Integer> popCount;
-    
     // Flag to mark whether this is a factorial moment:
     boolean factorialMoment;
+        
+    // Specification of moment:
+    Map<Population, Integer> popCount;
 
     /**
      * Default constructor. (Used by BEAST)

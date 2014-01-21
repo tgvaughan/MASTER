@@ -75,19 +75,19 @@ public class EnsembleSummary extends Runnable {
             "Trajectory end condition based on population sizes.",
             new ArrayList<PopulationEndCondition>());
     
-    // Moments groups:
-    public Input<List<NewMomentGroup>> momentGroupsInput = new Input<List<NewMomentGroup>>(
-            "momentGroup",
-            "Moment group to estimate from birth-death process.",
-            new ArrayList<NewMomentGroup>());
-    
     // Individual moments:
     public Input<List<NewMoment>> momentsInput = new Input<List<NewMoment>>(
             "moment",
             "Individual moment to estimate from birth-death process.",
             new ArrayList<NewMoment>());
     
-    
+    // Moments groups:
+    public Input<List<NewMomentGroup>> momentGroupsInput = new Input<List<NewMomentGroup>>(
+            "momentGroup",
+            "Moment group to estimate from birth-death process.",
+            new ArrayList<NewMomentGroup>());
+
+    // Outputs to write:
     public Input<List<EnsembleSummaryOutput>> outputsInput = new Input<List<EnsembleSummaryOutput>>(
             "output",
             "Output writer used to write simulation output to disk.",
@@ -138,8 +138,8 @@ public class EnsembleSummary extends Runnable {
             throw new IllegalArgumentException("EnsembleSummary doesn't specfy any moments!");
         
         // Add moments and moment groups:
-        for (master.beast.MomentGroup momentGroup : momentGroupsInput.get())
-            spec.addMomentGroup(momentGroup.momentGroup);
+        for (NewMomentGroup momentGroup : momentGroupsInput.get())
+            spec.addMomentGroup(momentGroup);
         
         for (NewMoment moment : momentsInput.get()) {
             if (moment.name == null)
@@ -195,7 +195,7 @@ public class EnsembleSummary extends Runnable {
         // Initialise state summaries:
         stateSummaries = new StateSummary[spec.nSamples];
         for (int sidx = 0; sidx<spec.nSamples; sidx++)
-            stateSummaries[sidx] = new StateSummary(spec.momentGroups);
+            stateSummaries[sidx] = new StateSummary(spec.moments, spec.momentGroups);
 
         // Loop over trajectories:
         for (int traj = 0; traj<spec.nTraj; traj++) {

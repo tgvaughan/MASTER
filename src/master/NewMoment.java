@@ -112,14 +112,6 @@ public class NewMoment extends BEASTObject {
     }
 
     /**
-     * Initialization which can only be accomplished after the moment schema is
-     * specified. Called by Simulation::addMoment().
-     */
-    public void postSpecInit() {
-
-    }
-
-    /**
      * Obtain summary for given state.
      *
      * @param state PopulationState to summarize.

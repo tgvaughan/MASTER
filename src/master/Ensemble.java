@@ -81,19 +81,7 @@ public class Ensemble extends Runnable {
             "Trajectory end condition based on population sizes.",
             new ArrayList<PopulationEndCondition>());
     
-    // Moments groups:
-    public Input<List<master.beast.MomentGroup>> momentGroupsInput = new Input<List<master.beast.MomentGroup>>(
-            "momentGroup",
-            "Moment group to estimate from birth-death process.",
-            new ArrayList<master.beast.MomentGroup>());
-    
-    // Individual moments:
-    public Input<List<master.beast.Moment>> momentsInput = new Input<List<master.beast.Moment>>(
-            "moment",
-            "Individual moment to estimate from birth-death process.",
-            new ArrayList<master.beast.Moment>());
-    
-    
+    // Outputs to write:
     public Input<List<EnsembleOutput>> outputsInput = new Input<List<EnsembleOutput>>(
             "output",
             "Output writer used to write simulation output to disk.",

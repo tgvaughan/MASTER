@@ -7,9 +7,6 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import master.beast.InheritanceReaction;
 
 /**
  * Class of objects describing the reactions which occur between the various

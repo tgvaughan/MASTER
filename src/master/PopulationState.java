@@ -119,8 +119,7 @@ public class PopulationState {
      * Alter state according to one ore more occurrences of a particular
      * reaction.
      * 
-     * @param reactionGroup
-     * @param reactionIndex
+     * @param reaction
      * @param q Number of times for reaction to fire.
      */
     public void implementReaction(Reaction reaction, double q) {

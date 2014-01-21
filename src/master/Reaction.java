@@ -89,7 +89,7 @@ public class Reaction extends BEASTObject {
         
         if (ranges.isEmpty()) {
             try {
-                setSchemaFromString(reactionName, populationTypes);
+                setSchemaFromString(reactionStringInput.get(), populationTypes);
             } catch (ParseException ex) {
                 Logger.getLogger(Reaction.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -188,33 +188,6 @@ public class Reaction extends BEASTObject {
         rangeToValues = Lists.newArrayList();
     }
     
-
-
-    /**
-     * Define a particular schema by listing the individual
-     * reactants involved in a reaction.
-     *
-     * @param pops varargs list of reactant populations.
-     */
-    public void setReactantSchema(Population ... pops) {
-
-        // Record unique sub-population counts:
-        reactCount = getPopCount(pops);
-
-    }
-    
-    /**
-     * Define a particular schema by listing the individual
-     * products involved in a reaction.
-     *
-     * @param pops varargs list of product populations.
-     */
-    public void setProductSchema(Population ... pops) {
-
-        // Record unique population counts:
-        prodCount = getPopCount(pops);
-    }
-    
     /**
      * Attempt to determine reaction schema from string representation.
      * 
@@ -225,8 +198,8 @@ public class Reaction extends BEASTObject {
     public void setSchemaFromString(String schemaString, List<PopulationType> popTypes) throws ParseException {
         
         ReactionStringParser parser = new ReactionStringParser(schemaString, popTypes);
-        setReactantSchema((Population[])parser.getReactantPops().toArray());
-        setProductSchema((Population[])parser.getReactantPops().toArray());
+        reactCount = getPopCount(parser.getReactantPops());
+        prodCount = getPopCount(parser.getReactantPops());
     }
     
     /**
@@ -245,7 +218,7 @@ public class Reaction extends BEASTObject {
      * @param pops List of populations.
      * @return Map from populations to their list multiplicity.
      */
-    private Map<Population, Integer> getPopCount(Population ... pops) {
+    private Map<Population, Integer> getPopCount(List<Population> pops) {
 
         // Condense provided schema into a map of the form
         // SubPop->count, where count is the number of times

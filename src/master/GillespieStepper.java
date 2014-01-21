@@ -26,7 +26,7 @@ import beast.util.Randomizer;
 public class GillespieStepper extends Stepper {
     
     private double eventCount = 0;
-
+    
     @Override
     public double step(PopulationState state, Model model, double maxDt) {
         

@@ -25,6 +25,11 @@ import beast.core.BEASTObject;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public abstract class Stepper extends BEASTObject {
+    
+    public Stepper() { }
+    
+    @Override
+    public void initAndValidate() { }
 
     /**
      * Use the stochastic integration algorithm to increment the state

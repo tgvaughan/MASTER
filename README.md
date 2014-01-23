@@ -25,5 +25,5 @@ LICENCE.* files included in this archive.
 
 Work on this project is made possible by generous funding from the
 [Allan Wilson Centre for Molecular Ecology and
-Epidemiology](http://www.allanwilsoncentre.ac.nz/).
+Evolution](http://www.allanwilsoncentre.ac.nz/).
 

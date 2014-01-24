@@ -27,14 +27,14 @@ import java.util.*;
 public class EnsembleSummarySpec extends EnsembleSpec {
 
     // Moments estimates to record:
-    List<NewMomentGroup> momentGroups;
-    List<NewMoment> moments;
+    List<MomentGroup> momentGroups;
+    List<Moment> moments;
 
     public EnsembleSummarySpec() {
         super();
 
         // Create empty moment list:
-        momentGroups = new ArrayList<NewMomentGroup>();
+        momentGroups = new ArrayList<MomentGroup>();
     }
 
     /**
@@ -42,7 +42,7 @@ public class EnsembleSummarySpec extends EnsembleSpec {
      *
      * @param momentGroup
      */
-    public void addMomentGroup(NewMomentGroup momentGroup) {
+    public void addMomentGroup(MomentGroup momentGroup) {
         momentGroups.add(momentGroup);
     }
 
@@ -51,7 +51,7 @@ public class EnsembleSummarySpec extends EnsembleSpec {
      *
      * @param moment
      */
-    public void addMoment(NewMoment moment) {
+    public void addMoment(Moment moment) {
         moments.add(moment);
     }
 
@@ -73,7 +73,7 @@ public class EnsembleSummarySpec extends EnsembleSpec {
     /**
      * @return List of moment groups.
      */
-    public List<NewMomentGroup> getMomentGroups() {
+    public List<MomentGroup> getMomentGroups() {
         return momentGroups;
     }
 }

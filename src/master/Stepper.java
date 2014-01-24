@@ -17,6 +17,7 @@
 package master;
 
 import beast.core.BEASTObject;
+import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * Abstract base class for algorithms which increment the system state
@@ -50,8 +51,8 @@ public abstract class Stepper extends BEASTObject {
     public abstract String getAlgorithmName();
     
     @Override
+    @JsonValue
     public String toString() {
         return getAlgorithmName();
     }
-    
 }

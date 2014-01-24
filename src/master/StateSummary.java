@@ -28,8 +28,8 @@ import java.util.*;
  */
 public class StateSummary {
 
-    Map<NewMoment, Double> mean, std, summaries;
-    Map<NewMomentGroup, double[]> groupMean, groupStd, groupSummaries;
+    Map<Moment, Double> mean, std, summaries;
+    Map<MomentGroup, double[]> groupMean, groupStd, groupSummaries;
     int sampleNum;
 
     /**
@@ -37,7 +37,7 @@ public class StateSummary {
      *
      * @param moments List of moments to use to summarize states.
      */
-    public StateSummary(List<NewMoment> moments, List<NewMomentGroup> momentGroups) {
+    public StateSummary(List<Moment> moments, List<MomentGroup> momentGroups) {
 
         mean = Maps.newHashMap();
         std = Maps.newHashMap();
@@ -47,7 +47,7 @@ public class StateSummary {
         groupStd = Maps.newHashMap();
         groupSummaries = Maps.newHashMap();
         
-        for (NewMomentGroup momentGroup : momentGroups) {
+        for (MomentGroup momentGroup : momentGroups) {
             int nElements;
             if (momentGroup.isSum())
                 nElements = 1;
@@ -68,10 +68,10 @@ public class StateSummary {
      * @param state
      */
     public void record(PopulationState state) {
-        for (NewMoment moment : mean.keySet())
+        for (Moment moment : mean.keySet())
             summaries.put(moment, moment.getSummary(state));
         
-        for (NewMomentGroup momentGroup : groupMean.keySet())
+        for (MomentGroup momentGroup : groupMean.keySet())
             momentGroup.getSummary(state, groupSummaries.get(momentGroup));
     }
 
@@ -79,13 +79,13 @@ public class StateSummary {
      * Incorporate latest summaries into mean and variance estimates.
      */
     public void accept() {
-        for (NewMoment moment : mean.keySet()) {
+        for (Moment moment : mean.keySet()) {
             double summary = summaries.get(moment);
             mean.put(moment, mean.get(moment) + summary);
             std.put(moment, std.get(moment) + summary*summary);
         }
         
-        for (NewMomentGroup momentGroup : groupMean.keySet()) {
+        for (MomentGroup momentGroup : groupMean.keySet()) {
             for (int i = 0; i < groupMean.get(momentGroup).length; i++) {
                 double summary = groupSummaries.get(momentGroup)[i];
                 groupMean.get(momentGroup)[i] += summary;
@@ -99,7 +99,7 @@ public class StateSummary {
      * Normalize the summary.
      */
     public void normalise() {
-        for (NewMoment moment : mean.keySet()) {
+        for (Moment moment : mean.keySet()) {
             double thisMean = mean.get(moment)/sampleNum;
             double thisStd = std.get(moment)/sampleNum;
             
@@ -107,7 +107,7 @@ public class StateSummary {
             mean.put(moment, thisStd);
         }
         
-        for (NewMomentGroup momentGroup : groupMean.keySet()) {
+        for (MomentGroup momentGroup : groupMean.keySet()) {
             double[] thisMean = groupMean.get(momentGroup);
             double[] thisStd = groupStd.get(momentGroup);
             for (int i = 0; i < thisMean.length; i++) {
@@ -129,28 +129,28 @@ public class StateSummary {
     /**
      * @return means for each moment group
      */
-    public Map<NewMomentGroup, double[]> getGroupMeans() {
+    public Map<MomentGroup, double[]> getGroupMeans() {
         return groupMean;
     }
     
     /**
      * @return means for each moment
      */
-    public Map<NewMoment, Double> getMeans() {
+    public Map<Moment, Double> getMeans() {
         return mean;
     }
 
     /**
      * @return Standard deviations for each moment group
      */
-    public Map<NewMomentGroup, double[]> getGroupStds() {
+    public Map<MomentGroup, double[]> getGroupStds() {
         return groupStd;
     }
     
     /**
      * @return Standard deviations for each moment
      */
-    public Map<NewMoment, Double> getStds() {
+    public Map<Moment, Double> getStds() {
         return std;
     }
 }

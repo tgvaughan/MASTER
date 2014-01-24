@@ -76,16 +76,16 @@ public class EnsembleSummary extends Runnable {
             new ArrayList<PopulationEndCondition>());
     
     // Individual moments:
-    public Input<List<NewMoment>> momentsInput = new Input<List<NewMoment>>(
+    public Input<List<Moment>> momentsInput = new Input<List<Moment>>(
             "moment",
             "Individual moment to estimate from birth-death process.",
-            new ArrayList<NewMoment>());
+            new ArrayList<Moment>());
     
     // Moments groups:
-    public Input<List<NewMomentGroup>> momentGroupsInput = new Input<List<NewMomentGroup>>(
+    public Input<List<MomentGroup>> momentGroupsInput = new Input<List<MomentGroup>>(
             "momentGroup",
             "Moment group to estimate from birth-death process.",
-            new ArrayList<NewMomentGroup>());
+            new ArrayList<MomentGroup>());
 
     // Outputs to write:
     public Input<List<EnsembleSummaryOutput>> outputsInput = new Input<List<EnsembleSummaryOutput>>(
@@ -138,10 +138,10 @@ public class EnsembleSummary extends Runnable {
             throw new IllegalArgumentException("EnsembleSummary doesn't specfy any moments!");
         
         // Add moments and moment groups:
-        for (NewMomentGroup momentGroup : momentGroupsInput.get())
+        for (MomentGroup momentGroup : momentGroupsInput.get())
             spec.addMomentGroup(momentGroup);
         
-        for (NewMoment moment : momentsInput.get()) {
+        for (Moment moment : momentsInput.get()) {
             if (moment.name == null)
                 throw new RuntimeException("Moment doesn't specify name.");
             

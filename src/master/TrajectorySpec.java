@@ -17,8 +17,10 @@
 package master;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.util.List;
-import org.codehaus.jackson.annotate.JsonIgnore;
+import java.util.Map;
+import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * Basic specification for birth-death trajectory simulations.
@@ -114,7 +116,6 @@ public class TrajectorySpec {
         this.initPopulationState = initState;
     }
 
-    @JsonIgnore
     public PopulationState getInitPopulationState() {
         return initPopulationState;
     }
@@ -218,7 +219,6 @@ public class TrajectorySpec {
      *
      * @return Sampling period.
      */
-    @JsonIgnore
     public double getSampleDt() {
         return simulationTime/(nSamples-1);
     }
@@ -228,7 +228,6 @@ public class TrajectorySpec {
      * 
      * @return verbosity
      */
-    @JsonIgnore
     public int getVerbosity() {
         return verbosity;
     }
@@ -258,5 +257,25 @@ public class TrajectorySpec {
      */
     public double getWallTime() {
         return wallTime;
+    }
+
+    /**
+     * Construct representation of specification to use in assembling
+     * summary in JSON output file.
+     * 
+     * @return Map from strings to other objects which have a JSON rep
+     */
+    @JsonValue
+    public Map<String, Object> getJsonValue() {
+        
+        Map<String, Object> jsonObject = Maps.newHashMap();
+        
+        jsonObject.put("model", getModel());
+        jsonObject.put("nSamples", getnSamples());
+        jsonObject.put("seed", getSeed());
+        jsonObject.put("simulationTime", getSimulationTime());
+        jsonObject.put("stepper", getStepper());
+        
+        return jsonObject;
     }
 }

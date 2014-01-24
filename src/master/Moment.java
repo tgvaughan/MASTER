@@ -28,7 +28,7 @@ import java.util.*;
  * @author Tim Vaughan
  *
  */
-public class NewMoment extends BEASTObject {
+public class Moment extends BEASTObject {
 
     public Input<String> nameInput = new Input<String>("momentName",
             "Name of moment. (Overridden by moment group name.)");
@@ -54,7 +54,7 @@ public class NewMoment extends BEASTObject {
     /**
      * Default constructor. (Used by BEAST)
      */
-    public NewMoment() { }
+    public Moment() { }
     
     @Override
     public void initAndValidate() {
@@ -70,7 +70,7 @@ public class NewMoment extends BEASTObject {
      * @param name Moment name to use for output.
      * @param pops
      */
-    public NewMoment(String name, Population ... pops) {
+    public Moment(String name, Population ... pops) {
         this.name = name;
         this.factorialMoment = true;
 
@@ -84,7 +84,7 @@ public class NewMoment extends BEASTObject {
      * @param factMoment True if this is a factorial moment.
      * @param pops
      */
-    public NewMoment(String name, boolean factMoment, Population ... pops) {
+    public Moment(String name, boolean factMoment, Population ... pops) {
         this.name = name;
         this.factorialMoment = factMoment;
 

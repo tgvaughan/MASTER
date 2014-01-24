@@ -19,7 +19,9 @@ package master;
 import beast.core.BEASTObject;
 import beast.core.Input;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.util.*;
+import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * Class describing a birth-death viral population genetics model. Basically a
@@ -98,32 +100,12 @@ public class Model extends BEASTObject {
     }
     
     /**
-     * Add a number of population types to model.
-     * 
-     * @param popTypes vararg array of population type objects
-     */
-    public void addPopulationTypes(PopulationType ... popTypes) {
-        for (PopulationType popType : popTypes)
-            addPopulationType(popType);
-    }
-    
-    /**
      * Add a type corresponding to given population to model.
      * 
      * @param pop 
      */
     public void addPopulation(Population pop) {
         types.add(pop.type);
-    }
-    
-    /**
-     * Add a types corresponding to given populations to model.
-     * 
-     * @param pops 
-     */
-    public void addPopulations(Population... pops) {
-        for (Population pop : pops)
-            addPopulation(pop);
     }
     
     /**
@@ -144,5 +126,22 @@ public class Model extends BEASTObject {
 
     public List<Reaction> getReactions() {
         return reactions;
+    }
+    
+    /**
+     * Construct representation of specification to use in assembling
+     * summary in JSON output file.
+     * 
+     * @return Map from strings to other objects which have a JSON rep
+     */
+    @JsonValue
+    public Map<String, Object> getJsonValue() {
+        
+        Map<String, Object> jsonObject = Maps.newHashMap();
+        
+        jsonObject.put("population types", getPopulationTypes());
+        jsonObject.put("reactions", getReactions());
+        
+        return jsonObject;
     }
 }

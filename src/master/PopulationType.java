@@ -4,8 +4,11 @@ import beast.core.BEASTObject;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.parameter.IntegerParameter;
+import com.google.common.collect.Maps;
 import java.util.Iterator;
+import java.util.Map;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * Class of objects describing distinct populations within the model. These
@@ -153,5 +156,22 @@ public class PopulationType extends BEASTObject implements Iterable<Population> 
     @Override
     public Iterator<Population> iterator() {
         return new PopulationIterator(this);
+    }
+    
+    /**
+     * Construct representation of specification to use in assembling
+     * summary in JSON output file.
+     * 
+     * @return Map from strings to other objects which have a JSON rep
+     */
+    @JsonValue
+    public Map<String, Object> getJsonValue() {
+        
+        Map<String, Object> jsonObject = Maps.newHashMap();
+        
+        jsonObject.put("name", getName());
+        jsonObject.put("dimensions", getDims());
+        
+        return jsonObject;
     }
 }

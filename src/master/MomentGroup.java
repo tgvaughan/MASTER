@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class NewMomentGroup extends BEASTObject {
+public class MomentGroup extends BEASTObject {
     
     public Input<String> nameInput = new Input<String>("momentGroupName",
             "Name of moment group. (Overrides moment name.)");
@@ -39,8 +39,8 @@ public class NewMomentGroup extends BEASTObject {
             "Whether moments in group should be added together (Default false.)",
             false);
     
-    public Input<List<NewMoment>> momentsInput = new Input<List<NewMoment>>(
-            "moment", "Individual moments.", new ArrayList<NewMoment>());
+    public Input<List<Moment>> momentsInput = new Input<List<Moment>>(
+            "moment", "Individual moments.", new ArrayList<Moment>());
 
     // Name of moment group - used in output file:
     String name;
@@ -51,7 +51,7 @@ public class NewMomentGroup extends BEASTObject {
     // Flag to mark whether product moments are to be added together
     boolean sum;
     
-    public NewMomentGroup() { };
+    public MomentGroup() { };
     
     @Override
     public void initAndValidate() {
@@ -60,7 +60,7 @@ public class NewMomentGroup extends BEASTObject {
         factorialMoments = factorialInput.get();
         sum = sumInput.get();
         
-        for (NewMoment moment : momentsInput.get()) {
+        for (Moment moment : momentsInput.get()) {
             moment.factorialMoment = factorialInput.get();
         }
         
@@ -97,7 +97,7 @@ public class NewMomentGroup extends BEASTObject {
     public void getSummary(PopulationState state, double [] summary) {
         
         if (sum) {
-            for (NewMoment moment : momentsInput.get()) {
+            for (Moment moment : momentsInput.get()) {
                 summary[0] += moment.getSummary(state);
             }
         } else {
@@ -109,7 +109,7 @@ public class NewMomentGroup extends BEASTObject {
     /**
      * @return list of moments contained in group.
      */
-    public List<NewMoment> getMoments() {
+    public List<Moment> getMoments() {
         return momentsInput.get();
     }
 }

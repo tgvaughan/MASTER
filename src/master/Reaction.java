@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * Class of objects describing the reactions which occur between the various
@@ -317,16 +318,12 @@ public class Reaction extends BEASTObject {
         return reactionName;
     }
    
-    
-
-
-
-    
     /*
      * Methods for JSON object mapper
      */
     
     @Override
+    @JsonValue
     public String toString() {
 
         // Construct reaction string

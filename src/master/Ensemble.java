@@ -145,24 +145,6 @@ public class Ensemble extends Runnable {
     @Override
     public void run() throws Exception {
 
-        // Generate stochastic trajectory:
-        master.Ensemble ensemble =
-                new master.Ensemble(spec);
-
-        // Write outputs:
-        for (EnsembleOutput output : outputsInput.get())
-            output.write(ensemble);        
-    }
-
-    /**
-     * Generate trajectory ensemble.
-     *
-     * @param spec Simulation specification.
-     */
-    public Ensemble(EnsembleSpec spec) {
-
-        this.spec = spec;
-
         // Set RNG seed unless seed<0:
         if (spec.seed>=0 && !spec.seedUsed) {
             Randomizer.setSeed(spec.seed);
@@ -191,7 +173,10 @@ public class Ensemble extends Runnable {
         
         // Record total time (in seconds) taken by calculation:
         spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
-
+        
+        // Write outputs:
+        for (EnsembleOutput output : outputsInput.get())
+            output.write(this);        
     }
 
     /**

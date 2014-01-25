@@ -1,7 +1,7 @@
 <!-- Estimate moments of the size of a population evolving under
      a stochastic logistic growth model. -->
 
-<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+<beast version='2.0' namespace='master:master.outputs:master.steppers'>
     <run spec='EnsembleSummary'
          simulationTime='20'
          nSamples='1001'

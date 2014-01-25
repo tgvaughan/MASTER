@@ -61,52 +61,14 @@ public class Moment extends BEASTObject {
         name = nameInput.get();
         factorialMoment = factorialInput.get();
         
-        setSchema((Population[])factorsInput.get().toArray());
-    }
-    
-    /**
-     * Regular Constructor.
-     *
-     * @param name Moment name to use for output.
-     * @param pops
-     */
-    public Moment(String name, Population ... pops) {
-        this.name = name;
-        this.factorialMoment = true;
-
-        setSchema(pops);
-    }
-
-    /**
-     * Alternative constructor.
-     *
-     * @param name Moment name to use for output.
-     * @param factMoment True if this is a factorial moment.
-     * @param pops
-     */
-    public Moment(String name, boolean factMoment, Population ... pops) {
-        this.name = name;
-        this.factorialMoment = factMoment;
-
-        setSchema(pops);
-    }
-
-    /**
-     * Set moment specification schema.
-     *
-     * @param pops Populations whose sizes will be multiplied together
-     * to produce moment.
-     */
-
-    public final void setSchema(Population ... pops) {
         popCount = Maps.newHashMap();
 
-        for (Population sub : pops) {
-            if (!popCount.containsKey(sub))
-                popCount.put(sub, 1);
+        for (Population pop : factorsInput.get()) {
+            if (!popCount.containsKey(pop))
+                popCount.put(pop, 1);
             else {
-                int val = popCount.get(sub);
-                popCount.put(sub, val+1);
+                int val = popCount.get(pop);
+                popCount.put(pop, val+1);
             }
         }
     }

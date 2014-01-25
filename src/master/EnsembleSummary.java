@@ -102,7 +102,7 @@ public class EnsembleSummary extends Runnable {
     // Ensemble-averaged state summaries:
     StateSummary[] stateSummaries;
     
-        public EnsembleSummary() { }
+    public EnsembleSummary() { }
 
     @Override
     public void initAndValidate() throws Exception {

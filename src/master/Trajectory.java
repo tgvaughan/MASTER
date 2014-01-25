@@ -90,6 +90,18 @@ public class Trajectory extends Runnable {
     // Simulation specification:
     private TrajectorySpec spec;
 
+    public Trajectory() { }
+    
+    /**
+     * Simulate a new trajectory with given specification.
+     * 
+     * @param spec trajectory specification
+     */
+    public Trajectory(TrajectorySpec spec) {
+        this.spec = spec;
+        
+        simulate();
+    }
     
     @Override
     public void initAndValidate() {
@@ -148,7 +160,7 @@ public class Trajectory extends Runnable {
     /**
      * Generate trajectory of birth-death process.
      */
-    public void simulate() {
+    private void simulate() {
 
         // Set seed if defined:
         if (spec.seed>=0 && !spec.seedUsed) {
@@ -267,22 +279,7 @@ public class Trajectory extends Runnable {
         spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
     }
     
-    /**
-     * Default constructor.  Creates an empty trajectory object.  Must be
-     * present to allow classes to derive from this one.
-     */
-    public Trajectory() {
-        sampledStates = Lists.newArrayList();
-        sampledTimes = Lists.newArrayList();
-    }
-    
-    /**
-     * Old constructor.
-     */
-    public Trajectory(TrajectorySpec spec) {
-        this.spec = spec;
-        simulate();
-    }
+
     
     /**
      * Retrieve trajectory simulation specification.

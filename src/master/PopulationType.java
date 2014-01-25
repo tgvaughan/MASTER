@@ -7,7 +7,6 @@ import beast.core.parameter.IntegerParameter;
 import com.google.common.collect.Maps;
 import java.util.Iterator;
 import java.util.Map;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonValue;
 
 /**
@@ -39,7 +38,7 @@ public class PopulationType extends BEASTObject implements Iterable<Population> 
         
         name = nameInput.get();
         
-        if (dimsInput.get()!=null)
+        if (dimsInput.get()==null)
             dims = new int[0];
         else {
             dims = new int[dimsInput.get().getDimension()];
@@ -134,9 +133,6 @@ public class PopulationType extends BEASTObject implements Iterable<Population> 
         return true;
     }
 
-    /*
-     * Getters for JSON object mapper
-     */
     public String getName() {
         return name;
     }
@@ -148,7 +144,6 @@ public class PopulationType extends BEASTObject implements Iterable<Population> 
     /**
      * @return true if only one deme has this population type.
      */
-    @JsonIgnore
     public boolean isScalar() {
         return dims.length == 0;
     }

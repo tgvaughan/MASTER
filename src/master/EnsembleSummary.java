@@ -16,6 +16,8 @@
  */
 package master;
 
+import master.steppers.GillespieStepper;
+import master.steppers.Stepper;
 import beast.core.Input;
 import beast.core.Runnable;
 import beast.util.Randomizer;

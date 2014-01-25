@@ -16,6 +16,7 @@
  */
 package master;
 
+import master.steppers.Stepper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.List;

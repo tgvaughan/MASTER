@@ -14,14 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master;
+package master.steppers;
 
 import beast.core.Input;
 import beast.util.Randomizer;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
-import java.util.List;
+import master.Model;
+import master.Population;
+import master.PopulationState;
+import master.Reaction;
 
 /**
  * Implementation of Sehl et al.'s "step anticipation" tau-leaping
@@ -73,7 +75,7 @@ public class SALStepper extends Stepper {
     public void leap(Reaction reaction, PopulationState state, Model model, double thisdt) {
         
         // Calculate corrected rate
-        double rho = reaction.propensity*thisdt
+        double rho = reaction.getPropensity()*thisdt
                 + 0.5*corrections.get(reaction)*thisdt*thisdt;
 
         // Draw number of reactions to fire within time tau:
@@ -93,14 +95,14 @@ public class SALStepper extends Stepper {
         double thisdt = Math.min(dt, maxStepSize);
             
         // Calculate propensities based on starting state:
-        for (Reaction reaction : model.reactions)
+        for (Reaction reaction : model.getReactions())
             reaction.calcPropensity(state);
         
         // Estimate second order corrections:
         calcCorrections(model, state);
         
         // Update state according to these rates:
-        for (Reaction reaction : model.reactions)
+        for (Reaction reaction : model.getReactions())
             leap(reaction, state, model, thisdt);
             
         return thisdt;
@@ -122,19 +124,19 @@ public class SALStepper extends Stepper {
                 if (derivs.containsKey(pop))
                     old = derivs.get(pop);
                 derivs.put(pop, old
-                        + reaction.propensity
+                        + reaction.getPropensity()
                                 *reaction.deltaCount.get(pop));
             }
         }
         
         // Ensure that corrections map is initialised
         if (corrections.isEmpty()) {
-            for (Reaction reaction : model.reactions)
+            for (Reaction reaction : model.getReactions())
                 corrections.put(reaction, 0.0);
         }
         
         // Incoporate propensity derivatives:
-        for (Reaction reaction : model.reactions) {
+        for (Reaction reaction : model.getReactions()) {
             double thisCorr = 0.0;
             for (Population pop : reaction.reactCount.keySet()) {
                 if (derivs.containsKey(pop))
@@ -162,11 +164,11 @@ public class SALStepper extends Stepper {
             return 0.0;
         
         // Short-cut if propensity is non-zero:
-        if (reaction.propensity>0.0) {
+        if (reaction.getPropensity()>0.0) {
             double sum = 0.0;
             for (int m=0; m<reaction.reactCount.get(pop); m++)
                 sum += 1.0/(state.get(pop)-m);
-            return sum*reaction.propensity;
+            return sum*reaction.getPropensity();
         }
         
         // Initialise accumulator:

@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master;
+package master.steppers;
 
 import beast.core.BEASTObject;
+import master.Model;
+import master.PopulationState;
 import org.codehaus.jackson.annotate.JsonValue;
 
 /**

@@ -14,10 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master;
+package master.steppers;
 
 import beast.core.Input;
 import beast.util.Randomizer;
+import master.Model;
+import master.PopulationState;
+import master.Reaction;
 
 /**
  * Implementation of Gillespie's tau-leaping stochastic integrator.
@@ -65,7 +68,7 @@ public class TauLeapingStepper extends Stepper {
     public void leap(Reaction reaction, PopulationState state, Model model, double thisdt) {
         
         // Draw number of reactions to fire within time tau:
-        double q = Randomizer.nextPoisson(reaction.propensity*thisdt);
+        double q = Randomizer.nextPoisson(reaction.getPropensity()*thisdt);
 
         // Implement reactions:
         state.implementReaction(reaction, q);
@@ -81,11 +84,11 @@ public class TauLeapingStepper extends Stepper {
         double thisdt = Math.min(dt, maxStepSize);
             
         // Calculate transition rates based on starting state:
-        for (Reaction reaction : model.reactions)
+        for (Reaction reaction : model.getReactions())
             reaction.calcPropensity(state);
 
         // Update state according to these rates:
-        for (Reaction reaction : model.reactions)
+        for (Reaction reaction : model.getReactions())
             leap(reaction, state, model, thisdt);
             
         return thisdt;

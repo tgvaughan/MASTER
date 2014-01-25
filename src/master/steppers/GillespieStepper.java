@@ -14,9 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master;
+package master.steppers;
 
 import beast.util.Randomizer;
+import master.Model;
+import master.PopulationState;
+import master.Reaction;
 
 /**
  * Implementation of Gillespie's foundational SSA.
@@ -32,9 +35,9 @@ public class GillespieStepper extends Stepper {
         
         // Calculate propensities
         double totalPropensity = 0.0;
-        for (Reaction reaction : model.reactions) {
+        for (Reaction reaction : model.getReactions()) {
             reaction.calcPropensity(state);
-            totalPropensity += reaction.propensity;
+            totalPropensity += reaction.getPropensity();
         }
 
         // Draw time of next reaction
@@ -52,8 +55,8 @@ public class GillespieStepper extends Stepper {
         double u = Randomizer.nextDouble()*totalPropensity;
 
         Reaction chosenReaction = null;
-        for (Reaction reaction : model.reactions) {                
-            u -= reaction.propensity;
+        for (Reaction reaction : model.getReactions()) {                
+            u -= reaction.getPropensity();
             if (u<0) { 
                 chosenReaction = reaction;
                 break;

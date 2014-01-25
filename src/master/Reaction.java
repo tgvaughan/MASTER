@@ -200,7 +200,7 @@ public class Reaction extends BEASTObject {
         
         ReactionStringParser parser = new ReactionStringParser(schemaString, popTypes);
         reactCount = getPopCount(parser.getReactantPops());
-        prodCount = getPopCount(parser.getReactantPops());
+        prodCount = getPopCount(parser.getProductPops());
     }
     
     /**
@@ -306,6 +306,15 @@ public class Reaction extends BEASTObject {
             for (int m = 0; m<reactCount.get(pop); m++)
                 propensity *= state.get(pop)-m;
         }
+    }
+    
+    /**
+     * Retrieve recently calculated propensity.
+     * 
+     * @return propensity
+     */
+    public double getPropensity() {
+        return propensity;
     }
     
     /**

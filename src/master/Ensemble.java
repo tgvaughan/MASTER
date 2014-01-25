@@ -16,6 +16,7 @@
  */
 package master;
 
+import master.steppers.Stepper;
 import beast.core.Input;
 import beast.util.Randomizer;
 import beast.core.Runnable;
@@ -106,7 +107,7 @@ public class Ensemble extends Runnable {
         if (stepperInput.get() != null)
             spec.setStepper(stepperInput.get());
         else
-            spec.setStepper(new master.GillespieStepper());
+            spec.setStepper(new master.steppers.GillespieStepper());
         
         // Default to unevenly spaced sampling times:
         if (useEvenSamplingInput.get())

@@ -139,7 +139,7 @@ public class Model extends BEASTObject {
         
         Map<String, Object> jsonObject = Maps.newHashMap();
         
-        jsonObject.put("population types", getPopulationTypes());
+        jsonObject.put("population_types", getPopulationTypes());
         jsonObject.put("reactions", getReactions());
         
         return jsonObject;

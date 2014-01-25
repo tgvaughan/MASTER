@@ -18,7 +18,7 @@ package master.inheritance;
 
 import com.google.common.collect.Lists;
 import master.Model;
-import master.Stepper;
+import master.steppers.Stepper;
 import master.TrajectorySpec;
 import java.util.List;
 

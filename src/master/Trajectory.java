@@ -16,6 +16,8 @@
  */
 package master;
 
+import master.steppers.GillespieStepper;
+import master.steppers.Stepper;
 import master.outputs.TrajectoryOutput;
 import beast.core.Input;
 import beast.core.Runnable;
@@ -100,7 +102,7 @@ public class Trajectory extends Runnable {
         if (stepperInput.get() != null)
             spec.setStepper(stepperInput.get());
         else
-            spec.setStepper(new master.GillespieStepper());
+            spec.setStepper(new master.steppers.GillespieStepper());
         
         // Default to unevenly spaced sampling times:
         if (nSamplesInput.get() != null)

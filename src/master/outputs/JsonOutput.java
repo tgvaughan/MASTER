@@ -26,10 +26,12 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import master.Ensemble;
 import master.EnsembleSpec;
 import master.EnsembleSummary;
 import master.EnsembleSummarySpec;
+import master.Moment;
 import master.MomentGroup;
 import master.Population;
 import master.PopulationState;
@@ -216,27 +218,47 @@ public class JsonOutput extends BEASTObject implements
         // data.  Heirarchy is moment->[mean/std]->schema->estimate.
 
         for (MomentGroup momentGroup : spec.getMomentGroups()) {
-            HashMap<String, Object> momentData = Maps.newHashMap();
+            Map<String, Object> momentGroupData = Maps.newHashMap();
 
-            ArrayList<Object> meanData = new ArrayList<Object>();
+            ArrayList<Object> meanData = Lists.newArrayList();
             for (int schema = 0; schema<stateSummaries[0].getGroupMeans().get(momentGroup).length; schema++) {
-                ArrayList<Double> schemaData = Lists.newArrayList();
+                List<Double> schemaData = Lists.newArrayList();
                 for (StateSummary stateSummary : stateSummaries)
                     schemaData.add(stateSummary.getGroupMeans().get(momentGroup)[schema]);
                 meanData.add(schemaData);
             }
-            momentData.put("mean", meanData);
+            momentGroupData.put("mean", meanData);
 
-            ArrayList<Object> stdData = Lists.newArrayList();
+            List<Object> stdData = Lists.newArrayList();
             for (int schema = 0; schema<stateSummaries[0].getGroupStds().get(momentGroup).length; schema++) {
-                ArrayList<Double> schemaData = Lists.newArrayList();
+                List<Double> schemaData = Lists.newArrayList();
                 for (StateSummary stateSummary : stateSummaries)
                     schemaData.add(stateSummary.getGroupStds().get(momentGroup)[schema]);
                 stdData.add(schemaData);
             }
-            momentData.put("std", stdData);
+            momentGroupData.put("std", stdData);
 
-            outputData.put(momentGroup.getName(), momentData);
+            outputData.put(momentGroup.getName(), momentGroupData);
+        }
+        
+        for (Moment moment : spec.getMoments()) {
+            Map<String, Object> momentData = Maps.newHashMap();
+            
+            List<Object> meanData = Lists.newArrayList();
+            List<Double> schemaData = Lists.newArrayList();
+            for (StateSummary stateSummary : stateSummaries)
+                schemaData.add(stateSummary.getMeans().get(moment));
+            meanData.add(schemaData);
+            momentData.put("mean", meanData);
+            
+            List<Object> stdData = Lists.newArrayList();
+            schemaData.clear();
+            for (StateSummary stateSummary : stateSummaries)
+                schemaData.add(stateSummary.getStds().get(moment));
+            stdData.add(schemaData);
+            momentData.put("std", stdData);
+            
+            outputData.put(moment.getName(), momentData);
         }
 
         // Add list of sampling times to output object:

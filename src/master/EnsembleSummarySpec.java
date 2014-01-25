@@ -16,6 +16,7 @@
  */
 package master;
 
+import com.google.common.collect.Lists;
 import java.util.*;
 
 /**
@@ -33,8 +34,9 @@ public class EnsembleSummarySpec extends EnsembleSpec {
     public EnsembleSummarySpec() {
         super();
 
-        // Create empty moment list:
-        momentGroups = new ArrayList<MomentGroup>();
+        // Create empty moment and moment group lists:
+        momentGroups = Lists.newArrayList();
+        moments = Lists.newArrayList();
     }
 
     /**
@@ -75,5 +77,12 @@ public class EnsembleSummarySpec extends EnsembleSpec {
      */
     public List<MomentGroup> getMomentGroups() {
         return momentGroups;
+    }
+    
+    /**
+     * @return List of moments.
+     */
+    public List<Moment> getMoments() {
+        return moments;
     }
 }

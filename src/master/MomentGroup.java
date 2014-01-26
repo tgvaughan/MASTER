@@ -19,6 +19,7 @@ package master;
 
 import beast.core.BEASTObject;
 import beast.core.Input;
+import beast.core.Input.Validate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ import java.util.List;
 public class MomentGroup extends BEASTObject {
     
     public Input<String> nameInput = new Input<String>("momentGroupName",
-            "Name of moment group. (Overrides moment name.)");
+            "Name of moment group. (Overrides moment name.)", Validate.REQUIRED);
     
     public Input<Boolean> factorialInput = new Input<Boolean>("factorial",
             "True causes factorial moments to be used.  (Overrides moment choice.)",

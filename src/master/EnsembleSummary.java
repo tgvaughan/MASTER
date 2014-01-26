@@ -145,7 +145,8 @@ public class EnsembleSummary extends Runnable {
         
         for (Moment moment : momentsInput.get()) {
             if (moment.name == null)
-                throw new RuntimeException("Moment doesn't specify name.");
+                throw new RuntimeException("Moment doesn't specify name"
+                        + " and is not part of a moment group.");
             
             spec.addMoment(moment);
         }

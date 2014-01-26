@@ -252,7 +252,7 @@ public class JsonOutput extends BEASTObject implements
             momentData.put("mean", meanData);
             
             List<Object> stdData = Lists.newArrayList();
-            schemaData.clear();
+            schemaData = Lists.newArrayList();
             for (StateSummary stateSummary : stateSummaries)
                 schemaData.add(stateSummary.getStds().get(moment));
             stdData.add(schemaData);

@@ -108,8 +108,10 @@ public class StateSummary {
     public void normalise() {
         for (Moment moment : mean.keySet()) {
             double thisMean = mean.get(moment)/sampleNum;
-            double thisStd = Math.sqrt(std.get(moment)/sampleNum - thisMean*thisMean);
-            
+            double thisMean2 = thisMean*thisMean;
+            double thisStd = Math.sqrt(
+                    Math.max(0.0, std.get(moment)/sampleNum - thisMean2));
+
             mean.put(moment, thisMean);
             std.put(moment, thisStd);
         }
@@ -122,13 +124,7 @@ public class StateSummary {
                 thisStd[i] /= sampleNum;
 
                 double thisMean2 = thisMean[i] * thisMean[i];
-                if (thisMean2 > thisStd[i]) {
-                    // This can happen due to rounding errors when very large
-                    // populations are involved.
-                    thisStd[i] = 0.0;
-                } else {
-                    thisStd[i] = Math.sqrt(thisStd[i] - thisMean2);
-                }
+                thisStd[i] = Math.sqrt(Math.max(0.0, thisStd[i]-thisMean2));
             }
         }
     }

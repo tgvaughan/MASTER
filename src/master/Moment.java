@@ -20,6 +20,7 @@ import beast.core.BEASTObject;
 import beast.core.Input;
 import com.google.common.collect.*;
 import java.util.*;
+import org.codehaus.jackson.annotate.JsonValue;
 
 /**
  * Class of objects representing a group of moments to be estimated from
@@ -99,5 +100,43 @@ public class Moment extends BEASTObject {
      */
     public String getName() {
         return name;
+    }
+    
+    @Override
+    @JsonValue
+    public String toString() {
+
+        // Construct reaction string
+        StringBuilder sb = new StringBuilder();
+        if (name != null)
+            sb.append(name).append(": ");
+        
+        if (!popCount.isEmpty()) {
+            boolean first = true;
+            for (Population pop : popCount.keySet()) {
+                if (!first)
+                    sb.append(" + ");
+                else
+                    first = false;
+                
+                if (popCount.get(pop)>1)
+                    sb.append(popCount.get(pop));
+                sb.append(pop.type.name);
+                if (!pop.isScalar()) {
+                    sb.append("[");
+                    int [] loc = pop.getLocation();
+                    for (int i=0; i<loc.length; i++) {
+                        if (i>0)
+                            sb.append(',');
+                        sb.append(loc[i]);
+                    }
+                    sb.append("]");
+                }
+            }
+        } else
+            sb.append("0");  // This would be weird.
+        
+        return sb.toString();
+
     }
 }

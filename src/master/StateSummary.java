@@ -111,7 +111,7 @@ public class StateSummary {
             double thisStd = Math.sqrt(std.get(moment)/sampleNum - thisMean*thisMean);
             
             mean.put(moment, thisMean);
-            mean.put(moment, thisStd);
+            std.put(moment, thisStd);
         }
         
         for (MomentGroup momentGroup : groupMean.keySet()) {

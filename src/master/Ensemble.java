@@ -204,5 +204,4 @@ public class Ensemble extends Runnable {
         return trajectories;
     }
     
-    
 }

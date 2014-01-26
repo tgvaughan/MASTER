@@ -1,7 +1,7 @@
 <!-- Estimates population size moments under a two-deme structured
      stochastic logistic growth model. -->
 
-<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+<beast version='2.0' namespace='master:master.steppers:master.outputs'>
     
   <run spec='EnsembleSummary'
        simulationTime='10'

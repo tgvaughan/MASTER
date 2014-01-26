@@ -115,12 +115,11 @@ public class Moment extends BEASTObject {
             boolean first = true;
             for (Population pop : popCount.keySet()) {
                 if (!first)
-                    sb.append(" + ");
+                    sb.append("*");
                 else
                     first = false;
                 
-                if (popCount.get(pop)>1)
-                    sb.append(popCount.get(pop));
+
                 sb.append(pop.type.name);
                 if (!pop.isScalar()) {
                     sb.append("[");
@@ -132,6 +131,8 @@ public class Moment extends BEASTObject {
                     }
                     sb.append("]");
                 }
+                if (popCount.get(pop)>1)
+                    sb.append("^").append(popCount.get(pop));
             }
         } else
             sb.append("0");  // This would be weird.

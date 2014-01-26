@@ -161,26 +161,19 @@ public class EnsembleSummary extends Runnable {
     @Override
     public void run() throws Exception {
 
-        // Generate ensemble of stochastic trajectories and estimate
-        // specified moments:
-        master.EnsembleSummary ensemble =
-                new master.EnsembleSummary(spec);
-
+        // Perform simulations.
+        simulate();
+        
         // Write outputs:
         for (EnsembleSummaryOutput output : outputsInput.get())
-            output.write(ensemble);
+            output.write(this);
         
     }
 
     /**
-     * Assign simulation parameters and moment list to non-static fields,
-     * performs the spec, recording the required summary statistics.
-     *
-     * @param spec Simulation specification.
+     * Perform simulation.
      */
-    public EnsembleSummary(EnsembleSummarySpec spec) {
-
-        this.spec = spec;
+    private void simulate () {
 
         // Set seed if defined:
         if (spec.seed>=0 && !spec.seedUsed) {

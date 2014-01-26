@@ -145,6 +145,19 @@ public class Ensemble extends Runnable {
     @Override
     public void run() throws Exception {
 
+        // Perform simulations.
+        simulate();
+        
+        // Write outputs:
+        for (EnsembleOutput output : outputsInput.get())
+            output.write(this);        
+    }
+    
+    /**
+     * Simulate ensemble trajectories.
+     */
+    private void simulate() {
+        
         // Set RNG seed unless seed<0:
         if (spec.seed>=0 && !spec.seedUsed) {
             Randomizer.setSeed(spec.seed);
@@ -173,10 +186,6 @@ public class Ensemble extends Runnable {
         
         // Record total time (in seconds) taken by calculation:
         spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
-        
-        // Write outputs:
-        for (EnsembleOutput output : outputsInput.get())
-            output.write(this);        
     }
 
     /**

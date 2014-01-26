@@ -36,6 +36,7 @@ public class StateSummary {
      * Create new state summary using a given list of moment groups.
      *
      * @param moments List of moments to use to summarize states.
+     * @param momentGroups List of moment groups to use to summarize states.
      */
     public StateSummary(List<Moment> moments, List<MomentGroup> momentGroups) {
 
@@ -46,6 +47,12 @@ public class StateSummary {
         groupMean = Maps.newHashMap();
         groupStd = Maps.newHashMap();
         groupSummaries = Maps.newHashMap();
+        
+        for (Moment moment : moments) {
+            mean.put(moment, 0.0);
+            std.put(moment, 0.0);
+        }
+            
         
         for (MomentGroup momentGroup : momentGroups) {
             int nElements;
@@ -101,7 +108,7 @@ public class StateSummary {
     public void normalise() {
         for (Moment moment : mean.keySet()) {
             double thisMean = mean.get(moment)/sampleNum;
-            double thisStd = std.get(moment)/sampleNum;
+            double thisStd = Math.sqrt(std.get(moment)/sampleNum - thisMean*thisMean);
             
             mean.put(moment, thisMean);
             mean.put(moment, thisStd);

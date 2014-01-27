@@ -16,7 +16,6 @@
  */
 package master;
 
-import master.compat.InheritanceReactionGroup;
 import master.model.Node;
 import master.endconditions.LeafCountEndCondition;
 import master.endconditions.LineageEndCondition;
@@ -34,6 +33,7 @@ import master.model.Population;
 import master.endconditions.PopulationEndCondition;
 import master.model.PopulationSize;
 import master.model.PopulationState;
+import master.model.Reaction;
 import master.outputs.InheritanceTrajectoryOutput;
 import master.postprocessors.InheritancePostProcessor;
 
@@ -146,17 +146,17 @@ public class InheritanceTrajectory extends Trajectory {
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
             initState.set(popSize.getPopulation(), popSize.getSize());
         spec.setInitPopulationState(initState);        
-        spec.setInitNodes(initialStateInput.get().initNodes);
+        spec.setInitNodes(initialStateInput.get().getInitNodes());
         
         // Incorporate any end conditions:
-        for (PopulationEndCondition endCondition : popEndConditionsInput.get())
-            spec.addPopSizeEndCondition(endCondition.endConditionObject);
+        for (PopulationEndCondition endCondition : endConditionsInput.get())
+            spec.addPopSizeEndCondition(endCondition);
         
         for (LineageEndCondition endCondition : lineageEndConditionsInput.get())
-            spec.addLineageEndCondition(endCondition.endConditionObject);
+            spec.addLineageEndCondition(endCondition);
         
         for (LeafCountEndCondition endCondition : leafCountEndConditionsInput.get())
-            spec.addLeafCountEndCondition(endCondition.endConditionObject);
+            spec.addLeafCountEndCondition(endCondition);
 
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)
@@ -170,8 +170,8 @@ public class InheritanceTrajectory extends Trajectory {
     public void run() {
         
         // Generate stochastic trajectory:
-        master.inheritance.InheritanceTrajectory itraj =
-                new master.inheritance.InheritanceTrajectory(spec);
+        master.InheritanceTrajectory itraj =
+                new master.InheritanceTrajectory(spec);
         
         // Perform any requested post-processing:
         for (InheritancePostProcessor inheritancePostProc : inheritancePostProcessorsInput.get())
@@ -286,11 +286,10 @@ public class InheritanceTrajectory extends Trajectory {
 
             // Calculate propensities
             double totalPropensity = 0.0;
-            for (InheritanceReactionGroup reactionGroup :
-                    spec.getModel().getInheritanceReactionGroups()) {
-                reactionGroup.calcPropensities(currentPopState);
-                for (double propensity : reactionGroup.propensities)
-                    totalPropensity += propensity;
+            for (Reaction reaction :
+                    spec.getModel().getReactions()) {
+                reaction.calcPropensity(currentPopState);
+                totalPropensity += reaction.getPropensity();
             }
 
             // Draw time of next reactionGroup
@@ -327,14 +326,14 @@ public class InheritanceTrajectory extends Trajectory {
             if (seedTimeExceeded) {
                 Node seedNode = inactiveLineages.get(0);
                 inactiveLineages.remove(0);
-                Node child = new Node(seedNode.population);
+                Node child = new Node(seedNode.getPopulation());
                 seedNode.addChild(child);
                 
                 if (!activeLineages.containsKey(child.getPopulation()))
                     activeLineages.put(child.getPopulation(), new ArrayList<Node>());
                 activeLineages.get(child.getPopulation()).add(child);
                 
-                currentPopState.add(seedNode.population, 1.0);                
+                currentPopState.add(seedNode.getPopulation(), 1.0);                
                 continue;
             }
             
@@ -347,34 +346,24 @@ public class InheritanceTrajectory extends Trajectory {
 
             // Choose reaction to implement
             double u = Randomizer.nextDouble()*totalPropensity;
-            boolean found = false;
-            InheritanceReactionGroup chosenReactionGroup = null;
-            int chosenReaction = 0;
-            for (InheritanceReactionGroup reactionGroup :
-                    spec.getModel().getInheritanceReactionGroups()) {
+            Reaction chosenReaction = null;
+            for (Reaction reaction : spec.getModel().getReactions()) {
 
-                for (int ridx = 0; ridx<reactionGroup.propensities.size(); ridx++) {
-                    u -= reactionGroup.propensities.get(ridx);
-                    if (u<0) {
-                        found = true;
-                        chosenReactionGroup = reactionGroup;
-                        chosenReaction = ridx;
-                        break;
-                    }
-                }
-
-                if (found)
+                u -= reaction.getPropensity();
+                if (u<0) {
+                    chosenReaction = reaction;
                     break;
+                }
             }
 
             // Select lineages involved in chosen reaction:
-            selectLineagesInvolved(chosenReactionGroup, chosenReaction);
+            selectLineagesInvolved(chosenReaction);
             
             // Implement changes to inheritance graph:
-            implementInheritanceReaction(chosenReactionGroup);
+            implementInheritanceReaction(chosenReaction);
 
             // Implement state change due to reaction:
-            currentPopState.implementReaction(chosenReactionGroup, chosenReaction, 1);
+            currentPopState.implementReaction(chosenReaction, 1);
             
             // Update event counter:
             spec.getStepper().incrementEventCount();
@@ -477,10 +466,10 @@ public class InheritanceTrajectory extends Trajectory {
      * @param chosenReaction integer index into reaction group specifying reactionGroup
      * @return Map from nodes involved to the corresponding reactant nodes.
      */
-    private void selectLineagesInvolved(InheritanceReactionGroup chosenReactionGroup, int chosenReaction) {
+    private void selectLineagesInvolved(Reaction chosenReaction) {
 
         nodesInvolved.clear();
-        for (Population reactPop : chosenReactionGroup.reactNodes.get(chosenReaction).keySet()) {
+        for (Population reactPop : chosenReaction.reactNodes.keySet()) {
             
             // Skip this population if no lineages remain:
             if (!activeLineages.containsKey(reactPop))
@@ -490,7 +479,7 @@ public class InheritanceTrajectory extends Trajectory {
             double N = currentPopState.get(reactPop);
             
             List<Node> lineages = activeLineages.get(reactPop);            
-            for (Node reactNode : chosenReactionGroup.reactNodes.get(chosenReaction).get(reactPop)) {
+            for (Node reactNode : chosenReaction.reactNodes.get(reactPop)) {
                 
                 double l = Randomizer.nextDouble()*N;
                 if (l<lineages.size()) {
@@ -520,44 +509,44 @@ public class InheritanceTrajectory extends Trajectory {
      * 
      * @param nodesInvolved map from active lineages involved to reactant nodes
      */
-    private void implementInheritanceReaction(InheritanceReactionGroup reactionGroup) {
+    private void implementInheritanceReaction(Reaction reaction) {
        
         // Attach reactionGroup graph to inheritance graph
         nextLevelNodes.clear();
         for (Node node : nodesInvolved.keySet()) {
             Node reactNode = nodesInvolved.get(node);
 
-            for (Node reactChild : reactNode.children) {
+            for (Node reactChild : reactNode.getChildren()) {
                 if (!nextLevelNodes.containsKey(reactChild))
-                    nextLevelNodes.put(reactChild, new Node(reactChild.population));
+                    nextLevelNodes.put(reactChild, new Node(reactChild.getPopulation()));
                 
                 node.addChild(nextLevelNodes.get(reactChild));
             }
             
             // Increment terminal node counter as necessary:
-            if (reactNode.children.isEmpty())
+            if (reactNode.getChildren().isEmpty())
                 nTerminalNodes += 1;
         }
         
         // Graph cleaning and activeLineages maintenance:
         for (Node node : nodesInvolved.keySet()) {
             
-            if (node.children.size()==1
-                    &&(node.population.equals(node.children.get(0).population)
-                    || node.children.get(0).parents.size()>1)) {
+            if (node.getChildren().size()==1
+                    && (node.getPopulation().equals(node.getChildren().get(0).getPopulation())
+                    || node.getChildren().get(0).getParents().size()>1)) {
                 // Node is not needed to represent a state change: delete it
                 // from the graph
 
                 // Active lineages are nodes having exactly one parent:
-                Node parent = node.parents.get(0);
-                Node child = node.children.get(0);
+                Node parent = node.getParents().get(0);
+                Node child = node.getChildren().get(0);
 
                 // Prune from graph
-                int nodeIdx = parent.children.indexOf(node);
-                parent.children.set(nodeIdx, node.children.get(0));
+                int nodeIdx = parent.getChildren().indexOf(node);
+                parent.getChildren().set(nodeIdx, node.getChildren().get(0));
 
-                nodeIdx = child.parents.indexOf(node);
-                child.parents.set(nodeIdx, parent);
+                nodeIdx = child.getParents().indexOf(node);
+                child.getParents().set(nodeIdx, parent);
             } else {
                 // Node is here to stay
                                 
@@ -565,11 +554,11 @@ public class InheritanceTrajectory extends Trajectory {
                 node.setTime(t);
                 
                 // Annotate node with reaction group
-                node.setReactionGroup(reactionGroup);
+                node.setReaction(reaction);
             }
 
             // Ensure any children are in active nodes list
-            for (Node child : node.children) {
+            for (Node child : node.getChildren()) {
                 Population pop = child.getPopulation();
                 if (!child.flagIsSet()) {
                     if (!activeLineages.containsKey(pop))
@@ -582,15 +571,15 @@ public class InheritanceTrajectory extends Trajectory {
 
         // Deal with multi-parent nodes:
         for (Node node : nextLevelNodes.values()) {
-            if (node.parents.size()>1) {
+            if (node.getParents().size()>1) {
                 node.setTime(t);
-                node.setReactionGroup(reactionGroup);
+                node.setReaction(reaction);
                 
                 activeLineages.get(node.getPopulation()).remove(node);
                 if (activeLineages.get(node.getPopulation()).isEmpty())
                     activeLineages.remove(node.getPopulation());
 
-                Node child = new Node(node.population);
+                Node child = new Node(node.getPopulation());
                 node.addChild(child);
                 
                 if (!activeLineages.containsKey(child.getPopulation()))

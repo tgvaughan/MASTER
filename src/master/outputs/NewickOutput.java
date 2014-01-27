@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.inheritance;
+package master.outputs;
 
 import master.InheritanceEnsemble;
 import master.model.Node;
@@ -26,6 +26,7 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import master.InheritanceTrajectory;
 
 /**
  * Static methods for producing "extended Newick" representations of inheritance

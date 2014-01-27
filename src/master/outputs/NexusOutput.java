@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.inheritance;
+package master.outputs;
 
 import master.InheritanceEnsemble;
 import master.model.Node;
 import java.io.PrintStream;
+import master.InheritanceTrajectory;
 
 /**
  * Class containing static methods useful for exporting tree-like graphs

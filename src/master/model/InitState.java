@@ -1,8 +1,5 @@
 package master.model;
 
-import master.model.PopulationSize;
-import master.model.MultipleIndividuals;
-import master.model.Individual;
 import beast.core.*;
 import java.util.*;
 
@@ -29,17 +26,24 @@ public class InitState extends BEASTObject {
             "Specify multiple identical lineage seeds.",
             new ArrayList<MultipleIndividuals>());
 
-    List<master.model.Node> initNodes;
+    List<Node> initNodes;
     
     public InitState() { };
 
     @Override
     public void initAndValidate() {
-        initNodes = new ArrayList<master.model.Node>();
+        initNodes = new ArrayList<Node>();
         for (Individual individual : lineageSeedsInput.get())
             initNodes.add(individual.getNode());
         
         for (MultipleIndividuals multi : multipleLineageSeedsInput.get())
             initNodes.addAll(multi.getNodes());            
+    }
+    
+    /**
+     * @return list of nodes implied by this initial state.
+     */
+    public List<Node> getInitNodes() {
+        return initNodes;
     }
 }

@@ -215,7 +215,7 @@ public class Reaction extends BEASTObject {
             reactNodeList.add(node);
         }
         
-        List<Node> prodNodeList = Lists.newArrayList();
+        prodNodes = Maps.newHashMap();
         for (int i=0; i<parser.getProductPops().size(); i++) {
             Population pop = parser.getProductPops().get(i);
             Node node = new Node(pop);

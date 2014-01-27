@@ -148,14 +148,14 @@ public class Node {
      * 
      * @param value 
      */
-    protected void setFlag(boolean value) {
+    public void setFlag(boolean value) {
         flag = value;
     }
     
     /**
      * @return State of node flag.  Flag is false by default.
      */
-    protected boolean flagIsSet() {
+    public boolean flagIsSet() {
         return flag;
     }
 

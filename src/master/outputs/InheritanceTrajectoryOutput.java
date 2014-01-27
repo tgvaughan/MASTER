@@ -23,6 +23,6 @@ package master.outputs;
  */
 public interface InheritanceTrajectoryOutput {
     
-    public void write (master.inheritance.InheritanceTrajectory inheritanceTrajectory);
+    public void write (master.InheritanceTrajectory inheritanceTrajectory);
     
 }

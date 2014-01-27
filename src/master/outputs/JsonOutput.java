@@ -41,7 +41,7 @@ import master.Trajectory;
 import master.TrajectorySpec;
 import master.InheritanceEnsemble;
 import master.InheritanceEnsembleSpec;
-import master.inheritance.InheritanceTrajectory;
+import master.InheritanceTrajectory;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**

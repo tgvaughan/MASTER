@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.inheritance;
+package master.compat;
 
 import master.model.Node;
 import com.google.common.collect.Lists;

@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.inheritance;
+package master;
 
 import beast.util.Randomizer;
 import beast.core.Runnable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import master.inheritance.InheritanceTrajectory;
 
 /**
  *

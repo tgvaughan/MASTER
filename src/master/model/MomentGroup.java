@@ -98,6 +98,7 @@ public class MomentGroup extends BEASTObject {
     public void getSummary(PopulationState state, double [] summary) {
         
         if (sum) {
+            summary[0] = 0.0;
             for (Moment moment : momentsInput.get()) {
                 summary[0] += moment.getSummary(state);
             }

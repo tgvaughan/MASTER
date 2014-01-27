@@ -1,4 +1,4 @@
-package master;
+package master.model;
 
 import master.model.PopulationSize;
 import master.model.MultipleIndividuals;

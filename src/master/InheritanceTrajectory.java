@@ -16,6 +16,8 @@
  */
 package master.inheritance;
 
+import master.compat.InheritanceReactionGroup;
+import master.InheritanceTrajectorySpec;
 import master.model.Node;
 import master.endconditions.LeafCountEndCondition;
 import master.endconditions.LineageEndCondition;
@@ -105,7 +107,7 @@ public class InheritanceTrajectory extends Trajectory {
     
     @Override
     public void initAndValidate() {
-        spec = new master.inheritance.InheritanceTrajectorySpec();
+        spec = new master.InheritanceTrajectorySpec();
                
         // Incorporate model:
         spec.setModel(modelInput.get());        

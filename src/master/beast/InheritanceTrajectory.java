@@ -16,7 +16,7 @@
  */
 package master.beast;
 
-import master.InitState;
+import master.model.InitState;
 import master.model.PopulationSize;
 import master.outputs.InheritanceTrajectoryOutput;
 import beast.core.Citation;
@@ -109,13 +109,13 @@ public class InheritanceTrajectory extends Runnable {
             new ArrayList<InheritanceTrajectoryOutput>());
     
     
-    master.inheritance.InheritanceTrajectorySpec spec;
+    master.InheritanceTrajectorySpec spec;
     
     public InheritanceTrajectory() { }
     
     @Override
     public void initAndValidate() {
-        spec = new master.inheritance.InheritanceTrajectorySpec();
+        spec = new master.InheritanceTrajectorySpec();
                
         // Incorporate model:
         spec.setModel(modelInput.get().model);        

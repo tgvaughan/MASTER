@@ -16,6 +16,7 @@
  */
 package master;
 
+import master.model.InitState;
 import master.endconditions.PopulationEndCondition;
 import master.model.MomentGroup;
 import master.model.PopulationSize;
@@ -112,7 +113,7 @@ public class EnsembleSummary extends Runnable {
     public EnsembleSummary() { }
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
 
         spec = new master.EnsembleSummarySpec();
 
@@ -142,7 +143,7 @@ public class EnsembleSummary extends Runnable {
         for (PopulationEndCondition endCondition : endConditionsInput.get())
             spec.addPopSizeEndCondition(endCondition);
 
-        // Check for zero-lenght moment and moment group lists (no point to calculation!)
+        // Check for zero-length moment and moment group lists (no point to calculation!)
         if (momentGroupsInput.get().isEmpty() && momentsInput.get().isEmpty())
             throw new IllegalArgumentException("EnsembleSummary doesn't specfy any moments!");
         
@@ -152,7 +153,7 @@ public class EnsembleSummary extends Runnable {
         
         for (Moment moment : momentsInput.get()) {
             if (moment.getName() == null)
-                throw new RuntimeException("Moment doesn't specify name"
+                throw new IllegalArgumentException("Moment doesn't specify name"
                         + " and is not part of a moment group.");
             
             spec.addMoment(moment);

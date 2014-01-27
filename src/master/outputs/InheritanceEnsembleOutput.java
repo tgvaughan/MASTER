@@ -23,6 +23,6 @@ package master.outputs;
  */
 public interface InheritanceEnsembleOutput {
     
-    public void write (master.inheritance.InheritanceEnsemble iensemble);
+    public void write (master.InheritanceEnsemble iensemble);
     
 }

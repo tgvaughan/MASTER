@@ -41,7 +41,7 @@ public class InheritanceReactionGroup extends BEASTObject {
             new ArrayList<InheritanceReaction>());
     
     // True inheritance reaction object
-    master.inheritance.InheritanceReactionGroup inheritanceReactionGroup;
+    master.compat.InheritanceReactionGroup inheritanceReactionGroup;
     
     public InheritanceReactionGroup() { };
     
@@ -51,9 +51,9 @@ public class InheritanceReactionGroup extends BEASTObject {
     public void addToModel(master.compat.InheritanceModel model) throws ParseException {
         
         if (nameInput.get()==null)
-            inheritanceReactionGroup = new master.inheritance.InheritanceReactionGroup();
+            inheritanceReactionGroup = new master.compat.InheritanceReactionGroup();
         else
-            inheritanceReactionGroup = new master.inheritance.InheritanceReactionGroup(nameInput.get());
+            inheritanceReactionGroup = new master.compat.InheritanceReactionGroup(nameInput.get());
 
         // Add reactions to reaction group:
         for (InheritanceReaction react : reactionsInput.get())

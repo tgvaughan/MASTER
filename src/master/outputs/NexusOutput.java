@@ -16,6 +16,7 @@
  */
 package master.inheritance;
 
+import master.InheritanceEnsemble;
 import master.model.Node;
 import java.io.PrintStream;
 

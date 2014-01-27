@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import master.inheritance.InheritanceReactionGroup;
+import master.compat.InheritanceReactionGroup;
 
 /**
  * Node in inheritance graph generated from birth-death model.

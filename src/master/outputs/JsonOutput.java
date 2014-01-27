@@ -39,8 +39,8 @@ import master.model.PopulationType;
 import master.model.StateSummary;
 import master.Trajectory;
 import master.TrajectorySpec;
-import master.inheritance.InheritanceEnsemble;
-import master.inheritance.InheritanceEnsembleSpec;
+import master.InheritanceEnsemble;
+import master.InheritanceEnsembleSpec;
 import master.inheritance.InheritanceTrajectory;
 import org.codehaus.jackson.map.ObjectMapper;
 

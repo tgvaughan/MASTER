@@ -19,8 +19,6 @@ package master.compat;
 import com.google.common.collect.Lists;
 import master.model.Model;
 import java.util.List;
-import master.inheritance.InheritanceReaction;
-import master.inheritance.InheritanceReactionGroup;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**

@@ -16,7 +16,7 @@
  */
 package master.beast;
 
-import master.InitState;
+import master.model.InitState;
 import master.model.PopulationSize;
 import master.outputs.InheritanceTrajectoryOutput;
 import beast.core.Citation;
@@ -99,14 +99,14 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
     public Input<Alignment> alignmentInput = new Input<Alignment>("alignment",
             "If provided, nodes are equated with taxons having the same label.");
         
-    master.inheritance.InheritanceTrajectorySpec spec;
+    master.InheritanceTrajectorySpec spec;
     
     public BeastTreeFromMaster() { }
     
     @Override
     public void initAndValidate() throws Exception {
     
-        spec = new master.inheritance.InheritanceTrajectorySpec();
+        spec = new master.InheritanceTrajectorySpec();
                
         // Incorporate model:
         spec.setModel(modelInput.get().model);        

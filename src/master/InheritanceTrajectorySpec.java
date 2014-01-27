@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.inheritance;
+package master;
 
+import master.steppers.InheritanceTrajectoryStepper;
 import master.model.Node;
 import master.endconditions.LeafCountEndCondition;
 import master.endconditions.LineageEndCondition;

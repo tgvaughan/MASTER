@@ -189,7 +189,7 @@ public class InheritanceReaction extends BEASTObject {
      */
     private void rangeLoop(int depth, int [] indices, ReactionStringParser parser,
             master.compat.InheritanceModel model,
-            master.inheritance.InheritanceReactionGroup group) throws ParseException {
+            master.compat.InheritanceReactionGroup group) throws ParseException {
         
         if (depth==indices.length) {
             
@@ -217,14 +217,14 @@ public class InheritanceReaction extends BEASTObject {
                 
             } else {
                 
-                master.inheritance.InheritanceReaction reaction;
+                master.compat.InheritanceReaction reaction;
                 if (name != null) {
                     if (reactionIndex>0)
-                        reaction = new master.inheritance.InheritanceReaction(name + reactionIndex);
+                        reaction = new master.compat.InheritanceReaction(name + reactionIndex);
                     else
-                        reaction = new master.inheritance.InheritanceReaction(name);
+                        reaction = new master.compat.InheritanceReaction(name);
                 } else
-                    reaction = new master.inheritance.InheritanceReaction();
+                    reaction = new master.compat.InheritanceReaction();
                 
                 reaction.addInheritanceReactantSchema(reactants.toArray(new master.model.Node[0]));
                 reaction.addInheritanceProductSchema(products.toArray(new master.model.Node[0]));
@@ -293,7 +293,7 @@ public class InheritanceReaction extends BEASTObject {
      * @throws ParseException 
      */
     public void addToGroup(master.compat.InheritanceModel model,
-            master.inheritance.InheritanceReactionGroup group, Double groupRate) throws ParseException {
+            master.compat.InheritanceReactionGroup group, Double groupRate) throws ParseException {
         
         if (groupRate != null) {
           rate = groupRate;

@@ -16,6 +16,7 @@
  */
 package master;
 
+import master.model.InitState;
 import master.endconditions.PopulationEndCondition;
 import master.model.PopulationSize;
 import master.model.Model;

@@ -112,6 +112,7 @@ public class Moment extends BEASTObject {
             sb.append(name).append(": ");
         
         if (!popCount.isEmpty()) {
+            sb.append("E(");
             boolean first = true;
             for (Population pop : popCount.keySet()) {
                 if (!first)
@@ -134,8 +135,9 @@ public class Moment extends BEASTObject {
                 if (popCount.get(pop)>1)
                     sb.append("^").append(popCount.get(pop));
             }
+            sb.append(")");
         } else
-            sb.append("0");  // This would be weird.
+            sb.append("1");  // This would be weird.
         
         return sb.toString();
 

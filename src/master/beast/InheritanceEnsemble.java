@@ -16,7 +16,7 @@
  */
 package master.beast;
 
-import master.InitState;
+import master.model.InitState;
 import master.model.PopulationSize;
 import master.outputs.InheritanceEnsembleOutput;
 import beast.core.Citation;
@@ -113,13 +113,13 @@ public class InheritanceEnsemble extends Runnable {
             new ArrayList<InheritanceEnsembleOutput>());
     
     
-    master.inheritance.InheritanceEnsembleSpec spec;
+    master.InheritanceEnsembleSpec spec;
     
     public InheritanceEnsemble() { }
     
     @Override
     public void initAndValidate() {
-        spec = new master.inheritance.InheritanceEnsembleSpec();
+        spec = new master.InheritanceEnsembleSpec();
                
         // Incorporate model:
         spec.setModel(modelInput.get().model);        
@@ -178,8 +178,8 @@ public class InheritanceEnsemble extends Runnable {
     public void run() {
         
         // Generate stochastic trajectory:
-        master.inheritance.InheritanceEnsemble iensemble =
-                new master.inheritance.InheritanceEnsemble(spec);
+        master.InheritanceEnsemble iensemble =
+                new master.InheritanceEnsemble(spec);
         
         // Perform any requested post-processing:
         for (master.inheritance.InheritanceTrajectory itraj : iensemble.getTrajectories())

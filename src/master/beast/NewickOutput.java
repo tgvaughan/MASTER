@@ -26,7 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import master.inheritance.InheritanceEnsemble;
+import master.InheritanceEnsemble;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>

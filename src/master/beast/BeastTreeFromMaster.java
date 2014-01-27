@@ -17,7 +17,7 @@
 package master.beast;
 
 import master.InitState;
-import master.PopulationSize;
+import master.model.PopulationSize;
 import master.outputs.InheritanceTrajectoryOutput;
 import beast.core.Citation;
 import beast.core.Description;
@@ -121,7 +121,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
             spec.setSimulationTime(Double.POSITIVE_INFINITY);
         
         // Assemble initial state:
-        master.PopulationState initState = new master.PopulationState();
+        master.model.PopulationState initState = new master.model.PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
             initState.set(popSize.pop, popSize.size);
         spec.setInitPopulationState(initState);        

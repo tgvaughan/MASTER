@@ -1,7 +1,7 @@
 <!-- Generate a simulated compartmental population size history using
      an implementation of the SIR epidemiological model. -->
 
-<beast version='2.0' namespace='master:master.steppers:master.outputs'>
+<beast version='2.0' namespace='master:master.model:master.steppers:master.outputs'>
   <run spec='Trajectory'
        simulationTime='50'>
 

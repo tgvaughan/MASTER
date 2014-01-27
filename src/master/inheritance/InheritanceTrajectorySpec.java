@@ -16,8 +16,11 @@
  */
 package master.inheritance;
 
+import master.endconditions.LeafCountEndCondition;
+import master.endconditions.LineageEndCondition;
+import master.compat.InheritanceModel;
 import com.google.common.collect.Lists;
-import master.Model;
+import master.model.Model;
 import master.steppers.Stepper;
 import master.TrajectorySpec;
 import java.util.List;

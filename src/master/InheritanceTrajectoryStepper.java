@@ -16,8 +16,8 @@
  */
 package master.inheritance;
 
-import master.Model;
-import master.PopulationState;
+import master.model.Model;
+import master.model.PopulationState;
 import master.steppers.Stepper;
 
 /**

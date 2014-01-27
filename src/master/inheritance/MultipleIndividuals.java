@@ -23,7 +23,7 @@ import beast.core.Input.Validate;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
-import master.Population;
+import master.model.Population;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>

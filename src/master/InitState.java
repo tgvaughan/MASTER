@@ -1,5 +1,6 @@
 package master;
 
+import master.model.PopulationSize;
 import master.inheritance.MultipleIndividuals;
 import master.inheritance.Individual;
 import beast.core.*;

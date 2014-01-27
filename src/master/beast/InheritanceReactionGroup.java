@@ -48,7 +48,7 @@ public class InheritanceReactionGroup extends BEASTObject {
     @Override
     public void initAndValidate() { };
     
-    public void addToModel(master.inheritance.InheritanceModel model) throws ParseException {
+    public void addToModel(master.compat.InheritanceModel model) throws ParseException {
         
         if (nameInput.get()==null)
             inheritanceReactionGroup = new master.inheritance.InheritanceReactionGroup();

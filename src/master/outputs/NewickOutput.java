@@ -18,7 +18,7 @@ package master.inheritance;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import master.Population;
+import master.model.Population;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.List;

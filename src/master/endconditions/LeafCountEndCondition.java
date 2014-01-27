@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.inheritance;
+package master.endconditions;
 
 import java.util.List;
 import java.util.Map;
-import master.Population;
+import master.inheritance.Node;
+import master.model.Population;
 
 /**
  * A condition which is met when the simulation has generated a given

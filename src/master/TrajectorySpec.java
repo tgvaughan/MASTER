@@ -16,6 +16,9 @@
  */
 package master;
 
+import master.endconditions.PopulationEndCondition;
+import master.model.Model;
+import master.model.PopulationState;
 import master.steppers.Stepper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

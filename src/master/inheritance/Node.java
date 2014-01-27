@@ -16,7 +16,7 @@
  */
 package master.inheritance;
 
-import master.Population;
+import master.model.Population;
 
 import java.util.ArrayList;
 import java.util.HashMap;

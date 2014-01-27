@@ -16,6 +16,9 @@
  */
 package master;
 
+import master.endconditions.PopulationEndCondition;
+import master.model.MomentGroup;
+import master.model.Moment;
 import com.google.common.collect.Lists;
 import java.util.*;
 

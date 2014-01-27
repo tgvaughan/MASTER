@@ -16,6 +16,10 @@
  */
 package master;
 
+import master.endconditions.PopulationEndCondition;
+import master.model.PopulationSize;
+import master.model.Model;
+import master.model.PopulationState;
 import master.steppers.GillespieStepper;
 import master.steppers.Stepper;
 import master.outputs.TrajectoryOutput;
@@ -131,7 +135,7 @@ public class Trajectory extends Runnable {
         // Assemble initial state:
         PopulationState initState = new PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            initState.set(popSize.pop, popSize.size);
+            initState.set(popSize.getPopulation(), popSize.getSize());
         spec.setInitPopulationState(initState);
         
         // Incorporate any end conditions:

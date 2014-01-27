@@ -16,8 +16,8 @@
  */
 package master.beast;
 
-import master.ReactionStringParser;
-import master.Range;
+import master.model.ReactionStringParser;
+import master.model.Range;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
@@ -135,7 +135,7 @@ public class InheritanceReaction extends BEASTObject {
     private List<master.inheritance.Node> getEntityList(int [] indices,
             List<String> popNames, List<List<Integer>> locs,
             List<String> reactionVariableNames,
-            List<master.PopulationType> popTypes) throws ParseException {
+            List<master.model.PopulationType> popTypes) throws ParseException {
         
         List<master.inheritance.Node> entities = Lists.newArrayList();
 
@@ -144,8 +144,8 @@ public class InheritanceReaction extends BEASTObject {
             String popTypeName = popNames.get(entityIdx);
             List<Integer> loc = locs.get(entityIdx);
             
-            master.PopulationType popType = null;
-            for (master.PopulationType thisPopType : popTypes)
+            master.model.PopulationType popType = null;
+            for (master.model.PopulationType thisPopType : popTypes)
                 if (thisPopType.getName().equals(popTypeName))
                     popType = thisPopType;
             
@@ -168,7 +168,7 @@ public class InheritanceReaction extends BEASTObject {
                 }
             }
                 
-            master.Population population = new master.Population(popType, flattenedLoc);
+            master.model.Population population = new master.model.Population(popType, flattenedLoc);
             entities.add(new master.inheritance.Node(population));
         }
             
@@ -188,7 +188,7 @@ public class InheritanceReaction extends BEASTObject {
      * @throws ParseException 
      */
     private void rangeLoop(int depth, int [] indices, ReactionStringParser parser,
-            master.inheritance.InheritanceModel model,
+            master.compat.InheritanceModel model,
             master.inheritance.InheritanceReactionGroup group) throws ParseException {
         
         if (depth==indices.length) {
@@ -264,7 +264,7 @@ public class InheritanceReaction extends BEASTObject {
      * @param model Inheritance model
      * @throws ParseException 
      */
-    public void addToModel(master.inheritance.InheritanceModel model) throws ParseException {
+    public void addToModel(master.compat.InheritanceModel model) throws ParseException {
         
         if (rate<0) {
             throw new RuntimeException("No reaction rate specified.");
@@ -292,7 +292,7 @@ public class InheritanceReaction extends BEASTObject {
      * @param groupRate Optional fixed group rate for reactions.
      * @throws ParseException 
      */
-    public void addToGroup(master.inheritance.InheritanceModel model,
+    public void addToGroup(master.compat.InheritanceModel model,
             master.inheritance.InheritanceReactionGroup group, Double groupRate) throws ParseException {
         
         if (groupRate != null) {

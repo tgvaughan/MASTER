@@ -16,6 +16,9 @@
  */
 package master;
 
+import master.endconditions.PopulationEndCondition;
+import master.model.PopulationSize;
+import master.model.Model;
 import master.steppers.Stepper;
 import beast.core.Input;
 import beast.util.Randomizer;
@@ -125,9 +128,9 @@ public class Ensemble extends Runnable {
         spec.setnTraj(nTrajInput.get());
         
         // Assemble initial state:
-        master.PopulationState initState = new master.PopulationState();
+        master.model.PopulationState initState = new master.model.PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            initState.set(popSize.pop, popSize.size);
+            initState.set(popSize.getPopulation(), popSize.getSize());
         spec.setInitPopulationState(initState);
                         
         // Incorporate any end conditions:

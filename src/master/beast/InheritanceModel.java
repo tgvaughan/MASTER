@@ -48,14 +48,14 @@ public class InheritanceModel extends BEASTObject {
             "Specifies an individual inheritance reaction.",
             new ArrayList<InheritanceReaction>());
     
-    master.inheritance.InheritanceModel model;
+    master.compat.InheritanceModel model;
     
     public InheritanceModel() { }
     
     @Override
     public void initAndValidate() throws Exception {
 
-        model = new master.inheritance.InheritanceModel();
+        model = new master.compat.InheritanceModel();
 
         // Add population types to model:
         for (PopulationType popType : populationTypesInput.get())

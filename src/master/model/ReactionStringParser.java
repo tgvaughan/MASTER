@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master;
+package master.model;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -51,7 +51,7 @@ public class ReactionStringParser {
     // This parser abuses fields by treating them as global variables:
     private int parseIdx;    
     private int nextNodeID;
-    private Map<master.PopulationType,Integer> seenTypeIDs;
+    private Map<master.model.PopulationType,Integer> seenTypeIDs;
     
     /**
      * Assemble lists of reactant and product nodes by parsing a
@@ -70,7 +70,7 @@ public class ReactionStringParser {
         
         // Construct map from pop type names to pop type objects.
         popTypeMap = Maps.newHashMap();
-        for (master.PopulationType popType : popTypes)
+        for (master.model.PopulationType popType : popTypes)
             popTypeMap.put(popType.getName(), popType);
         
         doLex();

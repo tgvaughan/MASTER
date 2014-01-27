@@ -1,4 +1,4 @@
-package master;
+package master.model;
 
 import beast.core.BEASTObject;
 import beast.core.Input;

@@ -17,6 +17,7 @@
 package master.inheritance;
 
 import beast.util.Randomizer;
+import beast.core.Runnable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -84,4 +85,5 @@ public class InheritanceEnsemble {
     public List<InheritanceTrajectory> getTrajectories() {
         return itrajectories;
     }
+
 }

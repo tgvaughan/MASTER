@@ -20,10 +20,10 @@ import beast.core.Input;
 import beast.util.Randomizer;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
-import master.Model;
-import master.Population;
-import master.PopulationState;
-import master.Reaction;
+import master.model.Model;
+import master.model.Population;
+import master.model.PopulationState;
+import master.model.Reaction;
 
 /**
  * Implementation of Sehl et al.'s "step anticipation" tau-leaping

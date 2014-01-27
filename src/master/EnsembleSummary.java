@@ -16,6 +16,13 @@
  */
 package master;
 
+import master.endconditions.PopulationEndCondition;
+import master.model.MomentGroup;
+import master.model.PopulationSize;
+import master.model.Model;
+import master.model.StateSummary;
+import master.model.Moment;
+import master.model.PopulationState;
 import master.steppers.GillespieStepper;
 import master.steppers.Stepper;
 import beast.core.Input;
@@ -126,9 +133,9 @@ public class EnsembleSummary extends Runnable {
         spec.setnTraj(nTrajInput.get());
         
         // Assemble initial state:
-        master.PopulationState initState = new master.PopulationState();
+        master.model.PopulationState initState = new master.model.PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            initState.set(popSize.pop, popSize.size);
+            initState.set(popSize.getPopulation(), popSize.getSize());
         spec.setInitPopulationState(initState);
         
         // Incorporate any end conditions:
@@ -144,7 +151,7 @@ public class EnsembleSummary extends Runnable {
             spec.addMomentGroup(momentGroup);
         
         for (Moment moment : momentsInput.get()) {
-            if (moment.name == null)
+            if (moment.getName() == null)
                 throw new RuntimeException("Moment doesn't specify name"
                         + " and is not part of a moment group.");
             

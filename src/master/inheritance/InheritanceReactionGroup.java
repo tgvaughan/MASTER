@@ -19,8 +19,8 @@ package master.inheritance;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.ArrayList;
-import master.Population;
-import master.ReactionGroup;
+import master.model.Population;
+import master.model.ReactionGroup;
 import java.util.List;
 import java.util.Map;
 

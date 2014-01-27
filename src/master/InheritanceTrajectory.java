@@ -16,6 +16,9 @@
  */
 package master.inheritance;
 
+import master.endconditions.LeafCountEndCondition;
+import master.endconditions.LineageEndCondition;
+import beast.core.Input;
 import beast.util.Randomizer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -25,9 +28,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import master.Population;
-import master.PopulationEndCondition;
-import master.PopulationState;
+import master.model.Population;
+import master.endconditions.PopulationEndCondition;
+import master.model.PopulationState;
 import master.Trajectory;
 
 /**
@@ -36,7 +39,7 @@ import master.Trajectory;
  * are trajectories which additionally contain a time graph reprepresenting
  * the lineages decending from members of a subset of the population.
  *
- * <p>Things to keep in mind if you're reading this code:
+ * <p>Things to keep in mind when reading this code:
  *
  * <ol> <li>Construction of the graph proceeds in a top-down fashion beginning
  * with the earliest nodes (provided in spec.initNodes), implementing changes as
@@ -52,7 +55,36 @@ import master.Trajectory;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class InheritanceTrajectory extends Trajectory {
-
+    
+    public Input<Boolean> samplePopulationSizesInput = new Input<Boolean>(
+            "samplePopulationSizes",
+            "Sample population sizes together with inheritance graph. (Default false.)",
+            false);
+    
+    public Input<Boolean> sampleAtNodesOnlyInput = new Input<Boolean>(
+            "sampleAtNodesOnly",
+            "Sample population sizes only at graph node times. (Default false.)",
+            false);
+    
+    // Lineage end conditions:
+    public Input<List<LineageEndCondition>> lineageEndConditionsInput = new Input<List<LineageEndCondition>>(
+            "lineageEndCondition",
+            "Trajectory end condition based on remaining lineages.",
+            new ArrayList<LineageEndCondition>());
+    
+    // Post-processors:
+    public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
+            new Input<List<InheritancePostProcessor>>(
+            "inheritancePostProcessor",
+            "Post processor for inheritance graph.",
+            new ArrayList<InheritancePostProcessor>());
+    
+    // Outputs:
+    public Input<List<InheritanceTrajectoryOutput>> outputsInput
+            = new Input<List<InheritanceTrajectoryOutput>>("output",
+            "Output writer used to write results of simulation to disk.",
+            new ArrayList<InheritanceTrajectoryOutput>());
+    
     // List of nodes present at the start of the simulation
     public List<Node> startNodes;
     
@@ -68,8 +100,79 @@ public class InheritanceTrajectory extends Trajectory {
     private int sidx;
     private int nTerminalNodes;
     
+      public InheritanceTrajectory() { }
+    
+    @Override
+    public void initAndValidate() {
+        spec = new master.inheritance.InheritanceTrajectorySpec();
+               
+        // Incorporate model:
+        spec.setModel(modelInput.get());        
+        
+        // Set population size options:
+        if (samplePopulationSizesInput.get()) {
+            if (nSamplesInput.get()>=2)
+                spec.setEvenSampling(nSamplesInput.get());
+            else
+                spec.setUnevenSampling(sampleAtNodesOnlyInput.get());
+        }
+        
+        // Set maximum simulation time:
+        if (simulationTimeInput.get() != null)
+            spec.setSimulationTime(simulationTimeInput.get());
+        else {
+            if (popEndConditionsInput.get() == null
+                    && lineageEndConditionsInput.get() == null
+                    && leafCountEndConditionsInput.get() == null) {
+                throw new IllegalArgumentException("Must specify either a final simulation "
+                        + "time or one or more end conditions.");
+            } else
+                spec.setSimulationTime(Double.POSITIVE_INFINITY);
+        }
+        
+        // Assemble initial state:
+        master.model.PopulationState initState = new master.model.PopulationState();
+        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
+            initState.set(popSize.pop, popSize.size);
+        spec.setInitPopulationState(initState);        
+        spec.setInitNodes(initialStateInput.get().initNodes);
+        
+        // Incorporate any end conditions:
+        for (PopulationEndCondition endCondition : popEndConditionsInput.get())
+            spec.addPopSizeEndCondition(endCondition.endConditionObject);
+        
+        for (LineageEndCondition endCondition : lineageEndConditionsInput.get())
+            spec.addLineageEndCondition(endCondition.endConditionObject);
+        
+        for (LeafCountEndCondition endCondition : leafCountEndConditionsInput.get())
+            spec.addLeafCountEndCondition(endCondition.endConditionObject);
+
+        // Set seed if provided, otherwise use default BEAST seed:
+        if (seedInput.get()!=null)
+            spec.setSeed(seedInput.get());
+        
+        // Set the level of verbosity:
+        spec.setVerbosity(verbosityInput.get());
+    }
+    
+    @Override
+    public void run() {
+        
+        // Generate stochastic trajectory:
+        master.inheritance.InheritanceTrajectory itraj =
+                new master.inheritance.InheritanceTrajectory(spec);
+        
+        // Perform any requested post-processing:
+        for (InheritancePostProcessor inheritancePostProc : inheritancePostProcessorsInput.get())
+            inheritancePostProc.process(itraj);
+
+        // Write outputs:
+        for (InheritanceTrajectoryOutput output : outputsInput.get())
+            output.write(itraj);
+    }
+    
     /**
-     * Build an inheritance graph corrsponding to a set of lineages embedded
+     * Build an inheritance graph corresponding to a set of lineages embedded
      * within populations evolving under a birth-death process.
      *
      * @param spec Inheritance trajectory simulation specification.

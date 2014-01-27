@@ -41,7 +41,7 @@ public class LineageEndCondition extends BEASTObject {
             "Whether this end condition should cause a rejection. (Default false.)",
             false);
 
-    public master.inheritance.LineageEndCondition endConditionObject;
+    public master.endconditions.LineageEndCondition endConditionObject;
     
     public LineageEndCondition() { }
     
@@ -49,12 +49,12 @@ public class LineageEndCondition extends BEASTObject {
     public void initAndValidate() {
         
         if (populationInput.get() != null) {
-            endConditionObject = new master.inheritance.LineageEndCondition(
+            endConditionObject = new master.endconditions.LineageEndCondition(
                     populationInput.get().pop,
                     nLineagesInput.get(),
                     isRejectionInput.get());
         } else {
-            endConditionObject = new master.inheritance.LineageEndCondition(
+            endConditionObject = new master.endconditions.LineageEndCondition(
                     nLineagesInput.get(),
                     isRejectionInput.get());
         }

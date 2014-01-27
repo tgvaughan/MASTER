@@ -17,9 +17,9 @@
 package master.steppers;
 
 import beast.util.Randomizer;
-import master.Model;
-import master.PopulationState;
-import master.Reaction;
+import master.model.Model;
+import master.model.PopulationState;
+import master.model.Reaction;
 
 /**
  * Implementation of Gillespie's foundational SSA.

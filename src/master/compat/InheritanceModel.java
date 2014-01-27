@@ -14,11 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.inheritance;
+package master.compat;
 
 import com.google.common.collect.Lists;
-import master.Model;
+import master.model.Model;
 import java.util.List;
+import master.inheritance.InheritanceReaction;
+import master.inheritance.InheritanceReactionGroup;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**

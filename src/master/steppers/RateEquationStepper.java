@@ -14,10 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master;
+package master.steppers;
 
 import master.steppers.Stepper;
 import beast.core.Input;
+import master.model.Model;
+import master.model.PopulationState;
+import master.model.Reaction;
 
 /**
  * Deterministic rate equation stepper.  Currently uses an implicit Runge-Kutta method.
@@ -63,21 +66,21 @@ public class RateEquationStepper extends Stepper {
             
         PopulationState statePrime = state.getCopy();
         for (int i=0; i<maxIter; i++) {
-            for (Reaction reaction : model.reactions)
+            for (Reaction reaction : model.getReactions())
                 reaction.calcPropensity(statePrime);
             
             if (i>0)
                 statePrime = state.getCopy();
             
-            for (Reaction reaction : model.reactions) {
+            for (Reaction reaction : model.getReactions()) {
                 statePrime.implementReaction(reaction,
-                        reaction.propensity*0.5*thisdt);
+                        reaction.getPropensity()*0.5*thisdt);
             }
         }
         
-        for (Reaction reaction : model.reactions) {
+        for (Reaction reaction : model.getReactions()) {
             reaction.calcPropensity(statePrime);
-            state.implementReaction(reaction, reaction.propensity*thisdt);
+            state.implementReaction(reaction, reaction.getPropensity()*thisdt);
         }
         
         return thisdt;

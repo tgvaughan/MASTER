@@ -2,7 +2,7 @@
      the basic model of within-host virus dynamics, conditioning on
      chronic infection. -->
 
-<beast version='2.0' namespace='master:master.steppers:master.outputs'>
+<beast version='2.0' namespace='master:master.model:master.endconditions:master.steppers:master.outputs'>
   <run spec='EnsembleSummary'
        nSamples="1001"
        nTraj="1000"

@@ -1,4 +1,4 @@
-package master.inheritance;
+package master.postprocessors;
 
 import beast.util.Randomizer;
 import java.util.ArrayList;

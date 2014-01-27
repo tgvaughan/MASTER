@@ -1,4 +1,4 @@
-package master;
+package master.model;
 
 import beast.core.*;
 
@@ -33,5 +33,19 @@ public class PopulationSize extends BEASTObject {
     public void initAndValidate() throws Exception {
         pop = populationInput.get();
         size = sizeInput.get();
+    }
+    
+    /**
+     * @return Associated population object.
+     */
+    public Population getPopulation() {
+        return pop;
+    }
+    
+    /**
+     * @return Population size.
+     */
+    public double getSize() {
+        return size;
     }
 }

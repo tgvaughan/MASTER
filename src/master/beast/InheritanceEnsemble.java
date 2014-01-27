@@ -17,7 +17,7 @@
 package master.beast;
 
 import master.InitState;
-import master.PopulationSize;
+import master.model.PopulationSize;
 import master.outputs.InheritanceEnsembleOutput;
 import beast.core.Citation;
 import beast.core.Description;
@@ -31,7 +31,7 @@ import java.util.List;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Simulates a single trajectory under a stochastic birth-death"
-        + " model, keeping track of lineages decendent form a chosen set"
+        + " model, keeping track of lineages that descend from a chosen set"
         + " of individuals.")
 @Citation("Tim Vaughan and Alexei Drummond, 'A Stochastic Simulator of "
         + "Birth–Death Master Equations with Application to Phylodynamics'. "
@@ -149,7 +149,7 @@ public class InheritanceEnsemble extends Runnable {
         spec.setnTraj(nTrajInput.get());        
         
         // Assemble initial state:
-        master.PopulationState initState = new master.PopulationState();
+        master.model.PopulationState initState = new master.model.PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
             initState.set(popSize.pop, popSize.size);
         spec.setInitPopulationState(initState);        

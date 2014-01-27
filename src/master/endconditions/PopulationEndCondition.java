@@ -14,8 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master;
+package master.endconditions;
 
+import master.model.Population;
+import master.model.PopulationState;
 import beast.core.BEASTObject;
 import beast.core.Input;
 import com.google.common.collect.Lists;

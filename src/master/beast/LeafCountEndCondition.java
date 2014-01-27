@@ -41,14 +41,14 @@ public class LeafCountEndCondition extends BEASTObject {
             "Whether this end condition should cause a rejection. (Default false.)",
             false);
     
-    public master.inheritance.LeafCountEndCondition endConditionObject;
+    public master.endconditions.LeafCountEndCondition endConditionObject;
     
     public LeafCountEndCondition() { }
     
     @Override
     public void initAndValidate() {
         
-        endConditionObject = new master.inheritance.LeafCountEndCondition(
+        endConditionObject = new master.endconditions.LeafCountEndCondition(
                 nLeavesInput.get(),
                 includeExtantInput.get(),
                 isRejectionInput.get());

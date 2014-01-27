@@ -35,6 +35,7 @@ public class Reaction extends BEASTObject {
 
     public String reactionName;
     public Map<Population,Integer> reactCount, prodCount, deltaCount;
+    public Map<Population, List<Node>> reactNodes, prodNodes;
     public double rate = -1.0;
     public double propensity;
     
@@ -94,7 +95,6 @@ public class Reaction extends BEASTObject {
             } catch (ParseException ex) {
                 Logger.getLogger(Reaction.class.getName()).log(Level.SEVERE, null, ex);
             }
-            calcDelta();
             reactions.add(this);
         } else {
             int [] indices = new int[ranges.size()];
@@ -124,7 +124,7 @@ public class Reaction extends BEASTObject {
         if (depth==indices.length) {
             
             // Make required replacements in reaction schema string
-            String schemaString = reactionStringInput.get();
+            String schemaString = reactionStringInput.get().replaceAll("  *", "");
             for (int rangeIdx = 0; rangeIdx < ranges.size(); rangeIdx++) {
                 String var = rangeVariableNames.get(rangeIdx);
                 int val = indices[rangeIdx];
@@ -199,81 +199,52 @@ public class Reaction extends BEASTObject {
     public void setSchemaFromString(String schemaString, List<PopulationType> popTypes) throws ParseException {
         
         ReactionStringParser parser = new ReactionStringParser(schemaString, popTypes);
-        reactCount = getPopCount(parser.getReactantPops());
-        prodCount = getPopCount(parser.getProductPops());
-    }
-    
-    /**
-     * Add range.  Causes multiple reactions to be added to model.
-     * 
-     * @param range Range object.
-     */
-    public void addRange(Range range) {
-        ranges.add(range);
-    }
-    
-    /**
-     * Internal method which takes a list of populations and constructs
-     * a map from the populations to their multiplicity in the list.
-     * 
-     * @param pops List of populations.
-     * @return Map from populations to their list multiplicity.
-     */
-    private Map<Population, Integer> getPopCount(List<Population> pops) {
-
-        // Condense provided schema into a map of the form
-        // SubPop->count, where count is the number of times
-        // that specific offset appears as a reactant/product in this schema.
-        Map<Population, Integer> popCount = Maps.newHashMap();
         
-        for (Population pop : pops) {   
+        // Assemble node representation of reaction
+        
+        reactNodes = Maps.newHashMap();
+        List<Node> reactNodeList = Lists.newArrayList();
+        for (int i=0; i<parser.getReactantPops().size(); i++) {
+            Population pop = parser.getReactantPops().get(i);
+            Node node = new Node(pop);
             
-            if (!popCount.containsKey(pop))
-                popCount.put(pop, 1);
-            else {
-                int val = popCount.get(pop);
-                popCount.put(pop, val+1);
+            if (!reactNodes.containsKey(pop))
+                reactNodes.put(pop, new ArrayList<Node>());
+
+            reactNodes.get(pop).add(node);
+            reactNodeList.add(node);
+        }
+        
+        List<Node> prodNodeList = Lists.newArrayList();
+        for (int i=0; i<parser.getProductPops().size(); i++) {
+            Population pop = parser.getProductPops().get(i);
+            Node node = new Node(pop);
+            
+            if (!prodNodes.containsKey(pop))
+                prodNodes.put(pop, new ArrayList<Node>());
+            
+            prodNodes.get(pop).add(node);
+            
+            int nodeId = parser.getProductIDs().get(i);
+            for (int ip=0; ip<parser.getReactantIDs().size(); ip++) {
+                if (parser.getReactantIDs().get(ip)==nodeId) {
+                    Node parent = reactNodeList.get(ip);
+                    parent.addChild(node);
+                }
             }
         }
-
-        return popCount;
-    }
-
-    /**
-     * Adds rate of specific reaction.
-     *
-     * @param rate
-     */
-    public void setRate(double rate) {
-        this.rate = rate;
-    }
-    
-
-    /**
-     * Perform that part of the initialization process which can only be
-     * completed once the reaction schema is in place.
-     *
-     * Also performs validation of the specified schema.
-     */
-    public void postSpecInit() {
-
-        // Perform sanity check on schema:
-        if (reactCount == null || prodCount == null || rate < 0.0)
-            throw new IllegalArgumentException("Inconsistent number of schemas and/or rates.");
-
-        // Pre-calculate reaction-induced changes to sub-population sizes:
-        calcDelta();
-
-    }
-    
-    /**
-     * Pre-calculate reaction-induced changes to population sizes.
-     *
-     * Determines the difference between each reactant and product
-     * schema defined in reactCounts and prodCounts.
-     */
-    private void calcDelta() {
-
+        
+        // Calculate individual population counts for non-inheritance
+        // trajectory code
+        
+        reactCount = Maps.newHashMap();
+        for (Population pop : reactNodes.keySet())
+            reactCount.put(pop, reactNodes.get(pop).size());
+        
+        prodCount = Maps.newHashMap();
+        for (Population pop : prodNodes.keySet())
+            prodCount.put(pop, prodNodes.get(pop).size());
+        
         // Loosely, calculate deltas=prodLocSchema-reactLocSchema.
 
         deltaCount = Maps.newHashMap();
@@ -292,6 +263,15 @@ public class Reaction extends BEASTObject {
         }
     }
 
+    /**
+     * Adds rate of specific reaction.
+     *
+     * @param rate
+     */
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
+    
     /**
      * Calculate instantaneous reaction rates (propensities) for a given system
      * state.

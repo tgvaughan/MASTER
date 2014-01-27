@@ -24,7 +24,6 @@ import master.compat.InheritanceModel;
 import com.google.common.collect.Lists;
 import master.model.Model;
 import master.steppers.Stepper;
-import master.TrajectorySpec;
 import java.util.List;
 
 /**
@@ -120,6 +119,15 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
      */
     public void setInitNodes(List<Node> initNodes) {
         this.initNodes = initNodes;
+    }
+    
+    /**
+     * Obtain list of nodes whose lineages the simulation will follow.
+     * 
+     * @return List of initial nodes
+     */
+    public List<Node> getInitNodes() {
+        return initNodes;
     }
     
     /**

@@ -63,11 +63,11 @@ public class Model extends BEASTObject {
 
         // Add population types to model:
         for (PopulationType popType : populationTypesInput.get())
-            addPopulationType(popType);
+            types.add(popType);
         
         // Add population types corresponding to individual populations to model:
         for (Population pop : populationsInput.get())
-            addPopulation(pop);
+            types.add(pop.type);
 
         // Add reaction groups to model:
         for (ReactionGroup reactGroup: reactionGroupsInput.get()) {
@@ -89,33 +89,6 @@ public class Model extends BEASTObject {
         types = Lists.newArrayList();
         reactions = Lists.newArrayList();
     }
-
-    /**
-     * Add population type to model.
-     *
-     * @param popType Population type to add.
-     */
-    public void addPopulationType(PopulationType popType) {
-        types.add(popType);
-    }
-    
-    /**
-     * Add a type corresponding to given population to model.
-     * 
-     * @param pop 
-     */
-    public void addPopulation(Population pop) {
-        types.add(pop.type);
-    }
-    
-    /**
-     * Add reaction to model.
-     * 
-     * @param react 
-     */
-    public void addReaction(Reaction react) {
-        reactions.add(react);
-    }       
 
     /*
      * Getters:

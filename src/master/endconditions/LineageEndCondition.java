@@ -19,6 +19,7 @@ package master.endconditions;
 import master.model.Population;
 import java.util.List;
 import java.util.Map;
+import master.model.Node;
 
 /**
  * A condition which is met when the simulation includes a specific

@@ -14,10 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.inheritance;
+package master;
 
 import master.compat.InheritanceReactionGroup;
-import master.InheritanceTrajectorySpec;
 import master.model.Node;
 import master.endconditions.LeafCountEndCondition;
 import master.endconditions.LineageEndCondition;
@@ -33,14 +32,16 @@ import java.util.List;
 import java.util.Map;
 import master.model.Population;
 import master.endconditions.PopulationEndCondition;
+import master.model.PopulationSize;
 import master.model.PopulationState;
-import master.Trajectory;
+import master.outputs.InheritanceTrajectoryOutput;
+import master.postprocessors.InheritancePostProcessor;
 
 /**
  * A class representing a stochastic inheritance trajectory generated under
  * a particular stochastic population dynamics model. Inheritance trajectories
- * are trajectories which additionally contain a time graph reprepresenting
- * the lineages decending from members of a subset of the population.
+ * are trajectories which additionally contain a time graph representing
+ * the lineages descending from members of a subset of the population.
  *
  * <p>Things to keep in mind when reading this code:
  *
@@ -74,6 +75,13 @@ public class InheritanceTrajectory extends Trajectory {
             "lineageEndCondition",
             "Trajectory end condition based on remaining lineages.",
             new ArrayList<LineageEndCondition>());
+    
+        
+    // Leaf count end conditions:
+    public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput = new Input<List<LeafCountEndCondition>>(
+            "leafCountEndCondition",
+            "Trajectory end condition based on number of terminal nodes generated.",
+            new ArrayList<LeafCountEndCondition>());
     
     // Post-processors:
     public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
@@ -124,7 +132,7 @@ public class InheritanceTrajectory extends Trajectory {
         if (simulationTimeInput.get() != null)
             spec.setSimulationTime(simulationTimeInput.get());
         else {
-            if (popEndConditionsInput.get() == null
+            if (endConditionsInput.get() == null
                     && lineageEndConditionsInput.get() == null
                     && leafCountEndConditionsInput.get() == null) {
                 throw new IllegalArgumentException("Must specify either a final simulation "
@@ -136,7 +144,7 @@ public class InheritanceTrajectory extends Trajectory {
         // Assemble initial state:
         master.model.PopulationState initState = new master.model.PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            initState.set(popSize.pop, popSize.size);
+            initState.set(popSize.getPopulation(), popSize.getSize());
         spec.setInitPopulationState(initState);        
         spec.setInitNodes(initialStateInput.get().initNodes);
         

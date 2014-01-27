@@ -18,6 +18,8 @@ package master.postprocessors;
 
 import java.util.ArrayList;
 import java.util.List;
+import master.InheritanceTrajectory;
+import master.model.Node;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -96,8 +98,8 @@ public class FilterLineages {
                     break;
                     
                 case BY_REACTNAME:
-                    if ((node.getReactionGroup() != null && node.getReactionGroup().getName().equals(name))
-                            || (node.getReactionGroup() == null && name.equals("NONE")))
+                    if ((node.getReaction() != null && node.getReaction().getName().equals(name))
+                            || (node.getReaction() == null && name.equals("NONE")))
                         mark(node, reverseTime, markAnnotation);
                     else
                         if (leavesOnly) {
@@ -108,8 +110,8 @@ public class FilterLineages {
                     break;
                     
                 case BY_REACTNAME_DISCARD:
-                    if (!((node.getReactionGroup() != null && node.getReactionGroup().getName().equals(name))
-                            || (node.getReactionGroup() == null && name.equals("NONE"))))
+                    if (!((node.getReaction() != null && node.getReaction().getName().equals(name))
+                            || (node.getReaction() == null && name.equals("NONE"))))
                         mark(node, reverseTime, markAnnotation);
                     else
                         if (leavesOnly) {
@@ -241,10 +243,10 @@ public class FilterLineages {
     private static void unPinSingletons(Node node, boolean reverseTime, String markAnnotation) {
 
         if (node.getAttributeNames().contains("__pinned__"))
-            node.attributes.remove("__pinned__");
+            node.removeAttribute("__pinned__");
         
         if (node.getAttributeNames().contains(markAnnotation))
-            node.attributes.remove(markAnnotation);
+            node.removeAttribute(markAnnotation);
 
         for (Node child : getNext(node, reverseTime))
             unPinSingletons(child, reverseTime, markAnnotation);
@@ -262,7 +264,7 @@ public class FilterLineages {
         List<Node> prevNodes = getPrev(node, reverseTime);
         
         if (nextNodes.size() == 1 && prevNodes.size() == 1
-                && !node.attributes.containsKey("__pinned__")) {
+                && !node.getAttributeNames().contains("__pinned__")) {
             Node parent = prevNodes.get(0);
             Node child = nextNodes.get(0);
             

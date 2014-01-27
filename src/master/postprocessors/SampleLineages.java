@@ -3,6 +3,8 @@ package master.postprocessors;
 import beast.util.Randomizer;
 import java.util.ArrayList;
 import java.util.List;
+import master.InheritanceTrajectory;
+import master.model.Node;
 
 /**
  * @author Alexei Drummond
@@ -21,7 +23,7 @@ public class SampleLineages {
      * @param itraj Inheritance trajectory object
      * @param samplingTime Time at which sampling will occur
      * @param nSamples Number of lineages to sample
-     * @param markOnly If true, sampled lineages are only marked not pruned.
+     * @param markAnnotation
      * @param reverseTime If true, times increases in the opposite direction
      * to the Markov process which generated the graph.
      */

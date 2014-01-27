@@ -16,14 +16,11 @@
  */
 package master.model;
 
-import master.model.Population;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import master.compat.InheritanceReactionGroup;
 
 /**
  * Node in inheritance graph generated from birth-death model.
@@ -47,8 +44,8 @@ public class Node {
     // Attributes for node annotation:
     Map<String, Object> attributes;
 
-    // Reaction group (if any) associated with this node.
-    InheritanceReactionGroup reactionGroup;
+    // Reaction (if any) associated with this node.
+    Reaction reaction;
 
     // Unique name for this node:
     String name;
@@ -67,7 +64,7 @@ public class Node {
         this.population = population;
         this.time = time;
 
-        reactionGroup = null;
+        reaction = null;
         name = null;
     }
 
@@ -80,7 +77,7 @@ public class Node {
         this.population = population;
         this.time = -1;
 
-        reactionGroup = null;
+        reaction = null;
         name = null;
     }
 
@@ -109,6 +106,16 @@ public class Node {
             attributes = new HashMap<String, Object>();
         }
         attributes.put(name, value);
+    }
+    
+    /**
+     * Remove named attribute from this node.
+     * 
+     * @param name 
+     */
+    public void removeAttribute(String name) {
+        if (attributes.keySet().contains(name))
+            attributes.remove(name);
     }
 
     /**
@@ -179,10 +186,10 @@ public class Node {
      * Associate a reaction group with this node.  Used as an annotation in the
      * NEXUS output format.
      *
-     * @param reactionGroup
+     * @param reaction
      */
-    public void setReactionGroup(InheritanceReactionGroup reactionGroup) {
-        this.reactionGroup = reactionGroup;
+    public void setReaction(Reaction reaction) {
+        this.reaction = reaction;
     }
 
     /**
@@ -213,8 +220,8 @@ public class Node {
         return this.children;
     }
 
-    public InheritanceReactionGroup getReactionGroup() {
-        return this.reactionGroup;
+    public Reaction getReaction() {
+        return this.reaction;
     }
 
     public String getName() {

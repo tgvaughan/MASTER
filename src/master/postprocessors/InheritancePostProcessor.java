@@ -23,6 +23,6 @@ package master.postprocessors;
  */
 public interface InheritancePostProcessor {
     
-    public void process(master.inheritance.InheritanceTrajectory inheritanceTrajectory);
+    public void process(master.InheritanceTrajectory inheritanceTrajectory);
     
 }

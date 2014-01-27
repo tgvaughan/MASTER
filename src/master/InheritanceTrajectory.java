@@ -16,6 +16,7 @@
  */
 package master.inheritance;
 
+import master.model.Node;
 import master.endconditions.LeafCountEndCondition;
 import master.endconditions.LineageEndCondition;
 import beast.core.Input;

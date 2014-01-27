@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.inheritance;
+package master.model;
 
+import master.model.Node;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
@@ -56,7 +57,7 @@ public class Individual extends BEASTObject {
     @Override
     public void initAndValidate() {
         
-        node = new master.inheritance.Node(populationInput.get(), timeInput.get());
+        node = new master.model.Node(populationInput.get(), timeInput.get());
         if (labelInput.get() != null)
             node.setName(labelInput.get());
         

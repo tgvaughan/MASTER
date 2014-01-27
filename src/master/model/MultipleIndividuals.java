@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.inheritance;
+package master.model;
 
+import master.model.Node;
 import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Input;
@@ -52,7 +53,7 @@ public class MultipleIndividuals extends BEASTObject {
     public void initAndValidate() {
         nodes = Lists.newArrayList();
         for (int i=0; i<nCopiesInput.get(); i++)
-            nodes.add(new master.inheritance.Node(populationInput.get(), timeInput.get()));
+            nodes.add(new master.model.Node(populationInput.get(), timeInput.get()));
     }
 
     /**

@@ -16,6 +16,8 @@
  */
 package master.inheritance;
 
+import master.model.Node;
+
 /**
  * An InheritanceReaction is a special InheritanceReactionGroup specifying
  * only a single reaction.

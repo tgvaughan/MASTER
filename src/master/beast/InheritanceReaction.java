@@ -132,12 +132,12 @@ public class InheritanceReaction extends BEASTObject {
      * @return list of nodes
      * @throws ParseException 
      */
-    private List<master.inheritance.Node> getEntityList(int [] indices,
+    private List<master.model.Node> getEntityList(int [] indices,
             List<String> popNames, List<List<Integer>> locs,
             List<String> reactionVariableNames,
             List<master.model.PopulationType> popTypes) throws ParseException {
         
-        List<master.inheritance.Node> entities = Lists.newArrayList();
+        List<master.model.Node> entities = Lists.newArrayList();
 
         for (int entityIdx=0; entityIdx<popNames.size(); entityIdx++) {
             // Substitute variable names for values:
@@ -169,7 +169,7 @@ public class InheritanceReaction extends BEASTObject {
             }
                 
             master.model.Population population = new master.model.Population(popType, flattenedLoc);
-            entities.add(new master.inheritance.Node(population));
+            entities.add(new master.model.Node(population));
         }
             
         return entities;
@@ -193,10 +193,10 @@ public class InheritanceReaction extends BEASTObject {
         
         if (depth==indices.length) {
             
-            List<master.inheritance.Node> reactants = getEntityList(indices,
+            List<master.model.Node> reactants = getEntityList(indices,
                     parser.reactantPopNames, parser.reactantLocs,
                     parser.variableNames, model.getPopulationTypes());
-            List<master.inheritance.Node> products = getEntityList(indices,
+            List<master.model.Node> products = getEntityList(indices,
                     parser.productPopNames, parser.productLocs,
                     parser.variableNames, model.getPopulationTypes());
             
@@ -211,8 +211,8 @@ public class InheritanceReaction extends BEASTObject {
 
             if (group != null) {
                 
-                group.addInheritanceReactantSchema(reactants.toArray(new master.inheritance.Node[0]));
-                group.addInheritanceProductSchema(products.toArray(new master.inheritance.Node[0]));
+                group.addInheritanceReactantSchema(reactants.toArray(new master.model.Node[0]));
+                group.addInheritanceProductSchema(products.toArray(new master.model.Node[0]));
                 group.addRate(rate);
                 
             } else {
@@ -226,8 +226,8 @@ public class InheritanceReaction extends BEASTObject {
                 } else
                     reaction = new master.inheritance.InheritanceReaction();
                 
-                reaction.addInheritanceReactantSchema(reactants.toArray(new master.inheritance.Node[0]));
-                reaction.addInheritanceProductSchema(products.toArray(new master.inheritance.Node[0]));
+                reaction.addInheritanceReactantSchema(reactants.toArray(new master.model.Node[0]));
+                reaction.addInheritanceProductSchema(products.toArray(new master.model.Node[0]));
                 reaction.setRate(rate);
                 model.addInheritanceReaction(reaction);
                 

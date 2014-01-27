@@ -16,6 +16,7 @@
  */
 package master.inheritance;
 
+import master.model.Node;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import master.model.Population;

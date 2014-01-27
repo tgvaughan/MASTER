@@ -172,14 +172,14 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
 
         boolean reverseTime = reverseTimeInput.get();
         
-        Map<master.inheritance.Node,String> leafLabels;
-        List<master.inheritance.Node> rootNodes, leafNodes;
+        Map<master.model.Node,String> leafLabels;
+        List<master.model.Node> rootNodes, leafNodes;
         
         
         // Identify root and leaf nodes
         // (Use the "child" of the root node to account for the fact that
         // master always generates trees having an explicit end node.)
-        master.inheritance.Node masterRoot;
+        master.model.Node masterRoot;
         if (reverseTime) {
             rootNodes = findEndNodes(itraj);
             masterRoot = rootNodes.get(0).getParents().get(0);
@@ -199,7 +199,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         double largestHeightDiff = 0.0;
         double youngestLeafTime = 0.0;
         int label = 1;
-        for (master.inheritance.Node leaf : leafNodes) {
+        for (master.model.Node leaf : leafNodes) {
             if (leaf.getName() == null)
                 leafLabels.put(leaf, String.valueOf(label++));
             else
@@ -235,10 +235,10 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      * @param graph
      * @return Set containing leaf nodes.
      */
-    private List<master.inheritance.Node> findEndNodes(master.inheritance.InheritanceTrajectory graph) {
-        List<master.inheritance.Node> endNodes = Lists.newArrayList();
+    private List<master.model.Node> findEndNodes(master.inheritance.InheritanceTrajectory graph) {
+        List<master.model.Node> endNodes = Lists.newArrayList();
         
-        for (master.inheritance.Node startNode : graph.startNodes)
+        for (master.model.Node startNode : graph.startNodes)
             findEndNodesOnSubGraph(startNode, endNodes);
         
         return endNodes;
@@ -250,8 +250,8 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      * @param node Current node in traversal.
      * @param endNodes Set of leaf nodes already found.
      */
-    private void findEndNodesOnSubGraph(master.inheritance.Node node,
-            List<master.inheritance.Node> endNodes) {
+    private void findEndNodesOnSubGraph(master.model.Node node,
+            List<master.model.Node> endNodes) {
         
         if (node.getChildren().isEmpty()) {
             if (!endNodes.contains(node))
@@ -259,7 +259,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
             return;
         }
         
-        for (master.inheritance.Node child : node.getChildren())
+        for (master.model.Node child : node.getChildren())
             findEndNodesOnSubGraph(child, endNodes);
     }
     
@@ -273,12 +273,12 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      * @param leafLabels 
      * @return 
      */
-    private void assembleSubtree(master.inheritance.Node masterNode,
+    private void assembleSubtree(master.model.Node masterNode,
             beast.evolution.tree.Node beastNode, double timeOffset,
-            Map<master.inheritance.Node,String> leafLabels) {
+            Map<master.model.Node,String> leafLabels) {
         
         // Deal with potential time reversal:
-        List<master.inheritance.Node> masterChildren;
+        List<master.model.Node> masterChildren;
         if (reverseTimeInput.get())
             masterChildren = masterNode.getParents();
         else
@@ -294,7 +294,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         beastNode.setHeight(Math.abs(masterNode.getTime()-timeOffset));
         
         // Add children:
-        for (master.inheritance.Node masterChild : masterChildren) {
+        for (master.model.Node masterChild : masterChildren) {
             beast.evolution.tree.Node beastChild = new beast.evolution.tree.Node();
             assembleSubtree(masterChild, beastChild, timeOffset, leafLabels);
             beastNode.addChild(beastChild);
@@ -313,10 +313,10 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      * @param masterNode
      * @param beastNode 
      */
-    private void annotateNode(master.inheritance.Node masterNode,
+    private void annotateNode(master.model.Node masterNode,
             beast.evolution.tree.Node beastNode) {
         
-        master.inheritance.Node annotationNode;
+        master.model.Node annotationNode;
         if (reverseTimeInput.get()) {
             annotationNode = masterNode.getChildren().get(0);
         } else {

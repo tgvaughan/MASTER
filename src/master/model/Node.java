@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.inheritance;
+package master.model;
 
 import master.model.Population;
 
@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import master.inheritance.InheritanceReactionGroup;
 
 /**
  * Node in inheritance graph generated from birth-death model.

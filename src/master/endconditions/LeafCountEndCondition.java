@@ -18,7 +18,7 @@ package master.endconditions;
 
 import java.util.List;
 import java.util.Map;
-import master.inheritance.Node;
+import master.model.Node;
 import master.model.Population;
 
 /**

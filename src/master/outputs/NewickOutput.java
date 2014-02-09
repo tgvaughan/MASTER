@@ -55,6 +55,7 @@ public class NewickOutput {
      * @param reverseTime True causes the graph to be read in the direction
      * from the latest nodes to the earliest.  Useful for coalescent trees.
      * @param collapseSingleChildNodes 
+     * @param pstream 
      */
     public NewickOutput(InheritanceTrajectory graph, boolean reverseTime,
             boolean collapseSingleChildNodes, PrintStream pstream) {
@@ -301,7 +302,7 @@ public class NewickOutput {
         if (iensemble.getSpec().getVerbosity()>0)
             System.out.println("Writing Newick output...");
 
-        for (InheritanceTrajectory itrajectory : iensemble.itrajectories) {
+        for (InheritanceTrajectory itrajectory : iensemble.getTrajectories()) {
             new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes, pstream);
             pstream.println();
         }

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.beast;
+package master;
 
 import master.model.InitState;
 import master.model.PopulationSize;
@@ -31,6 +31,10 @@ import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import master.endconditions.LineageEndCondition;
+import master.endconditions.PopulationEndCondition;
+import master.model.Model;
+import master.postprocessors.InheritancePostProcessor;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -55,7 +59,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
             "verbosity", "Level of verbosity to use (0-3).", 1);
     
     // Model:
-    public Input<InheritanceModel> modelInput = new Input<InheritanceModel>("model",
+    public Input<Model> modelInput = new Input<Model>("model",
             "The specific model to simulate.", Input.Validate.REQUIRED);
     
     // Initial state:
@@ -109,7 +113,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         spec = new master.InheritanceTrajectorySpec();
                
         // Incorporate model:
-        spec.setModel(modelInput.get().model);        
+        spec.setModel(modelInput.get());        
         
         // No need to sample population sizes here:
         spec.setNoSampling();
@@ -123,16 +127,16 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         // Assemble initial state:
         master.model.PopulationState initState = new master.model.PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            initState.set(popSize.pop, popSize.size);
+            initState.set(popSize.getPopulation(), popSize.getSize());
         spec.setInitPopulationState(initState);        
-        spec.setInitNodes(initialStateInput.get().initNodes);
+        spec.setInitNodes(initialStateInput.get().getInitNodes());
         
         // Incorporate any end conditions:
         for (PopulationEndCondition endCondition : popEndConditionsInput.get())
-            spec.addPopSizeEndCondition(endCondition.endConditionObject);
+            spec.addPopSizeEndCondition(endCondition);
         
         for (LineageEndCondition endCondition : lineageEndConditionsInput.get())
-            spec.addLineageEndCondition(endCondition.endConditionObject);
+            spec.addLineageEndCondition(endCondition);
 
         // BEAST controls seed here:
         spec.setSeed(-1);
@@ -141,8 +145,8 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         spec.setVerbosity(verbosityInput.get());
         
         // Generate stochastic trajectory:
-        master.inheritance.InheritanceTrajectory itraj =
-                new master.inheritance.InheritanceTrajectory(spec);
+        master.InheritanceTrajectory itraj =
+                new master.InheritanceTrajectory(spec);
         
         // Perform any requested post-processing:
         for (InheritancePostProcessor postProc : postProcessorsInput.get())
@@ -168,7 +172,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      * @throws Exception when inheritance graph is not tree-like in preferred
      * time direction.
      */
-    private void assembleTree(master.inheritance.InheritanceTrajectory itraj) throws Exception {
+    private void assembleTree(master.InheritanceTrajectory itraj) throws Exception {
 
         boolean reverseTime = reverseTimeInput.get();
         
@@ -235,7 +239,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      * @param graph
      * @return Set containing leaf nodes.
      */
-    private List<master.model.Node> findEndNodes(master.inheritance.InheritanceTrajectory graph) {
+    private List<master.model.Node> findEndNodes(master.InheritanceTrajectory graph) {
         List<master.model.Node> endNodes = Lists.newArrayList();
         
         for (master.model.Node startNode : graph.startNodes)

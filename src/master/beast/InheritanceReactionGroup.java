@@ -17,49 +17,12 @@
 package master.beast;
 
 import beast.core.Description;
-import beast.core.Input;
-import beast.core.BEASTObject;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import master.model.ReactionGroup;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Group of reactions in an inheritance-tracking birth-death model.")
-public class InheritanceReactionGroup extends BEASTObject {
+public class InheritanceReactionGroup extends ReactionGroup {
     
-    public Input<String> nameInput = new Input<String>("reactionGroupName",
-            "Reaction group name");
-    
-    public Input<Double> rateInput = new Input<Double>("rate",
-            "Group reaction rate. (Overrides individual reaction rates.)");
-    
-    public Input<List<InheritanceReaction>> reactionsInput = new Input<List<InheritanceReaction>>(
-            "reaction",
-            "Individual inheritance reaction within group.",
-            new ArrayList<InheritanceReaction>());
-    
-    // True inheritance reaction object
-    master.compat.InheritanceReactionGroup inheritanceReactionGroup;
-    
-    public InheritanceReactionGroup() { };
-    
-    @Override
-    public void initAndValidate() { };
-    
-    public void addToModel(master.compat.InheritanceModel model) throws ParseException {
-        
-        if (nameInput.get()==null)
-            inheritanceReactionGroup = new master.compat.InheritanceReactionGroup();
-        else
-            inheritanceReactionGroup = new master.compat.InheritanceReactionGroup(nameInput.get());
-
-        // Add reactions to reaction group:
-        for (InheritanceReaction react : reactionsInput.get())
-            react.addToGroup(model, inheritanceReactionGroup, rateInput.get());
-        
-        // Add reaction group to model.
-        model.addInheritanceReactionGroup(inheritanceReactionGroup);
-    }
 }

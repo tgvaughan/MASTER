@@ -20,7 +20,7 @@ import master.steppers.InheritanceTrajectoryStepper;
 import master.model.Node;
 import master.endconditions.LeafCountEndCondition;
 import master.endconditions.LineageEndCondition;
-import master.compat.InheritanceModel;
+import master.model.Model;
 import com.google.common.collect.Lists;
 import master.model.Model;
 import master.steppers.Stepper;
@@ -34,9 +34,6 @@ import java.util.List;
  */
 public class InheritanceTrajectorySpec extends TrajectorySpec {
     
-    // Birth-death model including inheritance relationships.
-    InheritanceModel inheritanceModel;
-
     // Nodes used to seed the inheritance graph.
     List<Node> initNodes;
     
@@ -78,39 +75,7 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
         stepper = new InheritanceTrajectoryStepper();
     }
     
-    /**
-     * Specify inheritance model to use.  Note that the model field
-     * is also set by this method, so that the non-inheritance graph
-     * methods can still interact with those aspects of the model.
-     * 
-     * @param inheritanceModel 
-     */
-    public void setModel(InheritanceModel inheritanceModel) {
-        this.inheritanceModel = inheritanceModel;
-        super.setModel(inheritanceModel);
-    }
-    
-    /**
-     * Prevent use of non-inheritances model.  Messy.  Class structure is
-     * getting out of hand.
-     * 
-     * @param model
-     */
-    @Override
-    public void setModel(Model model) {
-       throw new UnsupportedOperationException("Inheritance trajectory "
-               + "specification requires inheritance model."); 
-    }
-    
-    /**
-     * Retrieve inheritance model.
-     * 
-     * @return inheritance model.
-     */
-    @Override
-    public InheritanceModel getModel() {
-        return inheritanceModel;
-    }
+
     
     /**
      * Specify initial nodes whose lineages the simulation will follow.

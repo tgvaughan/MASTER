@@ -17,61 +17,12 @@
 package master.beast;
 
 import beast.core.Description;
-import beast.core.Input;
-import beast.core.BEASTObject;
-import java.util.ArrayList;
-import java.util.List;
+import master.model.Model;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Specification of a birth-death model with inheritance relationships.")
-public class InheritanceModel extends BEASTObject {
-    
-    public Input<List<PopulationType>> populationTypesInput = new Input<List<PopulationType>>(
-            "populationType",
-            "Population type involved in the birth-death process.",
-            new ArrayList<PopulationType>());
-    
-    public Input<List<Population>> populationsInput = new Input<List<Population>>(
-            "population",
-            "Population involved in the birth-death process.",
-            new ArrayList<Population>());
-    
-    public Input<List<InheritanceReactionGroup>> inheritanceReactionGroupsInput =
-            new Input<List<InheritanceReactionGroup>>("reactionGroup",
-            "Specifies an inheritance reaction group.",
-            new ArrayList<InheritanceReactionGroup>());
-    
-    public Input<List<InheritanceReaction>> inheritanceReactionsInput = 
-            new Input<List<InheritanceReaction>>("reaction",
-            "Specifies an individual inheritance reaction.",
-            new ArrayList<InheritanceReaction>());
-    
-    master.compat.InheritanceModel model;
-    
-    public InheritanceModel() { }
-    
-    @Override
-    public void initAndValidate() throws Exception {
+public class InheritanceModel extends Model {
 
-        model = new master.compat.InheritanceModel();
-
-        // Add population types to model:
-        for (PopulationType popType : populationTypesInput.get())
-            model.addPopulationType(popType.popType);
-        
-        // Add population types corresponding to individual populations to model:
-        for (Population pop : populationsInput.get())
-            model.addPopulation(pop.pop);
-
-        // Add reaction groups to model:
-        for (InheritanceReactionGroup reactGroup : inheritanceReactionGroupsInput.get())
-            reactGroup.addToModel(model);
-
-        // Add individual reactions to model:
-        for (InheritanceReaction react : inheritanceReactionsInput.get())
-            react.addToModel(model);
-        
-    }
 }

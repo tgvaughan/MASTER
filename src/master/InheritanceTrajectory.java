@@ -111,7 +111,7 @@ public class InheritanceTrajectory extends Trajectory {
     private int sidx;
     private int nTerminalNodes;
     
-      public InheritanceTrajectory() { }
+    public InheritanceTrajectory() { }
     
     @Override
     public void initAndValidate() {

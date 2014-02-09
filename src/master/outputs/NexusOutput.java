@@ -41,6 +41,7 @@ public class NexusOutput extends NewickOutput {
      * @param reverseTime True causes the graph to be read in the direction
      * from the latest nodes to the earliest.  Useful for coalescent trees.
      * @param collapseSingleChildNodes 
+     * @param pstream 
      */
     public NexusOutput(InheritanceTrajectory graph, boolean reverseTime,
             boolean collapseSingleChildNodes, PrintStream pstream) {
@@ -68,11 +69,11 @@ public class NexusOutput extends NewickOutput {
         
 
         ps.append("[&");
-        ps.format("type=\"%s\"", branchNode.population.getType().getName());
-        if (!branchNode.population.isScalar()) {
+        ps.format("type=\"%s\"", branchNode.getPopulation().getType().getName());
+        if (!branchNode.getPopulation().isScalar()) {
             ps.append(",location=\"");
 
-            int[] loc = branchNode.population.getLocation();
+            int[] loc = branchNode.getPopulation().getLocation();
             for (int i=0; i<loc.length; i++) {
                 if (i>0)
                     ps.append(" ");
@@ -81,8 +82,8 @@ public class NexusOutput extends NewickOutput {
             
             ps.append("\"");
         }
-        if (node.reactionGroup != null && node.reactionGroup.getName() != null)
-            ps.format(",reaction=\"%s\"", node.reactionGroup.getName());
+        if (node.getReaction() != null && node.getReaction().getName() != null)
+            ps.format(",reaction=\"%s\"", node.getReaction().getName());
         ps.append(",time=").append(String.valueOf(node.getTime()));
         
         // Add general annotations:
@@ -166,8 +167,8 @@ public class NexusOutput extends NewickOutput {
                 
         pstream.println("#nexus\n\nBegin trees;");
         
-        for (int i=0; i<iensemble.itrajectories.size(); i++) {
-            InheritanceTrajectory thisTraj = iensemble.itrajectories.get(i);
+        for (int i=0; i<iensemble.getTrajectories().size(); i++) {
+            InheritanceTrajectory thisTraj = iensemble.getTrajectories().get(i);
             
             // Skip empty inheritance graphs:
             if (thisTraj.getStartNodes().isEmpty())

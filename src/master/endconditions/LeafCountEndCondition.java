@@ -16,6 +16,7 @@
  */
 package master.endconditions;
 
+import beast.core.BEASTObject;
 import java.util.List;
 import java.util.Map;
 import master.model.Node;
@@ -27,7 +28,7 @@ import master.model.Population;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class LeafCountEndCondition {
+public class LeafCountEndCondition extends BEASTObject {
     
     private int nTerminalNodes;
     private boolean includeExtant;

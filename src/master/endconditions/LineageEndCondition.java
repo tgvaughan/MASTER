@@ -16,6 +16,10 @@
  */
 package master.endconditions;
 
+import beast.core.BEASTObject;
+import beast.core.Description;
+import beast.core.Input;
+import beast.core.Input.Validate;
 import master.model.Population;
 import java.util.List;
 import java.util.Map;
@@ -27,28 +31,44 @@ import master.model.Node;
  * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class LineageEndCondition {
+
+@Description("Lineage count end condition for an inheritance trajectory.")
+public class LineageEndCondition extends BEASTObject {
+    
+    public Input<Population> populationInput = new Input<Population>(
+            "population",
+            "Specific population to which lineages belong (optional).");
+    
+    public Input<Integer> nLineagesInput = new Input<Integer>(
+            "nLineages",
+            "Linage count threshold for end condition.",
+            Validate.REQUIRED);
+    
+    public Input<Boolean> isRejectionInput = new Input<Boolean>(
+            "isRejection",
+            "Whether this end condition should cause a rejection. (Default false.)",
+            false);
+
     
     private Population pop;    
     private int nlineages;
     private boolean rejection;
     
-    /**
-     * Create an inheritance graph end condition which is met when the
-     * given number of lineages is reached.
-     * 
-     * @param nlineages number of lineages constituting end condition
-     * @param rejection true causes graphs meeting condition to be discarded
-     */
-    public LineageEndCondition(int nlineages, boolean rejection) {
-        this.pop = null;
-        this.nlineages = nlineages;
-        this.rejection = rejection;
+    public LineageEndCondition() { }
+    
+    @Override
+    public void initAndValidate() {
+        
+        pop = populationInput.get();        
+        nlineages = nLineagesInput.get();
+        rejection = isRejectionInput.get();
     }
+
     
     /**
      * Create an inheritance graph end condition which is met when the
      * number of lineages matching the given population equals nlineages.
+     * If the population is null, all lineages match.
      * 
      * @param pop
      * @param nlineages

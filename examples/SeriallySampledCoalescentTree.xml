@@ -1,15 +1,15 @@
 <!-- Generate a coalescent tree from a given number of taxa, with
      a subset of these taxa sampled at times earlier than the present. -->
 
-<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+<beast version='2.0' namespace='master:master.model:master.endconditions:master.outputs'>
     <run spec='InheritanceTrajectory'
          verbosity='2'>
         
-        <model spec='InheritanceModel'>
+        <model spec='Model'>
             <population spec='Population' populationName='L' id='L'/>
 
 	    <!-- Coalescent process with N_e*g = 0.5 -->
-            <reaction spec='InheritanceReaction' reactionName='Coalescence' rate="1.0">
+            <reaction spec='Reaction' reactionName='Coalescence' rate="1.0">
                 2L:1 -> L:1
             </reaction>
         </model>                

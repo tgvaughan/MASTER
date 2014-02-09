@@ -1,19 +1,19 @@
 <!-- Simulate an inheritance tree from the SIR epidemic model -->
 
-<beast version='2.0' namespace='master:master.endconditions:master.model:master.outputs:master.beast'>
+<beast version='2.0' namespace='master:master.model:master.endconditions:master.outputs'>
   <run spec='InheritanceTrajectory'
        samplePopulationSizes="true"
        verbosity="1">
 
-    <model spec='InheritanceModel' id='model'>
+    <model spec='Model' id='model'>
       <population spec='Population' id='S' populationName='S'/>
       <population spec='Population' id='I' populationName='I'/>
       <population spec='Population' id='R' populationName='R'/>
       
-      <reaction spec='InheritanceReaction' reactionName="Infection" rate="0.005">
+      <reaction spec='Reaction' reactionName="Infection" rate="0.005">
 	S + I -> 2I
       </reaction>
-      <reaction spec='InheritanceReaction' reactionName="Recovery" rate="0.2">
+      <reaction spec='Reaction' reactionName="Recovery" rate="0.2">
 	I -> R
       </reaction>
     </model>

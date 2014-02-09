@@ -1,17 +1,17 @@
 <!-- Example showing how to produce an SIS tree with a
      specified number of leaves. -->
 
-<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+<beast version='2.0' namespace='master:master.model:master.endconditions:master.outputs:master.postprocessors'>
     <run spec='InheritanceEnsemble'
 	 nTraj="100">
 
-        <model spec='InheritanceModel' id='model'>
+        <model spec='Model' id='model'>
             <population spec='Population' id='S' populationName='S'/>
             <population spec='Population' id='I' populationName='I'/>
-            <reaction spec='InheritanceReaction' reactionName="Infection" rate="0.005">
+            <reaction spec='Reaction' reactionName="Infection" rate="0.005">
                 S + I -> 2I
             </reaction>
-            <reaction spec='InheritanceReaction' reactionName="Recovery" rate="0.5">
+            <reaction spec='Reaction' reactionName="Recovery" rate="0.5">
                 I -> S
             </reaction>
         </model>

@@ -1,12 +1,12 @@
 <!-- Generate a coalescent tree from a given number of taxa. -->
 
-<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+<beast version='2.0' namespace='master:master.model:master.endconditions:master.outputs'>
     <run spec='InheritanceTrajectory'
          verbosity='2'>
         
-        <model spec='InheritanceModel'>
+        <model spec='Model'>
             <population spec='Population' populationName='X' id='X'/>
-            <reaction spec='InheritanceReaction' reactionName='Coalescence' rate="1.0">
+            <reaction spec='Reaction' reactionName='Coalescence' rate="1.0">
                 2X:1 -> X:1
             </reaction>
         </model>                

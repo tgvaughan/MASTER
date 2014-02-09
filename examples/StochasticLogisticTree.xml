@@ -1,18 +1,18 @@
 <!-- Generate an inheritance tree from the stochastic logistic model.
      Note that population sizes are also sampled. -->
 
-<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+<beast version='2.0' namespace='master:master.model:master.endconditions:master.outputs'>
     <run spec='InheritanceTrajectory'
          simulationTime="100"
          samplePopulationSizes="true"
          verbosity='1'>
         
-        <model spec='InheritanceModel'>
+        <model spec='Model'>
             <population spec='Population' populationName='X' id='X'/>
-            <reaction spec='InheritanceReaction' reactionName='Birth' rate="1.0">
+            <reaction spec='Reaction' reactionName='Birth' rate="1.0">
                 X -> 2X
             </reaction>
-            <reaction spec='InheritanceReaction' reactionName='Death' rate="0.01">
+            <reaction spec='Reaction' reactionName='Death' rate="0.01">
                 2X -> X
             </reaction>
         </model>                

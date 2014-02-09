@@ -1,6 +1,6 @@
 <!-- Single stochastic logistic model population size trajectory.  -->
 
-<beast version='2.0' namespace='master:master.outputs:master.steppers'>
+<beast version='2.0' namespace='master:master.model:master.outputs:master.steppers'>
     <run spec='Trajectory'
          simulationTime='20'
          verbosity='1'>

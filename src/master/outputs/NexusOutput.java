@@ -16,9 +16,13 @@
  */
 package master.outputs;
 
+import beast.core.Description;
+import java.io.FileNotFoundException;
 import master.InheritanceEnsemble;
 import master.model.Node;
 import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import master.InheritanceTrajectory;
 
 /**
@@ -32,7 +36,42 @@ import master.InheritanceTrajectory;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
+@Description("Output writer capable of writing inheritance graph to"
+        + " disk in NEXUS format.  Note that in the case that the graph is"
+        + " not tree-like, an annotated variant of the extended Newick format"
+        + " of Cardona et al, BMC Bioinf. (2008) is used in place of the"
+        + " traditional annotated Newick for the topology strings.")
 public class NexusOutput extends NewickOutput {
+    
+    public NexusOutput() { }
+    
+    @Override
+    public void initAndValidate() { }
+    
+    @Override
+    public void write(InheritanceTrajectory itraj) {
+        try {
+            NexusOutput.write(itraj,
+                    reverseTimeInput.get(),
+                    collapseSingleChildNodesInput.get(),
+                    new PrintStream(fileNameInput.get()));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(NexusOutput.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void write(InheritanceEnsemble iensemble) {
+        try {
+            NexusOutput.write(iensemble,
+                    reverseTimeInput.get(),
+                    collapseSingleChildNodesInput.get(),
+                    new PrintStream(fileNameInput.get()));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(NexusOutput.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     
     /**
      * Constructor.

@@ -16,6 +16,10 @@
  */
 package master.outputs;
 
+import beast.core.BEASTObject;
+import beast.core.Description;
+import beast.core.Input;
+import beast.core.Input.Validate;
 import master.InheritanceEnsemble;
 import master.model.Node;
 import com.google.common.collect.Maps;
@@ -26,6 +30,8 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import master.InheritanceTrajectory;
 
 /**
@@ -35,7 +41,10 @@ import master.InheritanceTrajectory;
  * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class NewickOutput {
+@Description("Output writer capable of writing inheritance graph to"
+        + " disk in extended Newick format of Cardona et al, BMC Bioinf. (2008).")
+public class NewickOutput extends BEASTObject implements 
+        InheritanceTrajectoryOutput, InheritanceEnsembleOutput{
     
     InheritanceTrajectory graph;
 
@@ -47,6 +56,47 @@ public class NewickOutput {
     Map<Node, String> leafLabels;
     Map<Node, Integer> hybridIDs;
 
+    public Input<String> fileNameInput = new Input<String>("fileName",
+            "Name of file to write to.", Validate.REQUIRED);
+    
+    public Input<Boolean> reverseTimeInput = new Input<Boolean>("reverseTime",
+            "Read graph in reverse time - useful for building coalescent trees.  (Default false.)",
+            false);
+    
+    public Input<Boolean> collapseSingleChildNodesInput = new Input<Boolean>(
+            "collapseSingleChildNodes",
+            "Prune nodes having a single child from output. (Default false.)",
+            false);
+
+    public NewickOutput() { }
+    
+    @Override
+    public void initAndValidate() { }
+
+    @Override
+    public void write(InheritanceTrajectory itraj) {
+        try {
+            NewickOutput.write(itraj,
+                    reverseTimeInput.get(),
+                    collapseSingleChildNodesInput.get(),
+                    new PrintStream(fileNameInput.get()));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(NewickOutput.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    @Override
+    public void write(InheritanceEnsemble iensemble) {
+        try {
+            NewickOutput.write(iensemble,
+                    reverseTimeInput.get(),
+                    collapseSingleChildNodesInput.get(),
+                    new PrintStream(fileNameInput.get()));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(NewickOutput.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
        
     /**
      * Create an extended Newick string representation of graph.
@@ -335,4 +385,5 @@ public class NewickOutput {
         InheritanceTrajectory graph = new InheritanceTrajectory(root);        
         write(graph, false, false, new PrintStream("out.tree"));
     }
+
 }

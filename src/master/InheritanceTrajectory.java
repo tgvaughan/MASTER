@@ -122,7 +122,7 @@ public class InheritanceTrajectory extends Trajectory {
         
         // Set population size options:
         if (samplePopulationSizesInput.get()) {
-            if (nSamplesInput.get()>=2)
+            if (nSamplesInput.get() != null && nSamplesInput.get()>=2)
                 spec.setEvenSampling(nSamplesInput.get());
             else
                 spec.setUnevenSampling(sampleAtNodesOnlyInput.get());
@@ -170,16 +170,15 @@ public class InheritanceTrajectory extends Trajectory {
     public void run() {
         
         // Generate stochastic trajectory:
-        master.InheritanceTrajectory itraj =
-                new master.InheritanceTrajectory(spec);
+        simulate();
         
         // Perform any requested post-processing:
         for (InheritancePostProcessor inheritancePostProc : inheritancePostProcessorsInput.get())
-            inheritancePostProc.process(itraj);
+            inheritancePostProc.process(this);
 
         // Write outputs:
         for (InheritanceTrajectoryOutput output : outputsInput.get())
-            output.write(itraj);
+            output.write(this);
     }
     
     /**
@@ -188,10 +187,7 @@ public class InheritanceTrajectory extends Trajectory {
      *
      * @param spec Inheritance trajectory simulation specification.
      */
-    public InheritanceTrajectory(InheritanceTrajectorySpec spec) {
-
-        // Keep a record of the simulation spec and the starting nodes.
-        this.spec = spec;
+    private void simulate() {
 
         // Initialise graph with copy of specification init nodes:
         // (Can't use initNodes themselves when multiple graphs are being
@@ -203,6 +199,10 @@ public class InheritanceTrajectory extends Trajectory {
         // Create HashMaps:
         nodesInvolved = Maps.newHashMap();
         nextLevelNodes = Maps.newHashMap();
+        
+        // Initialise sampled state and time lists:
+        sampledStates = Lists.newArrayList();
+        sampledTimes = Lists.newArrayList();
 
         // Set seed if defined:
         if (spec.getSeed()>=0 && !spec.isSeedUsed()) {

@@ -16,17 +16,105 @@
  */
 package master;
 
+import beast.core.Description;
+import beast.core.Input;
+import beast.core.Input.Validate;
 import beast.util.Randomizer;
 import beast.core.Runnable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import master.endconditions.LeafCountEndCondition;
+import master.endconditions.LineageEndCondition;
+import master.endconditions.PopulationEndCondition;
+import master.model.InitState;
+import master.model.Model;
+import master.model.PopulationSize;
+import master.model.PopulationState;
+import master.outputs.InheritanceEnsembleOutput;
+import master.postprocessors.InheritancePostProcessor;
 
 /**
- *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class InheritanceEnsemble {
+@Description("Simulates a single trajectory under a stochastic birth-death"
+        + " model, keeping track of lineages decendent form a chosen set"
+        + " of individuals.")
+public class InheritanceEnsemble extends Runnable {
+    
+        /*
+     * XML inputs:
+     */
+    
+    // Spec parameters:
+    public Input<Double> simulationTimeInput = new Input<Double>(
+            "simulationTime",
+            "The maximum length of time to simulate for. (Defaults to infinite.)");
+
+    public Input<Boolean> samplePopulationSizesInput = new Input<Boolean>(
+            "samplePopulationSizes",
+            "Sample population sizes together with inheritance graph. (Default false.)",
+            false);
+    
+    public Input<Integer> nSamplesInput = new Input<Integer>(
+            "nSamples",
+            "Number of evenly spaced population size samples to record. (Default 0: uneven sampling)",
+            0);
+    
+    public Input<Boolean> sampleAtNodesOnlyInput = new Input<Boolean>(
+            "sampleAtNodesOnly",
+            "Sample population sizes only at graph node times. (Default false.)",
+            false);
+    
+    public Input<Integer> nTrajInput = new Input<Integer>(
+            "nTraj",
+            "Number of trajectories to generate.",
+            Input.Validate.REQUIRED);
+            
+    public Input<Integer> seedInput = new Input<Integer>(
+            "seed",
+            "Seed for RNG.");
+    
+    public Input<Integer> verbosityInput = new Input<Integer> (
+            "verbosity", "Level of verbosity to use (0-3).", 1);
+    
+    // Model:
+    public Input<Model> modelInput = new Input<Model>("model",
+            "The specific model to simulate.", Validate.REQUIRED);
+    
+    // Initial state:
+    public Input<InitState> initialStateInput = new Input<InitState>("initialState",
+            "Initial state of system.", Validate.REQUIRED);
+    
+    // Population end conditions:
+    public Input<List<PopulationEndCondition>> popEndConditionsInput = new Input<List<PopulationEndCondition>>(
+            "populationEndCondition",
+            "Trajectory end condition based on population sizes.",
+            new ArrayList<PopulationEndCondition>());
+
+    // Lineage end conditions:
+    public Input<List<LineageEndCondition>> lineageEndConditionsInput = new Input<List<LineageEndCondition>>(
+            "lineageEndCondition",
+            "Trajectory end condition based on remaining lineages.",
+            new ArrayList<LineageEndCondition>());
+    
+    // Leaf count end conditions:
+    public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput = new Input<List<LeafCountEndCondition>>(
+            "leafCountEndCondition",
+            "Trajectory end condition based on number of terminal nodes generated.",
+            new ArrayList<LeafCountEndCondition>());
+    
+    // Post-processors:
+    public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
+            new Input<List<InheritancePostProcessor>>(
+            "inheritancePostProcessor",
+            "Post processor for inheritance graph.",
+            new ArrayList<InheritancePostProcessor>());
+
+    public Input<List<InheritanceEnsembleOutput>> outputsInput
+            = new Input<List<InheritanceEnsembleOutput>>("output",
+            "Output writer used to write results of simulation to disk.",
+            new ArrayList<InheritanceEnsembleOutput>());
     
     // The ensemble is a large number of trajectories
     ArrayList<InheritanceTrajectory> itrajectories;
@@ -34,9 +122,82 @@ public class InheritanceEnsemble {
     // Record of simulation spec:
     InheritanceEnsembleSpec spec;
     
-    public InheritanceEnsemble(InheritanceEnsembleSpec spec) {
+    public InheritanceEnsemble() { }
+    
+     @Override
+    public void initAndValidate() {
+        spec = new InheritanceEnsembleSpec();
+               
+        // Incorporate model:
+        spec.setModel(modelInput.get());
         
-        this.spec = spec;
+        // Set population size options:
+        if (samplePopulationSizesInput.get()) {
+            if (nSamplesInput.get()>=2)
+                spec.setEvenSampling(nSamplesInput.get());
+            else
+                spec.setUnevenSampling(sampleAtNodesOnlyInput.get());
+        }
+        
+        // Set maximum simulation time:
+        if (simulationTimeInput.get() != null)
+            spec.setSimulationTime(simulationTimeInput.get());
+        else {
+            if (popEndConditionsInput.get() == null
+                    && lineageEndConditionsInput.get() == null
+                    && leafCountEndConditionsInput.get() == null) {
+                throw new IllegalArgumentException("Must specify either a final simulation "
+                        + "time or one or more end conditions.");
+            } else
+                spec.setSimulationTime(Double.POSITIVE_INFINITY);
+        }
+        
+        // Specify number of trajectories to generate:
+        spec.setnTraj(nTrajInput.get());        
+        
+        // Assemble initial state:
+        PopulationState initState = new PopulationState();
+        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
+            initState.set(popSize.getPopulation(), popSize.getSize());
+        spec.setInitPopulationState(initState);        
+        spec.setInitNodes(initialStateInput.get().getInitNodes());
+        
+        // Incorporate any end conditions:
+        for (PopulationEndCondition endCondition : popEndConditionsInput.get())
+            spec.addPopSizeEndCondition(endCondition);
+        
+        for (LineageEndCondition endCondition : lineageEndConditionsInput.get())
+            spec.addLineageEndCondition(endCondition);
+        
+        for (LeafCountEndCondition endCondition : leafCountEndConditionsInput.get())
+            spec.addLeafCountEndCondition(endCondition);
+
+        // Set seed if provided, otherwise use default BEAST seed:
+        if (seedInput.get()!=null)
+            spec.setSeed(seedInput.get());
+        
+        // Set the level of verbosity:
+        spec.setVerbosity(verbosityInput.get());
+        
+    }
+
+    @Override
+    public void run() {
+        
+        // Generate stochastic trajectories:
+        simulate();
+        
+        // Perform any requested post-processing:
+        for (InheritanceTrajectory itraj : getTrajectories())
+            for (InheritancePostProcessor postProc : inheritancePostProcessorsInput.get())
+                postProc.process(itraj);
+        
+        // Write outputs:
+        for (InheritanceEnsembleOutput output : outputsInput.get())
+            output.write(this);
+    }
+    
+    private void simulate() {
         
         // Set seed if defined:
         if (spec.getSeed()>=0 && !spec.isSeedUsed()) {

@@ -17,6 +17,8 @@
 package master.endconditions;
 
 import beast.core.BEASTObject;
+import beast.core.Description;
+import beast.core.Input;
 import java.util.List;
 import java.util.Map;
 import master.model.Node;
@@ -28,17 +30,44 @@ import master.model.Population;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
+@Description("Leaf count end condition for an inheritance trajectory.")
 public class LeafCountEndCondition extends BEASTObject {
+    
+    public Input<Integer> nLeavesInput = new Input<Integer>(
+            "nLeaves",
+            "Leaf count threshold for end condition.",
+            Input.Validate.REQUIRED);
+    
+    public Input<Boolean> includeExtantInput = new Input<Boolean>(
+            "includeExtant",
+            "Whether to include extant lineages in terminal node count. (Default false.)",
+            false);
+    
+    public Input<Boolean> isRejectionInput = new Input<Boolean>(
+            "isRejection",
+            "Whether this end condition should cause a rejection. (Default false.)",
+            false);
     
     private int nTerminalNodes;
     private boolean includeExtant;
     private boolean rejection;
 
+    public LeafCountEndCondition() { }
+    
+    @Override
+    public void initAndValidate() {
+        
+        nTerminalNodes = nLeavesInput.get();
+        includeExtant = includeExtantInput.get();
+        rejection = isRejectionInput.get();
+    }
+    
     /**
      * Create an inheritance graph end condition which is met when
      * the given number of terminal nodes is reached.
      * 
      * @param nTerminalNodes number of terminal nodes constituting end condition
+     * @param includeExtant
      * @param rejection true causes graphs meeting condition to be discarded
      */
     public LeafCountEndCondition(int nTerminalNodes,

@@ -16,6 +16,8 @@
  */
 package master.postprocessors;
 
+import beast.core.BEASTObject;
+import beast.core.Input;
 import java.util.ArrayList;
 import java.util.List;
 import master.InheritanceTrajectory;
@@ -24,7 +26,67 @@ import master.model.Node;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class FilterLineages {
+public class LineageFilter extends BEASTObject implements InheritancePostProcessor {
+    
+    public Input<String> reactNameInput = new Input<String>("reactionName",
+            "Name of reaction used to filter lineages.");
+    
+    public Input<String> populationNameInput = new Input<String>("populationName",
+            "Name of population used to filter lineages.");
+    
+    public Input<Boolean> discardInput = new Input<Boolean>("discard",
+            "Discard (instead of keep) lineages that match the name.", false);
+    
+    public Input<Boolean> leavesOnlyInput = new Input<Boolean>("leavesOnly",
+            "Only alter leaves.", false);
+    
+    public Input<String> markAnnotationInput = new Input<String>("markAnnotation",
+            "Mark using this annotation rather than pruning.");
+    
+    public Input<Boolean> noCleanInput = new Input<Boolean>("noClean",
+            "Do not remove no-state-change nodes.", false);
+    
+    public Input<Boolean> reverseTimeInput = new Input<Boolean>("reverseTime",
+            "Process inheritance graph in reverse time.  Default false.", false);
+
+    private String string;
+    private Rule rule;
+    
+    @Override
+    public void initAndValidate() {
+        
+        if ((reactNameInput.get() != null) && (populationNameInput.get() != null))
+            throw new IllegalArgumentException("Only ONE of the reaction or population "
+                    + "name inputs to LineageFilter may be specified.");
+        
+        if ((reactNameInput.get() == null) && (populationNameInput.get() == null))
+            throw new IllegalArgumentException("Either reaction or population "
+                    + "name input to LineageFilter must be specified.");
+        
+        if (reactNameInput.get() != null) {
+            string = reactNameInput.get();
+            if (discardInput.get())
+                rule = Rule.BY_REACTNAME_DISCARD;
+            else
+                rule = Rule.BY_REACTNAME;
+        }
+        
+        if (populationNameInput.get() != null) {
+            string = populationNameInput.get();
+            if (discardInput.get())
+                rule = Rule.BY_POPTYPENAME_DISCARD;
+            else
+                rule = Rule.BY_POPTYPENAME;
+        }
+        
+    }
+
+    @Override
+    public void process(InheritanceTrajectory itraj) {
+        LineageFilter.filter(itraj, rule, string,
+                markAnnotationInput.get(), leavesOnlyInput.get(),
+                noCleanInput.get(), reverseTimeInput.get());
+    }
     
     public enum Rule {
         BY_REACTNAME, BY_POPTYPENAME,

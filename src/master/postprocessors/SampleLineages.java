@@ -1,5 +1,7 @@
 package master.postprocessors;
 
+import beast.core.BEASTObject;
+import beast.core.Input;
 import beast.util.Randomizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +11,23 @@ import master.model.Node;
 /**
  * @author Alexei Drummond
  */
-public class SampleLineages {
+public class SampleLineages extends BEASTObject implements InheritancePostProcessor {
+    
+    public Input<Integer> nSamplesInput = new Input<Integer>("nSamples",
+            "Number of lineages to sample", Input.Validate.REQUIRED);
+    
+    public Input<Double> samplingTimeInput = new Input<Double>("samplingTime",
+            "Time at which sampling is to take place", Input.Validate.REQUIRED);
+  
+    public Input<String> markAnnotationInput = new Input<String>("markAnnotation",
+            "Mark using this annotation rather than pruning.");
+    
+    public Input<Boolean> reverseTimeInput = new Input<Boolean>("reverseTime",
+            "Process inheritance graph in reverse time.  Default false.", false);
 
+    @Override
+    public void initAndValidate() { }
+    
     /**
      * Sample (without replacement) nSamples lineages crossing the chosen
      * samplingTime.  The graph is truncated beyond this time and the nodes
@@ -220,6 +237,13 @@ public class SampleLineages {
             return node.getChildren();
         else
             return node.getParents();
+    }
+
+    @Override
+    public void process(InheritanceTrajectory itraj) {
+        SampleLineages.process(itraj,
+                samplingTimeInput.get(), nSamplesInput.get(),
+                markAnnotationInput.get(), reverseTimeInput.get());
     }
     
 }

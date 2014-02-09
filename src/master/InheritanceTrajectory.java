@@ -113,6 +113,17 @@ public class InheritanceTrajectory extends Trajectory {
     
     public InheritanceTrajectory() { }
     
+    /**
+     * Simulate a new inheritance trajectory with given specification.
+     * 
+     * @param spec inheritance trajectory specification
+     */
+    public InheritanceTrajectory(InheritanceTrajectorySpec spec) {
+        this.spec = spec;
+        
+        simulate();
+    }
+    
     @Override
     public void initAndValidate() {
         spec = new master.InheritanceTrajectorySpec();

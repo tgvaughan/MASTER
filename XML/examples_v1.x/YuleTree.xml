@@ -1,0 +1,23 @@
+<!-- Generate tree under Yule model of speciation. -->
+
+<beast version='2.0' namespace='master.beast:beast.core.parameter'>
+    <run spec='InheritanceTrajectory'
+         simulationTime="5"
+         verbosity='2'>
+        
+        <model spec='InheritanceModel'>
+            <population spec='Population' populationName='X' id='X'/>
+            <reaction spec='InheritanceReaction' reactionName='Speciation' rate="1.0">
+                X -> 2X
+            </reaction>
+        </model>
+
+        <initialState spec='InitState'>
+            <lineageSeed spec='Individual' population='@X'/>
+        </initialState>
+        
+        <lineageEndCondition spec='LineageEndCondition' nLineages="20"/>
+                
+        <output spec='NexusOutput' fileName='YuleTree_output.nexus'/>
+    </run>
+</beast>

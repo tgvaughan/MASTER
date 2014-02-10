@@ -127,7 +127,7 @@ public class InheritanceTrajectory extends Trajectory {
     @Override
     public void initAndValidate() {
         spec = new master.InheritanceTrajectorySpec();
-               
+        
         // Incorporate model:
         spec.setModel(modelInput.get());        
         

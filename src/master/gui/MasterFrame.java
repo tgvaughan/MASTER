@@ -17,6 +17,15 @@
 
 package master.gui;
 
+import beast.util.XMLParser;
+import java.io.File;
+import java.io.FileFilter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -186,7 +195,7 @@ public class MasterFrame extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
@@ -241,7 +250,7 @@ public class MasterFrame extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 148, Short.MAX_VALUE)
+            .addGap(0, 151, Short.MAX_VALUE)
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Initial State"));
@@ -444,13 +453,14 @@ public class MasterFrame extends javax.swing.JFrame {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 179, Short.MAX_VALUE)
                 .addComponent(jButton3)
                 .addContainerGap())
         );
 
         jTabbedPane1.addTab("Execution", jPanel8);
 
+        jMenuFile.setMnemonic('f');
         jMenuFile.setText("File");
 
         jMenuItemFileNew.setMnemonic('n');
@@ -460,6 +470,11 @@ public class MasterFrame extends javax.swing.JFrame {
 
         jMenuItemFileOpen.setMnemonic('o');
         jMenuItemFileOpen.setText("Open");
+        jMenuItemFileOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemFileOpenActionPerformed(evt);
+            }
+        });
         jMenuFile.add(jMenuItemFileOpen);
 
         jMenuItemFileSave.setMnemonic('s');
@@ -482,10 +497,16 @@ public class MasterFrame extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenuFile);
 
+        jMenuHelp.setMnemonic('h');
         jMenuHelp.setText("Help");
 
         jMenuItemHelpAbout.setMnemonic('a');
         jMenuItemHelpAbout.setText("About...");
+        jMenuItemHelpAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemHelpAboutActionPerformed(evt);
+            }
+        });
         jMenuHelp.add(jMenuItemHelpAbout);
 
         jMenuBar1.add(jMenuHelp);
@@ -526,6 +547,65 @@ public class MasterFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_jMenuItemFileExitActionPerformed
+
+    private void jMenuItemFileOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFileOpenActionPerformed
+        
+        JFileChooser fc = new JFileChooser();
+
+        fc.setFileFilter(new javax.swing.filechooser.FileFilter() {
+
+            private String getExtension(File f) {
+                String ext = null;
+                
+                String fullName = f.getName();
+                int i = fullName.lastIndexOf(".");
+                if (i>0 && i<fullName.length()-1)
+                    ext = fullName.substring(i+1).toLowerCase();
+                
+                return ext;
+            }
+            
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory())
+                    return true;
+                
+                return "xml".equals(getExtension(f));
+            }
+
+            @Override
+            public String getDescription() {
+                return "MASTER XML files";
+            }
+        });
+
+        
+        if (fc.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
+            return;
+        
+        File file = fc.getSelectedFile();
+        
+        // Load file
+        beast.core.Runnable runnable = null;
+        try {
+            runnable = new XMLParser().parseFile(file);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(rootPane,
+                    "Error loading '" + file.getName()
+                            + "': " + ex.getLocalizedMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItemFileOpenActionPerformed
+
+    private void jMenuItemHelpAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemHelpAboutActionPerformed
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(rootPane,
+                "MASTER: Stochastic simulator for Phylodynamics",
+                "About",
+                JOptionPane.INFORMATION_MESSAGE,
+                new ImageIcon(getClass().getResource("/master/gui/icon.png")));
+    }//GEN-LAST:event_jMenuItemHelpAboutActionPerformed
 
     /**
      * @param args the command line arguments

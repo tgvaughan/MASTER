@@ -206,7 +206,10 @@ public class Trajectory extends Runnable {
                 while (t<sampleDt)
                     t += spec.stepper.step(currentState, spec.model,
                             sampleDt-t);
-
+                
+                // Sample state:
+                sampleState(currentState, sampleDt*sidx);
+                
                 // Check for end conditions:
                 PopulationEndCondition endConditionMet = null;
                 for (PopulationEndCondition endCondition : spec.populationEndConditions) {
@@ -220,15 +223,9 @@ public class Trajectory extends Runnable {
                         currentState = new PopulationState(spec.initPopulationState);
                         clearSamples();
                         sidx = -1;
-                        continue;
                     } else
                         break;
                 }
-                
-                // Sample state:
-                sampleState(currentState, sampleDt*sidx);
-
-
             }
         } else {
             // Sample following every integration step
@@ -242,6 +239,14 @@ public class Trajectory extends Runnable {
                 // Increment time
                 t += spec.stepper.step(currentState, spec.model,
                         spec.simulationTime-t);
+                
+                // Report trajectory progress:
+                if (spec.verbosity>1)
+                    System.err.println("Recording sample at time "
+                            + String.valueOf(t)); 
+                
+                // Sample state
+                sampleState(currentState, t);
                 
                 // Check for end conditions:
                 PopulationEndCondition endConditionMet = null;
@@ -265,18 +270,10 @@ public class Trajectory extends Runnable {
                     } else {
                         if (spec.verbosity>0)
                             System.err.println("Truncation end condition met "
-                                    + "at time " + t);  
+                                    + "at time " + t);
                         break;
                     }
                 }
-                
-                // Report trajectory progress:
-                if (spec.verbosity>1)
-                    System.err.println("Recording sample at time "
-                            + String.valueOf(t)); 
-                
-                // Sample state
-                sampleState(currentState, t);
             }
         }
         

@@ -45,9 +45,15 @@ public class ReactionGroup extends BEASTObject {
     @Override
     public void initAndValidate() {
         
-        if (rateInput.get() != null)
+        if (rateInput.get() != null) {
             for (Reaction react : reactionsInput.get())
                 react.setRate(rateInput.get());
+        }
+        
+        if (nameInput.get() != null) {
+            for (Reaction react : reactionsInput.get())
+                react.setName(nameInput.get());
+        }
     }
     
     /**

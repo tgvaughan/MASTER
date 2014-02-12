@@ -25,6 +25,15 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import master.InheritanceEnsemble;
+import master.InheritanceTrajectory;
+import master.model.Model;
+import master.model.PopulationType;
+import master.model.Reaction;
+import master.outputs.JsonOutput;
+import master.outputs.NewickOutput;
+import master.outputs.NexusOutput;
 
 /**
  *
@@ -33,9 +42,18 @@ import javax.swing.JOptionPane;
 public class MasterFrame extends javax.swing.JFrame {
 
     /**
-     * Creates new form MasterFrame
+     * View controller.
      */
-    public MasterFrame() {
+    MasterApp controller;
+    
+    /**
+     * Creates new form MasterFrame
+     * 
+     * @param controller
+     */
+    public MasterFrame(MasterApp controller) {
+        this.controller = controller;
+        
         initComponents();
     }
 
@@ -48,18 +66,22 @@ public class MasterFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDialog1 = new javax.swing.JDialog();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel5 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        jTablePopulations = new javax.swing.JTable();
         jButtonAddPop = new javax.swing.JButton();
         jButtonDelPop = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jButtonAddReact = new javax.swing.JButton();
+        jButton2DelReact = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTableReactions = new javax.swing.JTable();
         jPanel6 = new javax.swing.JPanel();
         jComboBox1 = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
@@ -77,14 +99,14 @@ public class MasterFrame extends javax.swing.JFrame {
         jTextField5 = new javax.swing.JTextField();
         jPanel8 = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jTextField2 = new javax.swing.JTextField();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
+        jCheckBoxJsonOutput = new javax.swing.JCheckBox();
+        jTextFieldJsonOutput = new javax.swing.JTextField();
+        jCheckBoxNewickOutput = new javax.swing.JCheckBox();
+        jCheckBoxNexusOutput = new javax.swing.JCheckBox();
+        jTextFieldNewickOutput = new javax.swing.JTextField();
+        jTextFieldNexusOutput = new javax.swing.JTextField();
+        jButtonRun = new javax.swing.JButton();
+        jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemFileNew = new javax.swing.JMenuItem();
         jMenuItemFileOpen = new javax.swing.JMenuItem();
@@ -95,15 +117,53 @@ public class MasterFrame extends javax.swing.JFrame {
         jMenuHelp = new javax.swing.JMenu();
         jMenuItemHelpAbout = new javax.swing.JMenuItem();
 
+        jDialog1.setModal(true);
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/master/gui/icon.png"))); // NOI18N
+
+        jLabel4.setText("MASTER: A stochastic simulator for phylodynamics.");
+
+        jButton4.setText("Ok");
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDialog1Layout.createSequentialGroup()
+                        .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jDialog1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel4))
+                            .addGroup(jDialog1Layout.createSequentialGroup()
+                                .addGap(132, 132, 132)
+                                .addComponent(jLabel3)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialog1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton4)))
+                .addContainerGap())
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton4)
+                .addContainerGap())
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Populations"));
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        jTablePopulations.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"S", "none"},
-                {"I", "none"},
-                {"R", "none"}
+
             },
             new String [] {
                 "Name", "Dimension"
@@ -124,7 +184,7 @@ public class MasterFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(jTablePopulations);
 
         jButtonAddPop.setText("+");
         jButtonAddPop.addActionListener(new java.awt.event.ActionListener() {
@@ -134,6 +194,7 @@ public class MasterFrame extends javax.swing.JFrame {
         });
 
         jButtonDelPop.setText("-");
+        jButtonDelPop.setEnabled(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -158,28 +219,28 @@ public class MasterFrame extends javax.swing.JFrame {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Reactions"));
 
-        jButton1.setText("-");
+        jButtonAddReact.setText("-");
+        jButtonAddReact.setEnabled(false);
 
-        jButton2.setText("+");
+        jButton2DelReact.setText("+");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableReactions.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"S + I -> 2I", "1"},
-                {"I -> R", "1"}
+
             },
             new String [] {
-                "String", "Rate"
+                "String", "Rate", "Name"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.Double.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(jTable1);
+        jScrollPane3.setViewportView(jTableReactions);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -187,9 +248,9 @@ public class MasterFrame extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jButton2)
+                .addComponent(jButton2DelReact)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1))
+                .addComponent(jButtonAddReact))
             .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
@@ -198,8 +259,8 @@ public class MasterFrame extends javax.swing.JFrame {
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)))
+                    .addComponent(jButtonAddReact)
+                    .addComponent(jButton2DelReact)))
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -380,30 +441,30 @@ public class MasterFrame extends javax.swing.JFrame {
 
         jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("Outputs"));
 
-        jCheckBox2.setSelected(true);
-        jCheckBox2.setText("Pop sizes/moments");
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+        jCheckBoxJsonOutput.setSelected(true);
+        jCheckBoxJsonOutput.setText("Pop sizes/moments");
+        jCheckBoxJsonOutput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
+                jCheckBoxJsonOutputActionPerformed(evt);
             }
         });
 
-        jTextField2.setText("output.json");
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldJsonOutput.setText("output.json");
+        jTextFieldJsonOutput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                jTextFieldJsonOutputActionPerformed(evt);
             }
         });
 
-        jCheckBox3.setText("Tree/graph (Newick)");
+        jCheckBoxNewickOutput.setText("Tree/graph (Newick)");
 
-        jCheckBox4.setText("Tree/graph (NEXUS)");
+        jCheckBoxNexusOutput.setText("Tree/graph (NEXUS)");
 
-        jTextField3.setText("output.newick");
-        jTextField3.setEnabled(false);
+        jTextFieldNewickOutput.setText("output.newick");
+        jTextFieldNewickOutput.setEnabled(false);
 
-        jTextField4.setText("output.nexus");
-        jTextField4.setEnabled(false);
+        jTextFieldNexusOutput.setText("output.nexus");
+        jTextFieldNexusOutput.setEnabled(false);
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -412,32 +473,32 @@ public class MasterFrame extends javax.swing.JFrame {
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckBox2)
-                    .addComponent(jCheckBox3)
-                    .addComponent(jCheckBox4))
+                    .addComponent(jCheckBoxJsonOutput)
+                    .addComponent(jCheckBoxNewickOutput)
+                    .addComponent(jCheckBoxNexusOutput))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField4)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)))
+                    .addComponent(jTextFieldNexusOutput)
+                    .addComponent(jTextFieldJsonOutput, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jTextFieldNewickOutput, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox2)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jCheckBoxJsonOutput)
+                    .addComponent(jTextFieldJsonOutput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox3)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jCheckBoxNewickOutput)
+                    .addComponent(jTextFieldNewickOutput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox4)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jCheckBoxNexusOutput)
+                    .addComponent(jTextFieldNexusOutput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        jButton3.setText("Run Simulation");
+        jButtonRun.setText("Run Simulation");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -446,7 +507,7 @@ public class MasterFrame extends javax.swing.JFrame {
             .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButtonRun, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel8Layout.setVerticalGroup(
@@ -454,7 +515,7 @@ public class MasterFrame extends javax.swing.JFrame {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 179, Short.MAX_VALUE)
-                .addComponent(jButton3)
+                .addComponent(jButtonRun)
                 .addContainerGap())
         );
 
@@ -495,7 +556,7 @@ public class MasterFrame extends javax.swing.JFrame {
         });
         jMenuFile.add(jMenuItemFileExit);
 
-        jMenuBar1.add(jMenuFile);
+        jMenuBar.add(jMenuFile);
 
         jMenuHelp.setMnemonic('h');
         jMenuHelp.setText("Help");
@@ -509,9 +570,9 @@ public class MasterFrame extends javax.swing.JFrame {
         });
         jMenuHelp.add(jMenuItemHelpAbout);
 
-        jMenuBar1.add(jMenuHelp);
+        jMenuBar.add(jMenuHelp);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(jMenuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -535,13 +596,13 @@ public class MasterFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonAddPopActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void jTextFieldJsonOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldJsonOutputActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_jTextFieldJsonOutputActionPerformed
 
-    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+    private void jCheckBoxJsonOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxJsonOutputActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox2ActionPerformed
+    }//GEN-LAST:event_jCheckBoxJsonOutputActionPerformed
 
     private void jMenuItemFileExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemFileExitActionPerformed
         // TODO add your handling code here:
@@ -586,9 +647,9 @@ public class MasterFrame extends javax.swing.JFrame {
         File file = fc.getSelectedFile();
         
         // Load file
-        beast.core.Runnable runnable = null;
         try {
-            runnable = new XMLParser().parseFile(file);
+            controller.setRunnable(new XMLParser().parseFile(file));
+            controller.updateView();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane,
                     "Error loading '" + file.getName()
@@ -607,57 +668,120 @@ public class MasterFrame extends javax.swing.JFrame {
                 new ImageIcon(getClass().getResource("/master/gui/icon.png")));
     }//GEN-LAST:event_jMenuItemHelpAboutActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
+    public void updateModelTab(Model model) {
+        
+        if (model == null)
+            return;
+        
+        DefaultTableModel populationTable = (DefaultTableModel)jTablePopulations.getModel();
+        DefaultTableModel reactionTable = (DefaultTableModel)jTableReactions.getModel();
+        
+        // Set populations
+
+        populationTable.setRowCount(0);
+        for (PopulationType popType : model.getPopulationTypes()) {
+            String dimString;
+            if (popType.getDims().length>0) {
+                StringBuilder sb = new StringBuilder();
+                for (int i=0; i<popType.getDims().length; i++) {
+                    if (i>0)
+                        sb.append(",");
+                    sb.append(popType.getDims()[i]);
                 }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MasterFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MasterFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MasterFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MasterFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                dimString = sb.toString();
+            } else
+                dimString = "scalar";
+            
+            populationTable.addRow(new Object [] {popType.getName(), dimString});
         }
-        //</editor-fold>
+        
+        // Set reactions
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MasterFrame().setVisible(true);
-            }
-        });
+        reactionTable.setRowCount(0);
+        for (Reaction reaction : model.getReactions()) {
+            reactionTable.addRow(new Object [] {
+                reaction.reactionStringInput.get().trim(), reaction.getRate(), reaction.getName()});
+        }
+
     }
+    
+    public void updateExecutionTab(beast.core.Runnable runnable,
+            JsonOutput jsonOutput,
+            NewickOutput newickOutput,
+            NexusOutput nexusOutput) {
 
+
+        
+        if (jsonOutput == null) {
+            jCheckBoxJsonOutput.setSelected(false);
+            jTextFieldJsonOutput.setText("");
+        } else {
+            jCheckBoxJsonOutput.setSelected(true);
+            jTextFieldJsonOutput.setText(jsonOutput.fileNameInput.get());
+        }
+        
+                
+        if (runnable instanceof InheritanceTrajectory
+                || runnable instanceof InheritanceEnsemble) {
+
+            if (newickOutput == null) {
+                jCheckBoxNewickOutput.setSelected(false);
+                jTextFieldNewickOutput.setText("");
+            } else {
+                jCheckBoxNewickOutput.setSelected(true);
+                jTextFieldNewickOutput.setText(newickOutput.fileNameInput.get());
+            }
+            jCheckBoxNewickOutput.setEnabled(true);
+            jTextFieldNewickOutput.setEnabled(true);
+            
+            if (nexusOutput == null) {
+                jCheckBoxNexusOutput.setSelected(false);
+                jTextFieldNexusOutput.setText("");
+            } else {
+                jCheckBoxNexusOutput.setSelected(true);
+                jTextFieldNexusOutput.setText(nexusOutput.fileNameInput.get());
+            }
+            jCheckBoxNexusOutput.setEnabled(true);
+            jTextFieldNexusOutput.setEnabled(true);
+        } else {
+            jCheckBoxNewickOutput.setEnabled(false);
+            jCheckBoxNexusOutput.setEnabled(false);
+            jTextFieldNewickOutput.setEnabled(false);
+            jTextFieldNexusOutput.setEnabled(false);
+            jTextFieldNewickOutput.setText("");
+            jTextFieldNexusOutput.setText("");
+
+        }
+    }
+    
+    public DefaultTableModel getReactionTable() {
+        return (DefaultTableModel)jTableReactions.getModel();
+    }
+    
+    public DefaultTableModel getPopulationTable() {
+        return (DefaultTableModel)jTablePopulations.getModel();
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton2DelReact;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButtonAddPop;
+    private javax.swing.JButton jButtonAddReact;
     private javax.swing.JButton jButtonDelPop;
+    private javax.swing.JButton jButtonRun;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JCheckBox jCheckBox5;
+    private javax.swing.JCheckBox jCheckBoxJsonOutput;
+    private javax.swing.JCheckBox jCheckBoxNewickOutput;
+    private javax.swing.JCheckBox jCheckBoxNexusOutput;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenu jMenuHelp;
     private javax.swing.JMenuItem jMenuItemFileExit;
@@ -681,13 +805,13 @@ public class MasterFrame extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
+    private javax.swing.JTable jTablePopulations;
+    private javax.swing.JTable jTableReactions;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextFieldJsonOutput;
+    private javax.swing.JTextField jTextFieldNewickOutput;
+    private javax.swing.JTextField jTextFieldNexusOutput;
     // End of variables declaration//GEN-END:variables
 }

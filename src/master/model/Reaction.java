@@ -273,6 +273,15 @@ public class Reaction extends BEASTObject {
     }
     
     /**
+     * Retrieve rate of this reaction.
+     * 
+     * @return rate
+     */
+    public double getRate() {
+        return rate;
+    }
+    
+    /**
      * Calculate instantaneous reaction rates (propensities) for a given system
      * state.
      *
@@ -298,10 +307,19 @@ public class Reaction extends BEASTObject {
     }
     
     /**
-     * Retrieve name of reaction group optionally provided during
+     * Set name of reaction.
+     * 
+     * @param reactionName 
+     */
+    public void setName(String reactionName) {
+        this.reactionName = reactionName;
+    }
+    
+    /**
+     * Retrieve name of reaction optionally provided during
      * specification.
      * 
-     * @return reaction group name
+     * @return reaction name
      */
     public String getName() {
         return reactionName;

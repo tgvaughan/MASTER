@@ -26,14 +26,22 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import master.EnsembleSpec;
+import master.EnsembleSummarySpec;
 import master.InheritanceEnsemble;
+import master.InheritanceEnsembleSpec;
 import master.InheritanceTrajectory;
+import master.InheritanceTrajectorySpec;
+import master.TrajectorySpec;
 import master.model.Model;
 import master.model.PopulationType;
 import master.model.Reaction;
 import master.outputs.JsonOutput;
 import master.outputs.NewickOutput;
 import master.outputs.NexusOutput;
+import master.steppers.GillespieStepper;
+import master.steppers.SALStepper;
+import master.steppers.TauLeapingStepper;
 
 /**
  *
@@ -83,13 +91,13 @@ public class MasterFrame extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         jTableReactions = new javax.swing.JTable();
         jPanel6 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox();
-        jLabel1 = new javax.swing.JLabel();
-        jSpinner1 = new javax.swing.JSpinner();
-        jLabel2 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jTextField1 = new javax.swing.JTextField();
+        jComboBoxSimulationType = new javax.swing.JComboBox();
+        jLabelTrajectoryCount = new javax.swing.JLabel();
+        jSpinnerTrajectoryCount = new javax.swing.JSpinner();
+        jLabelStepper = new javax.swing.JLabel();
+        jComboBoxStepper = new javax.swing.JComboBox();
+        jCheckBoxSimPeriod = new javax.swing.JCheckBox();
+        jTextFieldSimPeriod = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -280,26 +288,27 @@ public class MasterFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Model", jPanel5);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Trajectory", "Ensemble", "EnsembleSummary", "InheritanceTrajectory", "InheritanceEnsemble" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        jComboBoxSimulationType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Trajectory", "Ensemble", "EnsembleSummary", "InheritanceTrajectory", "InheritanceEnsemble" }));
+        jComboBoxSimulationType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                jComboBoxSimulationTypeActionPerformed(evt);
             }
         });
 
-        jLabel1.setText("Trajectory count:");
+        jLabelTrajectoryCount.setText("Trajectory count:");
+        jLabelTrajectoryCount.setEnabled(false);
 
-        jSpinner1.setEnabled(false);
-        jSpinner1.setRequestFocusEnabled(false);
+        jSpinnerTrajectoryCount.setEnabled(false);
+        jSpinnerTrajectoryCount.setRequestFocusEnabled(false);
 
-        jLabel2.setText("Stepper:");
+        jLabelStepper.setText("Stepper:");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Gillespie", "Tau Leaping", "SAL" }));
+        jComboBoxStepper.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Gillespie", "Tau Leaping", "SAL" }));
 
-        jCheckBox1.setSelected(true);
-        jCheckBox1.setText("Max sim period:");
+        jCheckBoxSimPeriod.setSelected(true);
+        jCheckBoxSimPeriod.setText("Max sim period:");
 
-        jTextField1.setText("20");
+        jTextFieldSimPeriod.setText("20");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("End Conditions"));
 
@@ -311,16 +320,14 @@ public class MasterFrame extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 151, Short.MAX_VALUE)
+            .addGap(0, 150, Short.MAX_VALUE)
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Initial State"));
 
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"S",  new Double(1000.0), null},
-                {"I",  new Double(1.0),  new Boolean(true)},
-                {"R",  new Double(0.0), null}
+
             },
             new String [] {
                 "Population", "Size", "Lineage"
@@ -388,20 +395,20 @@ public class MasterFrame extends javax.swing.JFrame {
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(jTextField5))
                                 .addGroup(jPanel6Layout.createSequentialGroup()
-                                    .addComponent(jLabel1)
+                                    .addComponent(jLabelTrajectoryCount)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jSpinner1))
+                                    .addComponent(jSpinnerTrajectoryCount))
                                 .addGroup(jPanel6Layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
+                                    .addComponent(jLabelStepper)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(jComboBoxStepper, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGroup(jPanel6Layout.createSequentialGroup()
-                                    .addComponent(jCheckBox1)
+                                    .addComponent(jCheckBoxSimPeriod)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                    .addComponent(jTextFieldSimPeriod, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jComboBoxSimulationType, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -413,19 +420,19 @@ public class MasterFrame extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jComboBoxSimulationType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabelTrajectoryCount)
+                            .addComponent(jSpinnerTrajectoryCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabelStepper)
+                            .addComponent(jComboBoxStepper, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jCheckBox1)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jCheckBoxSimPeriod)
+                            .addComponent(jTextFieldSimPeriod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jCheckBox5)
@@ -588,9 +595,9 @@ public class MasterFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void jComboBoxSimulationTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxSimulationTypeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_jComboBoxSimulationTypeActionPerformed
 
     private void jButtonAddPopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddPopActionPerformed
         // TODO add your handling code here:
@@ -754,14 +761,72 @@ public class MasterFrame extends javax.swing.JFrame {
         }
     }
     
-    public DefaultTableModel getReactionTable() {
-        return (DefaultTableModel)jTableReactions.getModel();
+    public void updateSimulationTab(TrajectorySpec spec) {
+        
+        // Sim type and trajectory count
+        if (spec instanceof TrajectorySpec) {
+            jComboBoxSimulationType.setSelectedIndex(0);
+            jLabelTrajectoryCount.setEnabled(false);
+            jSpinnerTrajectoryCount.setEnabled(false);
+        }
+        if (spec instanceof EnsembleSpec) {
+            EnsembleSpec thisspec = (EnsembleSpec)spec;
+            jComboBoxSimulationType.setSelectedIndex(1);
+            jLabelTrajectoryCount.setEnabled(true);
+            jSpinnerTrajectoryCount.setEnabled(true);
+            jSpinnerTrajectoryCount.setValue(thisspec.getnTraj());
+        }
+        if (spec instanceof EnsembleSummarySpec) {
+            EnsembleSummarySpec thisspec = (EnsembleSummarySpec)spec;
+            jComboBoxSimulationType.setSelectedIndex(2);
+            jLabelTrajectoryCount.setEnabled(true);
+            jSpinnerTrajectoryCount.setEnabled(true);
+            jSpinnerTrajectoryCount.setValue(thisspec.getnTraj());
+        }
+        if (spec instanceof InheritanceTrajectorySpec) {
+            jComboBoxSimulationType.setSelectedIndex(3);
+            jLabelTrajectoryCount.setEnabled(false);
+            jSpinnerTrajectoryCount.setEnabled(false);
+        }
+        if (spec instanceof InheritanceEnsembleSpec) {
+            InheritanceEnsembleSpec thisspec = (InheritanceEnsembleSpec)spec;
+            jComboBoxSimulationType.setSelectedIndex(4);
+            jLabelTrajectoryCount.setEnabled(true);
+            jSpinnerTrajectoryCount.setEnabled(true);
+            jSpinnerTrajectoryCount.setValue(thisspec.getnTraj());
+        }
+
+        // Stepper
+        if (spec instanceof InheritanceTrajectorySpec
+                || spec instanceof InheritanceEnsembleSpec) {
+            jLabelStepper.setEnabled(false);
+            jComboBoxStepper.setSelectedIndex(-1);
+            jComboBoxStepper.setEnabled(false);
+        } else {
+            jLabelStepper.setEnabled(true);
+            jComboBoxStepper.setEnabled(true);
+            
+            if (spec.getStepper() instanceof GillespieStepper)
+                jComboBoxStepper.setSelectedIndex(0);
+            
+            if (spec.getStepper() instanceof TauLeapingStepper)
+                jComboBoxStepper.setSelectedIndex(1);
+            
+            if (spec.getStepper() instanceof SALStepper)
+                jComboBoxStepper.setSelectedIndex(2);
+        }
+        
+        // Simulation time
+        if (spec.getSimulationTime()>0.0) {
+            jCheckBoxSimPeriod.setSelected(true);
+            jTextFieldSimPeriod.setText(String.valueOf(spec.getSimulationTime()));
+        } else {
+            jCheckBoxSimPeriod.setSelected(true);
+            jTextFieldSimPeriod.setText("");
+        }
     }
     
-    public DefaultTableModel getPopulationTable() {
-        return (DefaultTableModel)jTablePopulations.getModel();
-    }
-    
+     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2DelReact;
     private javax.swing.JButton jButton4;
@@ -769,18 +834,18 @@ public class MasterFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonAddReact;
     private javax.swing.JButton jButtonDelPop;
     private javax.swing.JButton jButtonRun;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JCheckBox jCheckBoxJsonOutput;
     private javax.swing.JCheckBox jCheckBoxNewickOutput;
     private javax.swing.JCheckBox jCheckBoxNexusOutput;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JCheckBox jCheckBoxSimPeriod;
+    private javax.swing.JComboBox jComboBoxSimulationType;
+    private javax.swing.JComboBox jComboBoxStepper;
     private javax.swing.JDialog jDialog1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabelStepper;
+    private javax.swing.JLabel jLabelTrajectoryCount;
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenu jMenuHelp;
@@ -803,15 +868,15 @@ public class MasterFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JSpinner jSpinner1;
+    private javax.swing.JSpinner jSpinnerTrajectoryCount;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable3;
     private javax.swing.JTable jTablePopulations;
     private javax.swing.JTable jTableReactions;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextFieldJsonOutput;
     private javax.swing.JTextField jTextFieldNewickOutput;
     private javax.swing.JTextField jTextFieldNexusOutput;
+    private javax.swing.JTextField jTextFieldSimPeriod;
     // End of variables declaration//GEN-END:variables
 }

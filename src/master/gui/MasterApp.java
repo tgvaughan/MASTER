@@ -46,8 +46,8 @@ public class MasterApp {
     MasterFrame view;
     
     beast.core.Runnable runnable;
-    Model model;
-    InitState initState;
+    master.TrajectorySpec spec;
+    
     JsonOutput jsonOutput;
     NewickOutput newickOutput;
     NexusOutput nexusOutput;
@@ -89,14 +89,14 @@ public class MasterApp {
      */
     public void updateView() {
         
-        model = null;
+        spec = null;
         jsonOutput = null;
         newickOutput = null;
         nexusOutput = null;
         
         if (runnable instanceof Trajectory) {
             Trajectory r = (Trajectory)runnable;
-            model = r.getSpec().getModel();
+            spec = r.getSpec();
 
             for (TrajectoryOutput o : r.outputsInput.get()) {
                 if (o instanceof JsonOutput)
@@ -106,7 +106,7 @@ public class MasterApp {
         
         if (runnable instanceof Ensemble) {
             Ensemble r = (Ensemble)runnable;
-            model = r.getSpec().getModel();
+            spec = r.getSpec();
 
             for (EnsembleOutput o : r.outputsInput.get()) {
                 if (o instanceof JsonOutput)
@@ -116,7 +116,7 @@ public class MasterApp {
         
         if (runnable instanceof EnsembleSummary) {
             EnsembleSummary r = (EnsembleSummary)runnable;
-            model = r.getSpec().getModel();
+            spec = r.getSpec();
             
             for (EnsembleSummaryOutput o : r.outputsInput.get()) {
                 if (o instanceof JsonOutput)
@@ -126,7 +126,7 @@ public class MasterApp {
 
         if (runnable instanceof InheritanceTrajectory) {
             InheritanceTrajectory r = (InheritanceTrajectory)runnable;
-            model = r.getSpec().getModel();
+            spec = r.getSpec();
             
             for (InheritanceTrajectoryOutput o : r.outputsInput.get()) {
                 if (o instanceof JsonOutput) {
@@ -148,7 +148,7 @@ public class MasterApp {
 
         if (runnable instanceof InheritanceEnsemble) {
             InheritanceEnsemble r = (InheritanceEnsemble)runnable;
-            model = r.getSpec().getModel();
+            spec = r.getSpec();
             
             for (InheritanceEnsembleOutput o : r.outputsInput.get()) {
                 if (o instanceof JsonOutput) {
@@ -168,7 +168,8 @@ public class MasterApp {
             }
         }
         
-        view.updateModelTab(model);
+        view.updateModelTab(spec.getModel());
+        view.updateSimulationTab(spec);
         view.updateExecutionTab(runnable, jsonOutput, newickOutput, nexusOutput);
     }
     

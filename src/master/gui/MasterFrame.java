@@ -719,11 +719,11 @@ public class MasterFrame extends javax.swing.JFrame {
         
         // Set reactions
 
-        reactionTable.setRowCount(0);
-        for (Reaction reaction : model.getReactions()) {
-            reactionTable.addRow(new Object [] {
-                reaction.reactionStringInput.get().trim(), reaction.getRate(), reaction.getName()});
-        }
+//        reactionTable.setRowCount(0);
+//        for (Reaction reaction : model.getReactions()) {
+//            reactionTable.addRow(new Object [] {
+//                reaction.reactionStringInput.get().trim(), reaction.getRate(), reaction.getName()});
+//        }
 
     }
     

@@ -60,7 +60,7 @@ public class RateEquationStepper extends Stepper {
     }
     
     @Override
-    public double step(PopulationState state, Model model, double maxStepSize) {
+    public double step(PopulationState state, Model model, double t, double maxStepSize) {
         
         double thisdt = Math.min(dt, maxStepSize);
             

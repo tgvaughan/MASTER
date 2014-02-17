@@ -40,10 +40,12 @@ public abstract class Stepper extends BEASTObject {
      * 
      * @param state
      * @param model
+     * @param t
      * @param maxStepSize 
      * @return Length of time increment.
      */
-    public abstract double step (PopulationState state, Model model, double maxStepSize);
+    public abstract double step (PopulationState state, Model model,
+            double t, double maxStepSize);
     
     /**
      * Retrieve descriptive name of this integrator as a string.

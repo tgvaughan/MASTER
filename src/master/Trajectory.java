@@ -237,7 +237,7 @@ public class Trajectory extends Runnable {
             while (t<spec.simulationTime) {
                 
                 // Increment time
-                t += spec.stepper.step(currentState, spec.model,
+                t += spec.stepper.step(currentState, spec.model, t,
                         spec.simulationTime-t);
                 
                 // Report trajectory progress:

@@ -17,16 +17,11 @@
 
 package master.gui;
 
-import javax.swing.table.DefaultTableModel;
 import master.Ensemble;
 import master.EnsembleSummary;
 import master.InheritanceEnsemble;
 import master.InheritanceTrajectory;
 import master.Trajectory;
-import master.model.InitState;
-import master.model.Model;
-import master.model.PopulationType;
-import master.model.Reaction;
 import master.outputs.EnsembleOutput;
 import master.outputs.EnsembleSummaryOutput;
 import master.outputs.InheritanceEnsembleOutput;

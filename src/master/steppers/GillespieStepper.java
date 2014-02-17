@@ -31,24 +31,41 @@ public class GillespieStepper extends Stepper {
     private double eventCount = 0;
     
     @Override
-    public double step(PopulationState state, Model model, double maxDt) {
+    public double step(PopulationState state, Model model,
+            double t, double maxDt) {
+        
+        // Increment time until next event or maxDt exceeded
+        double tprime = t;
         
         // Calculate propensities
-        double totalPropensity = 0.0;
-        for (Reaction reaction : model.getReactions()) {
-            reaction.calcPropensity(state);
-            totalPropensity += reaction.getPropensity();
-        }
+        double totalPropensity;
+        
+        while (true) {
+            totalPropensity = 0.0;
+            for (Reaction reaction : model.getReactions()) {
+                reaction.calcPropensity(state, t);
+                totalPropensity += reaction.getPropensity();
+            }
 
-        // Draw time of next reaction
-        double dt;
-        if (totalPropensity>0.0)
-            dt = Randomizer.nextExponential(totalPropensity);
-        else
-            dt = Double.POSITIVE_INFINITY;
+            // Draw time of next reaction
+            double dt;
+            if (totalPropensity>0.0)
+                dt = Randomizer.nextExponential(totalPropensity);
+            else
+                dt = Double.POSITIVE_INFINITY;
+            
+            double nextChangeTime = model.getNextReactionChangeTime(t);
+            
+            tprime += dt;
+            
+            if (t+dt<nextChangeTime)
+                break;
+            
+            tprime = nextChangeTime;
+        }
         
         // Stop here if maxDt exceeded:
-        if (dt>maxDt)
+        if ((tprime-t)>maxDt)
             return maxDt;
             
         // Choose reaction to implement
@@ -69,7 +86,7 @@ public class GillespieStepper extends Stepper {
         // Increment event counter:
         eventCount += 1;
 
-        return dt;
+        return tprime-t;
     }
 
     @Override

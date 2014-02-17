@@ -22,7 +22,7 @@ public class Reaction extends BEASTObject {
     public Input<String> nameInput = new Input<String>("reactionName",
             "Name of reaction. (Not used for grouped reactions.)");
     
-    public Input<Double> rateInput = new Input<Double>("rate",
+    public Input<String> rateInput = new Input<String>("rate",
             "Individual reaction rate. (Only used if group rate unset.)");
     
     public Input<List<Range>> rangesInput = new Input<List<Range>>("range",
@@ -36,7 +36,7 @@ public class Reaction extends BEASTObject {
     public String reactionName;
     public Map<Population,Integer> reactCount, prodCount, deltaCount;
     public Map<Population, List<Node>> reactNodes, prodNodes;
-    public double rate = -1.0;
+    public List<Double> rates, rateTimes;
     public double propensity;
     
     private final List<Range> ranges;
@@ -56,9 +56,12 @@ public class Reaction extends BEASTObject {
     @Override
     public void initAndValidate() {
         reactionName = nameInput.get();
+
+        // Parse rate string
+        if (rateInput.get() != null) {
+            setRateFromString(rateInput.get());
+        }
         
-        if (rateInput.get() != null)
-            rate = rateInput.get();
         
         ranges.addAll(rangesInput.get());
         for (Range range : ranges)
@@ -144,7 +147,8 @@ public class Reaction extends BEASTObject {
             } else
                 reaction = new Reaction();
             
-            reaction.setRate(rate);
+            reaction.rates = rates;
+            reaction.rateTimes = rateTimes;
             
             try {
                 reaction.setSchemaFromString(schemaString, populationTypes);
@@ -264,21 +268,71 @@ public class Reaction extends BEASTObject {
     }
 
     /**
-     * Adds rate of specific reaction.
-     *
-     * @param rate
+     * Use string of the form "rate1:time1,rate2:time2,..."
+     * to set the list of reaction rates associated with
+     * this reaction.
+     * 
+     * @param rateString 
      */
-    public void setRate(double rate) {
-        this.rate = rate;
+    public void setRateFromString(String rateString) {
+        rates = Lists.newArrayList();
+        rateTimes = Lists.newArrayList();
+        
+        boolean isFirst = true;
+        for (String ratePairStr : rateInput.get().split(",")) {
+            String [] ratePairSplitStr = ratePairStr.trim().split(":");
+            if (ratePairSplitStr.length==1) {
+                if (!isFirst) {
+                    throw new IllegalArgumentException("Only first rate "
+                            + "pair in a reaction rate string can omit "
+                            + "the time.");
+                }
+                
+                rates.add(Double.valueOf(ratePairSplitStr[0]));
+                rateTimes.add(0.0);
+            }
+            
+            if (ratePairSplitStr.length==2) {
+                
+                double thisRate = Double.valueOf(ratePairSplitStr[0]);
+                double thisTime = Double.valueOf(ratePairSplitStr[1]);
+                
+                // First time >0 implies reaction is off at start of sim
+                if (isFirst && thisTime>0.0) {
+                    rates.add(0.0);
+                    rateTimes.add(0.0);
+                }
+                
+                rates.add(thisRate);
+                rateTimes.add(thisTime);
+            }
+            
+            if (rateTimes.size()>1 &&
+                    rateTimes.get(rateTimes.size()-1)<rateTimes.get(rateTimes.size()-2))
+                throw new IllegalArgumentException("Rate change times must "
+                        + "be monotonically increasing.");
+            
+            if (isFirst)
+                isFirst = false;
+        }
     }
     
     /**
-     * Retrieve rate of this reaction.
+     * Retrieve rate list for this reaction.
      * 
-     * @return rate
+     * @return rates
      */
-    public double getRate() {
-        return rate;
+    public List<Double> getRates() {
+        return rates;
+    }
+    
+    /**
+     * Retrieve rate change time list for this reaction.
+     * 
+     * @return list of rate change times
+     */
+    public List<Double> getRateTimes() {
+        return rateTimes;
     }
     
     /**
@@ -286,10 +340,17 @@ public class Reaction extends BEASTObject {
      * state.
      *
      * @param state	PopulationState used to calculate propensities.
+     * @param t
      */
-    public void calcPropensity(PopulationState state) {
+    public void calcPropensity(PopulationState state, double t) {
         
-        propensity = rate;
+        int interval;
+        for (interval=0; interval<rates.size()-1; interval++) {
+            if (rateTimes.get(interval+1)>t)
+                break;
+        }
+        
+        propensity = rates.get(interval);
 
         for (Population pop : reactCount.keySet()) {
             for (int m = 0; m<reactCount.get(pop); m++)

@@ -57,6 +57,7 @@ public class Model extends BEASTObject {
     
     // Reactions:
     List<Reaction> reactions;
+    List<Double> reactionRateChangeTimes;
     
     @Override
     public void initAndValidate() throws Exception {
@@ -99,6 +100,62 @@ public class Model extends BEASTObject {
 
     public List<Reaction> getReactions() {
         return reactions;
+    }
+    
+    /**
+     * Obtain ordered list of times at which reaction rates change.
+     * @return 
+     */
+    public List<Double> getReactionChangeTimes() {
+        
+        if (reactionRateChangeTimes != null)
+            return reactionRateChangeTimes;
+        
+        List <Double> times = Lists.newArrayList();
+        
+        for (Reaction reaction : reactions) 
+            times.addAll(reaction.getRateTimes());
+        
+        Collections.sort(times, new Comparator<Double>() {
+
+            @Override
+            public int compare(Double o1, Double o2) {
+                if (o1<o2)
+                    return -1;
+                if (o1>o2)
+                    return 1;
+                
+                return 0;
+            }
+        });
+        
+        List <Double> timesUnique = Lists.newArrayList();
+        for (int i=0; i<times.size(); i++) {
+            if (i==0) {
+                timesUnique.add(times.get(0));
+                continue;
+            }
+            
+            if (times.get(i) != times.get(i-1))
+                timesUnique.add(times.get(i));
+        }
+        reactionRateChangeTimes = timesUnique;
+        
+        return reactionRateChangeTimes;
+    }
+    
+    public double getNextReactionChangeTime(double t) {
+        
+        int idx;
+        for (idx=0; idx<getReactionChangeTimes().size(); idx++) {
+            if (getReactionChangeTimes().get(idx)>t)
+                break;
+        }
+
+        if (idx==getReactionChangeTimes().size())
+            return Double.POSITIVE_INFINITY;
+        
+        return getReactionChangeTimes().get(idx);
     }
     
     /**

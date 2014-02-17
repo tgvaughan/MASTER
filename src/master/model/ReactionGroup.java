@@ -32,7 +32,7 @@ public class ReactionGroup extends BEASTObject {
     public Input<String> nameInput = new Input<String>("reactionGroupName",
             "Reaction group name");
     
-    public Input<Double> rateInput = new Input<Double>("rate",
+    public Input<String> rateInput = new Input<String>("rate",
             "Group reaction rate. (Overrides individual reaction rates.)");
     
     public Input<List<Reaction>> reactionsInput = new Input<List<Reaction>>(
@@ -47,7 +47,7 @@ public class ReactionGroup extends BEASTObject {
         
         if (rateInput.get() != null) {
             for (Reaction react : reactionsInput.get())
-                react.setRate(rateInput.get());
+                react.setRateFromString(rateInput.get());
         }
         
         if (nameInput.get() != null) {

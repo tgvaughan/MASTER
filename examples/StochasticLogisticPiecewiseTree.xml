@@ -1,0 +1,31 @@
+<!-- Generate an inheritance tree from a stochastic logistic model with
+     piecewise variation in carrying capacity.  Population sizes are
+     also sampled. -->
+
+<beast version='2.0' namespace='master:master.model:master.endconditions:master.outputs'>
+    <run spec='InheritanceTrajectory'
+         simulationTime="100"
+         samplePopulationSizes="true"
+         verbosity='1'>
+        
+        <model spec='Model'>
+            <population spec='Population' populationName='X' id='X'/>
+            <reaction spec='Reaction' reactionName='Birth' rate="1.0">
+                X -> 2X
+            </reaction>
+            <reaction spec='Reaction' reactionName='Death'
+                      rate="0.2, 0.01:10, 0.2:20, .01:30, .2:40, .01:50, .2:60, .01:70, .2:80, .01:90">
+                2X -> X
+            </reaction>
+        </model>                
+
+        <initialState spec='InitState'>
+            <lineageSeed spec='Individual' population='@X'/>
+        </initialState>
+        
+        <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>      
+        
+        <output spec='NexusOutput' fileName='StochasticLogisticPiecewiseTree_output.nexus'/>
+        <output spec='JsonOutput' fileName='StochasticLogisticPiecewiseTree_output.json'/>
+    </run>
+</beast>

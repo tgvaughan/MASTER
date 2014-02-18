@@ -299,7 +299,7 @@ public class InheritanceTrajectory extends Trajectory {
             double totalPropensity = 0.0;
             for (Reaction reaction :
                     spec.getModel().getReactions()) {
-                reaction.calcPropensity(currentPopState);
+                reaction.calcPropensity(currentPopState, t);
                 totalPropensity += reaction.getPropensity();
             }
 
@@ -312,6 +312,7 @@ public class InheritanceTrajectory extends Trajectory {
             // Check whether new time exceeds node seed time or simulation time
             boolean seedTimeExceeded = false;
             boolean simulationTimeExceeded = false;
+            boolean rateChangeTimeExceeded = false;
             if (!inactiveLineages.isEmpty() &&
                     inactiveLineages.get(0).getTime()<spec.getSimulationTime()) {
                 if (t>inactiveLineages.get(0).getTime()) {
@@ -319,9 +320,15 @@ public class InheritanceTrajectory extends Trajectory {
                     seedTimeExceeded = true;
                 }
             } else {
-                if (t>spec.getSimulationTime()) {
-                    t = spec.getSimulationTime();
-                    simulationTimeExceeded = true;
+                double nextChangeTime = spec.getModel().getNextReactionChangeTime(t);
+                if (t>Math.min(spec.getSimulationTime(), nextChangeTime)) {
+                    if (spec.getSimulationTime()<nextChangeTime) {
+                        t = spec.getSimulationTime();
+                        simulationTimeExceeded = true;
+                    } else {
+                        t = nextChangeTime;
+                        rateChangeTimeExceeded = true;
+                    }
                 }
             }
 
@@ -345,6 +352,11 @@ public class InheritanceTrajectory extends Trajectory {
                 activeLineages.get(child.getPopulation()).add(child);
                 
                 currentPopState.add(seedNode.getPopulation(), 1.0);                
+                continue;
+            }
+            
+            // Continue to next reaction if reached reaction rate change time
+            if (rateChangeTimeExceeded) {
                 continue;
             }
             

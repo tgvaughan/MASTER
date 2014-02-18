@@ -16,7 +16,6 @@
  */
 package master.steppers;
 
-import master.steppers.Stepper;
 import beast.core.Input;
 import master.model.Model;
 import master.model.PopulationState;
@@ -62,28 +61,37 @@ public class RateEquationStepper extends Stepper {
     @Override
     public double step(PopulationState state, Model model, double t, double maxStepSize) {
         
-        double thisdt = Math.min(dt, maxStepSize);
+        double tend = t + Math.min(dt, maxStepSize);
+        double tprime = t;
             
-        PopulationState statePrime = state.getCopy();
-        for (int i=0; i<maxIter; i++) {
-            for (Reaction reaction : model.getReactions())
-                reaction.calcPropensity(statePrime);
+        do {
+            double nextChangeTime = model.getNextReactionChangeTime(tprime);
+            double smallerdt = Math.min(nextChangeTime, tend) - tprime;
             
-            if (i>0)
-                statePrime = state.getCopy();
+            PopulationState statePrime = state.getCopy();
+            for (int i=0; i<maxIter; i++) {
+                for (Reaction reaction : model.getReactions())
+                    reaction.calcPropensity(statePrime, tprime);
+                
+                if (i>0)
+                    statePrime = state.getCopy();
+                
+                for (Reaction reaction : model.getReactions()) {
+                    statePrime.implementReaction(reaction,
+                            reaction.getPropensity()*0.5*smallerdt);
+                }
+            }
             
             for (Reaction reaction : model.getReactions()) {
-                statePrime.implementReaction(reaction,
-                        reaction.getPropensity()*0.5*thisdt);
+                reaction.calcPropensity(statePrime, tprime);
+                state.implementReaction(reaction, reaction.getPropensity()*smallerdt);
             }
-        }
+            
+            tprime += smallerdt;
+            
+        } while (tprime<tend);
         
-        for (Reaction reaction : model.getReactions()) {
-            reaction.calcPropensity(statePrime);
-            state.implementReaction(reaction, reaction.getPropensity()*thisdt);
-        }
-        
-        return thisdt;
+        return tend-t;
     }
 
     @Override

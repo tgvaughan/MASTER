@@ -6,7 +6,8 @@
          simulationTime='100'
          verbosity='1'>
         
-        <stepper spec='TauLeapingStepper' stepSize="0.01" />
+        <stepper spec='RateEquationStepper' stepSize="0.01" />
+        <!--stepper spec='TauLeapingStepper' stepSize="0.01" /-->
         <!--stepper spec='GillespieStepper' /-->
 
         <model spec='Model' id='model'>

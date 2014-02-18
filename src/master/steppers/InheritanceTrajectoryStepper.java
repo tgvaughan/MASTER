@@ -31,7 +31,7 @@ public class InheritanceTrajectoryStepper extends Stepper {
     private double eventCount = 0;
 
     @Override
-    public double step(PopulationState state, Model model, double maxStepSize) {
+    public double step(PopulationState state, Model model, double t, double maxStepSize) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

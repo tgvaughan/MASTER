@@ -336,6 +336,22 @@ public class Reaction extends BEASTObject {
     }
     
     /**
+     * Obtain rate at particular time.
+     * 
+     * @param t
+     * @return 
+     */
+    public double getRate(double t) {
+        int interval;
+        for (interval = 0; interval<rateTimes.size()-1; interval++) {
+            if (rateTimes.get(interval+1)>t)
+                break;
+        } 
+        
+        return rates.get(interval);
+    }
+    
+    /**
      * Calculate instantaneous reaction rates (propensities) for a given system
      * state.
      *

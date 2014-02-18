@@ -48,6 +48,8 @@ public class SALStepper extends Stepper {
     @Override
     public void initAndValidate() {
         dt = stepSizeInput.get();
+        corrections = Maps.newHashMap();
+        derivs = Maps.newHashMap();
     }
     
     /**
@@ -90,31 +92,41 @@ public class SALStepper extends Stepper {
     }
     
     @Override
-    public double step(PopulationState state, Model model, double maxStepSize) {
+    public double step(PopulationState state, Model model, double t, double maxStepSize) {
 
-        double thisdt = Math.min(dt, maxStepSize);
+        double tend = Math.min(dt, maxStepSize) + t;
+        double tprime = t;
             
-        // Calculate propensities based on starting state:
-        for (Reaction reaction : model.getReactions())
-            reaction.calcPropensity(state);
-        
-        // Estimate second order corrections:
-        calcCorrections(model, state);
-        
-        // Update state according to these rates:
-        for (Reaction reaction : model.getReactions())
-            leap(reaction, state, model, thisdt);
+        do {
+            double nextChangeTime = model.getNextReactionChangeTime(tprime);
+            double smallerdt = Math.min(nextChangeTime, tend) - tprime;
             
-        return thisdt;
+            // Calculate propensities based on starting state:
+            for (Reaction reaction : model.getReactions())
+                reaction.calcPropensity(state, tprime);
+        
+            // Estimate second order corrections:
+            calcCorrections(model, state, tprime);
+        
+            // Update state according to these rates:
+            for (Reaction reaction : model.getReactions())
+                leap(reaction, state, model, smallerdt);
+            
+            tprime += smallerdt;
+            
+        } while (tprime<tend);
+            
+        return tend-t;
     }
     
     /**
      * Calculate second order corrections to Poisson process rates.
      * 
      * @param model
-     * @param state 
+     * @param state
+     * @param t
      */
-    private void calcCorrections(Model model, PopulationState state) {
+    private void calcCorrections(Model model, PopulationState state, double t) {
 
         // Time derivatives of rate equations:
         derivs.clear();
@@ -140,7 +152,7 @@ public class SALStepper extends Stepper {
             double thisCorr = 0.0;
             for (Population pop : reaction.reactCount.keySet()) {
                 if (derivs.containsKey(pop))
-                    thisCorr += propensityDeriv(state, reaction, pop)*derivs.get(pop);
+                    thisCorr += propensityDeriv(state, reaction, pop, t)*derivs.get(pop);
             }
             corrections.put(reaction, thisCorr);
         }
@@ -154,10 +166,11 @@ public class SALStepper extends Stepper {
      * @param reaction Reaction group whose propensity to differentiate
      * @param r Member of reaction group
      * @param pop Population dimension to take derivative in
+     * @param t Time at which to evaluate derivative
      * @return Derivative
      */
     private double propensityDeriv(PopulationState state,
-            Reaction reaction, Population pop) {
+            Reaction reaction, Population pop, double t) {
         
         // Can stop here if reaction doesn't involve population:
         if (!reaction.reactCount.containsKey(pop))
@@ -172,7 +185,7 @@ public class SALStepper extends Stepper {
         }
         
         // Initialise accumulator:
-        double acc = reaction.rate;
+        double acc = reaction.getRate(t);
         
         // TODO: This calculation involves a lot of loops - can we optimize?
         for (Population popPrime : reaction.reactCount.keySet()) {

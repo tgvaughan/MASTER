@@ -36,7 +36,7 @@ public class RateEquationStepper extends Stepper {
             "Num of iterations used to solve for implicit term. (Default 3.)",
             3);
     
-    private double dt;    
+    private double dt;
     private int maxIter;
     
     public RateEquationStepper() { }

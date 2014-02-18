@@ -192,7 +192,10 @@ public class Trajectory extends Runnable {
             sampleState(currentState, 0.0);
 
             // Integration loop:
+            double t = 0;
             for (int sidx = 1; sidx<spec.nSamples; sidx++) {                
+
+                double nextSampTime = sidx*sampleDt;
                 
                 // Report trajectory progress:
                 if (spec.verbosity>1)
@@ -200,15 +203,13 @@ public class Trajectory extends Runnable {
                             +String.valueOf(sidx+1)+" of "
                             +String.valueOf(spec.nSamples));    
 
-
                 // Integrate to next sample time:
-                double t = 0;
-                while (t<sampleDt)
-                    t += spec.stepper.step(currentState, spec.model,
-                            sampleDt-t);
+                while (t<nextSampTime)
+                    t += spec.stepper.step(currentState, spec.model, t,
+                            nextSampTime-t);
                 
                 // Sample state:
-                sampleState(currentState, sampleDt*sidx);
+                sampleState(currentState, nextSampTime);
                 
                 // Check for end conditions:
                 PopulationEndCondition endConditionMet = null;
@@ -220,11 +221,19 @@ public class Trajectory extends Runnable {
                 }
                 if (endConditionMet != null) {
                     if (endConditionMet.isRejection()) {
+                        if (spec.verbosity>0)
+                            System.err.println("Rejection end condition met "
+                                    + "at time " + t);   
                         currentState = new PopulationState(spec.initPopulationState);
                         clearSamples();
+                        t = 0;
                         sidx = -1;
-                    } else
+                    } else {
+                        if (spec.verbosity>0)
+                            System.err.println("Truncation end condition met "
+                                    + "at time " + t);
                         break;
+                    }
                 }
             }
         } else {
@@ -265,8 +274,6 @@ public class Trajectory extends Runnable {
                         currentState = new PopulationState(spec.initPopulationState);
                         clearSamples();                        
                         t = 0;
-                        
-                        continue;
                     } else {
                         if (spec.verbosity>0)
                             System.err.println("Truncation end condition met "

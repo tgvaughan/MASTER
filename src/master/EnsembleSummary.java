@@ -217,7 +217,10 @@ public class EnsembleSummary extends Runnable {
             stateSummaries[0].record(currentState);
 
             // Integration loop:
+            double t = 0.0;
             for (int sidx = 1; sidx<spec.nSamples; sidx++) {
+                
+                double nextSampTime = sidx*sampleDt;
                 
                 // Check for end conditions:
                 boolean endConditionMet = false;
@@ -226,14 +229,16 @@ public class EnsembleSummary extends Runnable {
                         
                         // Can immediately reject, as only rejection condtions
                         // allowed for ensemble summaries.
-                        currentState = new PopulationState(spec.initPopulationState);
-                        sidx = 0;
-                        endConditionMet = true;
                         
                         // Report if necessary:
                         if (spec.verbosity>0)
                             System.err.println("Rejection end condition met"
-                                    + " at time " + sampleDt);
+                                    + " at time " + t);
+                        
+                        currentState = new PopulationState(spec.initPopulationState);
+                        t = 0;
+                        sidx = 0;
+                        endConditionMet = true;
                         
                         break;
                     }
@@ -248,9 +253,9 @@ public class EnsembleSummary extends Runnable {
                             +String.valueOf(spec.nSamples));
 
                 // Integrate to next sample time:
-                double t = 0;
-                while (t<sampleDt)
-                    t += spec.stepper.step(currentState, spec.model, sampleDt-t);
+                while (t<nextSampTime)
+                    t += spec.stepper.step(currentState, spec.model,
+                            t, nextSampTime-t);
                 
                 // Record sample:
                 stateSummaries[sidx].record(currentState);

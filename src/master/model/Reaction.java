@@ -340,7 +340,7 @@ public class Reaction extends BEASTObject {
      * state.
      *
      * @param state	PopulationState used to calculate propensities.
-     * @param t
+     * @param t         Time at which propensity is calculated.
      */
     public void calcPropensity(PopulationState state, double t) {
         

@@ -3,18 +3,19 @@
 
 <beast version='2.0' namespace='master:master.model:master.outputs:master.steppers'>
     <run spec='Trajectory'
-         simulationTime='30'
+         simulationTime='100'
          verbosity='1'>
         
-        <!-- <stepper spec='TauLeapingStepper' stepSize="0.01" /> -->
-        <stepper spec='GillespieStepper' />
+        <stepper spec='TauLeapingStepper' stepSize="0.01" />
+        <!--stepper spec='GillespieStepper' /-->
 
         <model spec='Model' id='model'>
             <population spec='Population' populationName="X" id='X'/>
             <reaction spec='Reaction' reactionName="Birth" rate="1.0">
                 X -> 2X
             </reaction>
-            <reaction spec='Reaction' reactionName="Death" rate="0.02:0, 0.01:5, 0.02:10, 0.01:15, 0.02:20">
+            <reaction spec='Reaction' reactionName="Death"
+                      rate="0.02, 0.01:30, 0.02:60">
                 2X -> X
             </reaction>
         </model>

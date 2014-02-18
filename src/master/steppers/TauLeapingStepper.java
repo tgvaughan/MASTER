@@ -78,20 +78,29 @@ public class TauLeapingStepper extends Stepper {
     }
     
     @Override
-    public double step(PopulationState state, Model model, double maxStepSize) {
+    public double step(PopulationState state, Model model, double t, double maxStepSize) {
         
+        double tend = t + Math.min(maxStepSize, dt);
+        double tprime = t;
 
-        double thisdt = Math.min(dt, maxStepSize);
+        do {
             
-        // Calculate transition rates based on starting state:
-        for (Reaction reaction : model.getReactions())
-            reaction.calcPropensity(state);
-
-        // Update state according to these rates:
-        for (Reaction reaction : model.getReactions())
-            leap(reaction, state, model, thisdt);
+            double nextChangeTime = model.getNextReactionChangeTime(tprime);
+            double smallerdt = Math.min(tend, nextChangeTime)-tprime;
+        
+            // Calculate transition rates based on starting state:
+            for (Reaction reaction : model.getReactions())
+                reaction.calcPropensity(state, tprime);
             
-        return thisdt;
+            // Update state according to these rates:
+            for (Reaction reaction : model.getReactions())
+                leap(reaction, state, model, smallerdt);
+          
+            tprime += smallerdt;
+            
+        } while (tprime<tend);
+        
+        return tend-t;
     }
 
     @Override

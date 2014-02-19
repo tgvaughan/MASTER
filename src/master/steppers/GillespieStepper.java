@@ -54,11 +54,12 @@ public class GillespieStepper extends Stepper {
             else
                 dt = Double.POSITIVE_INFINITY;
             
-            double nextChangeTime = model.getNextReactionChangeTime(t);
+            double nextChangeTime = model.getNextReactionChangeTime(tprime);
             
             tprime += dt;
             
-            if (t+dt<nextChangeTime)
+            if (tprime<nextChangeTime ||
+                    (Double.isInfinite(tprime) && Double.isInfinite(nextChangeTime)))
                 break;
             
             tprime = nextChangeTime;

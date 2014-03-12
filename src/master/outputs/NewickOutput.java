@@ -67,7 +67,7 @@ public class NewickOutput extends BEASTObject implements
             "collapseSingleChildNodes",
             "Prune nodes having a single child from output. (Default false.)",
             false);
-
+    
     public NewickOutput() { }
     
     @Override
@@ -75,27 +75,51 @@ public class NewickOutput extends BEASTObject implements
 
     @Override
     public void write(InheritanceTrajectory itraj) {
+        
+        PrintStream pstream = null;
         try {
-            NewickOutput.write(itraj,
-                    reverseTimeInput.get(),
-                    collapseSingleChildNodesInput.get(),
-                    new PrintStream(fileNameInput.get()));
+            pstream = new PrintStream(fileNameInput.get());
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NewickOutput.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
+        if (itraj.getSpec().getVerbosity()>0)
+            System.out.println("Writing Newick output...");
+        
+        if (!itraj.getStartNodes().isEmpty())
+            generateOutput(itraj, reverseTime, collapseSingleChildNodes, pstream);
+        else {
+            if (itraj.getSpec().getVerbosity()>0)
+                System.out.println("Warning: Newick writer skipping empty graph.");
+        }
     }
 
     @Override
     public void write(InheritanceEnsemble iensemble) {
+        
+        PrintStream pstream = null;
         try {
-            NewickOutput.write(iensemble,
-                    reverseTimeInput.get(),
-                    collapseSingleChildNodesInput.get(),
-                    new PrintStream(fileNameInput.get()));
+            pstream = new PrintStream(fileNameInput.get());
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NewickOutput.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        if (iensemble.getSpec().getVerbosity()>0)
+            System.out.println("Writing Newick output...");
+
+        int skips=0;
+        for (InheritanceTrajectory itraj : iensemble.getTrajectories()) {
+            if (!itraj.getStartNodes().isEmpty())
+                generateOutput(itraj, reverseTime, collapseSingleChildNodes, pstream);
+            else {
+                skips += 1;
+                if (itraj.getSpec().getVerbosity()>0)
+                    System.out.print("\rWarning: Newick writer skipping empty "
+                            + "graph. (repeated " + skips + " times)");
+            }
+        }
+        if (skips>0)
+            System.out.println();
     }
        
     /**
@@ -107,7 +131,7 @@ public class NewickOutput extends BEASTObject implements
      * @param collapseSingleChildNodes 
      * @param pstream 
      */
-    public NewickOutput(InheritanceTrajectory graph, boolean reverseTime,
+    public void generateOutput(InheritanceTrajectory graph, boolean reverseTime,
             boolean collapseSingleChildNodes, PrintStream pstream) {
 
         this.graph = graph;
@@ -163,7 +187,7 @@ public class NewickOutput extends BEASTObject implements
             subTreeToExtendedNewick(next, node, visitedHybrids);
         }
         
-        ps.append(";");
+        ps.append(";\n");
     }
     
 
@@ -318,72 +342,4 @@ public class NewickOutput extends BEASTObject implements
         return ps.toString();
     }
     
-    /**
-     * Write extended Newick representation of inheritance graph contained in
-     * inheritance trajectory itrajectory to PrintStream pstream.
-     * 
-     * @param itrajectory Inheritance trajectory containing graph
-     * @param reverseTime Whether to traverse graph in reverse time.
-     * @param collapseSingleChildNodes 
-     * @param pstream PrintStream used as destination for string representation.
-     */
-    public static void write(InheritanceTrajectory itrajectory,
-            boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
-        
-        if (itrajectory.getSpec().getVerbosity()>0)
-            System.out.println("Writing Newick output...");
-        
-        new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes, pstream);
-        pstream.println();
-    }
-    
-    /**
-     * Write extended Newick representation of inheritance trajectory ensemble
-     * iensemble to PrintStream pstream.
-     * 
-     * @param iensemble
-     * @param reverseTime
-     * @param collapseSingleChildNodes 
-     * @param pstream 
-     */
-    public static void write(InheritanceEnsemble iensemble,
-            boolean reverseTime, boolean collapseSingleChildNodes, PrintStream pstream) {
-        
-        if (iensemble.getSpec().getVerbosity()>0)
-            System.out.println("Writing Newick output...");
-
-        for (InheritanceTrajectory itrajectory : iensemble.getTrajectories()) {
-            new NewickOutput(itrajectory, reverseTime, collapseSingleChildNodes, pstream);
-            pstream.println();
-        }
-
-    }
-    
-    
-    /**
-     * Main method for testing.
-     * 
-     * @param args 
-     */
-    public static void main (String[] args) throws FileNotFoundException {
-       
-        // Create artificial inheritance graph:
-        
-        Population X = new Population("X");
-        
-        // Basic 3-taxon tree: (:1,:1):1,:2):0;
-        Node root = (new Node(X,0))
-                .addChild((new Node(X,1)).addChild(new Node(X,2)).addChild(new Node(X,2)))
-                .addChild(new Node(X,2));
-
-        // Simple network:
-//        Node hybrid = (new Node(X,1)).addChild(new Node(X,2)).addChild(new Node(X,2));
-//        Node root = (new Node(X,0))
-//                .addChild(hybrid)
-//                .addChild((new Node(X,0.5)).addChild(hybrid).addChild(new Node(X,2)));
-        
-        InheritanceTrajectory graph = new InheritanceTrajectory(root);        
-        write(graph, false, false, new PrintStream("out.tree"));
-    }
-
 }

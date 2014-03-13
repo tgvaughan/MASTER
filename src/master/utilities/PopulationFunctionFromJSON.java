@@ -21,8 +21,15 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.evolution.tree.coalescent.PopulationFunction;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import master.utilities.pfe.PFExpressionLexer;
+import master.utilities.pfe.PFExpressionParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -74,23 +81,31 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
      * 
      * @param args 
      */
-    public static void main(String [] args) {
+    public static void main(String [] args) throws FileNotFoundException, IOException {
         
         // Read in JSON file:
-        
        
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(new FileInputStream("/home/tvaughan/code/beast_and_friends/MASTER/examples/SIR_output.json"));
+       
+        // Read in times
+        
+        double[] times = new double[rootNode.get("t").size()];
+        for (int i=0; i<times.length; i++)
+            times[i] = rootNode.get("t").get(i).asDouble();
+        
+        // Build AST
+        
         String testExp = "I/(2*S)";
         
         ANTLRInputStream input = new ANTLRInputStream(testExp);
-        
         PFExpressionLexer lexer = new PFExpressionLexer(input);
-        
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        
         PFExpressionParser parser = new PFExpressionParser(tokens);
-        
         ParseTree tree = parser.start();
-        System.out.println(tree.toStringTree(parser));
+        //System.out.println(tree.toStringTree(parser));
+        
+        // Calculate population sizes
         
     }
 }

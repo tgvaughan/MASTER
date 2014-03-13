@@ -7,7 +7,7 @@ import beast.core.parameter.IntegerParameter;
 import com.google.common.collect.Maps;
 import java.util.Iterator;
 import java.util.Map;
-import org.codehaus.jackson.annotate.JsonValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Class of objects describing distinct populations within the model. These

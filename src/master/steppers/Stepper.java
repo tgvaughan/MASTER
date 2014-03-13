@@ -19,7 +19,7 @@ package master.steppers;
 import beast.core.BEASTObject;
 import master.model.Model;
 import master.model.PopulationState;
-import org.codehaus.jackson.annotate.JsonValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Abstract base class for algorithms which increment the system state

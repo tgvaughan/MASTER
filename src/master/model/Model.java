@@ -21,7 +21,7 @@ import beast.core.Input;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.*;
-import org.codehaus.jackson.annotate.JsonValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Class describing a birth-death viral population genetics model. Basically a

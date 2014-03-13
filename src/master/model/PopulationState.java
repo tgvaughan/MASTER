@@ -18,7 +18,7 @@ package master.model;
 
 import com.google.common.collect.*;
 import java.util.*;
-import org.codehaus.jackson.annotate.JsonValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Class of objects describing population states of the simulated system.

@@ -42,7 +42,7 @@ import master.TrajectorySpec;
 import master.InheritanceEnsemble;
 import master.InheritanceEnsembleSpec;
 import master.InheritanceTrajectory;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Class containing static methods for writing tracjectory, ensemble

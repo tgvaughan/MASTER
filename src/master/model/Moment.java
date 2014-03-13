@@ -20,7 +20,7 @@ import beast.core.BEASTObject;
 import beast.core.Input;
 import com.google.common.collect.*;
 import java.util.*;
-import org.codehaus.jackson.annotate.JsonValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * Class of objects representing a group of moments to be estimated from

@@ -89,7 +89,8 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         
         // Read in JSON file:
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(new FileInputStream("/home/tvaughan/code/beast_and_friends/MASTER/examples/SIR_output.json"));
+        JsonNode rootNode = mapper.readTree(
+                new FileInputStream(fileNameInput.get()));
        
         // Read in times
         times = new Double[rootNode.get("t").size()];
@@ -143,30 +144,32 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         
         if (tforward>times[times.length-1]) {
             if (popSizeEndInput.get()>0.0) {
-                return t/popSizeEndInput.get();
+                return (times[times.length-1]-tforward)/popSizeEndInput.get();
             } else
                 return Double.NEGATIVE_INFINITY;
         }
         
         if (tforward<0.0) {
             if (popSizeStartInput.get()>0.0) {
-                return intensities[times.length-1]
+                return intensities[0]
                         + (-tforward)/popSizeStartInput.get();
             } else
                 return Double.POSITIVE_INFINITY;
         }
         
-        int tidx = Arrays.binarySearch(times, originInput.get().getValue()-t);
-        if (tidx<0)
+        int tidx = Arrays.binarySearch(times, tforward);
+        if (tidx<0) {
             tidx = -(tidx + 1);  // index of first element greater than key
-        
-        return ((times[tidx]-tforward)/(popSizes[tidx-1]) + intensities[tidx]);
+            return ((times[tidx]-tforward)/(popSizes[tidx-1]) + intensities[tidx]);
+        } else
+            return intensities[tidx]; // Exact match can happen at boundaries.
         
     }
 
     @Override
-    public double getInverseIntensity(double x) {
-        throw new UnsupportedOperationException();
+    public double getInverseIntensity(double intensity) {
+
+        int idx = Arrays.binarySearch(intensities, intensity);
 
     }
     
@@ -181,9 +184,24 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         
         PopulationFunctionFromJSON instance = new PopulationFunctionFromJSON();
         instance.initByName(
-                "fileName", "/home/tvaughan/code/beast_and_friends/MASTER/examples/SIR_output.json",
-                "popSizeExpression", "I/(2*S)",
-                "origin", new RealParameter("60.0"));
+                "fileName", "/home/tvaughan/code/beast_and_friends/MASTER/examples/SIR_mod_output.json",
+                "popSizeExpression", "I/(2*S) + 3*R/2.7",
+                "origin", new RealParameter("50.0"),
+                "popSizeStart", 0.0,
+                "popSizeEnd", 0.0);
 
+        // Write pop sizes and intensities out
+        PrintStream outf = new PrintStream("test.txt");
+        outf.println("t N intensity");
+        double dt = 50.0/1000;
+        for (int i=0; i<=1000; i++) {
+            double t = dt*i;
+            double N = instance.getPopSize(t);
+            double intensity = instance.getIntensity(t);
+            
+            outf.format("%g %g %g\n", t, N, intensity);
+        }
+        outf.println();
+        
     }
 }

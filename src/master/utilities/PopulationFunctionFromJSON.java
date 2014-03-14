@@ -78,7 +78,7 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
             + " ensemble of trajectories, but ignored otherwise.  Default 0.", 0);
     */
 
-    Double [] times, popSizes, intensities;
+    Double [] times, popSizes, intensities, intensitiesRev;
     
     double tIntensityTrajStart, dt;
     
@@ -115,6 +115,14 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
             intensities[i-1] = intensities[i]
                     + (times[i]-times[i-1])/popSizes[i-1];
         }
+        
+        // Copy to reversed intensities array needed for binary search
+        intensitiesRev = new Double[times.length];
+        for (int i=0; i<times.length/2; i++) {
+            int j = times.length-1-i;
+            intensitiesRev[i] = intensities[j];
+            intensitiesRev[j] = intensities[i];
+        }
     }
 
     @Override
@@ -124,16 +132,20 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
 
     @Override
     public double getPopSize(double t) {
+        
+        double tforward = originInput.get().getValue() - t;
+        
+        if (tforward>times[times.length-1])
+            return popSizeEndInput.get();
+        
+        if (tforward<0)
+            return popSizeStartInput.get();
+        
         // Choose which index into integration lattice to use:
         int tidx = Arrays.binarySearch(times, originInput.get().getValue()-t);
         if (tidx<0)
             tidx = -(tidx + 1) - 1;
 
-        if (tidx<0)
-            return popSizeStartInput.get();
-        else if (tidx >= times.length)
-            return popSizeEndInput.get();
-        
         return popSizes[tidx];
     }
 
@@ -169,7 +181,21 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
     @Override
     public double getInverseIntensity(double intensity) {
 
-        int idx = Arrays.binarySearch(intensities, intensity);
+        if (intensity<intensities[times.length-1])
+            return times[times.length-1] + popSizeEndInput.get()*intensity;
+
+        if (intensity>intensities[0])
+            return popSizeStartInput.get()*(intensity-intensities[0]);
+        
+        int idx = Arrays.binarySearch(intensitiesRev, intensity);
+        int tidx;
+        if (idx<0) {
+            idx = -(idx+1);
+            tidx = times.length - 1 - idx;  // index into forward-time array
+            
+            
+        } else
+            return times[times.length-1-idx];
 
     }
     

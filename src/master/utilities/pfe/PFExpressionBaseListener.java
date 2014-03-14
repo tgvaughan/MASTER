@@ -17,26 +17,39 @@ public class PFExpressionBaseListener implements PFExpressionListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpression(@NotNull PFExpressionParser.ExpressionContext ctx) { }
+	@Override public void enterBracketed(@NotNull PFExpressionParser.BracketedContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpression(@NotNull PFExpressionParser.ExpressionContext ctx) { }
+	@Override public void exitBracketed(@NotNull PFExpressionParser.BracketedContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTerm(@NotNull PFExpressionParser.TermContext ctx) { }
+	@Override public void enterMul(@NotNull PFExpressionParser.MulContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTerm(@NotNull PFExpressionParser.TermContext ctx) { }
+	@Override public void exitMul(@NotNull PFExpressionParser.MulContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMulOrDiv(@NotNull PFExpressionParser.MulOrDivContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMulOrDiv(@NotNull PFExpressionParser.MulOrDivContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -56,13 +69,65 @@ public class PFExpressionBaseListener implements PFExpressionListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFactor(@NotNull PFExpressionParser.FactorContext ctx) { }
+	@Override public void enterAdd(@NotNull PFExpressionParser.AddContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFactor(@NotNull PFExpressionParser.FactorContext ctx) { }
+	@Override public void exitAdd(@NotNull PFExpressionParser.AddContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNumber(@NotNull PFExpressionParser.NumberContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNumber(@NotNull PFExpressionParser.NumberContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPop(@NotNull PFExpressionParser.PopContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPop(@NotNull PFExpressionParser.PopContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSub(@NotNull PFExpressionParser.SubContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSub(@NotNull PFExpressionParser.SubContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterUnit(@NotNull PFExpressionParser.UnitContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUnit(@NotNull PFExpressionParser.UnitContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -76,6 +141,19 @@ public class PFExpressionBaseListener implements PFExpressionListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPopulation(@NotNull PFExpressionParser.PopulationContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDiv(@NotNull PFExpressionParser.DivContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDiv(@NotNull PFExpressionParser.DivContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -9,26 +9,37 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface PFExpressionListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#expression}.
+	 * Enter a parse tree produced by {@link PFExpressionParser#Bracketed}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpression(@NotNull PFExpressionParser.ExpressionContext ctx);
+	void enterBracketed(@NotNull PFExpressionParser.BracketedContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#expression}.
+	 * Exit a parse tree produced by {@link PFExpressionParser#Bracketed}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpression(@NotNull PFExpressionParser.ExpressionContext ctx);
+	void exitBracketed(@NotNull PFExpressionParser.BracketedContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#term}.
+	 * Enter a parse tree produced by {@link PFExpressionParser#Mul}.
 	 * @param ctx the parse tree
 	 */
-	void enterTerm(@NotNull PFExpressionParser.TermContext ctx);
+	void enterMul(@NotNull PFExpressionParser.MulContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#term}.
+	 * Exit a parse tree produced by {@link PFExpressionParser#Mul}.
 	 * @param ctx the parse tree
 	 */
-	void exitTerm(@NotNull PFExpressionParser.TermContext ctx);
+	void exitMul(@NotNull PFExpressionParser.MulContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link PFExpressionParser#MulOrDiv}.
+	 * @param ctx the parse tree
+	 */
+	void enterMulOrDiv(@NotNull PFExpressionParser.MulOrDivContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PFExpressionParser#MulOrDiv}.
+	 * @param ctx the parse tree
+	 */
+	void exitMulOrDiv(@NotNull PFExpressionParser.MulOrDivContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link PFExpressionParser#start}.
@@ -42,15 +53,59 @@ public interface PFExpressionListener extends ParseTreeListener {
 	void exitStart(@NotNull PFExpressionParser.StartContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#factor}.
+	 * Enter a parse tree produced by {@link PFExpressionParser#Add}.
 	 * @param ctx the parse tree
 	 */
-	void enterFactor(@NotNull PFExpressionParser.FactorContext ctx);
+	void enterAdd(@NotNull PFExpressionParser.AddContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#factor}.
+	 * Exit a parse tree produced by {@link PFExpressionParser#Add}.
 	 * @param ctx the parse tree
 	 */
-	void exitFactor(@NotNull PFExpressionParser.FactorContext ctx);
+	void exitAdd(@NotNull PFExpressionParser.AddContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link PFExpressionParser#number}.
+	 * @param ctx the parse tree
+	 */
+	void enterNumber(@NotNull PFExpressionParser.NumberContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PFExpressionParser#number}.
+	 * @param ctx the parse tree
+	 */
+	void exitNumber(@NotNull PFExpressionParser.NumberContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link PFExpressionParser#pop}.
+	 * @param ctx the parse tree
+	 */
+	void enterPop(@NotNull PFExpressionParser.PopContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PFExpressionParser#pop}.
+	 * @param ctx the parse tree
+	 */
+	void exitPop(@NotNull PFExpressionParser.PopContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link PFExpressionParser#Sub}.
+	 * @param ctx the parse tree
+	 */
+	void enterSub(@NotNull PFExpressionParser.SubContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PFExpressionParser#Sub}.
+	 * @param ctx the parse tree
+	 */
+	void exitSub(@NotNull PFExpressionParser.SubContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link PFExpressionParser#Unit}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnit(@NotNull PFExpressionParser.UnitContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PFExpressionParser#Unit}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnit(@NotNull PFExpressionParser.UnitContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link PFExpressionParser#population}.
@@ -62,4 +117,15 @@ public interface PFExpressionListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPopulation(@NotNull PFExpressionParser.PopulationContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link PFExpressionParser#Div}.
+	 * @param ctx the parse tree
+	 */
+	void enterDiv(@NotNull PFExpressionParser.DivContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link PFExpressionParser#Div}.
+	 * @param ctx the parse tree
+	 */
+	void exitDiv(@NotNull PFExpressionParser.DivContext ctx);
 }

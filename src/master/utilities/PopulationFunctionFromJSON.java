@@ -20,19 +20,29 @@ package master.utilities;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
+import beast.core.parameter.RealParameter;
 import beast.evolution.tree.coalescent.PopulationFunction;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import master.utilities.pfe.PFExpressionLexer;
 import master.utilities.pfe.PFExpressionParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.MaxIterationsExceededException;
+import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.solvers.BrentSolver;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -45,15 +55,65 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
     
     public Input<String> popSizeExpressionInput = new Input<String>("popSizeExpression",
             "Either the name of a population or a simple mathematical expression"
-            + "involving such names. e.g. I/(2*S) if S and I are population names.");
+            + "involving such names. e.g. I/(2*S) if S and I are population names.",
+            Validate.REQUIRED);
     
+    public Input<RealParameter> originInput = new Input<RealParameter>("origin",
+            "Maps population time onto time before most recent tree sample. "
+                    + "Think of this as specifying the time of the most recent "
+                    + "sample in the population size trajectory time scale.",
+            Validate.REQUIRED);
+    
+    public Input<Double> popSizeEndInput = new Input<Double>("popSizeEnd",
+            "Population size to use beyond the end of the simulated trajectory.",
+            0.0);
+    
+    public Input<Double> popSizeStartInput = new Input<Double>("popSizeStart",
+            "Population size to use before the start of the simulated trajectory.",
+            0.0);
+    
+    /*
     public Input<Integer> trajNumInput = new Input<Integer>("trajNum",
             "The index of the trajectory to use if the JSON file contains an"
             + " ensemble of trajectories, but ignored otherwise.  Default 0.", 0);
+    */
 
+    Double [] times, popSizes, intensities;
+    
+    double tIntensityTrajStart, dt;
+    
+    int stepCount;
+    
     @Override
     public void initAndValidate() throws Exception {
         
+        // Read in JSON file:
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(new FileInputStream("/home/tvaughan/code/beast_and_friends/MASTER/examples/SIR_output.json"));
+       
+        // Read in times
+        times = new Double[rootNode.get("t").size()];
+        for (int i=0; i<times.length; i++)
+            times[i] = rootNode.get("t").get(i).asDouble();
+        
+        // Build AST of population size expression
+        ANTLRInputStream input = new ANTLRInputStream(popSizeExpressionInput.get());
+        PFExpressionLexer lexer = new PFExpressionLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        PFExpressionParser parser = new PFExpressionParser(tokens);
+        ParseTree tree = parser.start();
+        
+        // Calculate population sizes
+        PFEVisitor visitor = new PFEVisitor(rootNode);
+        popSizes = visitor.visit(tree);
+        
+        // Numerically integrate to get intensities:
+        intensities = new Double[times.length];
+        intensities[times.length-1] = 0.0;
+        for (int i=times.length-1; i>0; i--) {
+            intensities[i-1] = intensities[i]
+                    + (times[i]-times[i-1])/popSizes[i-1];
+        }
     }
 
     @Override
@@ -63,49 +123,67 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
 
     @Override
     public double getPopSize(double t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // Choose which index into integration lattice to use:
+        int tidx = Arrays.binarySearch(times, originInput.get().getValue()-t);
+        if (tidx<0)
+            tidx = -(tidx + 1) - 1;
+
+        if (tidx<0)
+            return popSizeStartInput.get();
+        else if (tidx >= times.length)
+            return popSizeEndInput.get();
+        
+        return popSizes[tidx];
     }
 
     @Override
     public double getIntensity(double t) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        double tforward = originInput.get().getValue() - t;
+        
+        if (tforward>times[times.length-1]) {
+            if (popSizeEndInput.get()>0.0) {
+                return t/popSizeEndInput.get();
+            } else
+                return Double.NEGATIVE_INFINITY;
+        }
+        
+        if (tforward<0.0) {
+            if (popSizeStartInput.get()>0.0) {
+                return intensities[times.length-1]
+                        + (-tforward)/popSizeStartInput.get();
+            } else
+                return Double.POSITIVE_INFINITY;
+        }
+        
+        int tidx = Arrays.binarySearch(times, originInput.get().getValue()-t);
+        if (tidx<0)
+            tidx = -(tidx + 1);  // index of first element greater than key
+        
+        return ((times[tidx]-tforward)/(popSizes[tidx-1]) + intensities[tidx]);
+        
     }
 
     @Override
     public double getInverseIntensity(double x) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException();
+
     }
     
     /**
      * Main method for debugging.
      * 
      * @param args 
+     * @throws java.lang.Exception 
      */
-    public static void main(String [] args) throws FileNotFoundException, IOException {
+    public static void main(String [] args) throws Exception {
+
         
-        // Read in JSON file:
-       
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(new FileInputStream("/home/tvaughan/code/beast_and_friends/MASTER/examples/SIR_output.json"));
-       
-        // Read in times
-        
-        double[] times = new double[rootNode.get("t").size()];
-        for (int i=0; i<times.length; i++)
-            times[i] = rootNode.get("t").get(i).asDouble();
-        
-        // Build AST
-        
-        String testExp = "I/(2*S)";
-        
-        ANTLRInputStream input = new ANTLRInputStream(testExp);
-        PFExpressionLexer lexer = new PFExpressionLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        PFExpressionParser parser = new PFExpressionParser(tokens);
-        ParseTree tree = parser.start();
-        //System.out.println(tree.toStringTree(parser));
-        
-        // Calculate population sizes
-        
+        PopulationFunctionFromJSON instance = new PopulationFunctionFromJSON();
+        instance.initByName(
+                "fileName", "/home/tvaughan/code/beast_and_friends/MASTER/examples/SIR_output.json",
+                "popSizeExpression", "I/(2*S)",
+                "origin", new RealParameter("60.0"));
+
     }
 }

@@ -5,21 +5,21 @@ start: expression;
 // Parser rules:
 
 expression :
-        expression '+' term
-    |   expression '-' term
-    |   term
+        expression '+' term    # Add
+    |   expression '-' term    # Sub
+    |   term                   # MulOrDiv
     ;
 
 term :
-        term '*' factor
-    |   term '/' factor
-    |   factor
+        term '*' factor        # Mul
+    |   term '/' factor        # Div
+    |   factor                 # Unit
     ;
 
 factor :
-        '(' expression ')'
-    |   population
-    |   NUM
+        '(' expression ')'     # Bracketed
+    |   population             # pop
+    |   NUM                    # number
     ;
 
 population : POPTYPE LOC? ;

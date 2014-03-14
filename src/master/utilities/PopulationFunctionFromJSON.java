@@ -192,11 +192,9 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         if (idx<0) {
             idx = -(idx+1);
             tidx = times.length - 1 - idx;  // index into forward-time array
-            
-            
+            return times[tidx] + (intensity-intensities[tidx])*popSizes[tidx];
         } else
             return times[times.length-1-idx];
-
     }
     
     /**
@@ -218,14 +216,15 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
 
         // Write pop sizes and intensities out
         PrintStream outf = new PrintStream("test.txt");
-        outf.println("t N intensity");
+        outf.println("t N intensity invIntensity");
         double dt = 50.0/1000;
         for (int i=0; i<=1000; i++) {
             double t = dt*i;
             double N = instance.getPopSize(t);
             double intensity = instance.getIntensity(t);
+            double invIntensity = instance.getInverseIntensity(intensity);
             
-            outf.format("%g %g %g\n", t, N, intensity);
+            outf.format("%g %g %g %g\n", t, N, intensity, invIntensity);
         }
         outf.println();
         

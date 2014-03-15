@@ -182,19 +182,27 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
     public double getInverseIntensity(double intensity) {
 
         if (intensity<intensities[times.length-1])
-            return times[times.length-1] + popSizeEndInput.get()*intensity;
+            return convertTime(times[times.length-1]) + popSizeEndInput.get()*intensity;
 
         if (intensity>intensities[0])
-            return popSizeStartInput.get()*(intensity-intensities[0]);
+            return convertTime(times[0]) + popSizeStartInput.get()*(intensity-intensities[0]);
         
         int idx = Arrays.binarySearch(intensitiesRev, intensity);
-        int tidx;
         if (idx<0) {
             idx = -(idx+1);
-            tidx = times.length - 1 - idx;  // index into forward-time array
-            return times[tidx] + (intensity-intensities[tidx])*popSizes[tidx];
+            int tidx = times.length - 1 - idx;  // index into forward-time array
+            return convertTime(times[tidx]) + (intensity-intensities[tidx])*popSizes[tidx];
         } else
-            return times[times.length-1-idx];
+            return convertTime(times[times.length-1-idx]);
+    }
+    
+    /**
+     * Convert between simulation time and tree age time.
+     * @param t
+     * @return origin - t
+     */
+    private double convertTime(double t) {
+        return originInput.get().getValue() - t;
     }
     
     /**
@@ -208,16 +216,16 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         
         PopulationFunctionFromJSON instance = new PopulationFunctionFromJSON();
         instance.initByName(
-                "fileName", "/home/tvaughan/code/beast_and_friends/MASTER/examples/SIR_mod_output.json",
-                "popSizeExpression", "I/(2*S) + 3*R/2.7",
+                "fileName", "/home/tim/work/code/MASTER/examples/SIR_mod_output.json",
+                "popSizeExpression", "I",
                 "origin", new RealParameter("50.0"),
-                "popSizeStart", 0.0,
-                "popSizeEnd", 0.0);
+                "popSizeStart", 0.1,
+                "popSizeEnd", 0.1);
 
         // Write pop sizes and intensities out
         PrintStream outf = new PrintStream("test.txt");
         outf.println("t N intensity invIntensity");
-        double dt = 50.0/1000;
+        double dt = 60.0/1000;
         for (int i=0; i<=1000; i++) {
             double t = dt*i;
             double N = instance.getPopSize(t);

@@ -80,7 +80,7 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
     
     double tIntensityTrajStart, dt;
     
-    int stepCount;
+    int peakIdx;
     
     @Override
     public void initAndValidate() throws Exception {
@@ -113,11 +113,33 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         popSizes = visitor.visit(tree);
         
         // Numerically integrate to get intensities:
+//        intensities = new Double[times.length];
+//        intensities[times.length-1] = 0.0;
+//        for (int i=times.length-1; i>0; i--) {
+//            intensities[i-1] = intensities[i]
+//                    + (times[i]-times[i-1])/popSizes[i-1];
+//        }
+        
+        // Find peak population size
+        peakIdx=-1;
+        double peakVal = 0.0;
+        for (int i=0; i<times.length; i++) {
+            if (popSizes[i]>peakVal) {
+                peakIdx = i;
+                peakVal = popSizes[i];
+            }
+        }
+
+        // Numerically integrate intensities from peak population size
         intensities = new Double[times.length];
-        intensities[times.length-1] = 0.0;
-        for (int i=times.length-1; i>0; i--) {
+        intensities[peakIdx] = 0.0;
+        for (int i=peakIdx; i>0; i--) {
             intensities[i-1] = intensities[i]
                     + (times[i]-times[i-1])/popSizes[i-1];
+        }
+        for (int i=peakIdx; i<times.length-1; i++) {
+            intensities[i+1] = intensities[i]
+                    + (times[i]-times[i+1])/popSizes[i];
         }
         
         // Copy to reversed intensities array needed for binary search
@@ -160,7 +182,7 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         
         if (tforward>times[times.length-1]) {
             if (popSizeEndInput.get()>0.0) {
-                return (times[times.length-1]-tforward)/popSizeEndInput.get();
+                return intensities[times.length-1] + (times[times.length-1]-tforward)/popSizeEndInput.get();
             } else
                 return Double.NEGATIVE_INFINITY;
         }
@@ -176,7 +198,13 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         int tidx = Arrays.binarySearch(times, tforward);
         if (tidx<0) {
             tidx = -(tidx + 1);  // index of first element greater than key
-            return ((times[tidx]-tforward)/(popSizes[tidx-1]) + intensities[tidx]);
+            
+            // Integrate from different sides depending on location wrt peakIdx
+            if (tidx<=peakIdx) {
+                return (times[tidx]-tforward)/(popSizes[tidx-1]) + intensities[tidx];
+            } else {
+                return intensities[tidx-1] - (tforward-times[tidx-1])/popSizes[tidx-1];
+            }
         } else
             return intensities[tidx]; // Exact match can happen at boundaries.
         
@@ -186,7 +214,7 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
     public double getInverseIntensity(double intensity) {
 
         if (intensity<intensities[times.length-1])
-            return convertTime(times[times.length-1]) + popSizeEndInput.get()*intensity;
+            return convertTime(times[times.length-1]) + popSizeEndInput.get()*(intensity-intensities[times.length-1]);
 
         if (intensity>intensities[0])
             return convertTime(times[0]) + popSizeStartInput.get()*(intensity-intensities[0]);
@@ -220,16 +248,17 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         
         PopulationFunctionFromJSON instance = new PopulationFunctionFromJSON();
         instance.initByName(
-                "fileName", "/home/tim/work/code/MASTER/examples/SIR_mod_output.json",
-                "popSizeExpression", "I",
-                "origin", new RealParameter("50.0"),
-                "popSizeStart", 0.1,
-                "popSizeEnd", 0.1);
+                "fileName", "/home/tim/work/articles/volzpaper/SimulatedData/SIR_1000sims.json",
+                "popSizeExpression", "(I-1)/(2*0.00075*S)",
+                "origin", new RealParameter("66.5499977474"),
+                "trajNum", 1,
+                "popSizeStart", 0.0,
+                "popSizeEnd", 0.0);
 
         // Write pop sizes and intensities out
         PrintStream outf = new PrintStream("test.txt");
         outf.println("t N intensity invIntensity");
-        double dt = 60.0/1000;
+        double dt = 66.5499977474/1000;
         for (int i=0; i<=1000; i++) {
             double t = dt*i;
             double N = instance.getPopSize(t);

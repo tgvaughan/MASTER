@@ -72,11 +72,9 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
             "Population size to use before the start of the simulated trajectory.",
             0.0);
     
-    /*
     public Input<Integer> trajNumInput = new Input<Integer>("trajNum",
             "The index of the trajectory to use if the JSON file contains an"
             + " ensemble of trajectories, but ignored otherwise.  Default 0.", 0);
-    */
 
     Double [] times, popSizes, intensities, intensitiesRev;
     
@@ -92,10 +90,16 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         JsonNode rootNode = mapper.readTree(
                 new FileInputStream(fileNameInput.get()));
        
+        JsonNode trajRootNode;
+        if (rootNode.has("trajectories"))
+            trajRootNode = rootNode.get("trajectories").get(trajNumInput.get());
+        else
+            trajRootNode = rootNode;
+        
         // Read in times
-        times = new Double[rootNode.get("t").size()];
+        times = new Double[trajRootNode.get("t").size()];
         for (int i=0; i<times.length; i++)
-            times[i] = rootNode.get("t").get(i).asDouble();
+            times[i] = trajRootNode.get("t").get(i).asDouble();
         
         // Build AST of population size expression
         ANTLRInputStream input = new ANTLRInputStream(popSizeExpressionInput.get());
@@ -105,7 +109,7 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         ParseTree tree = parser.start();
         
         // Calculate population sizes
-        PFEVisitor visitor = new PFEVisitor(rootNode);
+        PFEVisitor visitor = new PFEVisitor(trajRootNode);
         popSizes = visitor.visit(tree);
         
         // Numerically integrate to get intensities:

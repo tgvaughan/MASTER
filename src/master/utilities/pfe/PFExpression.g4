@@ -28,7 +28,7 @@ population : POPTYPE LOC? ;
 
 POPTYPE : [a-zA-Z]+ ;
 LOC : '[' NNINT (',' NNINT)* ']' ;
-NUM : '-'? NNINT ('.' D+)? ([eE] '-'? D+)? ;
+NUM : NNINT ('.' D+)? ([eE] '-'? D+)? ;
 fragment NNINT : '0' | NZD D* ;
 fragment D : [0-9] ;
 fragment NZD : [1-9] ;

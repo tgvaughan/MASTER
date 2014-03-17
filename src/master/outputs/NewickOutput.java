@@ -45,16 +45,6 @@ import master.InheritanceTrajectory;
         + " disk in extended Newick format of Cardona et al, BMC Bioinf. (2008).")
 public class NewickOutput extends BEASTObject implements 
         InheritanceTrajectoryOutput, InheritanceEnsembleOutput{
-    
-    InheritanceTrajectory graph;
-
-    boolean reverseTime;
-    boolean collapseSingleChildNodes;
-    
-    PrintStream ps;
-    Set<Node> rootNodes, leafNodes;
-    Map<Node, String> leafLabels;
-    Map<Node, Integer> hybridIDs;
 
     public Input<String> fileNameInput = new Input<String>("fileName",
             "Name of file to write to.", Validate.REQUIRED);
@@ -68,26 +58,37 @@ public class NewickOutput extends BEASTObject implements
             "Prune nodes having a single child from output. (Default false.)",
             false);
     
+    boolean reverseTime, collapseSingleChildNodes;
+    
+    PrintStream pstream;
+    Set<Node> rootNodes, leafNodes;
+    Map<Node, String> leafLabels;
+    Map<Node, Integer> hybridIDs;
+    
     public NewickOutput() { }
     
     @Override
-    public void initAndValidate() { }
-
-    @Override
-    public void write(InheritanceTrajectory itraj) {
+    public void initAndValidate() {
         
-        PrintStream pstream = null;
+        reverseTime = reverseTimeInput.get();
+        collapseSingleChildNodes = collapseSingleChildNodesInput.get();
+        
+        pstream = null;
         try {
             pstream = new PrintStream(fileNameInput.get());
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NewickOutput.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }  
+    }
+
+    @Override
+    public void write(InheritanceTrajectory itraj) {
         
         if (itraj.getSpec().getVerbosity()>0)
             System.out.println("Writing Newick output...");
         
         if (!itraj.getStartNodes().isEmpty())
-            generateOutput(itraj, reverseTime, collapseSingleChildNodes, pstream);
+            generateOutput(itraj);
         else {
             if (itraj.getSpec().getVerbosity()>0)
                 System.out.println("Warning: Newick writer skipping empty graph.");
@@ -97,20 +98,13 @@ public class NewickOutput extends BEASTObject implements
     @Override
     public void write(InheritanceEnsemble iensemble) {
         
-        PrintStream pstream = null;
-        try {
-            pstream = new PrintStream(fileNameInput.get());
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(NewickOutput.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
         if (iensemble.getSpec().getVerbosity()>0)
             System.out.println("Writing Newick output...");
 
         int skips=0;
         for (InheritanceTrajectory itraj : iensemble.getTrajectories()) {
             if (!itraj.getStartNodes().isEmpty())
-                generateOutput(itraj, reverseTime, collapseSingleChildNodes, pstream);
+                generateOutput(itraj);
             else {
                 skips += 1;
                 if (itraj.getSpec().getVerbosity()>0)
@@ -126,18 +120,8 @@ public class NewickOutput extends BEASTObject implements
      * Create an extended Newick string representation of graph.
      * 
      * @param graph Graph to represent.
-     * @param reverseTime True causes the graph to be read in the direction
-     * from the latest nodes to the earliest.  Useful for coalescent trees.
-     * @param collapseSingleChildNodes 
-     * @param pstream 
      */
-    public void generateOutput(InheritanceTrajectory graph, boolean reverseTime,
-            boolean collapseSingleChildNodes, PrintStream pstream) {
-
-        this.graph = graph;
-        this.reverseTime = reverseTime;
-        this.collapseSingleChildNodes = collapseSingleChildNodes;
-        this.ps = pstream;
+    public void generateOutput(InheritanceTrajectory graph) {
         
         leafLabels = Maps.newHashMap();
         hybridIDs = Maps.newHashMap();
@@ -174,7 +158,7 @@ public class NewickOutput extends BEASTObject implements
         boolean first = true;
         for (Node node : rootNodes) {
             if (!first)
-                ps.append(",");
+                pstream.append(",");
             else
                 first = false;
 
@@ -187,7 +171,7 @@ public class NewickOutput extends BEASTObject implements
             subTreeToExtendedNewick(next, node, visitedHybrids);
         }
         
-        ps.append(";\n");
+        pstream.append(";\n");
     }
     
 
@@ -225,17 +209,17 @@ public class NewickOutput extends BEASTObject implements
             
         } else {
             if (nextNodes.size()>0) {
-                ps.append("(");
+                pstream.append("(");
                 boolean first = true;
                 for (Node next : nextNodes) {
                     if (!first)
-                        ps.append(",");
+                        pstream.append(",");
                     else
                         first = false;
                     
                     subTreeToExtendedNewick(next, node, visitedHybrids);
                 }
-                ps.append(")");
+                pstream.append(")");
             }
             
             addLabel(node, branchLength);
@@ -251,13 +235,13 @@ public class NewickOutput extends BEASTObject implements
     protected void addLabel(Node node, double branchLength) {
         
         if (leafLabels.containsKey(node))
-            ps.append(leafLabels.get(node));
+            pstream.append(leafLabels.get(node));
         
         if (hybridIDs.containsKey(node))
-            ps.append("#").append(String.valueOf(hybridIDs.get(node)));
+            pstream.append("#").append(String.valueOf(hybridIDs.get(node)));
         // note that we've omitted the optional "type" specifier
         
-        ps.append(":").append(String.valueOf(branchLength));
+        pstream.append(":").append(String.valueOf(branchLength));
     }
     
     /**
@@ -339,7 +323,7 @@ public class NewickOutput extends BEASTObject implements
     
     @Override
     public String toString() {
-        return ps.toString();
+        return pstream.toString();
     }
     
 }

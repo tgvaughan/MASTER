@@ -28,8 +28,9 @@
 	<inheritancePostProcessor spec='LineageSampler'
 				  nSamples="10"
 				  samplingTime="20"
-				  reverseTime="false"/>
+				  reverseTime="false"
+				  noClean="false"/>
         
-        <output spec='NexusOutput' fileName='SLTreeSampled_out.nexus'/>
+        <output spec='NexusOutput' fileName='StochasticLogisticTreeSampled_out.nexus'/>
     </run>
 </beast>

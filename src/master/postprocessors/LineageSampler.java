@@ -11,7 +11,7 @@ import master.model.Node;
 /**
  * @author Alexei Drummond
  */
-public class SampleLineages extends BEASTObject implements InheritancePostProcessor {
+public class LineageSampler extends BEASTObject implements InheritancePostProcessor {
     
     public Input<Integer> nSamplesInput = new Input<Integer>("nSamples",
             "Number of lineages to sample", Input.Validate.REQUIRED);
@@ -25,6 +25,9 @@ public class SampleLineages extends BEASTObject implements InheritancePostProces
     public Input<Boolean> reverseTimeInput = new Input<Boolean>("reverseTime",
             "Process inheritance graph in reverse time.  Default false.", false);
 
+    public Input<Boolean> noCleanInput = new Input<Boolean>("noClean",
+            "Do not remove no-state-change nodes.", false);
+    
     @Override
     public void initAndValidate() { }
     
@@ -46,7 +49,7 @@ public class SampleLineages extends BEASTObject implements InheritancePostProces
      */
     public static void process(InheritanceTrajectory itraj,
             double samplingTime, int nSamples, String markAnnotation,
-            boolean reverseTime) {
+            boolean noClean, boolean reverseTime) {
         
         boolean markOnly;
         if (markAnnotation != null) {
@@ -119,6 +122,14 @@ public class SampleLineages extends BEASTObject implements InheritancePostProces
                 rootNodes.remove(root);
         }
         
+        // Clean graph of singleton nodes that don't represent state changes:
+        if (!noClean)
+            for (Node node : rootNodes)
+                cleanSubGraph(node, reverseTime, markAnnotation);
+
+        // Remove marks:
+        for (Node root : rootNodes)
+            unMark(root, reverseTime, markAnnotation);
     }
 
     /**
@@ -144,6 +155,23 @@ public class SampleLineages extends BEASTObject implements InheritancePostProces
         List<Node> prevNodes = getPrev(node, reverseTime);
         for (Node prev : prevNodes)
             mark(prev, reverseTime, markAnnotation);
+    }
+    
+    /**
+     * Remove mark from node and its ancestors.
+     * 
+     * @param node 
+     * @param reverseTime 
+     */
+    private static void unMark(Node node, boolean reverseTime, String markAnnotation) {
+
+        if (node.getAttributeNames().contains(markAnnotation)) {
+            node.removeAttribute(markAnnotation);
+        }
+
+        List<Node> prevNodes = getNext(node, reverseTime);
+        for (Node prev : prevNodes)
+            unMark(prev, reverseTime, markAnnotation);
     }
     
     /**
@@ -238,12 +266,45 @@ public class SampleLineages extends BEASTObject implements InheritancePostProces
         else
             return node.getParents();
     }
+    
+    /**
+     * Clean graph below node of any unmarked singleton nodes which do not represent
+     * state changes.
+     * 
+     * @param node
+     * @param reverseTime 
+     */
+    private static void cleanSubGraph(Node node, boolean reverseTime, String markAnnotation) {
+        List<Node> nextNodes = getNext(node, reverseTime);
+        List<Node> prevNodes = getPrev(node, reverseTime);
+        
+        if (nextNodes.size() == 1 && prevNodes.size() == 1) {
+            Node parent = prevNodes.get(0);
+            Node child = nextNodes.get(0);
+            
+            if (node.getPopulation().equals(child.getPopulation())) {
+                
+                getPrev(child, reverseTime).remove(node);
+                getPrev(child, reverseTime).add(parent);
+                
+                getNext(parent, reverseTime).remove(node);
+                getNext(parent, reverseTime).add(child);
+            }
+        }
+        
+        List<Node> nextNodesCopy = new ArrayList<Node>();
+        nextNodesCopy.addAll(nextNodes);
+
+        for (Node child : nextNodesCopy)
+            cleanSubGraph(child, reverseTime, markAnnotation);
+    }
 
     @Override
     public void process(InheritanceTrajectory itraj) {
-        SampleLineages.process(itraj,
+        LineageSampler.process(itraj,
                 samplingTimeInput.get(), nSamplesInput.get(),
-                markAnnotationInput.get(), reverseTimeInput.get());
+                markAnnotationInput.get(), noCleanInput.get(),
+                reverseTimeInput.get());
     }
     
 }

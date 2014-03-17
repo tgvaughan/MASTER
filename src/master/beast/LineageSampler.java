@@ -20,4 +20,4 @@ package master.beast;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class SampleLineages extends master.postprocessors.LineageSampler { }
+public class LineageSampler extends master.postprocessors.LineageSampler { }

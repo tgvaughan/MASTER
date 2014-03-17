@@ -19,6 +19,7 @@ The following software is currently bundled with MASTER:
 * Beast 2 (http://code.google.com/p/beast2/)
 * Google Guava (http://code.google.com/p/guava-libraries/)
 * Jackson (http://jackson.codehaus.org/)
+* ANTLR (http://www.antlr.org/)
 
 That software is distributed under the licences provided in the
 LICENCE.* files included in this archive.

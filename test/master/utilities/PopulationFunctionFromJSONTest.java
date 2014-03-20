@@ -63,24 +63,27 @@ public class PopulationFunctionFromJSONTest {
         double i10relTruth = 10.0/N1;
         double i15relTruth = i10relTruth + 5.0/N2;
         double i20relTruth = i15relTruth + 5.0/N3;
-        
-        System.out.format("i(10)-i(0)=%g (Truth %g)\n", i10rel, i10relTruth);
-        System.out.format("i(15)-i(0)=%g (Truth %g)\n", i15rel, i15relTruth);
-        System.out.format("i(20)-i(0)=%g (Truth %g)\n", i20rel, i20relTruth);
-        
-        System.out.format("inverseIntensity(i0)=%g (Truth 0.0)\n", instance.getInverseIntensity(i0));
-        System.out.format("inverseIntensity(i1)=%g (Truth 10.0)\n", instance.getInverseIntensity(i10));
-        System.out.format("inverseIntensity(i2)=%g (Truth 15.0)\n", instance.getInverseIntensity(i15));
-        System.out.format("inverseIntensity(i3)=%g (Truth 20.0)\n", instance.getInverseIntensity(i20));
-        
+
         double tol = 1e-15;
+        System.out.format("i(10)-i(0)=%g (Truth %g)\n", i10rel, i10relTruth);
         assertTrue(equalWithinTol(i10rel, i10relTruth, tol));
+        System.out.format("i(15)-i(0)=%g (Truth %g)\n", i15rel, i15relTruth);
         assertTrue(equalWithinTol(i15rel, i15relTruth, tol));
+        System.out.format("i(20)-i(0)=%g (Truth %g)\n", i20rel, i20relTruth);
         assertTrue(equalWithinTol(i20rel, i20relTruth, tol));
+                
+        System.out.format("\ni(-1)-i(0)=%g (Truth -Infinity)\n", instance.getIntensity(-1.0));
+        assertTrue(instance.getIntensity(-1.0)==Double.NEGATIVE_INFINITY);
+        System.out.format("i(21)-i(0)=%g (Truth Infinity)\n", instance.getIntensity(21.0));
+        assertTrue(instance.getIntensity(21.0)==Double.POSITIVE_INFINITY);
         
+        System.out.format("\ninverseIntensity(i0)=%g (Truth 0.0)\n", instance.getInverseIntensity(i0));
         assertTrue(equalWithinTol(instance.getInverseIntensity(i0), 0.0, tol));
+        System.out.format("inverseIntensity(i1)=%g (Truth 10.0)\n", instance.getInverseIntensity(i10));
         assertTrue(equalWithinTol(instance.getInverseIntensity(i10), 10.0, tol));
+        System.out.format("inverseIntensity(i2)=%g (Truth 15.0)\n", instance.getInverseIntensity(i15));
         assertTrue(equalWithinTol(instance.getInverseIntensity(i15), 15.0, tol));
+        System.out.format("inverseIntensity(i3)=%g (Truth 20.0)\n", instance.getInverseIntensity(i20));
         assertTrue(equalWithinTol(instance.getInverseIntensity(i20), 20.0, tol));
     }
     

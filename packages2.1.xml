@@ -1,0 +1,8 @@
+<packages>
+    <!--names in alphabetic order-->
+    <package name='MASTER' version='1.5.2'
+           url="https://github.com/CompEvol/MASTER/releases/download/v1.5.2/MASTER.addon.v1.5.2.zip"
+           description="stochastic simulation" >
+        <depends on='beast2' atleast='2.1.0'/>
+    </package>
+</packages>

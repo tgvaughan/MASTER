@@ -182,11 +182,16 @@
 
     <jar jarfile="${pack}/${archiveName}.jar">
       <fileset dir="${build}"/>
-      <archives>
-	<zips>
-	  <fileset dir="${build-lib}" includes="**/*.jar"/>
-	</zips>
-      </archives>
+      <restrict>
+	<not>
+	  <name name="META-INF/**"/>
+	</not>
+	<archives>
+	  <zips>
+	    <fileset dir="${build-lib}" includes="**/*.jar"/>
+	  </zips>
+	</archives>
+      </restrict>
       <manifest>
 	<attribute name="Main-Class" value="beast.app.beastapp.BeastMain"/>
       </manifest>
@@ -199,6 +204,10 @@
     </zip> 
 
     <delete dir="${pack}"/>
+
+    <echo/>
+    <echo/>
+    <echo>** Archive ${dist}/${archivename}.zip created successfuly! **</echo>
   </target>
 
   <!-- Build EVERYTHING -->

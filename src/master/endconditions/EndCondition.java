@@ -20,12 +20,20 @@ package master.endconditions;
 import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Input;
+import java.util.ArrayList;
+import java.util.List;
+import master.model.Population;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Abstract end condition class.")
 public class EndCondition extends BEASTObject {
+    
+    public Input<List<Population>> populationInput = new Input<List<Population>>(
+            "population",
+            "Specific population to which end condition applies (Optional).",
+            new ArrayList<Population>());
         
     public Input<Boolean> rejectionInput = new Input<Boolean>(
             "isRejection",

@@ -16,21 +16,24 @@
  */
 package master;
 
-import master.model.Node;
-import master.endconditions.LeafCountEndCondition;
-import master.endconditions.LineageEndCondition;
 import beast.core.Input;
 import beast.util.Randomizer;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import master.model.Population;
+import master.endconditions.LeafCountEndCondition;
+import master.endconditions.LineageEndCondition;
 import master.endconditions.PopulationEndCondition;
+import master.model.Node;
+import master.model.Population;
 import master.model.PopulationSize;
 import master.model.PopulationState;
 import master.model.Reaction;
@@ -109,7 +112,7 @@ public class InheritanceTrajectory extends Trajectory {
     private PopulationState currentPopState;
     private double t;
     private int sidx;
-    private int nTerminalNodes;
+    private Multiset<Population> leafCounts;
     
     public InheritanceTrajectory() { }
     
@@ -180,12 +183,48 @@ public class InheritanceTrajectory extends Trajectory {
     @Override
     public void run() {
         
-        // Generate stochastic trajectory:
-        simulate();
+        boolean reject;
+        do {
+            // Generate stochastic trajectory:
+            simulate();
         
-        // Perform any requested post-processing:
-        for (InheritancePostProcessor inheritancePostProc : inheritancePostProcessorsInput.get())
-            inheritancePostProc.process(this);
+            // Perform any requested post-processing:
+            for (InheritancePostProcessor inheritancePostProc : inheritancePostProcessorsInput.get())
+                inheritancePostProc.process(this);
+            
+            // Check for any post-simulation rejections
+            reject = false;
+            
+            for (LineageEndCondition endCondition : spec.lineageEndConditions) {
+                if (endCondition.isMetPost(activeLineages)) {
+                    reject = true;
+                    break;
+                }
+            }
+            if (!reject) {
+                for (PopulationEndCondition endCondition : spec.populationEndConditions) {
+                    if (endCondition.isMetPost(currentPopState)) {
+                        reject = true;
+                        break;
+                    }
+                }
+            }
+            if (!reject) {
+                for (LeafCountEndCondition endCondition : spec.leafCountEndConditions) {
+                    if (endCondition.isMetPost(leafCounts)) {
+                        reject = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (reject) {
+                // Rejection: Start a new simulation
+                if (spec.getVerbosity()>0)
+                    System.err.println("Post-simulation rejection condition met.");
+            }
+            
+        } while (reject);
 
         // Write outputs:
         for (InheritanceTrajectoryOutput output : outputsInput.get())
@@ -253,7 +292,7 @@ public class InheritanceTrajectory extends Trajectory {
             // Check whether a leaf count end condition is met:
             if (!conditionMet) {
                 for (LeafCountEndCondition leafEC : spec.getLeafCountEndConditions()) {
-                    if (leafEC.isMet(nTerminalNodes, activeLineages)) {
+                    if (leafEC.isMet(leafCounts, activeLineages)) {
                         conditionMet = true;
                         isRejection = leafEC.isRejection();
                         break;
@@ -400,9 +439,12 @@ public class InheritanceTrajectory extends Trajectory {
         }
 
         // Fix final time of any remaining active lineages:
-        for (Population nodePop : activeLineages.keySet())
-            for (Node node : activeLineages.get(nodePop))
+        for (Population nodePop : activeLineages.keySet()) {
+            for (Node node : activeLineages.get(nodePop)) {
                 node.setTime(t);
+                leafCounts.add(nodePop);
+            }
+        }
         
         // Record total time of calculation:
         spec.setWallTime(((new Date()).getTime() - startTime)/1e3);
@@ -475,7 +517,8 @@ public class InheritanceTrajectory extends Trajectory {
         });
         
         // Reset terminal node count:
-        nTerminalNodes = 0;
+        if (leafCounts == null)
+            leafCounts = HashMultiset.create();
     }
 
     
@@ -548,7 +591,7 @@ public class InheritanceTrajectory extends Trajectory {
             
             // Increment terminal node counter as necessary:
             if (reactNode.getChildren().isEmpty())
-                nTerminalNodes += 1;
+                leafCounts.add(reactNode.getPopulation());
         }
         
         // Graph cleaning and activeLineages maintenance:

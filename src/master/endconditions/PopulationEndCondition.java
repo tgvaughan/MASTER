@@ -18,9 +18,7 @@ package master.endconditions;
 
 import master.model.Population;
 import master.model.PopulationState;
-import beast.core.BEASTObject;
 import beast.core.Input;
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +31,6 @@ import java.util.List;
  */
 public class PopulationEndCondition extends EndCondition {
     
-    public Input<List<Population>> populationInput = new Input<List<Population>>(
-            "population",
-            "Population whose size to base end condition on.",
-            new ArrayList<Population>());
-    
     public Input<Double> thresholdInput = new Input<Double>(
             "threshold",
             "Population size threshold at which condition is met.",
@@ -48,7 +41,6 @@ public class PopulationEndCondition extends EndCondition {
             "Whether condition is size>=threshold. False implies <=threshold.",
             true);
     
-    List<Population> pops;
     double threshold;
     boolean exceed;
     
@@ -56,13 +48,8 @@ public class PopulationEndCondition extends EndCondition {
     
     @Override
     public void initAndValidate() {
-        pops = populationInput.get();
         threshold = thresholdInput.get();
         exceed = exceedCondInput.get();
-        
-        if (pops.isEmpty())
-            throw new IllegalArgumentException("Need at least one population "
-                    + "for population end condition.");
     }
     
     public boolean isMet(PopulationState currentState) {
@@ -70,8 +57,13 @@ public class PopulationEndCondition extends EndCondition {
             return false;
         
         double size = 0;
-        for (Population pop : pops)
-            size += currentState.get(pop);
+        if (populationInput.get().isEmpty()) {
+            for (Population pop : currentState.getPopSet())
+                size += currentState.get(pop);
+        } else {
+            for (Population pop : populationInput.get())
+                size += currentState.get(pop);
+        }
         
         if (exceed)
             return size >= threshold;
@@ -84,8 +76,13 @@ public class PopulationEndCondition extends EndCondition {
             return false;
         
         double size = 0;
-        for (Population pop : pops)
-            size += finalState.get(pop);
+        if (populationInput.get().isEmpty()) {
+            for (Population pop : finalState.getPopSet())
+                size += finalState.get(pop);
+        } else {
+            for (Population pop : populationInput.get())
+                size += finalState.get(pop);
+        }
         
         if (exceed)
             return size >= threshold;
@@ -96,10 +93,14 @@ public class PopulationEndCondition extends EndCondition {
     public String getConditionDescription() {
         StringBuilder sb = new StringBuilder();
         sb.append("Condition is met when ");
-        for (int i=0; i<pops.size(); i++) {
-            if (i>0)
-                sb.append(" + ");            
-            sb.append(pops.get(i));
+        if (populationInput.get().isEmpty())
+            sb.append("total population size");
+        else {
+            for (int i=0; i<populationInput.get().size(); i++) {
+                if (i>0)
+                    sb.append(" + ");
+                sb.append(populationInput.get().get(i));
+            }
         }
 
         if (exceed)

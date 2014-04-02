@@ -24,7 +24,7 @@
         <populationEndCondition spec='PopulationEndCondition'
                                 population='@I' threshold="0"
                                 exceedCondition="false" isRejection="true" />
-	<leafCountEndCondition spec='LeafCountEndCondition' nLeaves="100"/>
+        <leafCountEndCondition spec='LeafCountEndCondition' nLeaves="100"/>
         <inheritancePostProcessor spec='LineageFilter'
                                   reactionName="NONE" discard="true"/>
 

@@ -35,32 +35,33 @@ import master.model.Population;
 @Description("Lineage count end condition for an inheritance trajectory.")
 public class LineageEndCondition extends EndCondition {
     
-    public Input<List<Population>> populationInput = new Input<List<Population>>(
-            "population",
-            "Specific population to which lineages belong (optional).",
-            new ArrayList<Population>());
-    
     public Input<Integer> nLineagesInput = new Input<Integer>(
             "nLineages",
             "Linage count threshold for end condition.",
             Validate.REQUIRED);
     
-    public Input<Boolean> exceedCondInput = new Input<Boolean>(
-            "exceedCondition",
-            "Whether condition is size>=threshold. False implies <=threshold.",
+    public Input<Boolean> exactMatchInput = new Input<Boolean>(
+            "exactMatch",
+            "If true, the number of lineages must exactly match "
+                    + "the value of nLineages.",
             true);
     
-    private List<Population> pops;
-    private int nlineages;
-    private boolean exceed;
+    public Input<Boolean> exceedCondInput = new Input<Boolean>(
+            "exceedCondition",
+            "If exactMatchRequired is false, determines whether condition "
+                    + "is size>=threshold. False implies <=threshold.",
+            true);
+    
+    private int nLineages;
+    private boolean exceed, exact;
     
     public LineageEndCondition() { }
     
     @Override
     public void initAndValidate() {
         
-        pops = populationInput.get();        
-        nlineages = nLineagesInput.get();
+        nLineages = nLineagesInput.get();
+        exact = exactMatchInput.get();
         exceed = exceedCondInput.get();
     }
 
@@ -75,22 +76,25 @@ public class LineageEndCondition extends EndCondition {
             return false;
         
         int size;
-        if (pops.isEmpty()) {
+        if (populationInput.get().isEmpty()) {
             size = 0;
             for (List<Node> nodeList : activeLineages.values())
                 size += nodeList.size();
         } else {
             size = 0;
-            for (Population pop : pops) {
+            for (Population pop : populationInput.get()) {
                 if (activeLineages.containsKey(pop))
                     size += activeLineages.get(pop).size();
             }
         }
         
+        if (exact)
+            return size == nLineages;
+        
         if (exceed)
-            return size >= nlineages;
+            return size >= nLineages;
         else
-            return size <= nlineages;
+            return size <= nLineages;
     }
     
     /**
@@ -104,29 +108,32 @@ public class LineageEndCondition extends EndCondition {
             return false;
         
         int size;
-        if (pops.isEmpty()) {
+        if (populationInput.get().isEmpty()) {
             size = 0;
             for (List<Node> nodeList : activeLineages.values())
                 size += nodeList.size();
         } else {
             size = 0;
-            for (Population pop : pops) {
+            for (Population pop : populationInput.get()) {
                 if (activeLineages.containsKey(pop))
                     size += activeLineages.get(pop).size();
             }
         }
         
+        if (exact)
+            return size == nLineages;
+        
         if (exceed)
-            return size >= nlineages;
+            return size >= nLineages;
         else
-            return size <= nlineages;
+            return size <= nLineages;
     }
 
     /**
      * @return Description of the end condition.
      */
     public String getConditionDescription() {
-        return "Condition met when number of lineages reaches " + nlineages;
+        return "Condition met when number of lineages reaches " + nLineages;
     }
     
 }

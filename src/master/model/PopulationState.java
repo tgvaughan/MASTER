@@ -65,6 +65,15 @@ public class PopulationState {
     }
 
     /**
+     * Retrieve set of populations represented in this state.
+     * 
+     * @return population set.
+     */
+    public Set<Population> getPopSet() {
+        return popSizes.keySet();
+    }
+    
+    /**
      * Get size of a particular population.
      *
      * @param pop Specific population.

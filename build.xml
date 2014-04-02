@@ -20,7 +20,7 @@
   <property name="build-test" location="build-test"/>
   <property name="test-reports" location="test-reports"/>
   <property name="dist" location="dist"/>
-  <property name="pack" location="${dist}/package"/>
+
 
   <!-- Prepare for compilation -->
   <target name="init">
@@ -105,22 +105,23 @@
 
 
   <!-- Create BEAST 2 package -->
-  <target name="build" depends="compile">
-    <property name="fullName" value="${projName}.v${projVersion}"/>
+  <target name="build-package" depends="compile">
+    <property name="packageName" value="${projName}.package.v${projVersion}"/>
 
+    <property name="pack" location="${dist}/package"/>
     <mkdir dir="${pack}"/>
     <mkdir dir="${pack}/examples"/>
     <mkdir dir="${pack}/templates"/>
     <mkdir dir="${pack}/lib"/>
     <mkdir dir="${pack}/doc"/>
 
-    <jar jarfile="${pack}/${fullName}.src.jar" basedir="${src}" />
+    <jar jarfile="${pack}/${packageName}.src.jar" basedir="${src}" />
 
     <mkdir dir="${lib}" />
     <copy todir="${pack}/lib">
       <fileset dir="${lib}" includes="*.jar" />
     </copy>
-    <jar jarfile="${pack}/lib/${fullName}.jar" basedir="${build}" />
+    <jar jarfile="${pack}/lib/${packageName}.jar" basedir="${build}" />
 
     <copy file="README.md" tofile="${pack}/README" />
     <copy file="COPYING" todir="${pack}" />
@@ -145,15 +146,63 @@
 
     <copy file="version.xml" todir="${pack}" />
 
-    <zip destfile="${dist}/${fullName}.zip" basedir="${pack}" />
+    <zip destfile="${dist}/${packageName}.zip" basedir="${pack}" />
 
     <delete dir="${pack}"/>
 
     <echo/>
     <echo/>
-    <echo>** Package ${dist}/${fullName}.zip created successfuly! **</echo>
+    <echo>** Package ${dist}/${packageName}.zip created successfuly! **</echo>
   </target>
 
+  <!-- Create stand-alone archive bundled with BEAST. -->
+  <target name="build-standalone" depends="compile">
+    <property name="archiveName" value="${projName}-${projVersion}"/>
+
+    <property name="pack" location="${dist}/${archiveName}"/>
+    <mkdir dir="${pack}"/>
+    <mkdir dir="${pack}/examples"/>
+
+    <copy file="README.md" tofile="${pack}/README" />
+    <copy file="COPYING" todir="${pack}" />
+    <copy todir="${pack}">
+      <fileset dir="${lib}" includes="LICENSE*" />
+    </copy>
+
+    <mkdir dir="${examples}" />
+    <copy todir="${pack}/examples">
+      <fileset dir="${examples}" includes="*.xml" />
+      <fileset dir="${examples}" includes="*.R" />
+    </copy>
+
+    <copy file="deployment/master_linux.sh" todir="${pack}"/>
+    <replace file="${pack}/master_linux.sh" token="_MASTERJAR_"
+	     value="${archiveName}.jar"/>
+    <chmod file="${pack}/master_linux.sh" perm="a+x"/>
+
+    <jar jarfile="${pack}/${archiveName}.jar">
+      <fileset dir="${build}"/>
+      <archives>
+	<zips>
+	  <fileset dir="${build-lib}" includes="**/*.jar"/>
+	</zips>
+      </archives>
+      <manifest>
+	<attribute name="Main-Class" value="beast.app.beastapp.BeastMain"/>
+      </manifest>
+    </jar>
+
+    <zip destfile="${dist}/${archiveName}.zip">
+      <zipfileset dir="${pack}" prefix="${archiveName}" excludes="**/master_linux.sh"/>
+      <zipfileset dir="${pack}" prefix="${archiveName}" includes="**/master_linux.sh"
+		  filemode="755"/>
+    </zip> 
+
+    <delete dir="${pack}"/>
+  </target>
+
+  <!-- Build EVERYTHING -->
+  <target name="build" depends="build-package,build-standalone"/>
 
   <!-- Revert to pristine state. -->
   <target name="clean">

@@ -1,0 +1,3 @@
+<addon name="MASTER" version="1.6.0">
+    <depends on="beast2" atleast="2.1.0"/>
+</addon>

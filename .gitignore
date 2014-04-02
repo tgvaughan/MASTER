@@ -1,22 +1,18 @@
 # Netbeans cruft:
-nbproject
-manifest.mf
+/nbproject
+/manifest.mf
+/nbbuild.xml
 
 # Eclipse cruft:
-.project
-.classpath
-.settings
+/.project
+/.classpath
+/.settings
 
 # Build directories:
-bin
-build
-dist
-
-# ANT build file:
-build.xml
-
-# Subversion directories:
-.svn
+/build
+/dist
 
 # Output files:
-*.txt
+*.json
+*.nexus
+*.tree

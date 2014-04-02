@@ -270,7 +270,7 @@ public class EnsembleSummary extends Runnable {
             summary.normalise();
         
         // Record total time of calculation:
-        spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
+        spec.setWallTime(((new Date()).getTime() - startTime)/1e3);
     }
 
     /**

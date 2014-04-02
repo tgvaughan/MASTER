@@ -31,7 +31,7 @@ import master.model.Population;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Leaf count end condition for an inheritance trajectory.")
-public class LeafCountEndCondition extends BEASTObject {
+public class LeafCountEndCondition extends EndCondition {
     
     public Input<Integer> nLeavesInput = new Input<Integer>(
             "nLeaves",
@@ -43,14 +43,8 @@ public class LeafCountEndCondition extends BEASTObject {
             "Whether to include extant lineages in terminal node count. (Default false.)",
             false);
     
-    public Input<Boolean> isRejectionInput = new Input<Boolean>(
-            "isRejection",
-            "Whether this end condition should cause a rejection. (Default false.)",
-            false);
-    
     private int nTerminalNodes;
     private boolean includeExtant;
-    private boolean rejection;
 
     public LeafCountEndCondition() { }
     
@@ -59,29 +53,6 @@ public class LeafCountEndCondition extends BEASTObject {
         
         nTerminalNodes = nLeavesInput.get();
         includeExtant = includeExtantInput.get();
-        rejection = isRejectionInput.get();
-    }
-    
-    /**
-     * Create an inheritance graph end condition which is met when
-     * the given number of terminal nodes is reached.
-     * 
-     * @param nTerminalNodes number of terminal nodes constituting end condition
-     * @param includeExtant
-     * @param rejection true causes graphs meeting condition to be discarded
-     */
-    public LeafCountEndCondition(int nTerminalNodes,
-            boolean includeExtant, boolean rejection) {
-        this.nTerminalNodes = nTerminalNodes;
-        this.includeExtant = includeExtant;
-        this.rejection = rejection;
-    }
-    
-    /**
-     * @return true if this end condition is a rejection.
-     */
-    public boolean isRejection() {
-        return this.rejection;
     }
     
     /**

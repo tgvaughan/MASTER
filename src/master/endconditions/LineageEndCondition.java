@@ -16,14 +16,14 @@
  */
 package master.endconditions;
 
-import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import master.model.Population;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import master.model.Node;
+import master.model.Population;
 
 /**
  * A condition which is met when the simulation includes a specific
@@ -33,58 +33,35 @@ import master.model.Node;
  */
 
 @Description("Lineage count end condition for an inheritance trajectory.")
-public class LineageEndCondition extends BEASTObject {
+public class LineageEndCondition extends EndCondition {
     
-    public Input<Population> populationInput = new Input<Population>(
+    public Input<List<Population>> populationInput = new Input<List<Population>>(
             "population",
-            "Specific population to which lineages belong (optional).");
+            "Specific population to which lineages belong (optional).",
+            new ArrayList<Population>());
     
     public Input<Integer> nLineagesInput = new Input<Integer>(
             "nLineages",
             "Linage count threshold for end condition.",
             Validate.REQUIRED);
     
-    public Input<Boolean> isRejectionInput = new Input<Boolean>(
-            "isRejection",
-            "Whether this end condition should cause a rejection. (Default false.)",
-            false);
-
+    public Input<Boolean> exceedCondInput = new Input<Boolean>(
+            "exceedCondition",
+            "Whether condition is size>=threshold. False implies <=threshold.",
+            true);
     
-    private Population pop;    
+    private List<Population> pops;
     private int nlineages;
-    private boolean rejection;
+    private boolean exceed;
     
     public LineageEndCondition() { }
     
     @Override
     public void initAndValidate() {
         
-        pop = populationInput.get();        
+        pops = populationInput.get();        
         nlineages = nLineagesInput.get();
-        rejection = isRejectionInput.get();
-    }
-
-    
-    /**
-     * Create an inheritance graph end condition which is met when the
-     * number of lineages matching the given population equals nlineages.
-     * If the population is null, all lineages match.
-     * 
-     * @param pop
-     * @param nlineages
-     * @param rejection 
-     */
-    public LineageEndCondition(Population pop, int nlineages, boolean rejection) {
-        this.pop = pop;
-        this.nlineages = nlineages;
-        this.rejection = rejection;
-    }
-
-    /**
-     * @return true if this end condition is a rejection.
-     */
-    public boolean isRejection() {
-        return this.rejection;
+        exceed = exceedCondInput.get();
     }
 
     /**
@@ -94,19 +71,55 @@ public class LineageEndCondition extends BEASTObject {
      * @return true if the end condition is met.
      */
     public boolean isMet(Map<Population,List<Node>> activeLineages) {
+        if (isPost())
+            return false;
+        
         int size;
-        if (pop == null) {
+        if (pops.isEmpty()) {
             size = 0;
             for (List<Node> nodeList : activeLineages.values())
                 size += nodeList.size();
         } else {
-            if (activeLineages.containsKey(pop))
-                size = activeLineages.get(pop).size();
-            else
-                size = 0;
+            size = 0;
+            for (Population pop : pops) {
+                if (activeLineages.containsKey(pop))
+                    size += activeLineages.get(pop).size();
+            }
         }
         
-        return size == nlineages;
+        if (exceed)
+            return size >= nlineages;
+        else
+            return size <= nlineages;
+    }
+    
+    /**
+     * Returns true iff the given activeLineages meets the end condition.
+     * 
+     * @param activeLineages
+     * @return true if the end condition is met.
+     */
+    public boolean isMetPost(Map<Population,List<Node>> activeLineages) {
+        if (!isPost())
+            return false;
+        
+        int size;
+        if (pops.isEmpty()) {
+            size = 0;
+            for (List<Node> nodeList : activeLineages.values())
+                size += nodeList.size();
+        } else {
+            size = 0;
+            for (Population pop : pops) {
+                if (activeLineages.containsKey(pop))
+                    size += activeLineages.get(pop).size();
+            }
+        }
+        
+        if (exceed)
+            return size >= nlineages;
+        else
+            return size <= nlineages;
     }
 
     /**

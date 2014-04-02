@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class PopulationEndCondition extends BEASTObject {
+public class PopulationEndCondition extends EndCondition {
     
     public Input<List<Population>> populationInput = new Input<List<Population>>(
             "population",
@@ -46,16 +46,11 @@ public class PopulationEndCondition extends BEASTObject {
     public Input<Boolean> exceedCondInput = new Input<Boolean>(
             "exceedCondition",
             "Whether condition is size>=threshold. False implies <=threshold.",
-            Input.Validate.REQUIRED);
-    
-    public Input<Boolean> rejectionInput = new Input<Boolean>(
-            "isRejection",
-            "Whether condition causes trajectory rejection. (Default false.)",
-            false);
+            true);
     
     List<Population> pops;
     double threshold;
-    boolean exceed, rejection;
+    boolean exceed;
     
     public PopulationEndCondition() { }
     
@@ -64,32 +59,16 @@ public class PopulationEndCondition extends BEASTObject {
         pops = populationInput.get();
         threshold = thresholdInput.get();
         exceed = exceedCondInput.get();
-        rejection = rejectionInput.get();
         
         if (pops.isEmpty())
             throw new IllegalArgumentException("Need at least one population "
                     + "for population end condition.");
     }
     
-    /**
-     * Create a new multi-population end condition which is met when sum of
-     * populations provided exceeds or dips below threshold, depending on
-     * value of exceedCond.
-     * 
-     * @param threshold Threshold at which condition is met.
-     * @param exceedCond True creates condition met when sum> >= threshold
-     * @param rejection True creates a rejection end condition
-     * @param pops Varargs array of populations to sum over.
-     */
-    public PopulationEndCondition(double threshold, boolean exceedCond, boolean rejection, Population ... pops) {
-        this.pops = Lists.newArrayList(pops);
-        this.threshold = threshold;
-        this.exceed = exceedCond;
-        this.rejection = rejection;
-
-    }
-
     public boolean isMet(PopulationState currentState) {
+        if (isPost())
+            return false;
+        
         double size = 0;
         for (Population pop : pops)
             size += currentState.get(pop);
@@ -99,9 +78,19 @@ public class PopulationEndCondition extends BEASTObject {
         else
             return size <= threshold;
     }
-
-    public boolean isRejection() {
-        return rejection;
+    
+    public boolean isMetPost(PopulationState finalState) {
+        if (!isPost())
+            return false;
+        
+        double size = 0;
+        for (Population pop : pops)
+            size += finalState.get(pop);
+        
+        if (exceed)
+            return size >= threshold;
+        else
+            return size <= threshold;
     }
 
     public String getConditionDescription() {

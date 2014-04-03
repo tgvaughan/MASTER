@@ -180,10 +180,13 @@ public class InheritanceEnsemble extends Runnable {
         for (LeafCountEndCondition endCondition : leafCountEndConditionsInput.get())
             spec.addLeafCountEndCondition(endCondition);
 
+        // Incorporate post-processors:
+        for (InheritancePostProcessor postProc : inheritancePostProcessorsInput.get())
+            spec.addInheritancePostProcessor(postProc);
+        
         // Incorporate post-simulation conditions:
         for (PostSimCondition condition : postSimConditionsInput.get())
             spec.addPostSimCondition(condition);
-        
         
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)

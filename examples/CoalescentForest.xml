@@ -1,6 +1,6 @@
 <!-- Generate an ensemble of coalescent trees from a given number of taxa. -->
 
-<beast version='2.0' namespace='master:master.model:master.endconditions:master.outputs'>
+<beast version='2.0' namespace='master:master.model:master.conditions:master.outputs'>
     <run spec='InheritanceEnsemble'
 	 nTraj='10'
          verbosity='1'>

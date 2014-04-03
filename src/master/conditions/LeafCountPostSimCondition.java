@@ -16,14 +16,12 @@
  */
 package master.conditions;
 
-import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Input;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import master.InheritanceTrajectory;
 import master.Trajectory;
 import master.model.Node;
@@ -35,7 +33,7 @@ import master.model.Population;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-@Description("Leaf count end condition for an inheritance trajectory.")
+@Description("Leaf count post-simulation condition for an inheritance trajectory.")
 public class LeafCountPostSimCondition extends PostSimCondition {
     
     public Input<List<Population>> populationInput = new Input<List<Population>>(
@@ -54,7 +52,7 @@ public class LeafCountPostSimCondition extends PostSimCondition {
             false);
     
     public Input<Boolean> exactMatchInput = new Input<Boolean>(
-            "exactMatch",
+            "exact",
             "If true, the number of lineages must exactly match "
                     + "the value of nLineages.",
             false);
@@ -80,13 +78,13 @@ public class LeafCountPostSimCondition extends PostSimCondition {
     
     /**
      * Returns true iff the given inheritance trajectory
-     * meet the rejection condition.
+     * meet the post-simulation acceptance condition.
      * 
      * @param itraj inheritance trajectory
      * @return true if the end condition is met.
      */
     @Override
-    public boolean isMet(InheritanceTrajectory itraj) {
+    public boolean accept(InheritanceTrajectory itraj) {
         
         // Assemble leaf counts:
         Multiset<Population> leafCounts = HashMultiset.create();
@@ -114,13 +112,14 @@ public class LeafCountPostSimCondition extends PostSimCondition {
     
     
     @Override
-    public boolean isMet(Trajectory traj) {
+    public boolean accept(Trajectory traj) {
         return false;
     }
  
     /**
      * @return Description of the end condition.
      */
+    @Override
     public String getConditionDescription() {
         StringBuilder sb = new StringBuilder();
         sb.append("Condition met when final number of terminal nodes");

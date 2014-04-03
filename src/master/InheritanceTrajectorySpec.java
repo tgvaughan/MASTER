@@ -65,6 +65,7 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
         
         lineageEndConditions = Lists.newArrayList();
         leafCountEndConditions = Lists.newArrayList();
+        inheritancePostProcessors = Lists.newArrayList();
 
         // For inheritance graphs there is a sensible default
         // maximum simulation time.

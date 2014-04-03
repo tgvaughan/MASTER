@@ -1,6 +1,6 @@
 <!-- Generate tree under Yule model of speciation. -->
 
-<beast version='2.0' namespace='master:master.model:master.endconditions:master.outputs'>
+<beast version='2.0' namespace='master:master.model:master.conditions:master.outputs'>
     <run spec='InheritanceTrajectory'
          simulationTime="5"
          verbosity='2'>

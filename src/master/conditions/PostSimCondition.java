@@ -29,21 +29,21 @@ public abstract class PostSimCondition extends BEASTObject {
     
     /**
      * Returns true if trajectory traj meets post-simulation
-     * rejection condition.
+     * acceptance condition.
      *
      * @param traj
      * @return true if condition is met
      */
-    public abstract boolean isMet(Trajectory traj);
+    public abstract boolean accept(Trajectory traj);
     
     /**
      * Returns true if inheritance trajectory itraj meets post-simulation
-     * rejection condition.
+     * acceptance condition.
      *
      * @param traj
      * @return true if condition is met
      */
-    public abstract boolean isMet(InheritanceTrajectory traj);
+    public abstract boolean accept(InheritanceTrajectory traj);
     
     /**
      * @return String description of condition.

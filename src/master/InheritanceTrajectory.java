@@ -39,6 +39,7 @@ import master.model.PopulationState;
 import master.model.Reaction;
 import master.outputs.InheritanceTrajectoryOutput;
 import master.postprocessors.InheritancePostProcessor;
+import sun.awt.SunToolkit;
 
 /**
  * A class representing a stochastic inheritance trajectory generated under
@@ -171,6 +172,10 @@ public class InheritanceTrajectory extends Trajectory {
         for (LeafCountEndCondition endCondition : leafCountEndConditionsInput.get())
             spec.addLeafCountEndCondition(endCondition);
 
+        // Incorporate post-processors:
+        for (InheritancePostProcessor postProc : inheritancePostProcessorsInput.get())
+            spec.addInheritancePostProcessor(postProc);
+        
         // Incorporate post-simulation conditions:
         for (PostSimCondition condition : postSimConditionsInput.get())
             spec.addPostSimCondition(condition);
@@ -403,13 +408,13 @@ public class InheritanceTrajectory extends Trajectory {
             }
             
             // Perform any requested post-processing:
-            for (InheritancePostProcessor inheritancePostProc : inheritancePostProcessorsInput.get())
+            for (InheritancePostProcessor inheritancePostProc : spec.inheritancePostProcessors)
                 inheritancePostProc.process(this);
             
             // Check for any post-simulation rejections
             postSimReject = false;
             for (PostSimCondition condition  : spec.postSimConditions) {
-                if (condition.isMet(this)) {
+                if (!condition.accept(this)) {
                     postSimReject = true;
                     break;
                 }

@@ -2,7 +2,7 @@
      then prune all nodes except the ancestors of a randomly selected
      set of leaves.  Demonstrates the use of the LineageFilter postprocessor. -->
 
-<beast version='2.0' namespace='master:master.model:master.endconditions:master.postprocessors:master.steppers:master.outputs'>
+<beast version='2.0' namespace='master:master.model:master.conditions:master.postprocessors:master.steppers:master.outputs'>
     <run spec='InheritanceTrajectory'
          simulationTime="100"
          samplePopulationSizes="true"

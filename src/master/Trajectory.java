@@ -303,7 +303,7 @@ public class Trajectory extends Runnable {
             
             postSimulationReject = false;
             for (PostSimCondition condition : spec.postSimConditions) {
-                if (condition.isMet(this)) {
+                if (!condition.accept(this)) {
                     postSimulationReject = true;
                     break;
                 }

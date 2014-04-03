@@ -19,12 +19,8 @@ package master.conditions;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import master.InheritanceTrajectory;
 import master.model.Node;
 import master.model.Population;
 

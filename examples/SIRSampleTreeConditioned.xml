@@ -1,4 +1,5 @@
-<!-- Simulate an inheritance tree from the SIR epidemic model -->
+<!-- Simulate a transmission tree from an SIR epidemic model with
+     exactly 50 leaves. -->
 
 <beast version='2.0' namespace='master
                                :master.model
@@ -34,14 +35,14 @@
     <!-- Simulation will terminate when no lineages remain -->
     <lineageEndCondition spec='LineageEndCondition' nLineages="0" population="@I"/>
     
+    <!-- Keep only sampled lineages. -->
     <inheritancePostProcessor spec='LineageFilter' reactionName="Sampling"/>
     
-    <!-- Simulation will be repeated until at least 70 sampled lineages exist. -->
-    <postSimCondition spec='LeafCountPostSimCondition' nLeaves="70" exceedCondition="false"/>
+    <!-- Simulation will be repeated until at exactly 50 sampled lineages exist. -->
+    <postSimCondition spec='LeafCountPostSimCondition' nLeaves="50" exact="true"/>
     
-    <output spec='NewickOutput' fileName='SIRTreeConditioned_output.newick'/>
-    <output spec='NexusOutput' fileName='SIRTreeConditioned_output.nexus'/>
-    <output spec='JsonOutput' fileName='SIRTreeConditioned_output.json'/>
+    <output spec='NexusOutput' fileName='SIRSampleTreeConditioned_output.nexus'/>
+    <output spec='JsonOutput' fileName='SIRSampleTreeConditioned_output.json'/>
   </run>
 </beast>
 

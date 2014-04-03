@@ -1,7 +1,7 @@
 <!-- Example showing how to produce an SIS tree with a
      specified number of leaves. -->
 
-<beast version='2.0' namespace='master:master.model:master.endconditions:master.outputs:master.postprocessors'>
+<beast version='2.0' namespace='master:master.model:master.conditions:master.outputs:master.postprocessors'>
     <run spec='InheritanceEnsemble'
 	 nTraj="100">
 

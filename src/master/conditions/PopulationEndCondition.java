@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.endconditions;
+package master.conditions;
 
 import master.model.Population;
 import master.model.PopulationState;
@@ -53,9 +53,7 @@ public class PopulationEndCondition extends EndCondition {
     }
     
     public boolean isMet(PopulationState currentState) {
-        if (isPost())
-            return false;
-        
+
         double size = 0;
         if (populationInput.get().isEmpty()) {
             for (Population pop : currentState.getPopSet())
@@ -71,24 +69,6 @@ public class PopulationEndCondition extends EndCondition {
             return size <= threshold;
     }
     
-    public boolean isMetPost(PopulationState finalState) {
-        if (!isPost())
-            return false;
-        
-        double size = 0;
-        if (populationInput.get().isEmpty()) {
-            for (Population pop : finalState.getPopSet())
-                size += finalState.get(pop);
-        } else {
-            for (Population pop : populationInput.get())
-                size += finalState.get(pop);
-        }
-        
-        if (exceed)
-            return size >= threshold;
-        else
-            return size <= threshold;
-    }
 
     public String getConditionDescription() {
         StringBuilder sb = new StringBuilder();

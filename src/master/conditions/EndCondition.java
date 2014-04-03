@@ -15,11 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package master.endconditions;
+package master.conditions;
 
 import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Input;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.ArrayList;
 import java.util.List;
 import master.model.Population;
@@ -28,7 +29,7 @@ import master.model.Population;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 @Description("Abstract end condition class.")
-public class EndCondition extends BEASTObject {
+public abstract class EndCondition extends BEASTObject {
     
     public Input<List<Population>> populationInput = new Input<List<Population>>(
             "population",
@@ -55,10 +56,13 @@ public class EndCondition extends BEASTObject {
     }
     
     /**
-     * @return true if this is a post-simulation condition
+     * @return String description of condition.
      */
-    public boolean isPost() {
-        return postSimulationConditionInput.get();
-    }
+    @JsonValue
+    public abstract String getConditionDescription();
     
+    @Override
+    public String toString() {
+        return getConditionDescription();
+    }
 }

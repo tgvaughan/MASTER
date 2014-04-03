@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.endconditions;
+package master.conditions;
 
 import beast.core.Description;
 import beast.core.Input;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import java.util.List;
 import java.util.Map;
+import master.InheritanceTrajectory;
 import master.model.Node;
 import master.model.Population;
 
@@ -43,20 +45,8 @@ public class LeafCountEndCondition extends EndCondition {
             "Whether to include extant lineages in terminal node count. (Default false.)",
             false);
     
-    public Input<Boolean> exactMatchInput = new Input<Boolean>(
-            "exactMatch",
-            "If true, the number of lineages must exactly match "
-                    + "the value of nLineages.",
-            true);
-    
-    public Input<Boolean> exceedCondInput = new Input<Boolean>(
-            "exceedCondition",
-            "If exactMatchRequired is false, determines whether condition "
-                    + "is size>=threshold. False implies <=threshold.",
-            true);
-    
     private int nTerminalNodes;
-    private boolean includeExtant, exact, exceed;
+    private boolean includeExtant;
 
     public LeafCountEndCondition() { }
     
@@ -65,8 +55,6 @@ public class LeafCountEndCondition extends EndCondition {
         
         nTerminalNodes = nLeavesInput.get();
         includeExtant = includeExtantInput.get();
-        exact = exactMatchInput.get();
-        exceed = exceedCondInput.get();
     }
     
     /**
@@ -80,9 +68,6 @@ public class LeafCountEndCondition extends EndCondition {
     public boolean isMet(Multiset<Population> leafCounts,
             Map<Population,List<Node>> activeLineages) {
 
-        if (isPost())
-            return false;
-        
         int size;
         if (populationInput.get().isEmpty())
             size = leafCounts.size();
@@ -96,45 +81,9 @@ public class LeafCountEndCondition extends EndCondition {
                 size += nodeList.size();
         }
         
-        if (exact)
-            return size == nTerminalNodes;
-        
-        if (exceed)
-            return size >= nTerminalNodes;
-        else
-            return size <= nTerminalNodes;
+        return size == nTerminalNodes;
     }
     
-    /**
-     * Returns true iff the given leafCounts and activeLineages
-     * meet the end condition.
-     * 
-     * @param leafCounts Multiset containing all leaf populations
-     * @return true if the end condition is met.
-     */
-    public boolean isMetPost(Multiset<Population> leafCounts) {
-
-        if (!isPost())
-            return false;
-        
-        int size;
-        if (populationInput.get().isEmpty())
-            size = leafCounts.size();
-        else {
-            size = 0;
-            for (Population pop : populationInput.get())
-                size += leafCounts.count(pop);
-        }
-        
-        if (exact)
-            return size == nTerminalNodes;
-        
-        if (exceed)
-            return size >= nTerminalNodes;
-        else
-            return size <= nTerminalNodes;
-    }
- 
     /**
      * @return Description of the end condition.
      */

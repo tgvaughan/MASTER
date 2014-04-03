@@ -14,14 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package master.endconditions;
+package master.conditions;
 
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import master.InheritanceTrajectory;
 import master.model.Node;
 import master.model.Population;
 
@@ -40,29 +43,13 @@ public class LineageEndCondition extends EndCondition {
             "Linage count threshold for end condition.",
             Validate.REQUIRED);
     
-    public Input<Boolean> exactMatchInput = new Input<Boolean>(
-            "exactMatch",
-            "If true, the number of lineages must exactly match "
-                    + "the value of nLineages.",
-            true);
-    
-    public Input<Boolean> exceedCondInput = new Input<Boolean>(
-            "exceedCondition",
-            "If exactMatchRequired is false, determines whether condition "
-                    + "is size>=threshold. False implies <=threshold.",
-            true);
-    
     private int nLineages;
-    private boolean exceed, exact;
     
     public LineageEndCondition() { }
     
     @Override
     public void initAndValidate() {
-        
         nLineages = nLineagesInput.get();
-        exact = exactMatchInput.get();
-        exceed = exceedCondInput.get();
     }
 
     /**
@@ -72,9 +59,7 @@ public class LineageEndCondition extends EndCondition {
      * @return true if the end condition is met.
      */
     public boolean isMet(Map<Population,List<Node>> activeLineages) {
-        if (isPost())
-            return false;
-        
+
         int size;
         if (populationInput.get().isEmpty()) {
             size = 0;
@@ -88,45 +73,7 @@ public class LineageEndCondition extends EndCondition {
             }
         }
         
-        if (exact)
-            return size == nLineages;
-        
-        if (exceed)
-            return size >= nLineages;
-        else
-            return size <= nLineages;
-    }
-    
-    /**
-     * Returns true iff the given activeLineages meets the end condition.
-     * 
-     * @param activeLineages
-     * @return true if the end condition is met.
-     */
-    public boolean isMetPost(Map<Population,List<Node>> activeLineages) {
-        if (!isPost())
-            return false;
-        
-        int size;
-        if (populationInput.get().isEmpty()) {
-            size = 0;
-            for (List<Node> nodeList : activeLineages.values())
-                size += nodeList.size();
-        } else {
-            size = 0;
-            for (Population pop : populationInput.get()) {
-                if (activeLineages.containsKey(pop))
-                    size += activeLineages.get(pop).size();
-            }
-        }
-        
-        if (exact)
-            return size == nLineages;
-        
-        if (exceed)
-            return size >= nLineages;
-        else
-            return size <= nLineages;
+        return size == nLineages;
     }
 
     /**

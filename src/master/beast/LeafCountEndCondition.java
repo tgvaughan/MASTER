@@ -20,4 +20,4 @@ package master.beast;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class LeafCountEndCondition extends master.endconditions.LeafCountEndCondition { }
+public class LeafCountEndCondition extends master.conditions.LeafCountEndCondition { }

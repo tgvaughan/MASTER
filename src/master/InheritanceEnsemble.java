@@ -24,9 +24,10 @@ import beast.core.Runnable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import master.endconditions.LeafCountEndCondition;
-import master.endconditions.LineageEndCondition;
-import master.endconditions.PopulationEndCondition;
+import master.conditions.LeafCountEndCondition;
+import master.conditions.LineageEndCondition;
+import master.conditions.PopulationEndCondition;
+import master.conditions.PostSimCondition;
 import master.model.InitState;
 import master.model.Model;
 import master.model.PopulationSize;
@@ -42,8 +43,8 @@ import master.postprocessors.InheritancePostProcessor;
         + " of individuals.")
 public class InheritanceEnsemble extends Runnable {
     
-        /*
-     * XML inputs:
+    /*
+    * XML inputs:
      */
     
     // Spec parameters:
@@ -110,7 +111,14 @@ public class InheritanceEnsemble extends Runnable {
             "inheritancePostProcessor",
             "Post processor for inheritance graph.",
             new ArrayList<InheritancePostProcessor>());
+    
+    // Post-simulation conditioning:
+    public Input<List<PostSimCondition>> postSimConditionsInput =
+            new Input<List<PostSimCondition>>("postSimCondition",
+                    "A post-simulation condition.",
+                    new ArrayList<PostSimCondition>());
 
+    // Outputs:
     public Input<List<InheritanceEnsembleOutput>> outputsInput
             = new Input<List<InheritanceEnsembleOutput>>("output",
             "Output writer used to write results of simulation to disk.",
@@ -172,6 +180,11 @@ public class InheritanceEnsemble extends Runnable {
         for (LeafCountEndCondition endCondition : leafCountEndConditionsInput.get())
             spec.addLeafCountEndCondition(endCondition);
 
+        // Incorporate post-simulation conditions:
+        for (PostSimCondition condition : postSimConditionsInput.get())
+            spec.addPostSimCondition(condition);
+        
+        
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)
             spec.setSeed(seedInput.get());
@@ -226,7 +239,7 @@ public class InheritanceEnsemble extends Runnable {
         }
         
         // Record length of time taken by calculation:
-        spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
+        spec.setWallTime(((new Date()).getTime() - startTime)/1e3);
     }
     
     /**

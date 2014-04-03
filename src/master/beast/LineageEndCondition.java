@@ -20,4 +20,4 @@ package master.beast;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class LineageEndCondition extends master.endconditions.LineageEndCondition { }
+public class LineageEndCondition extends master.conditions.LineageEndCondition { }

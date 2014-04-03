@@ -16,6 +16,10 @@
  */
 package master;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.google.common.collect.Maps;
+import java.util.Map;
+
 /**
  * Specification for generating an ensemble of birth-death trajectories.
  *
@@ -38,4 +42,19 @@ public class EnsembleSpec extends TrajectorySpec {
 		this.nTraj = nTraj;
 	}
 	
+    /**
+     * Construct representation of specification to use in assembling
+     * summary in JSON output file.
+     * 
+     * @return Map from strings to other objects which have a JSON rep
+     */
+    @JsonValue
+    @Override
+    public Map<String, Object> getJsonValue() {
+        
+        Map<String, Object> jsonObject = super.getJsonValue();
+        
+        jsonObject.put("nTraj", getnTraj());
+        return jsonObject;
+    }
 }

@@ -5,7 +5,8 @@
                                :master.conditions
                                :master.outputs
                                :master.postprocessors'>
-  <run spec='InheritanceTrajectory'
+  <run spec='InheritanceEnsemble'
+       nTraj="100"
        samplePopulationSizes="true"
        verbosity="1">
 
@@ -39,9 +40,9 @@
     <!-- Simulation will be repeated until at least 70 sampled lineages exist. -->
     <postSimCondition spec='LeafCountPostSimCondition' nLeaves="70" exceedCondition="false"/>
     
-    <output spec='NewickOutput' fileName='SIRTreeConditioned_output.newick'/>
-    <output spec='NexusOutput' fileName='SIRTreeConditioned_output.nexus'/>
-    <output spec='JsonOutput' fileName='SIRTreeConditioned_output.json'/>
+    <output spec='NewickOutput' fileName='SIRForestConditioned_output.newick'/>
+    <output spec='NexusOutput' fileName='SIRForestConditioned_output.nexus'/>
+    <output spec='JsonOutput' fileName='SIRForestConditioned_output.json'/>
   </run>
 </beast>
 

@@ -17,7 +17,7 @@
 package master;
 
 import master.model.InitState;
-import master.endconditions.PopulationEndCondition;
+import master.conditions.PopulationEndCondition;
 import master.model.MomentGroup;
 import master.model.PopulationSize;
 import master.model.Model;
@@ -32,6 +32,7 @@ import beast.util.Randomizer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import master.conditions.PostSimCondition;
 import master.outputs.EnsembleSummaryOutput;
 
 /**
@@ -84,6 +85,13 @@ public class EnsembleSummary extends Runnable {
             new Input<List<PopulationEndCondition>>("populationEndCondition",
             "Trajectory end condition based on population sizes.",
             new ArrayList<PopulationEndCondition>());
+    
+        
+    // Post-simulation conditioning:
+    public Input<List<PostSimCondition>> postSimConditionsInput =
+            new Input<List<PostSimCondition>>("postSimCondition",
+                    "A post-simulation condition.",
+                    new ArrayList<PostSimCondition>());
     
     // Individual moments:
     public Input<List<Moment>> momentsInput = new Input<List<Moment>>(
@@ -143,6 +151,10 @@ public class EnsembleSummary extends Runnable {
         for (PopulationEndCondition endCondition : endConditionsInput.get())
             spec.addPopSizeEndCondition(endCondition);
 
+        // Incorporate post-simulation conditions:
+        for (PostSimCondition condition : postSimConditionsInput.get())
+            spec.addPostSimCondition(condition);
+        
         // Check for zero-length moment and moment group lists (no point to calculation!)
         if (momentGroupsInput.get().isEmpty() && momentsInput.get().isEmpty())
             throw new IllegalArgumentException("EnsembleSummary doesn't specfy any moments!");

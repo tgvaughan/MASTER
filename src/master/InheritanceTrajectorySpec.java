@@ -16,15 +16,15 @@
  */
 package master;
 
-import master.steppers.InheritanceTrajectoryStepper;
-import master.model.Node;
-import master.endconditions.LeafCountEndCondition;
-import master.endconditions.LineageEndCondition;
-import master.model.Model;
 import com.google.common.collect.Lists;
-import master.model.Model;
-import master.steppers.Stepper;
 import java.util.List;
+import java.util.Map;
+import master.conditions.LeafCountEndCondition;
+import master.conditions.LineageEndCondition;
+import master.model.Node;
+import master.postprocessors.InheritancePostProcessor;
+import master.steppers.InheritanceTrajectoryStepper;
+import master.steppers.Stepper;
 
 /**
  * Specification of a simulation which will result in generation of an
@@ -42,6 +42,8 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     
     // Leaf count end conditions:
     List<LeafCountEndCondition> leafCountEndConditions;
+    
+    List<InheritancePostProcessor> inheritancePostProcessors;
 
     // Record population size dynamics.
     boolean samplePopSizes;
@@ -63,7 +65,7 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
         
         lineageEndConditions = Lists.newArrayList();
         leafCountEndConditions = Lists.newArrayList();
-        
+
         // For inheritance graphs there is a sensible default
         // maximum simulation time.
         super.setSimulationTime(Double.POSITIVE_INFINITY);
@@ -112,6 +114,15 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     public void addLeafCountEndCondition(LeafCountEndCondition endCondition) {
         this.leafCountEndConditions.add(endCondition);
     }
+
+    /**
+     * Incorporate inheritance post processor.
+     * 
+     * @param postproc 
+     */
+    public void addInheritancePostProcessor(InheritancePostProcessor postproc) {
+        this.inheritancePostProcessors.add(postproc);
+    }
     
     @Override
     public void setEvenSampling(int nSamples) {
@@ -158,7 +169,7 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     }
     
     /**
-     * Retrieve list of lineage end conditions currently in use.
+     * Retrieve list of lineage end conditions in spec.
      * 
      * @return list of lineage end conditions.
      */
@@ -167,11 +178,27 @@ public class InheritanceTrajectorySpec extends TrajectorySpec {
     }
     
     /**
-     * Retrieve list of leaf count end conditions currently in use.
+     * Retrieve list of leaf count end conditions in spec.
      * 
      * @return list of leaf count end conditions.
      */
     public List<LeafCountEndCondition> getLeafCountEndConditions() {
         return leafCountEndConditions;
+    }
+    
+    /**
+     * Construct representation of specification to use in assembling
+     * summary in JSON output file.
+     * 
+     * @return Map from strings to other objects which have a JSON rep
+     */
+    @Override
+    public Map<String, Object> getJsonValue() {
+        
+        Map<String, Object> jsonObject = super.getJsonValue();
+        
+        jsonObject.put("lineageEndConditions", getLineageEndConditions());
+        jsonObject.put("leafCountEndConditions", getLeafCountEndConditions());
+        return jsonObject;
     }
 }

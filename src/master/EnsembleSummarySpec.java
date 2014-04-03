@@ -16,7 +16,8 @@
  */
 package master;
 
-import master.endconditions.PopulationEndCondition;
+import com.fasterxml.jackson.annotation.JsonValue;
+import master.conditions.PopulationEndCondition;
 import master.model.MomentGroup;
 import master.model.Moment;
 import com.google.common.collect.Lists;
@@ -87,5 +88,21 @@ public class EnsembleSummarySpec extends EnsembleSpec {
      */
     public List<Moment> getMoments() {
         return moments;
+    }
+    
+    /**
+     * Construct representation of specification to use in assembling
+     * summary in JSON output file.
+     * 
+     * @return Map from strings to other objects which have a JSON rep
+     */
+    @JsonValue
+    @Override
+    public Map<String, Object> getJsonValue() {
+        
+        Map<String, Object> jsonObject = super.getJsonValue();
+        
+        jsonObject.put("moments", getMoments());
+        return jsonObject;
     }
 }

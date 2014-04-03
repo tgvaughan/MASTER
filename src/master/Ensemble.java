@@ -17,7 +17,7 @@
 package master;
 
 import master.model.InitState;
-import master.endconditions.PopulationEndCondition;
+import master.conditions.PopulationEndCondition;
 import master.model.PopulationSize;
 import master.model.Model;
 import master.steppers.Stepper;
@@ -25,6 +25,7 @@ import beast.core.Input;
 import beast.util.Randomizer;
 import beast.core.Runnable;
 import java.util.*;
+import master.conditions.PostSimCondition;
 import master.outputs.EnsembleOutput;
 
 /**
@@ -86,6 +87,12 @@ public class Ensemble extends Runnable {
             "Trajectory end condition based on population sizes.",
             new ArrayList<PopulationEndCondition>());
     
+    // Post-simulation conditioning:
+    public Input<List<PostSimCondition>> postSimConditionsInput =
+            new Input<List<PostSimCondition>>("postSimCondition",
+                    "A post-simulation condition.",
+                    new ArrayList<PostSimCondition>());
+    
     // Outputs to write:
     public Input<List<EnsembleOutput>> outputsInput = new Input<List<EnsembleOutput>>(
             "output",
@@ -138,6 +145,10 @@ public class Ensemble extends Runnable {
         for (PopulationEndCondition endCondition : endConditionsInput.get())
             spec.addPopSizeEndCondition(endCondition);
 
+        // Incorporate post-simulation conditions:
+        for (PostSimCondition condition : postSimConditionsInput.get())
+            spec.addPostSimCondition(condition);
+        
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)
             spec.setSeed(seedInput.get());
@@ -189,7 +200,7 @@ public class Ensemble extends Runnable {
         }
         
         // Record total time (in seconds) taken by calculation:
-        spec.setWallTime(Double.valueOf((new Date()).getTime() - startTime)/1e3);
+        spec.setWallTime(((new Date()).getTime() - startTime)/1e3);
     }
 
     /**

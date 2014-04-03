@@ -31,8 +31,8 @@ import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import master.endconditions.LineageEndCondition;
-import master.endconditions.PopulationEndCondition;
+import master.conditions.LineageEndCondition;
+import master.conditions.PopulationEndCondition;
 import master.model.Model;
 import master.postprocessors.InheritancePostProcessor;
 

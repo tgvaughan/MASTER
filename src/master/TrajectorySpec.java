@@ -16,7 +16,7 @@
  */
 package master;
 
-import master.endconditions.PopulationEndCondition;
+import master.conditions.PopulationEndCondition;
 import master.model.Model;
 import master.model.PopulationState;
 import master.steppers.Stepper;
@@ -25,6 +25,7 @@ import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonValue;
+import master.conditions.PostSimCondition;
 /**
  * Basic specification for birth-death trajectory simulations.
  *
@@ -61,6 +62,10 @@ public class TrajectorySpec {
     
     // Population size end conditions:
     List<PopulationEndCondition> populationEndConditions;
+        
+    // Leaf count post-simulation conditions:
+    List<PostSimCondition> postSimConditions;
+
     
     // Whether to collect evenly spaced samples or let the state stepper
     // when to sample:
@@ -89,6 +94,7 @@ public class TrajectorySpec {
         
         // Initialise lists:
         populationEndConditions = Lists.newArrayList();
+        postSimConditions = Lists.newArrayList();
     }
     
     public void setModel(Model model) {
@@ -157,7 +163,16 @@ public class TrajectorySpec {
     public void addPopSizeEndCondition(PopulationEndCondition endCondition) {
         this.populationEndConditions.add(endCondition);
     }
-
+    
+    /**
+     * Incorporate post-simulation condition.
+     * 
+     * @param condition 
+     */
+    public void addPostSimCondition(PostSimCondition condition) {
+        this.postSimConditions.add(condition);
+    }
+    
     /**
      * Sample population sizes at evenly spaced times.
      * 
@@ -245,6 +260,15 @@ public class TrajectorySpec {
     }
     
     /**
+     * Retrieve list of leaf count post-simulation conditions in spec.
+     * 
+     * @return list of leaf count post-simulation conditions.
+     */
+    public List<PostSimCondition> getPostSimConditions() {
+        return postSimConditions;
+    }
+    
+    /**
      * Record total wall time taken by calculation in seconds.
      * 
      * @param seconds 
@@ -278,7 +302,8 @@ public class TrajectorySpec {
         jsonObject.put("seed", getSeed());
         jsonObject.put("simulationTime", getSimulationTime());
         jsonObject.put("stepper", getStepper());
-        
+        jsonObject.put("populationEndConditions", getPopulationEndConditions());
+        jsonObject.put("postSimConditions", getPostSimConditions());
         return jsonObject;
     }
 }

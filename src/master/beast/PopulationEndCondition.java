@@ -20,4 +20,4 @@ package master.beast;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class PopulationEndCondition extends master.endconditions.PopulationEndCondition { }
+public class PopulationEndCondition extends master.conditions.PopulationEndCondition { }

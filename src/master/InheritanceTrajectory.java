@@ -22,16 +22,16 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import master.endconditions.LeafCountEndCondition;
-import master.endconditions.LineageEndCondition;
-import master.endconditions.PopulationEndCondition;
+import master.conditions.LeafCountEndCondition;
+import master.conditions.LineageEndCondition;
+import master.conditions.PopulationEndCondition;
+import master.conditions.PostSimCondition;
 import master.model.Node;
 import master.model.Population;
 import master.model.PopulationSize;
@@ -74,24 +74,23 @@ public class InheritanceTrajectory extends Trajectory {
             false);
     
     // Lineage end conditions:
-    public Input<List<LineageEndCondition>> lineageEndConditionsInput = new Input<List<LineageEndCondition>>(
-            "lineageEndCondition",
-            "Trajectory end condition based on remaining lineages.",
-            new ArrayList<LineageEndCondition>());
+    public Input<List<LineageEndCondition>> lineageEndConditionsInput =
+            new Input<List<LineageEndCondition>>("lineageEndCondition",
+                    "Trajectory end condition based on remaining lineages.",
+                    new ArrayList<LineageEndCondition>());
     
         
     // Leaf count end conditions:
-    public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput = new Input<List<LeafCountEndCondition>>(
-            "leafCountEndCondition",
+    public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput =
+            new Input<List<LeafCountEndCondition>>("leafCountEndCondition",
             "Trajectory end condition based on number of terminal nodes generated.",
             new ArrayList<LeafCountEndCondition>());
     
     // Post-processors:
     public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
-            new Input<List<InheritancePostProcessor>>(
-            "inheritancePostProcessor",
-            "Post processor for inheritance graph.",
-            new ArrayList<InheritancePostProcessor>());
+            new Input<List<InheritancePostProcessor>>("inheritancePostProcessor",
+                    "Post processor for inheritance graph.",
+                    new ArrayList<InheritancePostProcessor>());
     
     // Outputs:
     public Input<List<InheritanceTrajectoryOutput>> outputsInput
@@ -172,6 +171,10 @@ public class InheritanceTrajectory extends Trajectory {
         for (LeafCountEndCondition endCondition : leafCountEndConditionsInput.get())
             spec.addLeafCountEndCondition(endCondition);
 
+        // Incorporate post-simulation conditions:
+        for (PostSimCondition condition : postSimConditionsInput.get())
+            spec.addPostSimCondition(condition);
+        
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)
             spec.setSeed(seedInput.get());
@@ -183,48 +186,8 @@ public class InheritanceTrajectory extends Trajectory {
     @Override
     public void run() {
         
-        boolean reject;
-        do {
-            // Generate stochastic trajectory:
-            simulate();
-        
-            // Perform any requested post-processing:
-            for (InheritancePostProcessor inheritancePostProc : inheritancePostProcessorsInput.get())
-                inheritancePostProc.process(this);
-            
-            // Check for any post-simulation rejections
-            reject = false;
-            
-            for (LineageEndCondition endCondition : spec.lineageEndConditions) {
-                if (endCondition.isMetPost(activeLineages)) {
-                    reject = true;
-                    break;
-                }
-            }
-            if (!reject) {
-                for (PopulationEndCondition endCondition : spec.populationEndConditions) {
-                    if (endCondition.isMetPost(currentPopState)) {
-                        reject = true;
-                        break;
-                    }
-                }
-            }
-            if (!reject) {
-                for (LeafCountEndCondition endCondition : spec.leafCountEndConditions) {
-                    if (endCondition.isMetPost(leafCounts)) {
-                        reject = true;
-                        break;
-                    }
-                }
-            }
-            
-            if (reject) {
-                // Rejection: Start a new simulation
-                if (spec.getVerbosity()>0)
-                    System.err.println("Post-simulation rejection condition met.");
-            }
-            
-        } while (reject);
+        // Generate stochastic trajectory:
+        simulate();
 
         // Write outputs:
         for (InheritanceTrajectoryOutput output : outputsInput.get())
@@ -239,20 +202,10 @@ public class InheritanceTrajectory extends Trajectory {
      */
     private void simulate() {
 
-        // Initialise graph with copy of specification init nodes:
-        // (Can't use initNodes themselves when multiple graphs are being
-        // generated from the same spec by InheritanceEnsemble.)
-        startNodes = Lists.newArrayList();
-        for (Node startNode : spec.initNodes)
-            startNodes.add(startNode.getCopy());
-        
         // Create HashMaps:
         nodesInvolved = Maps.newHashMap();
         nextLevelNodes = Maps.newHashMap();
-        
-        // Initialise sampled state and time lists:
-        sampledStates = Lists.newArrayList();
-        sampledTimes = Lists.newArrayList();
+
 
         // Set seed if defined:
         if (spec.getSeed()>=0 && !spec.isSeedUsed()) {
@@ -268,183 +221,207 @@ public class InheritanceTrajectory extends Trajectory {
         if (spec.isSamplingEvenlySpaced())
             sampleDt = spec.getSampleDt();
 
-        initialiseSimulation();
+        boolean postSimReject;
+        do { // Perform simulations until no post-simulation rejection occurs
+            
+            initialiseSimulation();
         
-        // Simulation loop:
-        while (true) {
-
-            // Check whether a lineage end condition is met:
-            // (Note that end points can only be reached when all lineages
-            // are in play.  Presumably you don't want to cut the simulation
-            // short if we still have lineages to add.)
-            boolean conditionMet = false;
-            boolean isRejection = false;
-            if (inactiveLineages.isEmpty()) {
-                for (LineageEndCondition lineageEC : spec.getLineageEndConditions()) {
-                    if (lineageEC.isMet(activeLineages)) {
-                        conditionMet = true;
-                        isRejection = lineageEC.isRejection();
-                        break;
+            // Simulation loop:
+            while (true) {
+                
+                // Check whether a lineage end condition is met:
+                // (Note that end points can only be reached when all lineages
+                // are in play.  Presumably you don't want to cut the simulation
+                // short if we still have lineages to add.)
+                boolean conditionMet = false;
+                boolean isRejection = false;
+                if (inactiveLineages.isEmpty()) {
+                    for (LineageEndCondition lineageEC : spec.getLineageEndConditions()) {
+                        if (lineageEC.isMet(activeLineages)) {
+                            conditionMet = true;
+                            isRejection = lineageEC.isRejection();
+                            break;
+                        }
                     }
                 }
-            }
-            
-            // Check whether a leaf count end condition is met:
-            if (!conditionMet) {
-                for (LeafCountEndCondition leafEC : spec.getLeafCountEndConditions()) {
-                    if (leafEC.isMet(leafCounts, activeLineages)) {
-                        conditionMet = true;
-                        isRejection = leafEC.isRejection();
-                        break;
+                
+                // Check whether a leaf count end condition is met:
+                if (!conditionMet) {
+                    for (LeafCountEndCondition leafEC : spec.getLeafCountEndConditions()) {
+                        if (leafEC.isMet(leafCounts, activeLineages)) {
+                            conditionMet = true;
+                            isRejection = leafEC.isRejection();
+                            break;
+                        }
                     }
                 }
-            }
-            
-            // Check whether a population end condition is met:
-            if (!conditionMet) {
-                for (PopulationEndCondition popEC : spec.getPopulationEndConditions()) {
-                    if (popEC.isMet(currentPopState)) {
-                        conditionMet = true;
-                        isRejection = popEC.isRejection();
-                        break;
+                
+                // Check whether a population end condition is met:
+                if (!conditionMet) {
+                    for (PopulationEndCondition popEC : spec.getPopulationEndConditions()) {
+                        if (popEC.isMet(currentPopState)) {
+                            conditionMet = true;
+                            isRejection = popEC.isRejection();
+                            break;
+                        }
                     }
                 }
-            }
-            
-            // Act on arrival at any end condition:
-            if (conditionMet) {
-                if (isRejection) {
-                    // Rejection: Abort and start a new simulation
-                    if (spec.getVerbosity()>0)
-                        System.err.println("Rejection end condition met "
-                                + "at time " + t);   
-                    initialiseSimulation();
-                    continue;
-                } else {
-                    // Stopping point: Truncate existing simulation
-                    if (spec.getVerbosity()>0)
-                        System.err.println("Truncation end condition met "
-                                + "at time " + t);   
-                    break;
-                }                
-            }
-            
-            // Report trajectory progress:
-            if (spec.getVerbosity()>1)
-                System.err.println("Simulation arrived at time "
-                        + String.valueOf(t));
-
-            // Calculate propensities
-            double totalPropensity = 0.0;
-            for (Reaction reaction :
-                    spec.getModel().getReactions()) {
-                reaction.calcPropensity(currentPopState, t);
-                totalPropensity += reaction.getPropensity();
-            }
-
-            // Draw time of next reactionGroup
-            if (totalPropensity > 0.0)
-                t += Randomizer.nextExponential(totalPropensity);
-            else
-                t = Double.POSITIVE_INFINITY;
-            
-            // Check whether new time exceeds node seed time or simulation time
-            boolean seedTimeExceeded = false;
-            boolean simulationTimeExceeded = false;
-            boolean rateChangeTimeExceeded = false;
-            if (!inactiveLineages.isEmpty() &&
-                    inactiveLineages.get(0).getTime()<spec.getSimulationTime()) {
-                if (t>inactiveLineages.get(0).getTime()) {
-                    t = inactiveLineages.get(0).getTime();
-                    seedTimeExceeded = true;
-                }
-            } else {
-                double nextChangeTime = spec.getModel().getNextReactionChangeTime(t);
-                if (t>Math.min(spec.getSimulationTime(), nextChangeTime)) {
-                    if (spec.getSimulationTime()<nextChangeTime) {
-                        t = spec.getSimulationTime();
-                        simulationTimeExceeded = true;
+                
+                // Act on arrival at any end condition:
+                if (conditionMet) {
+                    if (isRejection) {
+                        // Rejection: Abort and start a new simulation
+                        if (spec.getVerbosity()>0)
+                            System.err.println("Rejection end condition met "
+                                    + "at time " + t);   
+                        initialiseSimulation();
+                        continue;
                     } else {
-                        t = nextChangeTime;
-                        rateChangeTimeExceeded = true;
+                        // Stopping point: Truncate existing simulation
+                        if (spec.getVerbosity()>0)
+                            System.err.println("Truncation end condition met "
+                                    + "at time " + t);   
+                        break;
+                    }                
+                }
+            
+                // Report trajectory progress:
+                if (spec.getVerbosity()>1)
+                    System.err.println("Simulation arrived at time "
+                            + String.valueOf(t));
+                
+                // Calculate propensities
+                double totalPropensity = 0.0;
+                for (Reaction reaction :
+                        spec.getModel().getReactions()) {
+                    reaction.calcPropensity(currentPopState, t);
+                    totalPropensity += reaction.getPropensity();
+                }
+                
+                // Draw time of next reactionGroup
+                if (totalPropensity > 0.0)
+                    t += Randomizer.nextExponential(totalPropensity);
+                else
+                    t = Double.POSITIVE_INFINITY;
+                
+                // Check whether new time exceeds node seed time or simulation time
+                boolean seedTimeExceeded = false;
+                boolean simulationTimeExceeded = false;
+                boolean rateChangeTimeExceeded = false;
+                if (!inactiveLineages.isEmpty() &&
+                        inactiveLineages.get(0).getTime()<spec.getSimulationTime()) {
+                    if (t>inactiveLineages.get(0).getTime()) {
+                        t = inactiveLineages.get(0).getTime();
+                        seedTimeExceeded = true;
+                    }
+                } else {
+                    double nextChangeTime = spec.getModel().getNextReactionChangeTime(t);
+                    if (t>Math.min(spec.getSimulationTime(), nextChangeTime)) {
+                        if (spec.getSimulationTime()<nextChangeTime) {
+                            t = spec.getSimulationTime();
+                            simulationTimeExceeded = true;
+                        } else {
+                            t = nextChangeTime;
+                            rateChangeTimeExceeded = true;
+                        }
                     }
                 }
-            }
 
-            // Sample population sizes (evenly) if necessary:
-            if (spec.samplePopSizes && spec.isSamplingEvenlySpaced()) {
-                while (sidx*spec.getSampleDt() < t) {
-                    sampleState(currentPopState, sampleDt*sidx);
-                    sidx += 1;
+                // Sample population sizes (evenly) if necessary:
+                if (spec.samplePopSizes && spec.isSamplingEvenlySpaced()) {
+                    while (sidx*spec.getSampleDt() < t) {
+                        sampleState(currentPopState, sampleDt*sidx);
+                        sidx += 1;
+                    }
+                }
+                
+                // Continue to on to next reaction if lineage has been seeded
+                if (seedTimeExceeded) {
+                    Node seedNode = inactiveLineages.get(0);
+                    inactiveLineages.remove(0);
+                    Node child = new Node(seedNode.getPopulation());
+                    seedNode.addChild(child);
+                    
+                    if (!activeLineages.containsKey(child.getPopulation()))
+                        activeLineages.put(child.getPopulation(), new ArrayList<Node>());
+                    activeLineages.get(child.getPopulation()).add(child);
+                    
+                    currentPopState.add(seedNode.getPopulation(), 1.0);                
+                    continue;
+                }
+                
+                // Continue to next reaction if reached reaction rate change time
+                if (rateChangeTimeExceeded) {
+                    continue;
+                }
+                
+                // Break if new time exceeds end time:
+                if (simulationTimeExceeded) {
+                    if (spec.samplePopSizes)
+                        sampleState(currentPopState, t);
+                    break;
+                }
+                
+                // Choose reaction to implement
+                double u = Randomizer.nextDouble()*totalPropensity;
+                Reaction chosenReaction = null;
+                for (Reaction reaction : spec.getModel().getReactions()) {
+                    
+                    u -= reaction.getPropensity();
+                    if (u<0) {
+                        chosenReaction = reaction;
+                        break;
+                    }
+                }
+                
+                // Select lineages involved in chosen reaction:
+                selectLineagesInvolved(chosenReaction);
+                
+                // Implement changes to inheritance graph:
+                implementInheritanceReaction(chosenReaction);
+                
+                // Implement state change due to reaction:
+                currentPopState.implementReaction(chosenReaction, 1);
+                
+                // Update event counter:
+                spec.getStepper().incrementEventCount();
+                
+                // Sample population sizes (unevenly) if necessary:
+                if (spec.samplePopSizes && !spec.isSamplingEvenlySpaced()) {              
+                    if (!spec.sampleStateAtNodes || !nodesInvolved.isEmpty())
+                        sampleState(currentPopState, t);
+                }
+                
+            }
+            
+            // Fix final time of any remaining active lineages:
+            for (Population nodePop : activeLineages.keySet()) {
+                for (Node node : activeLineages.get(nodePop)) {
+                    node.setTime(t);
+                    leafCounts.add(nodePop);
                 }
             }
             
-            // Continue to on to next reaction if lineage has been seeded
-            if (seedTimeExceeded) {
-                Node seedNode = inactiveLineages.get(0);
-                inactiveLineages.remove(0);
-                Node child = new Node(seedNode.getPopulation());
-                seedNode.addChild(child);
-                
-                if (!activeLineages.containsKey(child.getPopulation()))
-                    activeLineages.put(child.getPopulation(), new ArrayList<Node>());
-                activeLineages.get(child.getPopulation()).add(child);
-                
-                currentPopState.add(seedNode.getPopulation(), 1.0);                
-                continue;
-            }
+            // Perform any requested post-processing:
+            for (InheritancePostProcessor inheritancePostProc : inheritancePostProcessorsInput.get())
+                inheritancePostProc.process(this);
             
-            // Continue to next reaction if reached reaction rate change time
-            if (rateChangeTimeExceeded) {
-                continue;
-            }
-            
-            // Break if new time exceeds end time:
-            if (simulationTimeExceeded) {
-                if (spec.samplePopSizes)
-                    sampleState(currentPopState, t);
-                break;
-            }
-
-            // Choose reaction to implement
-            double u = Randomizer.nextDouble()*totalPropensity;
-            Reaction chosenReaction = null;
-            for (Reaction reaction : spec.getModel().getReactions()) {
-
-                u -= reaction.getPropensity();
-                if (u<0) {
-                    chosenReaction = reaction;
+            // Check for any post-simulation rejections
+            postSimReject = false;
+            for (PostSimCondition condition  : spec.postSimConditions) {
+                if (condition.isMet(this)) {
+                    postSimReject = true;
                     break;
                 }
             }
-
-            // Select lineages involved in chosen reaction:
-            selectLineagesInvolved(chosenReaction);
             
-            // Implement changes to inheritance graph:
-            implementInheritanceReaction(chosenReaction);
-
-            // Implement state change due to reaction:
-            currentPopState.implementReaction(chosenReaction, 1);
+            if (postSimReject) {
+                // Rejection: Start a new simulation
+                if (spec.getVerbosity()>0)
+                    System.err.println("Post-simulation rejection condition met.");
+            }
             
-            // Update event counter:
-            spec.getStepper().incrementEventCount();
-                         
-            // Sample population sizes (unevenly) if necessary:
-            if (spec.samplePopSizes && !spec.isSamplingEvenlySpaced()) {              
-                if (!spec.sampleStateAtNodes || !nodesInvolved.isEmpty())
-                    sampleState(currentPopState, t);
-            }
-
-        }
-
-        // Fix final time of any remaining active lineages:
-        for (Population nodePop : activeLineages.keySet()) {
-            for (Node node : activeLineages.get(nodePop)) {
-                node.setTime(t);
-                leafCounts.add(nodePop);
-            }
-        }
+        } while (postSimReject);
         
         // Record total time of calculation:
         spec.setWallTime(((new Date()).getTime() - startTime)/1e3);
@@ -458,9 +435,32 @@ public class InheritanceTrajectory extends Trajectory {
     private void initialiseSimulation() {
         // Initialise time
         t = 0.0;
+        
+        // Initialise graph with copy of specification init nodes:
+        // (Can't use initNodes themselves when multiple graphs are being
+        // generated from the same spec by InheritanceEnsemble.)
+        if (startNodes == null)
+            startNodes = Lists.newArrayList();
+        else
+            startNodes.clear();
+        
+        for (Node startNode : spec.initNodes)
+            startNodes.add(startNode.getCopy());
 
         // Initialise population size state:
         currentPopState = new PopulationState(spec.getInitPopulationState());
+        
+                
+        // Initialise sampled state and time lists:
+        if (sampledStates == null)
+            sampledStates = Lists.newArrayList();
+        else
+            sampledStates.clear();
+        
+        if (sampledTimes == null)
+            sampledTimes = Lists.newArrayList();
+        else
+            sampledTimes.clear();
         
         // Initialise active lineages with nodes present at start of simulation
         if (activeLineages == null)
@@ -519,6 +519,8 @@ public class InheritanceTrajectory extends Trajectory {
         // Reset terminal node count:
         if (leafCounts == null)
             leafCounts = HashMultiset.create();
+        else
+            leafCounts.clear();
     }
 
     

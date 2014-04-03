@@ -4,10 +4,15 @@ import beast.core.BEASTObject;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.util.Randomizer;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import master.InheritanceTrajectory;
 import master.model.Node;
 import master.model.Population;
@@ -19,7 +24,7 @@ import master.model.PopulationSize;
 public class LineageSampler extends BEASTObject implements InheritancePostProcessor {
     
     public Input<Integer> nSamplesInput = new Input<Integer>("nSamples",
-            "Number of lineages to sample");
+            "Number of lineages to sample", -1);
     
     public Input<List<PopulationSize>> popSpecificSamplesInput =
             new Input<List<PopulationSize>>("populationSize",
@@ -43,7 +48,7 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
     
     @Override
     public void initAndValidate() {
-        if (nSamplesInput.get() == null && popSpecificSamplesInput.get().isEmpty())
+        if (nSamplesInput.get()<0 && popSpecificSamplesInput.get().isEmpty())
             throw new IllegalArgumentException("Either nSamples or at least "
                     + "one populationSize must be specified.");
         
@@ -112,13 +117,12 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
         }
         
         // Sample a subset of these lineages:
-        List<Node> sampledNodes = new ArrayList<Node>();
-        while (nSamples > 0 && !nodesToSample.isEmpty()) {
-            int index = Randomizer.nextInt(nodesToSample.size());
-            Node sampledNode = nodesToSample.remove(index);
-            sampledNodes.add(sampledNode);
-            nSamples -= 1;
-        }
+        List<Node> sampledNodes;
+        if (nSamples>=0)
+            sampledNodes = getSampledLineages(nodesToSample, nSamples);
+        else
+            sampledNodes = getSampledLineages(nodesToSample, populationSizes);
+
         
         // Label nodes belonging to sampled lineages:
         for (Node node : sampledNodes)
@@ -272,7 +276,59 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
     }
     
     /**
-     * Obtain nodes decending from node, respecting chosen time direction.
+     * Assemble a list of at most nSamples nodes sampled with replacement
+     * from nodesToSample.
+     * 
+     * @param nodesToSample
+     * @param nSamples
+     * @return list of sampled nodes
+     */
+    private static List<Node> getSampledLineages(List<Node> nodesToSample, int nSamples) {
+        List<Node> sampledNodes = Lists.newArrayList();
+        while (nSamples > 0 && !nodesToSample.isEmpty()) {
+            int index = Randomizer.nextInt(nodesToSample.size());
+            Node sampledNode = nodesToSample.remove(index);
+            sampledNodes.add(sampledNode);
+            nSamples -= 1;
+        }
+        
+        return sampledNodes;
+    }
+    
+    /**
+     * Assemble list of nodes sampled with replacement from nodesToSample.
+     * 
+     * @param nodesToSample list of nodes from which to sample
+     * @param populationSizes multiset specifying number of nodes
+     * corresponding to each population to sample.
+     * 
+     * @return list of sampled nodes
+     */
+    private static List<Node> getSampledLineages(List<Node> nodesToSample,
+            Multiset<Population> populationSizes) {
+        
+        // Sort node list by population
+        Map<Population, List<Node>> nodeMap = Maps.newHashMap();
+        for (Node node : nodesToSample) {
+            Population pop = node.getPopulation();
+            if (!nodeMap.containsKey(pop))
+                nodeMap.put(pop, new ArrayList<Node>());
+            
+            nodeMap.get(pop).add(node);
+        }
+        
+        // Sample at most the chosen number of nodes of each population
+        List<Node> sampledNodes = Lists.newArrayList();
+        for (Population pop : populationSizes.elementSet()) {
+            int nSamples = populationSizes.count(pop);
+            sampledNodes.addAll(getSampledLineages(nodeMap.get(pop), nSamples));
+        }
+        
+        return sampledNodes;
+    }
+    
+    /**
+     * Obtain nodes descending from node, respecting chosen time direction.
      * 
      * @param node
      * @param reverseTime

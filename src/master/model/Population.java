@@ -148,8 +148,8 @@ public class Population extends BEASTObject {
 
         if (other instanceof Population) {
             Population otherPop = (Population) other;
-            //result = ((type == otherPop.type) && (offset == otherPop.offset));
-            result = (hash == otherPop.hashCode());
+            result = ((type == otherPop.type) && (offset == otherPop.offset));
+            //result = (hash == otherPop.hashCode()); // dangerous!!
         }
 
         return result;

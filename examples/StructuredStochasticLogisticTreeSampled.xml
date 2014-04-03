@@ -1,0 +1,59 @@
+<!-- Generate an inheritance tree from a structured stochastic logistic model,
+     then prune all nodes except the ancestors of a chosen number of 
+     randomly selected set of leaves per population.  Demonstrates the use
+     of the LineageFilter postprocessor. -->
+
+<beast version='2.0' namespace='master:master.model:master.conditions:master.postprocessors:master.steppers:master.outputs'>
+    <run spec='InheritanceTrajectory'
+         simulationTime="100"
+         samplePopulationSizes="true"
+         verbosity='1'>
+        
+        <model spec='Model'>
+            <populationType spec='PopulationType' typeName='X' dim='4' id='X'/>
+            <reaction spec='Reaction' reactionName='Birth' rate="1.0">
+                <range spec='Range' variableName="i" from="0" to="3"/>
+                X[i] -> 2X[i]
+            </reaction>
+            <reaction spec='Reaction' reactionName='Death' rate="0.01">
+                <range spec='Range' variableName="i" from="0" to="3"/>
+                2X[i] -> X[i]
+            </reaction>
+            <reaction spec='Reaction' reactionName='Migration' rate="0.02">
+                <range spec='Range' variableName="i" from="0" to="3"/>
+                <range spec='Range' variableName="j" from="0" to="3"/>
+                X[i] -> X[j]
+            </reaction>
+        </model>                
+
+        <initialState spec='InitState'>
+            <lineageSeed spec='Individual'>
+                <population spec='Population' type="@X" location="0"/>
+            </lineageSeed>
+        </initialState>
+        
+        <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>      
+        
+        <inheritancePostProcessor spec='LineageSampler'
+                                  reverseTime="false"
+                                  noClean="false">
+            <populationSize spec='PopulationSize' size="5">
+                <population spec='Population' type='@X' location="0"/>
+            </populationSize>
+            <populationSize spec='PopulationSize' size="10">
+                <population spec='Population' type='@X' location="1"/>
+            </populationSize>
+            <populationSize spec='PopulationSize' size="15">
+                <population spec='Population' type='@X' location="2"/>
+            </populationSize>
+            <populationSize spec='PopulationSize' size="20">
+                <population spec='Population' type='@X' location="3"/>
+            </populationSize>
+        </inheritancePostProcessor>
+        
+        <!-- Use post-simulation condition to ensure we actually have 50 samples. -->
+        <postSimCondition spec='LeafCountPostSimCondition' nLeaves="50" exact="true"/>
+        
+        <output spec='NexusOutput' fileName='StructuredStochasticLogisticTreeSampled_out.nexus'/>
+    </run>
+</beast>

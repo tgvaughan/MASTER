@@ -25,11 +25,14 @@
         
         <lineageEndCondition spec='LineageEndCondition' nLineages="0" isRejection="true"/>      
         
-	<inheritancePostProcessor spec='LineageSampler'
-				  nSamples="10"
-				  samplingTime="20"
-				  reverseTime="false"
-				  noClean="false"/>
+        <inheritancePostProcessor spec='LineageSampler'
+                                  nSamples="10"
+                                  samplingTime="20"
+                                  reverseTime="false"
+                                  noClean="false"/>
+        
+        <!-- Use post-simulation condition to ensure we actually have 10 samples. -->
+        <postSimCondition spec='LeafCountPostSimCondition' nLeaves="10" exact="true"/>
         
         <output spec='NexusOutput' fileName='StochasticLogisticTreeSampled_out.nexus'/>
     </run>

@@ -2,11 +2,16 @@ package master.postprocessors;
 
 import beast.core.BEASTObject;
 import beast.core.Input;
+import beast.core.Input.Validate;
 import beast.util.Randomizer;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import java.util.ArrayList;
 import java.util.List;
 import master.InheritanceTrajectory;
 import master.model.Node;
+import master.model.Population;
+import master.model.PopulationSize;
 
 /**
  * @author Alexei Drummond
@@ -14,10 +19,16 @@ import master.model.Node;
 public class LineageSampler extends BEASTObject implements InheritancePostProcessor {
     
     public Input<Integer> nSamplesInput = new Input<Integer>("nSamples",
-            "Number of lineages to sample", Input.Validate.REQUIRED);
+            "Number of lineages to sample");
+    
+    public Input<List<PopulationSize>> popSpecificSamplesInput =
+            new Input<List<PopulationSize>>("populationSize",
+            "Population size specifying number of samples to draw "
+                    + "from individual populations.",
+                    new ArrayList<PopulationSize>());
     
     public Input<Double> samplingTimeInput = new Input<Double>("samplingTime",
-            "Time at which sampling is to take place", Input.Validate.REQUIRED);
+            "Time at which sampling is to take place", -1.0);
   
     public Input<String> markAnnotationInput = new Input<String>("markAnnotation",
             "Mark using this annotation rather than pruning.");
@@ -28,8 +39,19 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
     public Input<Boolean> noCleanInput = new Input<Boolean>("noClean",
             "Do not remove no-state-change nodes.", false);
     
+    Multiset<Population> populationSizes;
+    
     @Override
-    public void initAndValidate() { }
+    public void initAndValidate() {
+        if (nSamplesInput.get() == null && popSpecificSamplesInput.get().isEmpty())
+            throw new IllegalArgumentException("Either nSamples or at least "
+                    + "one populationSize must be specified.");
+        
+        populationSizes = HashMultiset.create();
+        for (PopulationSize popSize : popSpecificSamplesInput.get())
+            populationSizes.setCount(popSize.getPopulation(),
+                    (int)Math.round(popSize.getSize()));
+    }
     
     /**
      * Sample (without replacement) nSamples lineages crossing the chosen
@@ -41,14 +63,18 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
      * by this method.
      * 
      * @param itraj Inheritance trajectory object
-     * @param samplingTime Time at which sampling will occur
+     * @param samplingTime Time at which sampling will occur (negative implies no specific time)
      * @param nSamples Number of lineages to sample
+     * @param populationSizes Lineages to sample from individual populations
      * @param markAnnotation
+     * @param noClean Do not remove non-state-change nodes after processing
      * @param reverseTime If true, times increases in the opposite direction
      * to the Markov process which generated the graph.
      */
     public static void process(InheritanceTrajectory itraj,
-            double samplingTime, int nSamples, String markAnnotation,
+            double samplingTime, int nSamples,
+            Multiset<Population> populationSizes,
+            String markAnnotation,
             boolean noClean, boolean reverseTime) {
         
         boolean markOnly;
@@ -59,30 +85,37 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
             markOnly = false;
         }
         
-        // Get list of root nodes (using chosen time direction):
-        List<Node> rootNodes;
-        if (reverseTime)
-            rootNodes = itraj.getEndNodes();
-        else
-            rootNodes = itraj.getStartNodes();
-        
-        // Assemble list of nodes at sampling time:
-        List<Node> nodesAtSamplingTime = new ArrayList<Node>();
-        for (Node root : rootNodes)
-            collectNodes(root, samplingTime, nodesAtSamplingTime, reverseTime,
-                    itraj);
-
-        // Update startNodes if necessary:
+        // Get lists of root and leaf nodes (using chosen time direction):
+        List<Node> rootNodes, leafNodes;
         if (reverseTime) {
-            itraj.getStartNodes().clear();
-            itraj.getStartNodes().addAll(nodesAtSamplingTime);
+            rootNodes = itraj.getEndNodes();
+            leafNodes = itraj.getStartNodes();
+        } else {
+            rootNodes = itraj.getStartNodes();
+            leafNodes = itraj.getEndNodes();
+        }
+        
+        // Assemble list of nodes from which to sample:
+        List<Node> nodesToSample = new ArrayList<Node>();
+        if (samplingTime>=0.0) {
+            for (Node root : rootNodes)
+                collectNodes(root, samplingTime, nodesToSample, reverseTime,
+                        itraj);
+            
+            // Update startNodes if necessary:
+            if (reverseTime) {
+                itraj.getStartNodes().clear();
+                itraj.getStartNodes().addAll(nodesToSample);
+            }
+        } else {
+            nodesToSample.addAll(leafNodes);
         }
         
         // Sample a subset of these lineages:
         List<Node> sampledNodes = new ArrayList<Node>();
-        while (nSamples > 0 && !nodesAtSamplingTime.isEmpty()) {
-            int index = Randomizer.nextInt(nodesAtSamplingTime.size());
-            Node sampledNode = nodesAtSamplingTime.remove(index);
+        while (nSamples > 0 && !nodesToSample.isEmpty()) {
+            int index = Randomizer.nextInt(nodesToSample.size());
+            Node sampledNode = nodesToSample.remove(index);
             sampledNodes.add(sampledNode);
             nSamples -= 1;
         }
@@ -98,8 +131,7 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
         if (markOnly)
             return;
         
-        // Get list of leaf nodes (using chosen time direction):
-        List<Node> leafNodes;
+        // Update list of leaf nodes (using chosen time direction):
         if (reverseTime)
             leafNodes = itraj.getStartNodes();
         else
@@ -303,6 +335,7 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
     public void process(InheritanceTrajectory itraj) {
         LineageSampler.process(itraj,
                 samplingTimeInput.get(), nSamplesInput.get(),
+                populationSizes,
                 markAnnotationInput.get(), noCleanInput.get(),
                 reverseTimeInput.get());
     }

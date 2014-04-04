@@ -46,11 +46,6 @@ public class LeafCountPostSimCondition extends PostSimCondition {
             "Leaf count threshold for end condition.",
             Input.Validate.REQUIRED);
     
-    public Input<Boolean> includeExtantInput = new Input<Boolean>(
-            "includeExtant",
-            "Whether to include extant lineages in terminal node count. (Default false.)",
-            false);
-    
     public Input<Boolean> exactMatchInput = new Input<Boolean>(
             "exact",
             "If true, the number of lineages must exactly match "

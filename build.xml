@@ -175,7 +175,7 @@
       <fileset dir="${examples}" includes="*.R" />
     </copy>
 
-    <copy file="deployment/master_linux.sh" todir="${pack}"/>
+    <copy file="master_linux.sh" todir="${pack}"/>
     <replace file="${pack}/master_linux.sh" token="_MASTERJAR_"
 	     value="${archiveName}.jar"/>
     <chmod file="${pack}/master_linux.sh" perm="a+x"/>

@@ -39,7 +39,6 @@ import master.model.PopulationState;
 import master.model.Reaction;
 import master.outputs.InheritanceTrajectoryOutput;
 import master.postprocessors.InheritancePostProcessor;
-import sun.awt.SunToolkit;
 
 /**
  * A class representing a stochastic inheritance trajectory generated under

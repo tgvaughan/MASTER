@@ -1,3 +1,6 @@
+<!-- Example use of the BeastTreeFromMaster simulation type to initialise a BEAST 2
+     MCMC chain with a coalescent tree described by a MASTER model. -->
+
 <beast version='2.0'
        namespace='beast.core
                   :beast.evolution.tree.coalescent
@@ -57,14 +60,7 @@
         <siteModel idref="siteModel"/>
     </input>
 
-<!--
-    <input spec='beast.util.ClusterTree' id='tree' clusterType='upgma'>
-        <input name='taxa' idref='alignment'/>
-    </input>
--->
-
     <input spec='beast.core.parameter.RealParameter' id="hky.kappa">1.0</input>
-
     <input spec='beast.core.parameter.RealParameter' id="popSize">1.0</input>
 
     <!-- Use MASTER to generate an initial coalescent tree -->
@@ -135,23 +131,21 @@
             <tree idref="tree"/>
         </operator>
 
-        <logger logEvery="10000" fileName="test.$(seed).log">
+        <logger logEvery="10000" fileName="$(filebase)_output.log">
    	        <model idref='posterior'/>
             <log idref="coalescent"/>
             <log idref="likelihood"/>
-            <!--parameter idref="treeModel.rootHeight"/-->
             <log idref="popSize"/>
             <log idref="hky.kappa"/>
             <log idref="posterior"/>
         </logger>
-        <logger logEvery="10000" fileName="test.$(seed).trees">
+        <logger logEvery="10000" fileName="$(filebase)_output.trees">
             <log idref="tree"/>
         </logger>
         <logger logEvery="10000">
 	        <model idref='posterior'/>
             <log idref="coalescent"/>
             <log idref="likelihood"/>
-            <!--parameter idref="treeModel.rootHeight"/-->
             <log idref="popSize"/>
             <log idref="hky.kappa"/>
             <log idref="posterior"/>

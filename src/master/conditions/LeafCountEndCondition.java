@@ -75,8 +75,15 @@ public class LeafCountEndCondition extends EndCondition {
                 size += leafCounts.count(pop);
         }
         if (includeExtant) {
-            for (List<Node> nodeList : activeLineages.values())
-                size += nodeList.size();
+            if (populationInput.get().isEmpty()) {
+                for (List<Node> nodeList : activeLineages.values())
+                    size += nodeList.size();
+            } else {
+                for (Population pop : populationInput.get()) {
+                    if (activeLineages.containsKey(pop))
+                        size += activeLineages.get(pop).size();
+                }
+            }
         }
         
         return size == nTerminalNodes;

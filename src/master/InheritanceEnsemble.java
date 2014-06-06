@@ -203,11 +203,6 @@ public class InheritanceEnsemble extends Runnable {
         // Generate stochastic trajectories:
         simulate();
         
-        // Perform any requested post-processing:
-        for (InheritanceTrajectory itraj : getTrajectories())
-            for (InheritancePostProcessor postProc : inheritancePostProcessorsInput.get())
-                postProc.process(itraj);
-        
         // Write outputs:
         for (InheritanceEnsembleOutput output : outputsInput.get())
             output.write(this);

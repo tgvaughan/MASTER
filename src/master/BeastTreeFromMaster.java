@@ -16,9 +16,6 @@
  */
 package master;
 
-import master.model.InitState;
-import master.model.PopulationSize;
-import master.outputs.InheritanceTrajectoryOutput;
 import beast.core.Citation;
 import beast.core.Description;
 import beast.core.Input;
@@ -31,10 +28,17 @@ import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import master.conditions.LeafCountEndCondition;
 import master.conditions.LineageEndCondition;
 import master.conditions.PopulationEndCondition;
+import master.conditions.PostSimCondition;
+import master.model.InitState;
 import master.model.Model;
+import master.model.PopulationSize;
+import master.outputs.InheritanceTrajectoryOutput;
 import master.postprocessors.InheritancePostProcessor;
+import master.steppers.GillespieStepper;
+import master.steppers.Stepper;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -55,39 +59,77 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
             "simulationTime",
             "The maximum length of time to simulate for. (Defaults to infinite.)");
     
+    public Input<Integer> nSamplesInput = new Input<Integer>(
+            "nSamples",
+            "Number of evenly spaced time points to sample state at.");
+    
+    public Input<Integer> seedInput = new Input<Integer>(
+            "seed",
+            "Seed for RNG.");
+        
+    public Input<Stepper> stepperInput = new Input<Stepper>(
+            "stepper",
+            "State incrementing algorithm to use. (Default Gillespie.)",
+            new GillespieStepper());
+    
     public Input<Integer> verbosityInput = new Input<Integer> (
-            "verbosity", "Level of verbosity to use (0-3).", 1);
+            "verbosity", "Level of verbosity to use (0-2).", 1);
     
     // Model:
     public Input<Model> modelInput = new Input<Model>("model",
-            "The specific model to simulate.", Input.Validate.REQUIRED);
+            "The specific model to simulate.",
+            Input.Validate.REQUIRED);
     
     // Initial state:
     public Input<InitState> initialStateInput = new Input<InitState>("initialState",
-            "Initial state of system.", Input.Validate.REQUIRED);
+            "Initial state of system.",
+            Input.Validate.REQUIRED);
     
-    // Population end conditions:
-    public Input<List<PopulationEndCondition>> popEndConditionsInput = new Input<List<PopulationEndCondition>>(
-            "populationEndCondition",
-            "Trajectory end condition based on population sizes.",
-            new ArrayList<PopulationEndCondition>());
+    // End conditions:
+    public Input<List<PopulationEndCondition>> popEndConditionsInput =
+            new Input<List<PopulationEndCondition>>(
+                    "populationEndCondition",
+                    "Trajectory end condition based on population sizes.",
+                    new ArrayList<PopulationEndCondition>());    
+    
+    // Post-simulation conditioning:
+    public Input<List<PostSimCondition>> postSimConditionsInput =
+            new Input<List<PostSimCondition>>("postSimCondition",
+                    "A post-simulation condition.",
+                    new ArrayList<PostSimCondition>());
+    
+        public Input<Boolean> samplePopulationSizesInput = new Input<Boolean>(
+            "samplePopulationSizes",
+            "Sample population sizes together with inheritance graph. (Default false.)",
+            false);
+    
+    public Input<Boolean> sampleAtNodesOnlyInput = new Input<Boolean>(
+            "sampleAtNodesOnly",
+            "Sample population sizes only at graph node times. (Default false.)",
+            false);
     
     // Lineage end conditions:
-    public Input<List<LineageEndCondition>> lineageEndConditionsInput = new Input<List<LineageEndCondition>>(
-            "lineageEndCondition",
-            "Trajectory end condition based on remaining lineages.",
-            new ArrayList<LineageEndCondition>());
+    public Input<List<LineageEndCondition>> lineageEndConditionsInput =
+            new Input<List<LineageEndCondition>>("lineageEndCondition",
+                    "Trajectory end condition based on remaining lineages.",
+                    new ArrayList<LineageEndCondition>());
+    
+        
+    // Leaf count end conditions:
+    public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput =
+            new Input<List<LeafCountEndCondition>>("leafCountEndCondition",
+            "Trajectory end condition based on number of terminal nodes generated.",
+            new ArrayList<LeafCountEndCondition>());
     
     // Post-processors:
-    public Input<List<InheritancePostProcessor>> postProcessorsInput =
-            new Input<List<InheritancePostProcessor>>(
-            "postProcessor",
-            "Inheritance trajectory post processor.",
-            new ArrayList<InheritancePostProcessor>());
+    public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
+            new Input<List<InheritancePostProcessor>>("inheritancePostProcessor",
+                    "Post processor for inheritance graph.",
+                    new ArrayList<InheritancePostProcessor>());
     
-    // Outputs (May want to record the tree separately.)
-    public Input<List<InheritanceTrajectoryOutput>> outputsInput = new Input<List<InheritanceTrajectoryOutput>>(
-            "output",
+    // Outputs:
+    public Input<List<InheritanceTrajectoryOutput>> outputsInput
+            = new Input<List<InheritanceTrajectoryOutput>>("output",
             "Output writer used to write results of simulation to disk.",
             new ArrayList<InheritanceTrajectoryOutput>());
     
@@ -103,58 +145,48 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
     public Input<Alignment> alignmentInput = new Input<Alignment>("alignment",
             "If provided, nodes are equated with taxons having the same label.");
         
-    master.InheritanceTrajectorySpec spec;
     
     public BeastTreeFromMaster() { }
     
     @Override
     public void initAndValidate() throws Exception {
     
-        spec = new master.InheritanceTrajectorySpec();
-               
-        // Incorporate model:
-        spec.setModel(modelInput.get());        
+        // Initialise inheritance trajectory simulation
         
-        // No need to sample population sizes here:
-        spec.setNoSampling();
+        InheritanceTrajectory itraj = new InheritanceTrajectory();
         
-        // Set maximum simulation time:
-        if (simulationTimeInput.get() != null)
-            spec.setSimulationTime(simulationTimeInput.get());
-        else
-            spec.setSimulationTime(Double.POSITIVE_INFINITY);
+        itraj.setInputValue("simulationTime", simulationTimeInput.get());
+        itraj.setInputValue("nSamples", nSamplesInput.get());
+        itraj.setInputValue("seed", seedInput.get());
+        itraj.setInputValue("stepper", stepperInput.get());
+        itraj.setInputValue("verbosity", verbosityInput.get());
+        itraj.setInputValue("model", modelInput.get());
+        itraj.setInputValue("initialState", initialStateInput.get());
+        itraj.setInputValue("samplePopulationSizes", samplePopulationSizesInput.get());
+        itraj.setInputValue("sampleAtNodesOnly", sampleAtNodesOnlyInput.get());
         
-        // Assemble initial state:
-        master.model.PopulationState initState = new master.model.PopulationState();
-        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            initState.set(popSize.getPopulation(), popSize.getSize());
-        spec.setInitPopulationState(initState);        
-        spec.setInitNodes(initialStateInput.get().getInitNodes());
-        
-        // Incorporate any end conditions:
         for (PopulationEndCondition endCondition : popEndConditionsInput.get())
-            spec.addPopSizeEndCondition(endCondition);
+            itraj.setInputValue("populationEndCondition", endCondition);
         
         for (LineageEndCondition endCondition : lineageEndConditionsInput.get())
-            spec.addLineageEndCondition(endCondition);
-
-        // BEAST controls seed here:
-        spec.setSeed(-1);
+            itraj.setInputValue("lineageEndCondition", endCondition);
+                
+        for (LeafCountEndCondition endCondition : leafCountEndConditionsInput.get())
+            itraj.setInputValue("leafCountEndCondition", endCondition);
         
-        // Set the level of verbosity:
-        spec.setVerbosity(verbosityInput.get());
+        for (InheritancePostProcessor postProcessor : inheritancePostProcessorsInput.get())
+            itraj.setInputValue("inheritancePostProcessor", postProcessor);
+                
+        for (PostSimCondition postSimCondition : postSimConditionsInput.get())
+            itraj.setInputValue("postSimCondition", postSimCondition);
         
-        // Generate stochastic trajectory:
-        master.InheritanceTrajectory itraj =
-                new master.InheritanceTrajectory(spec);
-        
-        // Perform any requested post-processing:
-        for (InheritancePostProcessor postProc : postProcessorsInput.get())
-            postProc.process(itraj);
-        
-        // Write any outputs:
         for (InheritanceTrajectoryOutput output : outputsInput.get())
-            output.write(itraj);
+            itraj.setInputValue("output", output);
+
+        itraj.initAndValidate();
+        
+        // Run simulation and generate output
+        itraj.run();
         
         // Assemble BEAST tree:
         assembleTree(itraj);

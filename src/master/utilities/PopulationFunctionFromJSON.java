@@ -17,6 +17,7 @@
 
 package master.utilities;
 
+import master.utilities.pfe.PFEJSONVisitor;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;

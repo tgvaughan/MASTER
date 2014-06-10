@@ -30,7 +30,7 @@ import master.model.Model;
 import master.outputs.TrajectoryOutput;
 import master.steppers.GillespieStepper;
 import master.steppers.Stepper;
-import master.utilities.PFEVisitor;
+import master.utilities.pfe.PFEVisitor;
 import master.utilities.pfe.PFExpressionLexer;
 import master.utilities.pfe.PFExpressionParser;
 import org.antlr.v4.runtime.ANTLRInputStream;

@@ -19,59 +19,23 @@ package master.utilities;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
-import master.Trajectory;
-import master.model.Population;
-import master.model.PopulationType;
 import master.utilities.pfe.PFExpressionBaseVisitor;
 import master.utilities.pfe.PFExpressionParser;
 
 /**
  * AST node visitor which calculates the population function expression
- * for each state in a trajectory.
+ * for each state in the JSON file.
  * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class PFEVisitor extends PFExpressionBaseVisitor<Double[]> {
+public class PFEJSONVisitor extends PFExpressionBaseVisitor<Double[]> {
 
-    Trajectory traj;
+    JsonNode rootNode;
     int n;
     
-    public PFEVisitor(Trajectory traj) {
-        this.traj = traj;
-        this.n = traj.getSampledTimes().size();
-    }
-    
-    /**
-     * Obtain population specified by string given in PFE.
-     * 
-     * @param popTypeString
-     * @param locString
-     * @return population object
-     */
-    Population getPop(String popTypeString, String locString) {
-        int[] loc;
-        if ("".equals(locString)) {
-            loc = new int[1];
-        } else {
-            String[] locSplit = locString.substring(1, locString.length()-1).split(",");
-            loc = new int[locSplit.length];
-            for (int i=0; i<locSplit.length; i++)
-                loc[i] = Integer.valueOf(locSplit[i]);
-        }
-        
-        PopulationType popType = null;
-        for (PopulationType thisPopType : traj.getSpec().getModel().getPopulationTypes()) {
-            if (thisPopType.getName().equals(popTypeString)) {
-                popType = thisPopType;
-                break;
-            }
-        }
-        
-        if (popType != null)
-            return new Population(popType, loc);
-        else
-            throw new IllegalStateException("Uknown population type "
-                    + popTypeString + ".");
+    public PFEJSONVisitor(JsonNode rootNode) {
+        this.rootNode = rootNode;
+        this.n = rootNode.get("t").size();
     }
 
     @Override
@@ -89,12 +53,9 @@ public class PFEVisitor extends PFExpressionBaseVisitor<Double[]> {
     public Double[] visitPop(PFExpressionParser.PopContext ctx) {
         Double [] vec = new Double[n];
         
-        String popTypeStr = ctx.population().POPTYPE().getText();
-        String locStr = ctx.population().LOC().getText();
-        Population pop = getPop(popTypeStr, locStr);
-        
+        String popType = ctx.population().POPTYPE().getText();
         for (int i=0; i<n; i++)
-            vec[i] = traj.getSampledStates().get(i).get(pop);
+            vec[i] = rootNode.get(popType).get(i).asDouble();
         
         return vec;
     }

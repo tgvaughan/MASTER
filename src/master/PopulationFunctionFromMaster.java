@@ -15,54 +15,101 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package master.utilities;
+package master;
 
-import beast.core.Description;
 import beast.core.Input;
-import beast.core.Input.Validate;
 import beast.core.parameter.RealParameter;
 import beast.evolution.tree.coalescent.PopulationFunction;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import master.conditions.PopulationEndCondition;
+import master.conditions.PostSimCondition;
+import master.model.InitState;
+import master.model.Model;
+import master.outputs.TrajectoryOutput;
+import master.steppers.GillespieStepper;
+import master.steppers.Stepper;
+import master.utilities.PFEVisitor;
 import master.utilities.pfe.PFExpressionLexer;
 import master.utilities.pfe.PFExpressionParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MaxIterationsExceededException;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
-import org.apache.commons.math.analysis.solvers.BrentSolver;
 
 /**
+ * Uses a MASTER Trajectory simulation as the basis for a BEAST population
+ * function.
+ *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-@Description("Construct a population function from a JSON output file.")
-public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
+public class PopulationFunctionFromMaster extends PopulationFunction.Abstract {
     
-    public Input<String> fileNameInput = new Input<String>("fileName",
-            "Name of JSON output file to use.", Validate.REQUIRED);
+    /*
+     * XML inputs:
+     */
     
+    // Spec parameters:
+    public Input<Double> simulationTimeInput = new Input<Double>(
+            "simulationTime",
+            "The maximum length of time to simulate for. (Defaults to infinite.)");
+    
+    public Input<Integer> nSamplesInput = new Input<Integer>(
+            "nSamples",
+            "Number of evenly spaced time points to sample state at.");
+    
+    public Input<Integer> seedInput = new Input<Integer>(
+            "seed",
+            "Seed for RNG.");
+    
+    public Input<Stepper> stepperInput = new Input<Stepper>(
+            "stepper",
+            "State incrementing algorithm to use. (Default Gillespie.)",
+            new GillespieStepper());
+    
+    public Input<Integer> verbosityInput = new Input<Integer> (
+            "verbosity", "Level of verbosity to use (0-2).", 1);
+    
+    // Model:
+    public Input<Model> modelInput = new Input<Model>("model",
+            "The specific model to simulate.",
+            Input.Validate.REQUIRED);
+    
+    // Initial state:
+    public Input<InitState> initialStateInput = new Input<InitState>("initialState",
+            "Initial state of system.",
+            Input.Validate.REQUIRED);
+    
+    // End conditions:
+    public Input<List<PopulationEndCondition>> endConditionsInput = new Input<List<PopulationEndCondition>>(
+            "populationEndCondition",
+            "Trajectory end condition based on population sizes.",
+            new ArrayList<PopulationEndCondition>());    
+    
+    // Post-simulation conditioning:
+    public Input<List<PostSimCondition>> postSimConditionsInput =
+            new Input<List<PostSimCondition>>("postSimCondition",
+                    "A post-simulation condition.",
+                    new ArrayList<PostSimCondition>());
+    
+    // Outputs:
+    public Input<List<TrajectoryOutput>> outputsInput = new Input<List<TrajectoryOutput>>(
+            "output",
+            "Output writer used to write simulation output to disk.",
+            new ArrayList<TrajectoryOutput>());
+    
+    // Inputs specific to population function generation    
+
     public Input<String> popSizeExpressionInput = new Input<String>("popSizeExpression",
             "Either the name of a population or a simple mathematical expression"
             + "involving such names. e.g. I/(2*S) if S and I are population names.",
-            Validate.REQUIRED);
+            Input.Validate.REQUIRED);
     
     public Input<RealParameter> originInput = new Input<RealParameter>("origin",
             "Maps population time onto time before most recent tree sample. "
                     + "Think of this as specifying the time of the most recent "
                     + "sample in the population size trajectory time scale.",
-            Validate.REQUIRED);
+            Input.Validate.REQUIRED);
     
     public Input<Double> popSizeEndInput = new Input<Double>("popSizeEnd",
             "Population size to use beyond the end of the simulated trajectory.",
@@ -71,35 +118,47 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
     public Input<Double> popSizeStartInput = new Input<Double>("popSizeStart",
             "Population size to use before the start of the simulated trajectory.",
             0.0);
-    
-    public Input<Integer> trajNumInput = new Input<Integer>("trajNum",
-            "The index of the trajectory to use if the JSON file contains an"
-            + " ensemble of trajectories, but ignored otherwise.  Default 0.", 0);
 
-    Double [] times, popSizes, intensities, intensitiesRev;
+    Double[] times, popSizes, intensities, intensitiesRev;
     
     double tIntensityTrajStart, dt;
     
     int peakIdx;
     
+    public PopulationFunctionFromMaster() { }
+
     @Override
     public void initAndValidate() throws Exception {
+
+        // Initialise trajectory simulation
         
-        // Read in JSON file:
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(
-                new FileInputStream(fileNameInput.get()));
-       
-        JsonNode trajRootNode;
-        if (rootNode.has("trajectories"))
-            trajRootNode = rootNode.get("trajectories").get(trajNumInput.get());
-        else
-            trajRootNode = rootNode;
+        Trajectory traj = new Trajectory();
         
-        // Read in times
-        times = new Double[trajRootNode.get("t").size()];
-        for (int i=0; i<times.length; i++)
-            times[i] = trajRootNode.get("t").get(i).asDouble();
+        traj.setInputValue("simulationTime", simulationTimeInput.get());
+        traj.setInputValue("nSamples", nSamplesInput.get());
+        traj.setInputValue("seed", seedInput.get());
+        traj.setInputValue("stepper", stepperInput.get());
+        traj.setInputValue("verbosity", verbosityInput.get());
+        traj.setInputValue("model", modelInput.get());
+        traj.setInputValue("initialState", initialStateInput.get());
+        
+        for (PopulationEndCondition endCondition : endConditionsInput.get())
+            traj.setInputValue("populationEndCondition", endCondition);        
+                
+        for (PostSimCondition postSimCondition : postSimConditionsInput.get())
+            traj.setInputValue("postSimCondition", postSimCondition);
+        
+        for (TrajectoryOutput output : outputsInput.get())
+            traj.setInputValue("output", output);
+
+        traj.initAndValidate();
+        
+        // Run simulation
+        traj.run();
+        
+        // Collate times:
+        times = new Double[traj.sampledTimes.size()];
+        traj.sampledTimes.toArray(times);
         
         // Build AST of population size expression
         ANTLRInputStream input = new ANTLRInputStream(popSizeExpressionInput.get());
@@ -109,16 +168,8 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         ParseTree tree = parser.start();
         
         // Calculate population sizes
-        PFEJSONVisitor visitor = new PFEJSONVisitor(trajRootNode);
+        PFEVisitor visitor = new PFEVisitor(traj);
         popSizes = visitor.visit(tree);
-        
-        // Numerically integrate to get intensities:
-//        intensities = new Double[times.length];
-//        intensities[times.length-1] = 0.0;
-//        for (int i=times.length-1; i>0; i--) {
-//            intensities[i-1] = intensities[i]
-//                    + (times[i]-times[i-1])/popSizes[i-1];
-//        }
         
         // Find peak population size
         peakIdx=-1;
@@ -158,8 +209,7 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
 
     @Override
     public double getPopSize(double t) {
-        
-        double tforward = convertTime(t);
+        double tforward = originInput.get().getValue() - t;
         
         if (tforward>times[times.length-1])
             return popSizeEndInput.get();
@@ -168,7 +218,7 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
             return popSizeStartInput.get();
         
         // Choose which index into integration lattice to use:
-        int tidx = Arrays.binarySearch(times, tforward);
+        int tidx = Arrays.binarySearch(times, originInput.get().getValue()-t);
         if (tidx<0)
             tidx = -(tidx + 1) - 1;
 
@@ -177,8 +227,7 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
 
     @Override
     public double getIntensity(double t) {
-        
-        double tforward = convertTime(t);
+        double tforward = originInput.get().getValue() - t;
         
         if (tforward>times[times.length-1]) {
             if (popSizeEndInput.get()>0.0) {
@@ -207,12 +256,11 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
             }
         } else
             return intensities[tidx]; // Exact match can happen at boundaries.
-        
     }
 
     @Override
     public double getInverseIntensity(double intensity) {
-
+        
         if (intensity<intensities[times.length-1])
             return convertTime(times[times.length-1]) + popSizeEndInput.get()*(intensity-intensities[times.length-1]);
 
@@ -237,37 +285,5 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         return originInput.get().getValue() - t;
     }
     
-    /**
-     * Main method for debugging.
-     * 
-     * @param args 
-     * @throws java.lang.Exception 
-     */
-    public static void main(String [] args) throws Exception {
-
-        
-        PopulationFunctionFromJSON instance = new PopulationFunctionFromJSON();
-        instance.initByName(
-                "fileName", "/home/tim/work/articles/volzpaper/SimulatedData/SIR_1000sims.json",
-                "popSizeExpression", "(I-1)/(2*0.00075*S)",
-                "origin", new RealParameter("66.5499977474"),
-                "trajNum", 1,
-                "popSizeStart", 0.0,
-                "popSizeEnd", 0.0);
-
-        // Write pop sizes and intensities out
-        PrintStream outf = new PrintStream("test.txt");
-        outf.println("t N intensity invIntensity");
-        double dt = 66.5499977474/1000;
-        for (int i=0; i<=1000; i++) {
-            double t = dt*i;
-            double N = instance.getPopSize(t);
-            double intensity = instance.getIntensity(t);
-            double invIntensity = instance.getInverseIntensity(intensity);
-            
-            outf.format("%g %g %g %g\n", t, N, intensity, invIntensity);
-        }
-        outf.println();
-        
-    }
+    
 }

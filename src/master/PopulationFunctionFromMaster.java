@@ -192,14 +192,16 @@ public class PopulationFunctionFromMaster extends PopulationFunction.Abstract {
             intensities[i+1] = intensities[i]
                     + (times[i]-times[i+1])/popSizes[i];
         }
-        
-        // Copy to reversed intensities array needed for binary search
+
+       // Copy to reversed intensities array needed for binary search
         intensitiesRev = new Double[times.length];
         for (int i=0; i<times.length/2; i++) {
             int j = times.length-1-i;
             intensitiesRev[i] = intensities[j];
             intensitiesRev[j] = intensities[i];
         }
+        if (times.length%2>0)
+            intensitiesRev[times.length/2] = intensities[times.length/2];
     }
 
     @Override

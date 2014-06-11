@@ -150,6 +150,8 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
             intensitiesRev[i] = intensities[j];
             intensitiesRev[j] = intensities[i];
         }
+        if (times.length%2>0)
+            intensitiesRev[times.length/2] = intensities[times.length/2];
     }
 
     @Override

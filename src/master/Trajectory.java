@@ -243,6 +243,7 @@ public class Trajectory extends Runnable {
                                         + "at time " + t);   
                             currentState = new PopulationState(spec.initPopulationState);
                             clearSamples();
+                            sampleState(currentState, 0.0);
                             t = 0;
                             sidx = -1;
                         } else {
@@ -289,7 +290,8 @@ public class Trajectory extends Runnable {
                                         + "at time " + t);                        
                             
                             currentState = new PopulationState(spec.initPopulationState);
-                            clearSamples();                        
+                            clearSamples();
+                            sampleState(currentState, 0.0);
                             t = 0;
                         } else {
                             if (spec.verbosity>0)

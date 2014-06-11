@@ -88,7 +88,11 @@ public class PFEVisitor extends PFExpressionBaseVisitor<Double[]> {
         Double [] vec = new Double[n];
         
         String popTypeStr = ctx.population().POPTYPE().getText();
-        String locStr = ctx.population().LOC().getText();
+        String locStr;
+        if (ctx.population().LOC() != null)
+            locStr = ctx.population().LOC().getText();
+        else
+            locStr = "";
         Population pop = getPop(popTypeStr, locStr);
         
         for (int i=0; i<n; i++)

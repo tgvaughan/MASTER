@@ -118,6 +118,11 @@ public class PopulationFunctionFromMaster extends PopulationFunction.Abstract {
     public Input<Double> popSizeStartInput = new Input<Double>("popSizeStart",
             "Population size to use before the start of the simulated trajectory.",
             0.0);
+    
+    ParseTree expressionParseTree;
+    PFEVisitor expressionVisitor;
+    
+    Trajectory traj;
 
     Double[] times, popSizes, intensities, intensitiesRev;
     
@@ -130,9 +135,9 @@ public class PopulationFunctionFromMaster extends PopulationFunction.Abstract {
     @Override
     public void initAndValidate() throws Exception {
 
-        // Initialise trajectory simulation
+        // Set up trajectory simulation inputs
         
-        Trajectory traj = new Trajectory();
+        traj = new Trajectory();
         
         traj.setInputValue("simulationTime", simulationTimeInput.get());
         traj.setInputValue("nSamples", nSamplesInput.get());
@@ -153,23 +158,40 @@ public class PopulationFunctionFromMaster extends PopulationFunction.Abstract {
 
         traj.initAndValidate();
         
-        // Run simulation
-        traj.run();
-        
-        // Collate times:
-        times = new Double[traj.sampledTimes.size()];
-        traj.sampledTimes.toArray(times);
-        
-        // Build AST of population size expression
+        // Build parse tree from of population size expression
         ANTLRInputStream input = new ANTLRInputStream(popSizeExpressionInput.get());
         PFExpressionLexer lexer = new PFExpressionLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         PFExpressionParser parser = new PFExpressionParser(tokens);
-        ParseTree tree = parser.start();
+        expressionParseTree = parser.start();
+        
+        // Visitor for interpreting population size expression
+        expressionVisitor = new PFEVisitor();
+        
+        // Perform the simulation, calculate intensities etc
+        prepare();
+
+    }
+    
+    /**
+     * Run the simulation itself and update the intensity arrays.
+     */
+    @Override
+    public void prepare() {
+                
+        // Run simulation
+        try {
+            traj.run();
+        } catch (Exception ex) { }
+        
+        // Collate times:
+        times = new Double[traj.sampledTimes.size()];
+        traj.sampledTimes.toArray(times);
+
         
         // Calculate population sizes
-        PFEVisitor visitor = new PFEVisitor(traj);
-        popSizes = visitor.visit(tree);
+        expressionVisitor.setTraj(traj);
+        popSizes = expressionVisitor.visit(expressionParseTree);
         
         // Find peak population size
         peakIdx=-1;

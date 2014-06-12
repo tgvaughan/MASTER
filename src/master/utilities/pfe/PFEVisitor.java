@@ -33,8 +33,16 @@ public class PFEVisitor extends PFExpressionBaseVisitor<Double[]> {
 
     Trajectory traj;
     int n;
+        
+    public PFEVisitor() {
+    }
     
     public PFEVisitor(Trajectory traj) {
+        this.traj = traj;
+        this.n = traj.getSampledTimes().size();
+    }
+    
+    public void setTraj(Trajectory traj) {
         this.traj = traj;
         this.n = traj.getSampledTimes().size();
     }

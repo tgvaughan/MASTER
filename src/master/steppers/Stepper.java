@@ -29,6 +29,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public abstract class Stepper extends BEASTObject {
     
+    protected double stepLogP;
+    
     public Stepper() { }
     
     @Override
@@ -40,12 +42,24 @@ public abstract class Stepper extends BEASTObject {
      * 
      * @param state
      * @param model
+     * @param calcLogP whether to calculate logP of step
      * @param t
      * @param maxStepSize 
      * @return Length of time increment.
      */
     public abstract double step (PopulationState state, Model model,
+            boolean calcLogP,
             double t, double maxStepSize);
+    
+    /**
+     * Retrieve the trajectory log probability contribution of the
+     * previous step.
+     * 
+     * @return logP of last step
+     */
+    public double getStepLogP() {
+        return stepLogP;
+    }
     
     /**
      * Retrieve descriptive name of this integrator as a string.

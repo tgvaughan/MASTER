@@ -70,6 +70,10 @@ public class TrajectorySpec {
     // Whether to collect evenly spaced samples or let the state stepper
     // when to sample:
     boolean evenlySpacedSampling;
+    
+    // Whether to record the probability of each trajectory generated.
+    // (Not used for EnsembleSummary calculations.)
+    boolean recordTrajLogP;
 
     // Number of evenly spaced samples times.  Must be >=2.
     int nSamples;
@@ -152,6 +156,22 @@ public class TrajectorySpec {
      */
     public void setStepper(Stepper integrator) {
         this.stepper = integrator;
+    }
+    
+    /**
+     * Used to turn on/off trajectory probability recording.
+     * 
+     * @param recordTrajLogP true causes logP to be recorded
+     */
+    public void setTrajLogPRecording(boolean recordTrajLogP) {
+        this.recordTrajLogP = recordTrajLogP;
+    }
+    
+    /**
+     * @return status of trajectory probability recording.
+     */
+    public boolean isTrajLogPRecordingOn() {
+        return recordTrajLogP;
     }
 
     /**

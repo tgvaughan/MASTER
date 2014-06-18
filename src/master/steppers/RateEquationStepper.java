@@ -44,6 +44,8 @@ public class RateEquationStepper extends Stepper {
     public void initAndValidate() {
         dt = stepSizeInput.get();
         maxIter = iterationsInput.get();
+        
+        stepLogP = 0.0;  // Deterministic model.
     }
     
     /**
@@ -59,7 +61,8 @@ public class RateEquationStepper extends Stepper {
     }
     
     @Override
-    public double step(PopulationState state, Model model, double t, double maxStepSize) {
+    public double step(PopulationState state, Model model, boolean calcLogP,
+            double t, double maxStepSize) {
         
         double tend = t + Math.min(dt, maxStepSize);
         double tprime = t;

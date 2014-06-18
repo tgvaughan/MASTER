@@ -78,7 +78,8 @@ public class TauLeapingStepper extends Stepper {
     }
     
     @Override
-    public double step(PopulationState state, Model model, double t, double maxStepSize) {
+    public double step(PopulationState state, Model model, boolean calcLogP,
+            double t, double maxStepSize) {
         
         double tend = t + Math.min(maxStepSize, dt);
         double tprime = t;

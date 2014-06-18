@@ -92,7 +92,8 @@ public class SALStepper extends Stepper {
     }
     
     @Override
-    public double step(PopulationState state, Model model, double t, double maxStepSize) {
+    public double step(PopulationState state, Model model, boolean calcLogP,
+            double t, double maxStepSize) {
 
         double tend = Math.min(dt, maxStepSize) + t;
         double tprime = t;

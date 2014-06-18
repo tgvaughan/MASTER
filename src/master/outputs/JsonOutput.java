@@ -68,15 +68,6 @@ public class JsonOutput extends BEASTObject implements
      */
     public JsonOutput() { }
     
-    /**
-     * Constructor for non-beast usage.
-     * @param fileName
-     * @throws FileNotFoundException 
-     */
-    public JsonOutput(String fileName) throws FileNotFoundException {
-        pstream = new PrintStream(fileName);
-    }
-    
     @Override
     public void initAndValidate() throws FileNotFoundException {
         pstream = new PrintStream(fileNameInput.get());
@@ -109,6 +100,10 @@ public class JsonOutput extends BEASTObject implements
         // Add list of sampling times to output object:
         outputData.put("t", trajectory.getSampledTimes());
         
+        // Add trajectory logP to output object:
+        if (trajectory.getSpec().isTrajLogPRecordingOn())
+            outputData.put("trajLogP", trajectory.getTrajLogP());
+        
         // Record spec parameters to object output:
         outputData.put("sim", spec);
 
@@ -119,38 +114,7 @@ public class JsonOutput extends BEASTObject implements
             System.err.println(ex);
         }
     }
-    
-    /**
-     * Private method for iteration over locations.
-     * 
-     * @param sampledStates
-     * @param type
-     * @param loc
-     * @param depth
-     * @return 
-     */
-    private Object iterateOverLocs (List<PopulationState> sampledStates, PopulationType type, int[] loc, int depth) {
 
-        if (depth<type.getDims().length) {
-            List<Object> nestedData = Lists.newArrayList();
-            
-            for (int i=0; i<type.getDims()[depth]; i++) {
-                loc[depth] = i;
-                nestedData.add(iterateOverLocs(sampledStates, type, loc, depth+1));
-            }
-            
-            return nestedData;
-            
-        } else {
-            
-            List<Object> stateList = Lists.newArrayList();
-            for (PopulationState state : sampledStates)
-                stateList.add(state.get(new Population(type, loc)));
-
-            return stateList;
-            
-        }
-    }
     
     /**
      * Express a given trajectory ensemble as a JSON-formatted string and send
@@ -182,6 +146,7 @@ public class JsonOutput extends BEASTObject implements
         
             // Add list of sampling times to output object:
             thisTrajData.put("t", trajectory.getSampledTimes());
+            
             trajData.add(thisTrajData);
         }
         outputData.put("trajectories", trajData);
@@ -309,6 +274,7 @@ public class JsonOutput extends BEASTObject implements
         
             // Add list of sampling times to output object:
             thisTrajData.put("t", trajectory.getSampledTimes());
+            
             trajData.add(thisTrajData);
         }
         outputData.put("trajectories", trajData);
@@ -327,5 +293,37 @@ public class JsonOutput extends BEASTObject implements
     @Override
     public void write(InheritanceTrajectory inheritanceTrajectory) {
         write((Trajectory)inheritanceTrajectory);
+    }
+    
+    /**
+     * Private method for iteration over locations.
+     * 
+     * @param sampledStates
+     * @param type
+     * @param loc
+     * @param depth
+     * @return 
+     */
+    private Object iterateOverLocs (List<PopulationState> sampledStates, PopulationType type, int[] loc, int depth) {
+
+        if (depth<type.getDims().length) {
+            List<Object> nestedData = Lists.newArrayList();
+            
+            for (int i=0; i<type.getDims()[depth]; i++) {
+                loc[depth] = i;
+                nestedData.add(iterateOverLocs(sampledStates, type, loc, depth+1));
+            }
+            
+            return nestedData;
+            
+        } else {
+            
+            List<Object> stateList = Lists.newArrayList();
+            for (PopulationState state : sampledStates)
+                stateList.add(state.get(new Population(type, loc)));
+
+            return stateList;
+            
+        }
     }
 }

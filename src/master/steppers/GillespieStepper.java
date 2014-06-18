@@ -31,8 +31,11 @@ public class GillespieStepper extends Stepper {
     private double eventCount = 0;
     
     @Override
-    public double step(PopulationState state, Model model,
+    public double step(PopulationState state, Model model, boolean calcLogP,
             double t, double maxDt) {
+        
+        if (calcLogP)
+            stepLogP = 0.0;
         
         // Increment time until next event or maxDt exceeded
         double tprime = t;
@@ -56,7 +59,29 @@ public class GillespieStepper extends Stepper {
             
             double nextChangeTime = model.getNextReactionChangeTime(tprime);
             
-            tprime += dt;
+            if (nextChangeTime<t+maxDt) {
+                if (tprime+dt<nextChangeTime) {
+                    if (calcLogP)
+                        stepLogP += -dt*totalPropensity;
+                    tprime += dt;
+                    break;
+                } else {
+                    if (calcLogP)
+                        stepLogP += -(nextChangeTime-tprime)*totalPropensity;
+                    tprime = nextChangeTime;
+                }
+            } else {
+                if (tprime+dt<t+maxDt) {
+                    if (calcLogP)
+                        stepLogP += -dt*totalPropensity;
+                    tprime += dt;
+                    break;
+                } else {
+                    if (calcLogP)
+                        stepLogP += -(t+maxDt-tprime)*totalPropensity;
+                    return maxDt;
+                }
+            }
             
             if (tprime<nextChangeTime ||
                     (Double.isInfinite(tprime) && Double.isInfinite(nextChangeTime)))
@@ -64,10 +89,6 @@ public class GillespieStepper extends Stepper {
             
             tprime = nextChangeTime;
         }
-        
-        // Stop here if maxDt exceeded:
-        if ((tprime-t)>maxDt)
-            return maxDt;
             
         // Choose reaction to implement
         double u = Randomizer.nextDouble()*totalPropensity;
@@ -87,6 +108,10 @@ public class GillespieStepper extends Stepper {
         // Increment event counter:
         eventCount += 1;
 
+        // Include event probability in step density
+        if (calcLogP && chosenReaction != null)
+            stepLogP += Math.log(chosenReaction.getPropensity());
+        
         return tprime-t;
     }
 

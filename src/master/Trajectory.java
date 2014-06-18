@@ -59,6 +59,10 @@ public class Trajectory extends Runnable {
             "seed",
             "Seed for RNG.");
     
+    public Input<Boolean> recordTrajLogPInput = new Input<Boolean>(
+            "recordTrajLogP",
+            "Record log probability density for this trajectory.", false);
+    
     public Input<Stepper> stepperInput = new Input<Stepper>(
             "stepper",
             "State incrementing algorithm to use. (Default Gillespie.)",
@@ -101,6 +105,9 @@ public class Trajectory extends Runnable {
     
     // Simulation specification:
     private TrajectorySpec spec;
+    
+    // Trajectory probability density
+    double trajLogP;
 
     public Trajectory() { }
     
@@ -160,6 +167,9 @@ public class Trajectory extends Runnable {
         
         // Set the level of verbosity:
         spec.setVerbosity(verbosityInput.get());
+        
+        // Set trajectory probability recording status:
+        spec.setTrajLogPRecording(recordTrajLogPInput.get());
     }
 
     @Override
@@ -194,6 +204,9 @@ public class Trajectory extends Runnable {
         // Initialise system state:
         PopulationState currentState = new PopulationState(spec.initPopulationState);
         
+        // Initialize trajectory probability:
+        trajLogP = 0.0;
+        
         // Loop until any post-simulation rejection conditions fail.
         boolean postSimulationReject;
         do {
@@ -221,9 +234,13 @@ public class Trajectory extends Runnable {
                                 +String.valueOf(spec.nSamples));    
                     
                     // Integrate to next sample time:
-                    while (t<nextSampTime)
-                        t += spec.stepper.step(currentState, spec.model, t,
-                                nextSampTime-t);
+                    while (t<nextSampTime) {
+                        t += spec.stepper.step(currentState, spec.getModel(),
+                                spec.isTrajLogPRecordingOn(),
+                                t, nextSampTime-t);
+                        if (spec.isTrajLogPRecordingOn())
+                            trajLogP += spec.stepper.getStepLogP();
+                    }
                     
                     // Sample state:
                     sampleState(currentState, nextSampTime);
@@ -244,10 +261,11 @@ public class Trajectory extends Runnable {
                             currentState = new PopulationState(spec.initPopulationState);
                             clearSamples();
                             sampleState(currentState, 0.0);
+                            trajLogP = 0.0;
                             t = 0;
                             sidx = -1;
                         } else {
-                            if (spec.verbosity>0)
+                            if (spec.getVerbosity()>0)
                                 System.err.println("Truncation end condition met "
                                         + "at time " + t);
                             break;
@@ -261,14 +279,19 @@ public class Trajectory extends Runnable {
                 sampleState(currentState, 0.0);
                 
                 double t = 0;
-                while (t<spec.simulationTime) {
+                while (t<spec.getSimulationTime()) {
                     
                     // Increment time
-                    t += spec.stepper.step(currentState, spec.model, t,
-                            spec.simulationTime-t);
+                    t += spec.getStepper().step(currentState, spec.getModel(),
+                            spec.isTrajLogPRecordingOn(),
+                            t, spec.getSimulationTime()-t);
+                    
+                    // Record logP increment
+                    if (spec.isTrajLogPRecordingOn())
+                        trajLogP += spec.getStepper().getStepLogP();
                     
                     // Report trajectory progress:
-                    if (spec.verbosity>1)
+                    if (spec.getVerbosity()>1)
                         System.err.println("Recording sample at time "
                                 + String.valueOf(t)); 
                     
@@ -292,6 +315,7 @@ public class Trajectory extends Runnable {
                             currentState = new PopulationState(spec.initPopulationState);
                             clearSamples();
                             sampleState(currentState, 0.0);
+                            trajLogP = 0.0;
                             t = 0;
                         } else {
                             if (spec.verbosity>0)
@@ -318,6 +342,7 @@ public class Trajectory extends Runnable {
             }
             
         } while (postSimulationReject);
+        
         // Record length of time (in seconds) taken by calculation:
         spec.setWallTime(((new Date()).getTime() - startTime)/1e3);
     }
@@ -365,5 +390,12 @@ public class Trajectory extends Runnable {
      */
     public List<Double> getSampledTimes() {
         return sampledTimes;
+    }
+    
+    /**
+     * @return log probability density of this trajectory, if recorded.
+     */
+    public double getTrajLogP() {
+        return trajLogP;
     }
 }

@@ -266,7 +266,8 @@ public class EnsembleSummary extends Runnable {
 
                 // Integrate to next sample time:
                 while (t<nextSampTime)
-                    t += spec.stepper.step(currentState, spec.model,
+                    t += spec.getStepper().step(currentState,
+                            spec.getModel(), false,
                             t, nextSampTime-t);
                 
                 // Record sample:

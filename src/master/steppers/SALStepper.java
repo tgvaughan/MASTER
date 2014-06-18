@@ -24,6 +24,7 @@ import master.model.Model;
 import master.model.Population;
 import master.model.PopulationState;
 import master.model.Reaction;
+import org.apache.commons.math.special.Gamma;
 
 /**
  * Implementation of Sehl et al.'s "step anticipation" tau-leaping
@@ -72,9 +73,11 @@ public class SALStepper extends Stepper {
      * @param reaction
      * @param state PopulationState to modify.
      * @param model
+     * @param calcLogP
      * @param thisdt
      */
-    public void leap(Reaction reaction, PopulationState state, Model model, double thisdt) {
+    public void leap(Reaction reaction, PopulationState state,
+            Model model, boolean calcLogP, double thisdt) {
         
         // Calculate corrected rate
         double rho = reaction.getPropensity()*thisdt
@@ -82,6 +85,11 @@ public class SALStepper extends Stepper {
 
         // Draw number of reactions to fire within time tau:
         double q = Randomizer.nextPoisson(rho);
+        
+        if (calcLogP) {
+            if (rho>0)
+                stepLogP += -rho + q*Math.log(rho) - Gamma.logGamma(q+1);
+        }
 
         // Implement reactions:
         state.implementReaction(reaction, q);
@@ -94,6 +102,9 @@ public class SALStepper extends Stepper {
     @Override
     public double step(PopulationState state, Model model, boolean calcLogP,
             double t, double maxStepSize) {
+        
+        if (calcLogP)
+            stepLogP = 0.0;
 
         double tend = Math.min(dt, maxStepSize) + t;
         double tprime = t;
@@ -111,7 +122,7 @@ public class SALStepper extends Stepper {
         
             // Update state according to these rates:
             for (Reaction reaction : model.getReactions())
-                leap(reaction, state, model, smallerdt);
+                leap(reaction, state, model, calcLogP, smallerdt);
             
             tprime += smallerdt;
             

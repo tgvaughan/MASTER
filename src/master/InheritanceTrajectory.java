@@ -185,6 +185,9 @@ public class InheritanceTrajectory extends Trajectory {
         
         // Set the level of verbosity:
         spec.setVerbosity(verbosityInput.get());
+        
+        // Set trajectory probability recording status:
+        spec.setTrajLogPRecording(recordTrajLogPInput.get());
     }
     
     @Override
@@ -302,34 +305,43 @@ public class InheritanceTrajectory extends Trajectory {
                     totalPropensity += reaction.getPropensity();
                 }
                 
-                // Draw time of next reactionGroup
+                // Draw time of next reaction
+                double tprime;
                 if (totalPropensity > 0.0)
-                    t += Randomizer.nextExponential(totalPropensity);
+                    tprime = t + Randomizer.nextExponential(totalPropensity);
                 else
-                    t = Double.POSITIVE_INFINITY;
+                    tprime = Double.POSITIVE_INFINITY;
                 
-                // Check whether new time exceeds node seed time or simulation time
+                // Check whether new time exceeds node seed time, simulation
+                // time or rate change time
                 boolean seedTimeExceeded = false;
                 boolean simulationTimeExceeded = false;
                 boolean rateChangeTimeExceeded = false;
                 if (!inactiveLineages.isEmpty() &&
                         inactiveLineages.get(0).getTime()<spec.getSimulationTime()) {
-                    if (t>inactiveLineages.get(0).getTime()) {
-                        t = inactiveLineages.get(0).getTime();
+                    if (tprime>inactiveLineages.get(0).getTime()) {
+                        tprime = inactiveLineages.get(0).getTime();
                         seedTimeExceeded = true;
                     }
                 } else {
                     double nextChangeTime = spec.getModel().getNextReactionChangeTime(t);
-                    if (t>Math.min(spec.getSimulationTime(), nextChangeTime)) {
+                    if (tprime>Math.min(spec.getSimulationTime(), nextChangeTime)) {
                         if (spec.getSimulationTime()<nextChangeTime) {
-                            t = spec.getSimulationTime();
+                            tprime = spec.getSimulationTime();
                             simulationTimeExceeded = true;
                         } else {
-                            t = nextChangeTime;
+                            tprime = nextChangeTime;
                             rateChangeTimeExceeded = true;
                         }
                     }
                 }
+                
+                // Calculate trajectory probability contribution of waiting time
+                if (spec.isTrajLogPRecordingOn())
+                    trajLogP += -(tprime-t)*totalPropensity;
+                
+                // Update time
+                t = tprime;
 
                 // Sample population sizes (evenly) if necessary:
                 if (spec.samplePopSizes && spec.isSamplingEvenlySpaced()) {
@@ -377,6 +389,10 @@ public class InheritanceTrajectory extends Trajectory {
                         break;
                     }
                 }
+                
+                // Calculate trajectory probability contribution of event
+                if (spec.isTrajLogPRecordingOn() && chosenReaction != null)
+                    trajLogP += Math.log(chosenReaction.getPropensity());
                 
                 // Select lineages involved in chosen reaction:
                 selectLineagesInvolved(chosenReaction);
@@ -439,6 +455,9 @@ public class InheritanceTrajectory extends Trajectory {
     private void initialiseSimulation() {
         // Initialise time
         t = 0.0;
+        
+        // Initialise trajectory probability
+        trajLogP = 0.0;
         
         // Initialise graph with copy of specification init nodes:
         // (Can't use initNodes themselves when multiple graphs are being
@@ -532,10 +551,7 @@ public class InheritanceTrajectory extends Trajectory {
      * Select lineages involved in reaction.  This is done by sampling
      * without replacement from the individuals present in the current state.
      * 
-     * @param activeLineages population-partitioned list of active lineages
-     * @param currentPopState current state of population sizes
-     * @param chosenReactionGroup reaction group selected
-     * @param chosenReaction integer index into reaction group specifying reactionGroup
+     * @param chosenReaction reaction selected
      * @return Map from nodes involved to the corresponding reactant nodes.
      */
     private void selectLineagesInvolved(Reaction chosenReaction) {

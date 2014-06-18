@@ -82,12 +82,6 @@ public class GillespieStepper extends Stepper {
                     return maxDt;
                 }
             }
-            
-            if (tprime<nextChangeTime ||
-                    (Double.isInfinite(tprime) && Double.isInfinite(nextChangeTime)))
-                break;
-            
-            tprime = nextChangeTime;
         }
             
         // Choose reaction to implement
@@ -101,16 +95,16 @@ public class GillespieStepper extends Stepper {
                 break;
             }
         }
+        
+        // Include event probability in step density
+        if (calcLogP && chosenReaction != null)
+            stepLogP += Math.log(chosenReaction.getPropensity());
             
         // Implement chosen reaction:
         state.implementReaction(chosenReaction, 1);
         
         // Increment event counter:
         eventCount += 1;
-
-        // Include event probability in step density
-        if (calcLogP && chosenReaction != null)
-            stepLogP += Math.log(chosenReaction.getPropensity());
         
         return tprime-t;
     }

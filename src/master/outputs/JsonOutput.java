@@ -147,6 +147,10 @@ public class JsonOutput extends BEASTObject implements
             // Add list of sampling times to output object:
             thisTrajData.put("t", trajectory.getSampledTimes());
             
+            // Add trajectory logP to output object:
+            if (trajectory.getSpec().isTrajLogPRecordingOn())
+                thisTrajData.put("trajLogP", trajectory.getTrajLogP());
+            
             trajData.add(thisTrajData);
         }
         outputData.put("trajectories", trajData);
@@ -274,6 +278,10 @@ public class JsonOutput extends BEASTObject implements
         
             // Add list of sampling times to output object:
             thisTrajData.put("t", trajectory.getSampledTimes());
+            
+            // Add trajectory logP to output object:
+            if (trajectory.getSpec().isTrajLogPRecordingOn())
+                thisTrajData.put("trajLogP", trajectory.getTrajLogP());
             
             trajData.add(thisTrajData);
         }

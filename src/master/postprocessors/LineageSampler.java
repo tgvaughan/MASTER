@@ -21,8 +21,12 @@ import master.model.PopulationSize;
 public class LineageSampler extends BEASTObject implements InheritancePostProcessor {
     
     public Input<Integer> nSamplesInput = new Input<Integer>("nSamples",
-            "Number of lineages to sample", -1);
-    
+            "Number of lineages to sample");
+
+    public Input<Double> sampleProbabilityInput = new Input<Double>("pSample",
+            "Probability with which to sample each lineage.",
+            Input.Validate.XOR, nSamplesInput);
+
     public Input<List<PopulationSize>> popSpecificSamplesInput =
             new Input<List<PopulationSize>>("populationSize",
             "Population size specifying number of samples to draw "
@@ -45,8 +49,10 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
     
     @Override
     public void initAndValidate() {
-        if (nSamplesInput.get()<0 && popSpecificSamplesInput.get().isEmpty())
-            throw new IllegalArgumentException("Either nSamples or at least "
+        if (nSamplesInput.get() == null
+                && sampleProbabilityInput.get() == null
+                && popSpecificSamplesInput.get().isEmpty())
+            throw new IllegalArgumentException("Either nSamples or pSample or at least "
                     + "one populationSize must be specified.");
         
         populationSizes = HashMultiset.create();
@@ -67,6 +73,7 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
      * @param itraj Inheritance trajectory object
      * @param samplingTime Time at which sampling will occur (negative implies no specific time)
      * @param nSamples Number of lineages to sample
+     * @param pSample Proportion of lineages to sample (or -1 if not used)
      * @param populationSizes Lineages to sample from individual populations
      * @param markAnnotation
      * @param noClean Do not remove non-state-change nodes after processing
@@ -74,10 +81,10 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
      * to the Markov process which generated the graph.
      */
     public static void process(InheritanceTrajectory itraj,
-            double samplingTime, int nSamples,
-            Multiset<Population> populationSizes,
-            String markAnnotation,
-            boolean noClean, boolean reverseTime) {
+                               double samplingTime, int nSamples, double pSample,
+                               Multiset<Population> populationSizes,
+                               String markAnnotation,
+                               boolean noClean, boolean reverseTime) {
         
         boolean markOnly;
         if (markAnnotation != null) {
@@ -112,13 +119,16 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
         } else {
             nodesToSample.addAll(leafNodes);
         }
-        
+
         // Sample a subset of these lineages:
         List<Node> sampledNodes;
-        if (nSamples>=0)
+        if (nSamples>=0) {
             sampledNodes = getSampledLineages(nodesToSample, nSamples);
-        else
+        } else if (pSample>0) {
+            sampledNodes = getSampledLineages(nodesToSample, pSample);
+        } else {
             sampledNodes = getSampledLineages(nodesToSample, populationSizes);
+        }
 
         
         // Label nodes belonging to sampled lineages:
@@ -273,7 +283,7 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
     }
     
     /**
-     * Assemble a list of at most nSamples nodes sampled with replacement
+     * Assemble a list of at most nSamples nodes sampled without replacement
      * from nodesToSample.
      * 
      * @param nodesToSample
@@ -291,7 +301,27 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
         
         return sampledNodes;
     }
-    
+
+    /**
+     * Assemble a list of nodes sampled probabilistically from the given list of nodes.
+     * Each node is sampled with probability rho.
+     *
+     * @param nodesToSample
+     * @param rho the probability with which each of the nodes is sampled
+     * @return list of sampled nodes
+     */
+    private static List<Node> getSampledLineages(List<Node> nodesToSample, double rho) {
+        List<Node> sampledNodes = Lists.newArrayList();
+        for (Node node : nodesToSample) {
+            if (Randomizer.nextDouble() < rho) {
+                Node sampledNode = node;
+                sampledNodes.add(sampledNode);
+            }
+        }
+        return sampledNodes;
+    }
+
+
     /**
      * Assemble list of nodes sampled with replacement from nodesToSample.
      * 
@@ -387,7 +417,9 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
     @Override
     public void process(InheritanceTrajectory itraj) {
         LineageSampler.process(itraj,
-                samplingTimeInput.get(), nSamplesInput.get(),
+                samplingTimeInput.get(),
+                nSamplesInput.get() == null ? -1 : nSamplesInput.get(),
+                sampleProbabilityInput.get() == null ? -1.0 : sampleProbabilityInput.get(),
                 populationSizes,
                 markAnnotationInput.get(), noCleanInput.get(),
                 reverseTimeInput.get());

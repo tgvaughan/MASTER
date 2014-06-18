@@ -207,7 +207,7 @@
 
     <echo/>
     <echo/>
-    <echo>** Archive ${dist}/${archivename}.zip created successfuly! **</echo>
+    <echo>** Archive ${dist}/${archiveName}.zip created successfuly! **</echo>
   </target>
 
   <!-- Build EVERYTHING -->

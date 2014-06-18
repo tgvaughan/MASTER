@@ -34,7 +34,7 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
                     new ArrayList<PopulationSize>());
     
     public Input<Double> samplingTimeInput = new Input<Double>("samplingTime",
-            "Time at which sampling is to take place", -1.0);
+            "Time at which sampling is to take place");
   
     public Input<String> markAnnotationInput = new Input<String>("markAnnotation",
             "Mark using this annotation rather than pruning.");
@@ -71,8 +71,8 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
      * by this method.
      * 
      * @param itraj Inheritance trajectory object
-     * @param samplingTime Time at which sampling will occur (negative implies no specific time)
-     * @param nSamples Number of lineages to sample
+     * @param samplingTime Time at which sampling will occur (-1 implies no specific time)
+     * @param nSamples Number of lineages to sample (or -1 if not used)
      * @param pSample Proportion of lineages to sample (or -1 if not used)
      * @param populationSizes Lineages to sample from individual populations
      * @param markAnnotation
@@ -417,7 +417,7 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
     @Override
     public void process(InheritanceTrajectory itraj) {
         LineageSampler.process(itraj,
-                samplingTimeInput.get(),
+                samplingTimeInput.get() == null ? -1 : samplingTimeInput.get(),
                 nSamplesInput.get() == null ? -1 : nSamplesInput.get(),
                 sampleProbabilityInput.get() == null ? -1.0 : sampleProbabilityInput.get(),
                 populationSizes,

@@ -75,7 +75,7 @@ public class TauLeapingStepper extends Stepper {
 
         if (calcLogP) {
             if (rho>0)
-                stepLogP += -rho + q*Math.log(rho) - Gamma.logGamma(q+1);
+                stepLogP += -rho + q*Math.log(rho/thisdt) - Gamma.logGamma(q+1);
         }
         
         // Implement reactions:

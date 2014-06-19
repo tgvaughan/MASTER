@@ -5,8 +5,8 @@
   <property name="test" location="test"/>
   <property name="lib" location="lib"/>
 
-  <property name="sourceVersion" value="1.6"/>
-  <property name="targetVersion" value="1.6"/>
+  <property name="sourceVersion" value="1.8"/>
+  <property name="targetVersion" value="1.8"/>
   <!--*******************************************************************-->
 
   <!-- Directories necessary for all BEAST 2 packages -->
@@ -18,6 +18,7 @@
   <property name="build" location="build"/>
   <property name="build-lib" location="build-lib"/>
   <property name="build-test" location="build-test"/>
+  <property name="build-beast" location="build-beast"/>
   <property name="test-reports" location="test-reports"/>
   <property name="dist" location="dist"/>
 
@@ -41,16 +42,36 @@
     <mkdir dir="${build}"/>
     <mkdir dir="${build-lib}"/>
     <mkdir dir="${dist}"/>
-    <get src="http://hudson.cs.auckland.ac.nz/job/BEAST2/lastSuccessfulBuild/artifact/build/dist/beast.jar"
-	 dest="${build-lib}/beast2.jar" />
     <copy todir="${build-lib}">
       <fileset dir="${lib}" includes="*.jar"/>
     </copy>
   </target>
 
+  <!-- Get beast -->
+  <target name="get-beast" depends="init">
+    <mkdir dir="${build-beast}"/>
+
+    <get src="https://github.com/CompEvol/beast2/archive/master.zip" dest="${build-beast}/beast.zip"/>
+    <unzip src="${build-beast}/beast.zip" dest="${build-beast}"/>
+    <mkdir dir="${build-beast}/beast2-master/build"/>
+    <javac target="${targetVersion}" source="${sourceVersion}"
+           srcdir="${build-beast}/beast2-master/src"
+           destdir="${build-beast}/beast2-master/build" includeantruntime="false">
+      <classpath>
+	<pathelement path="${classpath}"/>
+	<fileset dir="${build-beast}/beast2-master/lib" includes="*.jar"/>
+      </classpath>
+    </javac>
+    <jar jarfile="${build-lib}/beast2.jar" basedir="${build-beast}/beast2-master/build" />
+    <copy todir="${build-lib}">
+      <fileset dir="${build-beast}/beast2-master/lib" includes="*.jar"/>
+    </copy>
+
+    <delete dir="${build-beast}" />
+  </target>
 
   <!-- Compile -->
-  <target name="compile" depends="init">
+  <target name="compile" depends="init, get-beast">
     <javac target="${targetVersion}" source="${sourceVersion}" srcdir="${src}" destdir="${build}" includeantruntime="false">
       <classpath>
 	<pathelement path="${classpath}"/>

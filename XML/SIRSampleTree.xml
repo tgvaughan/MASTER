@@ -29,9 +29,9 @@
 
     <!-- Simulation will terminate when no lineages remain -->
     <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>
-    
+
     <!-- Keep only lineages ending in a sampling reaction. -->
-    <postProcessor spec='LineageFilter' reactionName="Sample" markOnly="false"/>
+    <inheritancePostProcessor spec='LineageFilter' reactionName="Sample"/>
     
     <output spec='NexusOutput' fileName='SIRSampleTree_output.nexus'
 	    collapseSingleChildNodes="true"/>

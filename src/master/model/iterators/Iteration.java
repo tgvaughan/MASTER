@@ -17,6 +17,7 @@
 
 package master.model.iterators;
 
+import beast.core.Description;
 import beast.core.Input;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -24,9 +25,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
+@Description("Facilitates iteration over ranges of iteration variables.")
 public class Iteration extends AbstractIteration {
         
     public Input<List<Range>> rangesInput = new Input<List<Range>>("range",
@@ -71,7 +72,7 @@ public class Iteration extends AbstractIteration {
         rangeLoop(0, indices);
     }
     
-        /**
+    /**
      * Recursion used to loop over range variables and assemble reaction
      * for each combination.
      * 

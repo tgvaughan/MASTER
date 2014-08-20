@@ -34,26 +34,20 @@ public class Range extends BEASTObject {
     public Input<String> toInput = new Input<String>("to",
             "Stop value of range.", Validate.REQUIRED);
     
-    private String variableName, from, to;
-    
     public Range() { };
     
     @Override
-    public void initAndValidate() {
-        variableName = variableNameInput.get();
-        from = fromInput.get();
-        to = toInput.get();
-    }
+    public void initAndValidate() { }
     
     public String getVariableName() {
-        return variableName;
+        return variableNameInput.get();
     }
     
     public String getFrom() {
-        return from;
+        return fromInput.get();
     }
     
     public String getTo() {
-        return to;
+        return toInput.get();
     }
 }

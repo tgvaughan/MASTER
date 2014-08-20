@@ -15,9 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package master.beast;
+package master.model.iterators;
+
+import beast.core.BEASTObject;
+import java.util.List;
 
 /**
+ * Abstract class of objects representing iterations over a set of variables.
+ * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class Range extends master.model.iterators.Range { }
+public abstract class AbstractIteration extends BEASTObject {
+    
+    /**
+     * Get list where each element is an array of integers
+     * corresponding to the one complete set of values of the
+     * iteration variables can take.
+     *
+     * @return list of variable value arrays
+     */
+    public abstract List<int[]> getVariableValuesList();
+    
+    /**
+     * Get array of strings corresponding to the variable names.
+     * 
+     * @return array of variable names
+     */
+    public abstract String[] getVariableNames();
+    
+}

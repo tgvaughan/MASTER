@@ -2,12 +2,14 @@ package master.model;
 
 import beast.core.BEASTObject;
 import beast.core.Input;
+import beast.core.Input.Validate;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.*;
 import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.fasterxml.jackson.annotation.JsonValue;
+import master.model.iterators.AbstractIteration;
 
 /**
  * Class of objects describing the reactions which occur between the various
@@ -19,19 +21,19 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public class Reaction extends BEASTObject {
     
-    public Input<String> nameInput = new Input<String>("reactionName",
+    public Input<String> nameInput = new Input<>("reactionName",
             "Name of reaction. (Not used for grouped reactions.)");
     
-    public Input<String> rateInput = new Input<String>("rate",
+    public Input<String> rateInput = new Input<>("rate",
             "Individual reaction rate. (Only used if group rate unset.)");
-    
-    public Input<List<Range>> rangesInput = new Input<List<Range>>("range",
-            "Define multiple reactions for different values of a variable.",
-            new ArrayList<Range>());
-    
-    public Input<String> reactionStringInput = new Input<String>(
+
+    public Input<String> reactionStringInput = new Input<>(
             "value",
-            "String description of reaction.", Input.Validate.REQUIRED);
+            "String description of reaction.", Validate.REQUIRED);
+    
+    public Input<AbstractIteration> iterationInput = new Input<>(
+            "iteration",
+            "Iteration over indices.");
 
     public String reactionName;
     public Map<Population,Integer> reactCount, prodCount, deltaCount;
@@ -39,19 +41,19 @@ public class Reaction extends BEASTObject {
     public List<Double> rates, rateTimes;
     public double propensity;
     
-    private final List<Range> ranges;
-    private final List<String> rangeVariableNames;
-    private final List<Integer> rangeFromValues, rangeToValues;
-    
     /**
      * Constructor without name.
      */
-    public Reaction() {
-        ranges = Lists.newArrayList();
-        rangeVariableNames = Lists.newArrayList();
-        rangeFromValues = Lists.newArrayList();
-        rangeToValues = Lists.newArrayList();
-    }   
+    public Reaction() { }
+    
+    /**
+     * Constructor with name.
+     * 
+     * @param reactionGroupName
+     */
+    public Reaction(String reactionGroupName) {
+        this.reactionName = reactionGroupName;
+}
     
     @Override
     public void initAndValidate() {
@@ -62,24 +64,7 @@ public class Reaction extends BEASTObject {
             setRateFromString(rateInput.get());
         }
         
-        
-        ranges.addAll(rangesInput.get());
-        for (Range range : ranges)
-            rangeVariableNames.add(range.getVariableName());
 
-        for (Range range : ranges) {
-            String fromStr = range.fromInput.get();
-            if(rangeVariableNames.contains(fromStr))
-                rangeFromValues.add(-(rangeVariableNames.indexOf(fromStr)+1));
-            else
-                rangeFromValues.add(Integer.parseInt(fromStr));
-
-            String toStr = range.toInput.get();
-            if (rangeVariableNames.contains(toStr))
-                rangeToValues.add(-(rangeVariableNames.indexOf(toStr)+1));
-            else
-                rangeToValues.add(Integer.parseInt(toStr));
-        }
     }
     
     /**
@@ -92,7 +77,7 @@ public class Reaction extends BEASTObject {
     public List<Reaction> getAllReactions(List<PopulationType> populationTypes) {
         List<Reaction> reactions = Lists.newArrayList();
         
-        if (ranges.isEmpty()) {
+        if (iterationInput.get() == null) {
             try {
                 setSchemaFromString(reactionStringInput.get(), populationTypes);
             } catch (ParseException ex) {
@@ -100,97 +85,59 @@ public class Reaction extends BEASTObject {
             }
             reactions.add(this);
         } else {
-            int [] indices = new int[ranges.size()];
-            rangeLoop(0, indices, populationTypes, reactions);
+            
+            String[] varNames = iterationInput.get().getVariableNames();
+            for (int[] varVals : iterationInput.get().getVariableValuesList()) {
+                String flattenedString = getFlattenedReactionString(
+                        varNames, varVals);
+                
+                // Assemble reaction
+                Reaction reaction;
+                if (reactionName != null) {
+                    if (reactions.size()>0)
+                        reaction = new Reaction(reactionName + reactions.size());
+                    else
+                        reaction = new Reaction(reactionName);
+                } else
+                    reaction = new Reaction();
+                
+                reaction.rates = rates;
+                reaction.rateTimes = rateTimes;
+                
+                try {
+                    reaction.setSchemaFromString(flattenedString, populationTypes);
+                } catch (ParseException ex) {
+                    Logger.getLogger(Reaction.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                reactions.add(reaction);
+            }
+                
         }
         
         return reactions;
     }
-    
-    
+
     /**
-     * Recursion used to loop over range variables and assemble reaction
-     * for each combination.
+     * Make required iteration variable replacements in reaction string.
      * 
-     * @param depth current recursion depth
-     * @param indices list of range variable values
-     * @param parser result of parsing reaction string
-     * @param model model to which reactions are to be added
-     * @param group reaction group to which reactions are to be added (may be null)
-     * @throws ParseException 
+     * @param varNames
+     * @param varVals
+     * @return flattened reaction string
      */
-    private void rangeLoop(int depth, int [] indices,
-            List<PopulationType> populationTypes,
-            List<Reaction> reactions) {
-        
+    private String getFlattenedReactionString(String[] varNames, int[] varVals) {
 
-        if (depth==indices.length) {
-            
-            // Make required replacements in reaction schema string
-            String schemaString = reactionStringInput.get().replaceAll("  *", "");
-            for (int rangeIdx = 0; rangeIdx < ranges.size(); rangeIdx++) {
-                String var = rangeVariableNames.get(rangeIdx);
-                int val = indices[rangeIdx];
-                schemaString = schemaString.replace("["+var+"]", "["+val+"]")
-                        .replace("["+var+",", "["+val+",")
-                        .replace(","+var+"]", ","+val+"]")
-                        .replace(","+var+",", ","+val+",");
-            }
-            
-            // Assemble reaction
-            Reaction reaction;
-            if (reactionName != null) {
-                if (reactions.size()>0)
-                    reaction = new Reaction(reactionName + reactions.size());
-                else
-                    reaction = new Reaction(reactionName);
-            } else
-                reaction = new Reaction();
-            
-            reaction.rates = rates;
-            reaction.rateTimes = rateTimes;
-            
-            try {
-                reaction.setSchemaFromString(schemaString, populationTypes);
-            } catch (ParseException ex) {
-                Logger.getLogger(Reaction.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            reactions.add(reaction);
-            
-        } else {
-            int from;
-            if (rangeFromValues.get(depth)<0)
-                from = indices[-rangeFromValues.get(depth)-1];
-            else
-                from = rangeFromValues.get(depth);
-
-            int to;
-            if (rangeToValues.get(depth)<0)
-                to = indices[-rangeToValues.get(depth)-1];
-            else
-                to = rangeToValues.get(depth);
-            
-            for (int i=from; i<=to; i++) {
-                indices[depth] = i;
-                rangeLoop(depth+1, indices, populationTypes, reactions);
-            }
-
+        String reactionStr = reactionStringInput.get().replaceAll("  *", "");
+        for (int i=0; i< varNames.length; i++) {
+            String name = varNames[i];
+            int val = varVals[i];
+            reactionStr = reactionStr.replace("["+name+"]", "["+val+"]")
+                    .replace("["+name+",", "["+val+",")
+                    .replace(","+name+"]", ","+val+"]")
+                    .replace(","+name+",", ","+val+",");
         }
-    }
-    
-    /**
-     * Constructor with name.
-     * 
-     * @param reactionGroupName
-     */
-    public Reaction(String reactionGroupName) {
-        this.reactionName = reactionGroupName;
         
-        ranges = Lists.newArrayList();
-        rangeVariableNames = Lists.newArrayList();
-        rangeFromValues = Lists.newArrayList();
-        rangeToValues = Lists.newArrayList();
+        return reactionStr;
     }
     
     /**
@@ -213,7 +160,7 @@ public class Reaction extends BEASTObject {
             Node node = new Node(pop);
             
             if (!reactNodes.containsKey(pop))
-                reactNodes.put(pop, new ArrayList<Node>());
+                reactNodes.put(pop, new ArrayList<>());
 
             reactNodes.get(pop).add(node);
             reactNodeList.add(node);
@@ -225,7 +172,7 @@ public class Reaction extends BEASTObject {
             Node node = new Node(pop);
             
             if (!prodNodes.containsKey(pop))
-                prodNodes.put(pop, new ArrayList<Node>());
+                prodNodes.put(pop, new ArrayList<>());
             
             prodNodes.get(pop).add(node);
             

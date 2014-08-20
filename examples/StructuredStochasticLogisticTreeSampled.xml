@@ -3,7 +3,13 @@
      randomly selected set of leaves per population.  Demonstrates the use
      of the LineageFilter postprocessor. -->
 
-<beast version='2.0' namespace='master:master.model:master.conditions:master.postprocessors:master.steppers:master.outputs'>
+<beast version='2.0' namespace='master
+                                :master.model
+                                :master.model.iterators
+                                :master.conditions
+                                :master.postprocessors
+                                :master.steppers
+                                :master.outputs'>
     <run spec='InheritanceTrajectory'
          simulationTime="100"
          samplePopulationSizes="true"
@@ -12,16 +18,24 @@
         <model spec='Model'>
             <populationType spec='PopulationType' typeName='X' dim='4' id='X'/>
             <reaction spec='Reaction' reactionName='Birth' rate="1.0">
+              <iteration spec='Iteration'>
                 <range spec='Range' variableName="i" from="0" to="3"/>
+              </iteration>
                 X[i] -> 2X[i]
             </reaction>
-            <reaction spec='Reaction' reactionName='Death' rate="0.01">
+            <reaction spec='Reaction' reactionName='Death'
+                      rate="0.01">
+              <iteration spec='Iteration'>
                 <range spec='Range' variableName="i" from="0" to="3"/>
+              </iteration>
                 2X[i] -> X[i]
             </reaction>
-            <reaction spec='Reaction' reactionName='Migration' rate="0.02">
+            <reaction spec='Reaction' reactionName='Migration'
+                      rate="0.02">
+              <iteration spec='Iteration'>
                 <range spec='Range' variableName="i" from="0" to="3"/>
                 <range spec='Range' variableName="j" from="0" to="3"/>
+              </iteration>
                 X[i] -> X[j]
             </reaction>
         </model>                
@@ -35,6 +49,7 @@
         <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>      
         
         <inheritancePostProcessor spec='LineageSampler'
+                                  pSample="1.0"
                                   reverseTime="false"
                                   noClean="false">
             <populationSize spec='PopulationSize' size="5">
@@ -54,6 +69,8 @@
         <!-- Use post-simulation condition to ensure we actually have 50 samples. -->
         <postSimCondition spec='LeafCountPostSimCondition' nLeaves="50" exact="true"/>
         
-        <output spec='NexusOutput' fileName='StructuredStochasticLogisticTreeSampled_out.nexus'/>
+        <output spec='NexusOutput'
+                fileName='StructuredStochasticLogisticTreeSampled_out.nexus'/>
+        <output spec='JsonOutput' fileName='$(filebase)_out.json'/>
     </run>
 </beast>

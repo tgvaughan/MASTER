@@ -49,7 +49,6 @@
         <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>      
         
         <inheritancePostProcessor spec='LineageSampler'
-                                  pSample="1.0"
                                   reverseTime="false"
                                   noClean="false">
             <populationSize spec='PopulationSize' size="5">

@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class Iteration extends AbstractIteration {
         
-    public Input<List<Range>> rangesInput = new Input<>("range",
+    public Input<List<Range>> rangesInput = new Input<List<Range>>("range",
             "Define multiple reactions for different values of a variable.",
             new ArrayList<Range>());
     
@@ -43,10 +43,10 @@ public class Iteration extends AbstractIteration {
     @Override
     public void initAndValidate() throws Exception {
         ranges = rangesInput.get();
-        variableNames = new ArrayList<>();
-        rangeFromValues = new ArrayList<>();
-        rangeToValues = new ArrayList<>();
-        variableValuesList = new ArrayList<>();
+        variableNames = new ArrayList<String>();
+        rangeFromValues = new ArrayList<Integer>();
+        rangeToValues = new ArrayList<Integer>();
+        variableValuesList = new ArrayList<int[]>();
         
         for (Range range : ranges)
             variableNames.add(range.getVariableName());

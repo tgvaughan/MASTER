@@ -24,8 +24,7 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
             "Number of lineages to sample");
 
     public Input<Double> sampleProbabilityInput = new Input<Double>("pSample",
-            "Probability with which to sample each lineage.",
-            Input.Validate.XOR, nSamplesInput);
+            "Probability with which to sample each lineage.");
 
     public Input<List<PopulationSize>> popSpecificSamplesInput =
             new Input<List<PopulationSize>>("populationSize",

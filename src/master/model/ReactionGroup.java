@@ -29,20 +29,19 @@ import java.util.List;
  */
 public class ReactionGroup extends BEASTObject {
     
-    public Input<String> nameInput = new Input<>("reactionGroupName",
+    public Input<String> nameInput = new Input<String>("reactionGroupName",
             "Reaction group name");
     
-    public Input<String> rateInput = new Input<>("rate",
+    public Input<String> rateInput = new Input<String>("rate",
             "Group reaction rate. (Overrides individual reaction rates.)");
     
-    public Input<List<Reaction>> reactionsInput;
-    
-    public ReactionGroup() {this.reactionsInput = new Input<>(
+    public Input<List<Reaction>> reactionsInput = new Input<List<Reaction>>(
             "reaction",
             "Individual reaction within group.",
             new ArrayList<Reaction>());
- }
-    
+
+    public ReactionGroup() { }
+
     @Override
     public void initAndValidate() {
         

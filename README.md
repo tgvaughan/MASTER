@@ -16,7 +16,7 @@ directory in the file named COPYING.
 
 The following software is currently bundled with MASTER:
 
-* Beast 2 (http://code.google.com/p/beast2/)
+* Beast 2 (http://www.beast2.org)
 * Google Guava (http://code.google.com/p/guava-libraries/)
 * Jackson (http://jackson.codehaus.org/)
 * ANTLR (http://www.antlr.org/)

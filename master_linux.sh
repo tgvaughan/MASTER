@@ -31,6 +31,5 @@ else
     MASTERDIR=$(dirname "$SCRIPTPATH")
 fi
 
-java -jar "$MASTERDIR"/$JARFILE $@
-
+$JAVA_HOME/bin/java -jar "$MASTERDIR"/$JARFILE $@
 

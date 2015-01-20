@@ -5,10 +5,9 @@
   <property name="test" location="test"/>
   <property name="lib" location="lib"/>
 
-  <property name="sourceVersion" value="1.6"/>
-  <property name="targetVersion" value="1.6"/>
-  <property name="beastSrcRevision"
-            value="bdbe765b40aec4f1c0f65aea843d80787b05b382"/> <!-- release 2.1.3 -->
+  <property name="sourceVersion" value="1.8"/>
+  <property name="targetVersion" value="1.8"/>
+  <property name="beastSrcRevision" value="master"/>
   <!--*******************************************************************-->
 
   <!-- Directories necessary for all BEAST 2 packages -->

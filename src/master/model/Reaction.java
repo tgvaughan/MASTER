@@ -21,17 +21,17 @@ import master.model.iterators.AbstractIteration;
  */
 public class Reaction extends BEASTObject {
     
-    public Input<String> nameInput = new Input<String>("reactionName",
+    public Input<String> nameInput = new Input<>("reactionName",
             "Name of reaction. (Not used for grouped reactions.)");
     
-    public Input<String> rateInput = new Input<String>("rate",
+    public Input<String> rateInput = new Input<>("rate",
             "Individual reaction rate. (Only used if group rate unset.)");
 
-    public Input<String> reactionStringInput = new Input<String>(
+    public Input<String> reactionStringInput = new Input<>(
             "value",
             "String description of reaction.", Validate.REQUIRED);
     
-    public Input<AbstractIteration> iterationInput = new Input<AbstractIteration>(
+    public Input<AbstractIteration> iterationInput = new Input<>(
             "iteration",
             "Iteration over indices.");
 
@@ -160,7 +160,7 @@ public class Reaction extends BEASTObject {
             Node node = new Node(pop);
             
             if (!reactNodes.containsKey(pop))
-                reactNodes.put(pop, new ArrayList<Node>());
+                reactNodes.put(pop, new ArrayList<>());
 
             reactNodes.get(pop).add(node);
             reactNodeList.add(node);
@@ -172,7 +172,7 @@ public class Reaction extends BEASTObject {
             Node node = new Node(pop);
             
             if (!prodNodes.containsKey(pop))
-                prodNodes.put(pop, new ArrayList<Node>());
+                prodNodes.put(pop, new ArrayList<>());
             
             prodNodes.get(pop).add(node);
             

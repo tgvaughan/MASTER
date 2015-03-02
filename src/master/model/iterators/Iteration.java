@@ -19,7 +19,6 @@ package master.model.iterators;
 
 import beast.core.Description;
 import beast.core.Input;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,9 +29,9 @@ import java.util.List;
 @Description("Facilitates iteration over ranges of iteration variables.")
 public class Iteration extends AbstractIteration {
         
-    public Input<List<Range>> rangesInput = new Input<List<Range>>("range",
+    public Input<List<Range>> rangesInput = new Input<>("range",
             "Define multiple reactions for different values of a variable.",
-            new ArrayList<Range>());
+            new ArrayList<>());
     
     private List<Range> ranges;
     private List<String> variableNames;
@@ -44,10 +43,10 @@ public class Iteration extends AbstractIteration {
     @Override
     public void initAndValidate() throws Exception {
         ranges = rangesInput.get();
-        variableNames = new ArrayList<String>();
-        rangeFromValues = new ArrayList<Integer>();
-        rangeToValues = new ArrayList<Integer>();
-        variableValuesList = new ArrayList<int[]>();
+        variableNames = new ArrayList<>();
+        rangeFromValues = new ArrayList<>();
+        rangeToValues = new ArrayList<>();
+        variableValuesList = new ArrayList<>();
         
         for (Range range : ranges)
             variableNames.add(range.getVariableName());
@@ -77,11 +76,7 @@ public class Iteration extends AbstractIteration {
      * for each combination.
      * 
      * @param depth current recursion depth
-     * @param indices list of range variable values
-     * @param parser result of parsing reaction string
-     * @param model model to which reactions are to be added
-     * @param group reaction group to which reactions are to be added (may be null)
-     * @throws ParseException 
+     * @param indices list of range variable values 
      */
     private void rangeLoop(int depth, int [] indices) {
         

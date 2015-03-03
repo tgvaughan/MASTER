@@ -15,6 +15,7 @@ import master.model.parsers.ReactionStringParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 /**
@@ -101,7 +102,7 @@ public class Reaction extends BEASTObject {
         // Grab lists of population types and variable names, keeping track
         // of maximum values location index variables can take.
         Map<String, PopulationType> popTypes = new HashMap<>();
-        Map<String, Integer> varBounds = new HashMap<>();
+        Map<String, Integer> varNameBoundsMap = new HashMap<>();
         parseTreeWalker.walk(new ReactionStringBaseListener() {
 
             @Override
@@ -132,11 +133,11 @@ public class Reaction extends BEASTObject {
                     for (int i=0; i<ctx.loc().locel().size(); i++) {
                         if (ctx.loc().locel(i).NAME() != null) {
                             String varName = ctx.loc().locel(i).NAME().toString();
-                            if (!varBounds.containsKey(varName)) {
-                                varBounds.put(varName, popType.dims[i]);
+                            if (!varNameBoundsMap.containsKey(varName)) {
+                                varNameBoundsMap.put(varName, popType.dims[i]);
                             } else {
-                                if (varBounds.get(varName)>popType.dims[i]) {
-                                    varBounds.put(varName, popType.dims[i]);
+                                if (varNameBoundsMap.get(varName)>popType.dims[i]) {
+                                    varNameBoundsMap.put(varName, popType.dims[i]);
                                 }
                             }
                         }
@@ -147,11 +148,49 @@ public class Reaction extends BEASTObject {
         }, parseTree);
 
 
-        String[] varNames = (String[])varBounds.keySet().toArray();
+        String[] varNames = (String[])varNameBoundsMap.keySet().toArray(new String[0]);
+        int[] varBounds = new int[varNames.length];
+        for (int i=0; i<varNames.length; i++)
+            varBounds[i] = varNameBoundsMap.get(varNames[i]);
+
         List<int[]> variableValuesList = new ArrayList<>();
-        variableLoop(0, maxIndices, indices, variableValuesList);
+        variableLoop(0, varBounds, new int[varNames.length], variableValuesList);
         
-        /*
+        for (int[] varVals : variableValuesList) {
+
+            // Assemble reaction
+            Reaction reaction;
+            if (reactionName != null) {
+                if (reactions.size()>0)
+                    reaction = new Reaction(reactionName + reactions.size());
+                else
+                    reaction = new Reaction(reactionName);
+            } else {
+                reaction = new Reaction();
+            }
+
+            reaction.rates = rates;
+            reaction.rateTimes = rateTimes;
+
+            reaction.reactNodes = new HashMap<>();
+            reaction.prodNodes = new HashMap<>();
+            parseTreeWalker.walk(new ReactionStringBaseListener() {
+
+                @Override
+                public void exitReactants(ReactionStringParser.ReactantsContext ctx) {
+                    System.out.println(ctx.popsum().getText().equals("0"));
+                }
+
+                @Override
+                public void exitProducts(ReactionStringParser.ProductsContext ctx) {
+                    System.out.println(ctx.popsum().getText().equals("0"));
+                }
+                
+            }, parseTree);
+
+            reactions.add(reaction);
+        }
+            /*
         for (int[] varVals : iterationInput.get().getVariableValuesList()) {
             String flattenedString = getFlattenedReactionString(
                 varNames, varVals);

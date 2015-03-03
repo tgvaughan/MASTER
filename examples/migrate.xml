@@ -12,10 +12,10 @@
     <!--<stepper spec='GillespieStepper' />-->
 
     <model spec='Model' id='model'>
-        <populationType spec='PopulationType' typeName='X' dim='5 10' id='X'/>
+        <populationType spec='PopulationType' typeName='X' dim='2' id='X'/>
 
         <reaction spec='Reaction' rate="2.0">
-            X[i,j] -> X[j,i]
+            X[i] -> 0
         </reaction>
 
     </model>

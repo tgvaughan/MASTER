@@ -173,30 +173,40 @@ public class Reaction extends BEASTObject {
             reaction.prodNodes = new HashMap<>();
             parseTreeWalker.walk(new ReactionStringBaseListener() {
 
-                Map<Population, List<Node>> popelNodes;
-                List<Population> pops, reactPops, prodPops;
+                List<Node> nodeList, reactNodeList, prodNodeList;
                 List<Integer> popIDs, reactPopIDs, prodPopIDs;
+                Map<Population, List<Node>> popNodeMap, reactPopNodeMap, prodPopNodeMap;
                 Map<PopulationType, Integer> seenTypeIDs = new HashMap<>();
                 int nextPopID = 0;
 
 
                 @Override
                 public void exitReactants(ReactionStringParser.ReactantsContext ctx) {
-                    reactPops = pops;
+                    reactNodeList = nodeList;
                     reactPopIDs = popIDs;
+                    reaction.reactNodes = popNodeMap;
                 }
 
                 @Override
                 public void exitProducts(ReactionStringParser.ProductsContext ctx) {
-                    prodPops = pops;
+                    prodNodeList = nodeList;
                     prodPopIDs = popIDs;
+                    reaction.prodNodes = popNodeMap;
+
+                    for (int pi=0; pi<prodNodeList.size(); pi++) {
+                        for (int ri=0; ri<reactNodeList.size(); ri++) {
+                            if (Objects.equals(reactPopIDs.get(ri), prodPopIDs.get(pi))) {
+                                reactNodeList.get(ri).addChild(prodNodeList.get(pi));
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void enterPopsum(ReactionStringParser.PopsumContext ctx) {
-                    popelNodes = new HashMap<>();
-                    pops = new ArrayList<>();
+                    nodeList = new ArrayList<>();
                     popIDs = new ArrayList<>();
+                    popNodeMap = new HashMap<>();
                 }
 
                 @Override
@@ -221,7 +231,7 @@ public class Reaction extends BEASTObject {
                     for (int i=0; i<loc.length; i++)
                         loc[i] = locList.get(i);
 
-                    Population pop = new Population(popType, loc);
+                    Node pop = new Node(new Population(popType, loc));
 
                     int factor;
                     if (ctx.factor() != null)
@@ -229,8 +239,12 @@ public class Reaction extends BEASTObject {
                     else
                         factor = 1;
 
-                    for (int i=0; i<factor; i++)
-                        pops.add(pop);
+                    for (int i=0; i<factor; i++) {
+                        nodeList.add(pop);
+                        if (!popNodeMap.containsKey(pop.getPopulation()))
+                            popNodeMap.put(pop.getPopulation(), new ArrayList<>());
+                        popNodeMap.get(pop.getPopulation()).add(pop);
+                    }
 
                     for (int i=0; i<factor; i++) {
                         int id;
@@ -258,34 +272,36 @@ public class Reaction extends BEASTObject {
 
             reactions.add(reaction);
         }
-            /*
-        for (int[] varVals : iterationInput.get().getVariableValuesList()) {
-            String flattenedString = getFlattenedReactionString(
-                varNames, varVals);
+
                 
-            // Assemble reaction
-            Reaction reaction;
-            if (reactionName != null) {
-                if (reactions.size()>0)
-                    reaction = new Reaction(reactionName + reactions.size());
-                else
-                    reaction = new Reaction(reactionName);
-            } else
-                reaction = new Reaction();
-            
-            reaction.rates = rates;
-            reaction.rateTimes = rateTimes;
-            
-            try {
-                reaction.setSchemaFromString(flattenedString, populationTypes);
-            } catch (ParseException ex) {
-                Logger.getLogger(Reaction.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            reactions.add(reaction);
-        }
-        */
+        // Calculate individual population counts for non-inheritance
+        // trajectory code
         
+        reactCount = Maps.newHashMap();
+        for (Population pop : reactNodes.keySet())
+            reactCount.put(pop, reactNodes.get(pop).size());
+        
+        prodCount = Maps.newHashMap();
+        for (Population pop : prodNodes.keySet())
+            prodCount.put(pop, prodNodes.get(pop).size());
+        
+        // Loosely, calculate deltas=prodLocSchema-reactLocSchema.
+
+        deltaCount = Maps.newHashMap();
+            
+        for (Population pop : reactCount.keySet()) 
+            deltaCount.put(pop, -reactCount.get(pop));
+            
+        for (Population pop : prodCount.keySet()) {
+            if (!deltaCount.containsKey(pop))
+                deltaCount.put(pop, prodCount.get(pop));
+            else {
+                int val = deltaCount.get(pop);
+                val += prodCount.get(pop);
+                deltaCount.put(pop, val);
+            }
+        }
+
         return reactions;
     }
    
@@ -333,34 +349,7 @@ public class Reaction extends BEASTObject {
                 }
             }
         }
-        
-        // Calculate individual population counts for non-inheritance
-        // trajectory code
-        
-        reactCount = Maps.newHashMap();
-        for (Population pop : reactNodes.keySet())
-            reactCount.put(pop, reactNodes.get(pop).size());
-        
-        prodCount = Maps.newHashMap();
-        for (Population pop : prodNodes.keySet())
-            prodCount.put(pop, prodNodes.get(pop).size());
-        
-        // Loosely, calculate deltas=prodLocSchema-reactLocSchema.
 
-        deltaCount = Maps.newHashMap();
-            
-        for (Population pop : reactCount.keySet()) 
-            deltaCount.put(pop, -reactCount.get(pop));
-            
-        for (Population pop : prodCount.keySet()) {
-            if (!deltaCount.containsKey(pop))
-                deltaCount.put(pop, prodCount.get(pop));
-            else {
-                int val = deltaCount.get(pop);
-                val += prodCount.get(pop);
-                deltaCount.put(pop, val);
-            }
-        }
     }
 
     /**

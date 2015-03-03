@@ -75,6 +75,17 @@ public class Reaction extends BEASTObject {
         parseTree = parser.reaction();
     }
 
+    /**
+     * Recursive function used to assemble list of variable indices.  The reason
+     * we have to use a function like this (rather than a bunch of nested for
+     * loops) is that the number of variables whose values need to be iterated
+     * over is model-dependent.
+     * 
+     * @param depth recursion depth
+     * @param maxIndices list of bounds on variable values
+     * @param indices variable value array
+     * @param indicesList list to be filled with variable value arrays
+     */
     private void variableLoop(int depth, int[] maxIndices, int[] indices, List<int[]> indicesList) {
         if (depth==indices.length) {
             indicesList.add(Arrays.copyOf(indices, indices.length));

@@ -1,0 +1,63 @@
+<!-- Estimates population size moments under a two-deme structured
+     stochastic logistic growth model. -->
+
+<beast version='2.0' namespace='master:master.model:master.steppers:master.conditions:master.outputs'>
+    
+  <run spec='EnsembleSummary'
+       simulationTime='10'
+       nSamples='1001'
+       nTraj='1'>
+    
+    <stepper spec='TauLeapingStepper' stepSize="0.01"/>
+    <!--<stepper spec='GillespieStepper' />-->
+
+    <model spec='Model' id='model'>
+        <populationType spec='PopulationType' typeName='X' dim='5 10' id='X'/>
+
+        <reaction spec='Reaction' rate="2.0">
+            X[i,j] -> X[j,i]
+        </reaction>
+
+    </model>
+
+    <initialState spec='InitState'>
+      <populationSize spec='PopulationSize' size='1'>
+	<population spec='Population' type='@X' location="0"/>
+      </populationSize>
+    </initialState>
+
+    <populationEndCondition spec='PopulationEndCondition'
+			    threshold="0"
+			    exceedCondition="false"
+			    isRejection="true">
+      <population spec='Population' type='@X' location='0'/>
+      <population spec='Population' type='@X' location='1'/>
+    </populationEndCondition>
+
+    
+    <momentGroup spec='MomentGroup' momentGroupName='X'>
+        <moment spec='Moment'>
+            <factor spec='Population' type="@X" location="0"/>
+        </moment>
+        <moment spec='Moment'>
+            <factor spec='Population' type="@X" location="1"/>
+        </moment>
+    </momentGroup>
+
+    <moment spec='Moment' momentName='X1X2'>
+      <factor spec='Population' type="@X" location="0"/>
+      <factor spec='Population' type="@X" location="1"/>
+    </moment>
+    
+    <momentGroup spec='MomentGroup' momentGroupName='N' sum="true">
+      <moment spec='Moment'>
+	<factor spec='Population' type="@X" location="0"/>
+      </moment>
+      <moment spec='Moment'>
+	<factor spec='Population' type="@X" location="1"/>
+      </moment>
+    </momentGroup>
+    
+    <output spec='JsonOutput' fileName='$(filebase).json'/>
+  </run>
+</beast>

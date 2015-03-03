@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class ReactionStringParser {
+public class OldReactionStringParser {
     
     // Outputs of the parser.  The `node ID' lists are used to
     // assign inheritance relationships.
@@ -63,7 +63,7 @@ public class ReactionStringParser {
      * 
      * @throws ParseException Tries to be a tiny bit informative when things go wrong.
      */
-    public ReactionStringParser(String string,
+    public OldReactionStringParser(String string,
             List<PopulationType> popTypes) throws ParseException {
        
         this.string = string.trim();        

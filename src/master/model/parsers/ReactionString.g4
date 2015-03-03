@@ -7,10 +7,7 @@ reaction : reactants '->' products ;
 reactants : popsum ;
 products : popsum ;
 
-popsum :
-        popel ('+' popel)*      # PopulationSum
-    |   '0'                     # ZeroPopulation
-    ;
+popsum : popel ('+' popel)* | '0' ;
 
 popel : factor? popname loc? (':' id)?;
 
@@ -20,10 +17,7 @@ popname : NAME ;
 
 loc : '[' locel (',' locel)* ']' ;
 
-locel :
-        NZINT   # ExplicitLocEl
-    |   NAME    # VariableLocEl
-    ;
+locel : NZINT | NAME ;
 
 id : NZINT ;
 

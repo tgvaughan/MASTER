@@ -9,7 +9,13 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import master.model.iterators.AbstractIteration;
+import master.model.parsers.ReactionStringBaseListener;
+import master.model.parsers.ReactionStringLexer;
+import master.model.parsers.ReactionStringParser;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 /**
  * Class of objects describing the reactions which occur between the various
@@ -30,16 +36,15 @@ public class Reaction extends BEASTObject {
     public Input<String> reactionStringInput = new Input<>(
             "value",
             "String description of reaction.", Validate.REQUIRED);
-    
-    public Input<AbstractIteration> iterationInput = new Input<>(
-            "iteration",
-            "Iteration over indices.");
 
     public String reactionName;
     public Map<Population,Integer> reactCount, prodCount, deltaCount;
     public Map<Population, List<Node>> reactNodes, prodNodes;
     public List<Double> rates, rateTimes;
     public double propensity;
+
+    ParseTree parseTree;
+    ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
     
     /**
      * Constructor without name.
@@ -63,8 +68,24 @@ public class Reaction extends BEASTObject {
         if (rateInput.get() != null) {
             setRateFromString(rateInput.get());
         }
-        
 
+        // Parse reaction string
+        ANTLRInputStream input = new ANTLRInputStream(reactionStringInput.get());
+        ReactionStringLexer lexer = new ReactionStringLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        ReactionStringParser parser = new ReactionStringParser(tokens);
+        parseTree = parser.reaction();
+    }
+
+    private void variableLoop(int depth, int[] maxIndices, int[] indices, List<int[]> indicesList) {
+        if (depth==indices.length) {
+            indicesList.add(Arrays.copyOf(indices, indices.length));
+        }  else {
+            for (int i=0; i<maxIndices[depth]; i++) {
+                indices[depth] = i;
+                variableLoop(depth+1, maxIndices, indices, indicesList);
+            }
+        }
     }
     
     /**
@@ -76,70 +97,91 @@ public class Reaction extends BEASTObject {
      */
     public List<Reaction> getAllReactions(List<PopulationType> populationTypes) {
         List<Reaction> reactions = Lists.newArrayList();
+
+        // Grab lists of population types and variable names, keeping track
+        // of maximum values location index variables can take.
+        Map<String, PopulationType> popTypes = new HashMap<>();
+        Map<String, Integer> varBounds = new HashMap<>();
+        parseTreeWalker.walk(new ReactionStringBaseListener() {
+
+            @Override
+            public void exitPopel(ReactionStringParser.PopelContext ctx) {
+
+                PopulationType popType = null;
+                for (PopulationType thisPopType : populationTypes) {
+                    if (ctx.popname().NAME().toString().equals(thisPopType.getName()))
+                        popType = thisPopType;
+                }
+
+                if (popType == null) {
+                    System.err.println("Uknown population type '"
+                        + ctx.popname().NAME() + "' in reaction string.");
+                    System.exit(1);
+                }
+
+                popTypes.put(ctx.popname().NAME().toString(), popType);
+
+                if (ctx.loc() != null) {
+
+                    if (ctx.loc().locel().size() != popType.dims.length) {
+                        System.err.println("Population location vector"
+                            + " length does not match length of dims vector.");
+                        System.exit(0);
+                    }
+                    
+                    for (int i=0; i<ctx.loc().locel().size(); i++) {
+                        if (ctx.loc().locel(i).NAME() != null) {
+                            String varName = ctx.loc().locel(i).NAME().toString();
+                            if (!varBounds.containsKey(varName)) {
+                                varBounds.put(varName, popType.dims[i]);
+                            } else {
+                                if (varBounds.get(varName)>popType.dims[i]) {
+                                    varBounds.put(varName, popType.dims[i]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }, parseTree);
+
+
+        String[] varNames = (String[])varBounds.keySet().toArray();
+        List<int[]> variableValuesList = new ArrayList<>();
+        variableLoop(0, maxIndices, indices, variableValuesList);
         
-        if (iterationInput.get() == null) {
+        /*
+        for (int[] varVals : iterationInput.get().getVariableValuesList()) {
+            String flattenedString = getFlattenedReactionString(
+                varNames, varVals);
+                
+            // Assemble reaction
+            Reaction reaction;
+            if (reactionName != null) {
+                if (reactions.size()>0)
+                    reaction = new Reaction(reactionName + reactions.size());
+                else
+                    reaction = new Reaction(reactionName);
+            } else
+                reaction = new Reaction();
+            
+            reaction.rates = rates;
+            reaction.rateTimes = rateTimes;
+            
             try {
-                setSchemaFromString(reactionStringInput.get(), populationTypes);
+                reaction.setSchemaFromString(flattenedString, populationTypes);
             } catch (ParseException ex) {
                 Logger.getLogger(Reaction.class.getName()).log(Level.SEVERE, null, ex);
             }
-            reactions.add(this);
-        } else {
             
-            String[] varNames = iterationInput.get().getVariableNames();
-            for (int[] varVals : iterationInput.get().getVariableValuesList()) {
-                String flattenedString = getFlattenedReactionString(
-                        varNames, varVals);
-                
-                // Assemble reaction
-                Reaction reaction;
-                if (reactionName != null) {
-                    if (reactions.size()>0)
-                        reaction = new Reaction(reactionName + reactions.size());
-                    else
-                        reaction = new Reaction(reactionName);
-                } else
-                    reaction = new Reaction();
-                
-                reaction.rates = rates;
-                reaction.rateTimes = rateTimes;
-                
-                try {
-                    reaction.setSchemaFromString(flattenedString, populationTypes);
-                } catch (ParseException ex) {
-                    Logger.getLogger(Reaction.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                reactions.add(reaction);
-            }
-                
+            reactions.add(reaction);
         }
+        */
         
         return reactions;
     }
-
-    /**
-     * Make required iteration variable replacements in reaction string.
-     * 
-     * @param varNames
-     * @param varVals
-     * @return flattened reaction string
-     */
-    private String getFlattenedReactionString(String[] varNames, int[] varVals) {
-
-        String reactionStr = reactionStringInput.get().replaceAll("  *", "");
-        for (int i=0; i< varNames.length; i++) {
-            String name = varNames[i];
-            int val = varVals[i];
-            reactionStr = reactionStr.replace("["+name+"]", "["+val+"]")
-                    .replace("["+name+",", "["+val+",")
-                    .replace(","+name+"]", ","+val+"]")
-                    .replace(","+name+",", ","+val+",");
-        }
-        
-        return reactionStr;
-    }
-    
+   
     /**
      * Attempt to determine reaction schema from string representation.
      * 
@@ -149,7 +191,7 @@ public class Reaction extends BEASTObject {
      */
     public void setSchemaFromString(String schemaString, List<PopulationType> popTypes) throws ParseException {
         
-        ReactionStringParser parser = new ReactionStringParser(schemaString, popTypes);
+        OldReactionStringParser parser = new OldReactionStringParser(schemaString, popTypes);
         
         // Assemble node representation of reaction
         

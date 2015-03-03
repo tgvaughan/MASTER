@@ -265,93 +265,46 @@ public class Reaction extends BEASTObject {
                         }
                         popIDs.add(id);
                     }
-
+                    
                 }
                 
             }, parseTree);
-
-            reactions.add(reaction);
-        }
-
-                
-        // Calculate individual population counts for non-inheritance
-        // trajectory code
-        
-        reactCount = Maps.newHashMap();
-        for (Population pop : reactNodes.keySet())
-            reactCount.put(pop, reactNodes.get(pop).size());
-        
-        prodCount = Maps.newHashMap();
-        for (Population pop : prodNodes.keySet())
-            prodCount.put(pop, prodNodes.get(pop).size());
-        
-        // Loosely, calculate deltas=prodLocSchema-reactLocSchema.
-
-        deltaCount = Maps.newHashMap();
             
-        for (Population pop : reactCount.keySet()) 
-            deltaCount.put(pop, -reactCount.get(pop));
+            // Calculate individual population counts for non-inheritance
+            // trajectory code
             
-        for (Population pop : prodCount.keySet()) {
-            if (!deltaCount.containsKey(pop))
-                deltaCount.put(pop, prodCount.get(pop));
-            else {
-                int val = deltaCount.get(pop);
-                val += prodCount.get(pop);
-                deltaCount.put(pop, val);
+            reaction.reactCount = Maps.newHashMap();
+            for (Population pop : reaction.reactNodes.keySet())
+                reaction.reactCount.put(pop, reaction.reactNodes.get(pop).size());
+            
+            reaction.prodCount = Maps.newHashMap();
+            for (Population pop : reaction.prodNodes.keySet())
+                reaction.prodCount.put(pop, reaction.prodNodes.get(pop).size());
+            
+            // Loosely, calculate deltas=prodLocSchema-reactLocSchema.
+            
+            reaction.deltaCount = Maps.newHashMap();
+            
+            for (Population pop : reaction.reactCount.keySet())
+                reaction.deltaCount.put(pop, -reaction.reactCount.get(pop));
+            
+            for (Population pop : reaction.prodCount.keySet()) {
+                if (!reaction.deltaCount.containsKey(pop))
+                    reaction.deltaCount.put(pop, reaction.prodCount.get(pop));
+                else {
+                    int val = reaction.deltaCount.get(pop);
+                    val += reaction.prodCount.get(pop);
+                    reaction.deltaCount.put(pop, val);
+                }
             }
+            
+            reactions.add(reaction);
+            
         }
 
         return reactions;
     }
-   
-    /**
-     * Attempt to determine reaction schema from string representation.
-     * 
-     * @param schemaString string to parse.
-     * @param popTypes list of population types present in model.
-     * @throws java.text.ParseException 
-     */
-    public void setSchemaFromString(String schemaString, List<PopulationType> popTypes) throws ParseException {
-        
-        OldReactionStringParser parser = new OldReactionStringParser(schemaString, popTypes);
-        
-        // Assemble node representation of reaction
-        
-        reactNodes = Maps.newHashMap();
-        List<Node> reactNodeList = Lists.newArrayList();
-        for (int i=0; i<parser.getReactantPops().size(); i++) {
-            Population pop = parser.getReactantPops().get(i);
-            Node node = new Node(pop);
-            
-            if (!reactNodes.containsKey(pop))
-                reactNodes.put(pop, new ArrayList<>());
-
-            reactNodes.get(pop).add(node);
-            reactNodeList.add(node);
-        }
-        
-        prodNodes = Maps.newHashMap();
-        for (int i=0; i<parser.getProductPops().size(); i++) {
-            Population pop = parser.getProductPops().get(i);
-            Node node = new Node(pop);
-            
-            if (!prodNodes.containsKey(pop))
-                prodNodes.put(pop, new ArrayList<>());
-            
-            prodNodes.get(pop).add(node);
-            
-            int nodeId = parser.getProductIDs().get(i);
-            for (int ip=0; ip<parser.getReactantIDs().size(); ip++) {
-                if (parser.getReactantIDs().get(ip)==nodeId) {
-                    Node parent = reactNodeList.get(ip);
-                    parent.addChild(node);
-                }
-            }
-        }
-
-    }
-
+  
     /**
      * Use string of the form "rate1:time1,rate2:time2,..."
      * to set the list of reaction rates associated with

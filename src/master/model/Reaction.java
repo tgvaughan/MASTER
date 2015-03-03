@@ -7,15 +7,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.*;
 import java.text.ParseException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import master.model.parsers.ReactionStringBaseListener;
 import master.model.parsers.ReactionStringLexer;
 import master.model.parsers.ReactionStringParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 /**
@@ -148,13 +145,13 @@ public class Reaction extends BEASTObject {
         }, parseTree);
 
 
-        String[] varNames = (String[])varNameBoundsMap.keySet().toArray(new String[0]);
-        int[] varBounds = new int[varNames.length];
-        for (int i=0; i<varNames.length; i++)
-            varBounds[i] = varNameBoundsMap.get(varNames[i]);
+        List<String> varNames = new ArrayList<>(varNameBoundsMap.keySet());
+        int[] varBounds = new int[varNames.size()];
+        for (int i=0; i<varNames.size(); i++)
+            varBounds[i] = varNameBoundsMap.get(varNames.get(i));
 
         List<int[]> variableValuesList = new ArrayList<>();
-        variableLoop(0, varBounds, new int[varNames.length], variableValuesList);
+        variableLoop(0, varBounds, new int[varNames.size()], variableValuesList);
         
         for (int[] varVals : variableValuesList) {
 
@@ -176,14 +173,85 @@ public class Reaction extends BEASTObject {
             reaction.prodNodes = new HashMap<>();
             parseTreeWalker.walk(new ReactionStringBaseListener() {
 
+                Map<Population, List<Node>> popelNodes;
+                List<Population> pops, reactPops, prodPops;
+                List<Integer> popIDs, reactPopIDs, prodPopIDs;
+                Map<PopulationType, Integer> seenTypeIDs = new HashMap<>();
+                int nextPopID = 0;
+
+
                 @Override
                 public void exitReactants(ReactionStringParser.ReactantsContext ctx) {
-                    System.out.println(ctx.popsum().getText().equals("0"));
+                    reactPops = pops;
+                    reactPopIDs = popIDs;
                 }
 
                 @Override
                 public void exitProducts(ReactionStringParser.ProductsContext ctx) {
-                    System.out.println(ctx.popsum().getText().equals("0"));
+                    prodPops = pops;
+                    prodPopIDs = popIDs;
+                }
+
+                @Override
+                public void enterPopsum(ReactionStringParser.PopsumContext ctx) {
+                    popelNodes = new HashMap<>();
+                    pops = new ArrayList<>();
+                    popIDs = new ArrayList<>();
+                }
+
+                @Override
+                public void exitPopel(ReactionStringParser.PopelContext ctx) {
+
+                    PopulationType popType = popTypes.get(ctx.popname().getText());
+
+                    List<Integer> locList = new ArrayList<>();
+                    if (ctx.loc() != null) {
+                        for (ReactionStringParser.LocelContext locelCtx : ctx.loc().locel()) {
+                            if (locelCtx.NZINT() != null) {
+                                locList.add(Integer.parseInt(locelCtx.NZINT().getText()));
+                            } else {
+                                String varName = locelCtx.NAME().getText();
+                                int varIdx = varNames.indexOf(varName);
+                                locList.add(varVals[varIdx]);
+                            }
+                        }
+                    }
+
+                    int[] loc = new int[locList.size()];
+                    for (int i=0; i<loc.length; i++)
+                        loc[i] = locList.get(i);
+
+                    Population pop = new Population(popType, loc);
+
+                    int factor;
+                    if (ctx.factor() != null)
+                        factor = Integer.parseInt(ctx.factor().getText());
+                    else
+                        factor = 1;
+
+                    for (int i=0; i<factor; i++)
+                        pops.add(pop);
+
+                    for (int i=0; i<factor; i++) {
+                        int id;
+                        if (ctx.id() != null) {
+                            id = Integer.parseInt(ctx.id().getText());
+                        } else {
+                            if (ctx.getParent().getParent()
+                                instanceof ReactionStringParser.ReactantsContext) {
+                                id = nextPopID++;
+                                if (!seenTypeIDs.containsKey(popType))
+                                    seenTypeIDs.put(popType, id);
+                            } else {
+                                if (seenTypeIDs.containsKey(popType))
+                                    id = seenTypeIDs.get(popType);
+                                else
+                                    id = nextPopID++;
+                            }
+                        }
+                        popIDs.add(id);
+                    }
+
                 }
                 
             }, parseTree);

@@ -152,7 +152,12 @@ public class PopulationType extends BEASTObject implements Iterable<Population> 
     public Iterator<Population> iterator() {
         return new PopulationIterator(this);
     }
-    
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     /**
      * Construct representation of specification to use in assembling
      * summary in JSON output file.

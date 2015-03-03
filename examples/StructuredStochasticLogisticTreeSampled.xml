@@ -18,24 +18,14 @@
         <model spec='Model'>
             <populationType spec='PopulationType' typeName='X' dim='4' id='X'/>
             <reaction spec='Reaction' reactionName='Birth' rate="1.0">
-              <iteration spec='Iteration'>
-                <range spec='Range' variableName="i" from="0" to="3"/>
-              </iteration>
                 X[i] -> 2X[i]
             </reaction>
             <reaction spec='Reaction' reactionName='Death'
                       rate="0.01">
-              <iteration spec='Iteration'>
-                <range spec='Range' variableName="i" from="0" to="3"/>
-              </iteration>
                 2X[i] -> X[i]
             </reaction>
             <reaction spec='Reaction' reactionName='Migration'
                       rate="0.02">
-              <iteration spec='Iteration'>
-                <range spec='Range' variableName="i" from="0" to="3"/>
-                <range spec='Range' variableName="j" from="0" to="3"/>
-              </iteration>
                 X[i] -> X[j]
             </reaction>
         </model>                

@@ -8,6 +8,9 @@
 /.classpath
 /.settings
 
+# Other cruft
+/.localrc
+
 # Build directories:
 /build
 /dist

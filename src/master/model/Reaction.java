@@ -6,6 +6,8 @@ import beast.core.Input.Validate;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.*;
 import java.util.*;
+import master.model.parsers.ExpressionLexer;
+import master.model.parsers.ExpressionParser;
 import master.model.parsers.ReactionStringBaseListener;
 import master.model.parsers.ReactionStringLexer;
 import master.model.parsers.ReactionStringParser;
@@ -30,6 +32,11 @@ public class Reaction extends BEASTObject {
     public Input<String> rateInput = new Input<>("rate",
             "Individual reaction rate. (Only used if group rate unset.)");
 
+    public Input<String> rateMultiplierInput = new Input("rateMultiplier",
+        "The result of evaluating this expression involving "
+            + "population location variables is multiplied with"
+            + "the base reaction rate to produce a location-specific rate.");
+
     public Input<String> reactionStringInput = new Input<>(
             "value",
             "String description of reaction.", Validate.REQUIRED);
@@ -45,8 +52,9 @@ public class Reaction extends BEASTObject {
     public List<Double> rates, rateTimes;
     public double propensity;
 
-    ParseTree parseTree;
+    ParseTree reactionStringParseTree, rateMultiplierParseTree;
     ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
+    RateMultiplierExpressionVisitor rateMultiplierVisitor;
     
     /**
      * Constructor without name.
@@ -72,11 +80,20 @@ public class Reaction extends BEASTObject {
         }
 
         // Parse reaction string
-        ANTLRInputStream input = new ANTLRInputStream(reactionStringInput.get());
-        ReactionStringLexer lexer = new ReactionStringLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ReactionStringParser parser = new ReactionStringParser(tokens);
-        parseTree = parser.reaction();
+        ANTLRInputStream rsInput = new ANTLRInputStream(reactionStringInput.get());
+        ReactionStringLexer rsLexer = new ReactionStringLexer(rsInput);
+        CommonTokenStream rsTokens = new CommonTokenStream(rsLexer);
+        ReactionStringParser rsParser= new ReactionStringParser(rsTokens);
+        reactionStringParseTree = rsParser.reaction();
+
+        // Parse rate multiplier string
+        if (rateMultiplierInput.get() != null) {
+            ANTLRInputStream rmInput = new ANTLRInputStream(rateMultiplierInput.get());
+            ExpressionLexer rmLexer = new ExpressionLexer(rsInput);
+            CommonTokenStream rmTokens = new CommonTokenStream(rmLexer);
+            ExpressionParser rmParser = new ExpressionParser(rmTokens);
+            rateMultiplierParseTree = rmParser.expression();
+        }
     }
 
     /**
@@ -157,7 +174,7 @@ public class Reaction extends BEASTObject {
                 }
             }
             
-        }, parseTree);
+        }, reactionStringParseTree);
 
 
         List<String> varNames = new ArrayList<>(varNameBoundsMap.keySet());
@@ -183,7 +200,7 @@ public class Reaction extends BEASTObject {
             if (!include)
                 continue;
 
-            // Assemble reaction
+            // Create reaction object
 
             Reaction reaction;
             if (reactionName != null) {
@@ -197,6 +214,25 @@ public class Reaction extends BEASTObject {
 
             reaction.rates = rates;
             reaction.rateTimes = rateTimes;
+
+            // Compute rate multiplier
+
+            if (rateMultiplierVisitor == null)
+                rateMultiplierVisitor = new RateMultiplierExpressionVisitor(varNames);
+            rateMultiplierVisitor.setVarVals(varVals);
+
+            Double[] rmRes = rateMultiplierVisitor.visit(rateMultiplierParseTree);
+            if (rmRes.length != 1) {
+                throw new IllegalArgumentException(
+                    "Reaction rate multiplier must be scalar!");
+            }
+
+            // Multiply original rates by multiplier
+
+            for (int i=0; i<reaction.rates.size(); i++)
+                reaction.rates.set(i, reaction.rates.get(i)*rmRes[0]);
+
+            // Walk reaction string parse tree to set up reaction topology
 
             reaction.reactNodes = new HashMap<>();
             reaction.prodNodes = new HashMap<>();
@@ -306,7 +342,7 @@ public class Reaction extends BEASTObject {
                     
                 }
                 
-            }, parseTree);
+            }, reactionStringParseTree);
             
             // Calculate individual population counts for non-inheritance
             // trajectory code

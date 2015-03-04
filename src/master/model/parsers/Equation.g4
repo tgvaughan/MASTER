@@ -3,7 +3,7 @@ import Expression;
 
 equation : expression op=('=' | '>' | '<' | '>=' | '<=' | '!=') expression ;
 
-EQ: '=' | '==';
+EQ: '=';
 GT: '>';
 LT: '<';
 GE: '>=';

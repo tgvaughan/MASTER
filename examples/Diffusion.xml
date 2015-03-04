@@ -1,0 +1,29 @@
+<!-- Simple discrete 2D diffusion model -->
+
+<beast version='2.0' namespace='master:master.model:master.outputs:master.steppers'>
+    <run spec='Trajectory'
+         simulationTime='20'
+         nSamples="10"
+         verbosity='2'>
+        
+        <!--stepper spec='GillespieStepper' /-->
+        <!--stepper spec='SALStepper' stepSize="0.1" /-->
+        <stepper spec='RateEquationStepper' stepSize="0.1" />
+
+        <model spec='Model' id='model'>
+            <populationType spec='PopulationType' typeName="X" dim="51 51" id="X"/>
+            <reaction spec='Reaction' reactionName="Migration" rate="1.0">
+                <predicate spec='Predicate' exp="sum(abs([x1,y1]-[x2,y2]))=1"/>
+                X[x1,y1] -> X[x2,y2]
+            </reaction>
+        </model>
+
+        <initialState spec='InitState'>
+            <populationSize spec='PopulationSize' size='1000'>
+                <population spec='Population' type="@X" location="25 25"/>
+            </populationSize>
+        </initialState>
+        
+        <output spec='JsonOutput' fileName='$(filebase)_output.json'/>
+    </run>
+</beast>

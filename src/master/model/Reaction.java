@@ -34,6 +34,11 @@ public class Reaction extends BEASTObject {
             "value",
             "String description of reaction.", Validate.REQUIRED);
 
+    public Input<List<Predicate>> predicatesInput = new Input<>(
+        "predicate",
+        "Predicate used to determine which reactions to include",
+        new ArrayList<>());
+
     public String reactionName;
     public Map<Population, Integer> reactCount, prodCount, deltaCount;
     public Map<Population, List<Node>> reactNodes, prodNodes;
@@ -164,6 +169,19 @@ public class Reaction extends BEASTObject {
         variableLoop(0, varBounds, new int[varNames.size()], variableValuesList);
         
         for (int[] varVals : variableValuesList) {
+
+            // Test predicates
+            boolean include = true;
+            for (Predicate pred : predicatesInput.get()) {
+                if (!pred.isTrue(varNames, varVals)) {
+                    include = false;
+                    break;
+                }
+            }
+
+            // Skip this reaction
+            if (!include)
+                continue;
 
             // Assemble reaction
 

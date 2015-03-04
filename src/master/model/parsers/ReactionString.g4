@@ -17,13 +17,14 @@ popname : NAME ;
 
 loc : '[' locel (',' locel)* ']' ;
 
-locel : NZINT | NAME ;
+locel : '0' | NZINT | NAME ;
 
-id : NZINT ;
+id : '0' | NZINT ;
 
 // Lexer rules:
 
-NZINT : NZD  D* ;
+NZINT : NZD D* ;
+fragment Z : '0' ;
 fragment D : [0-9] ;
 fragment NZD : [1-9] ;
 

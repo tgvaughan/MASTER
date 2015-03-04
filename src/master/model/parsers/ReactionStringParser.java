@@ -467,7 +467,7 @@ public class ReactionStringParser extends Parser {
 			{
 			setState(65);
 			_la = _input.LA(1);
-			if ( !(_la==NZINT || _la==NAME) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 7) | (1L << NZINT) | (1L << NAME))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			consume();
@@ -485,6 +485,7 @@ public class ReactionStringParser extends Parser {
 	}
 
 	public static class IdContext extends ParserRuleContext {
+		public Token val;
 		public TerminalNode NZINT() { return getToken(ReactionStringParser.NZINT, 0); }
 		public IdContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -503,10 +504,17 @@ public class ReactionStringParser extends Parser {
 	public final IdContext id() throws RecognitionException {
 		IdContext _localctx = new IdContext(_ctx, getState());
 		enterRule(_localctx, 18, RULE_id);
+		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(67); match(NZINT);
+			setState(67);
+			((IdContext)_localctx).val = _input.LT(1);
+			_la = _input.LA(1);
+			if ( !(_la==7 || _la==NZINT) ) {
+				((IdContext)_localctx).val = (Token)_errHandler.recoverInline(this);
+			}
+			consume();
 			}
 		}
 		catch (RecognitionException re) {
@@ -526,18 +534,19 @@ public class ReactionStringParser extends Parser {
 		"\2\3\2\3\2\3\2\3\3\3\3\3\4\3\4\3\5\3\5\3\5\7\5\"\n\5\f\5\16\5%\13\5\3"+
 		"\5\5\5(\n\5\3\6\5\6+\n\6\3\6\3\6\5\6/\n\6\3\6\3\6\5\6\63\n\6\3\7\3\7\3"+
 		"\b\3\b\3\t\3\t\3\t\3\t\7\t=\n\t\f\t\16\t@\13\t\3\t\3\t\3\n\3\n\3\13\3"+
-		"\13\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24\2\3\3\2\n\13C\2\26\3\2\2\2\4\32"+
-		"\3\2\2\2\6\34\3\2\2\2\b\'\3\2\2\2\n*\3\2\2\2\f\64\3\2\2\2\16\66\3\2\2"+
-		"\2\208\3\2\2\2\22C\3\2\2\2\24E\3\2\2\2\26\27\5\4\3\2\27\30\7\3\2\2\30"+
-		"\31\5\6\4\2\31\3\3\2\2\2\32\33\5\b\5\2\33\5\3\2\2\2\34\35\5\b\5\2\35\7"+
-		"\3\2\2\2\36#\5\n\6\2\37 \7\6\2\2 \"\5\n\6\2!\37\3\2\2\2\"%\3\2\2\2#!\3"+
-		"\2\2\2#$\3\2\2\2$(\3\2\2\2%#\3\2\2\2&(\7\t\2\2\'\36\3\2\2\2\'&\3\2\2\2"+
-		"(\t\3\2\2\2)+\5\f\7\2*)\3\2\2\2*+\3\2\2\2+,\3\2\2\2,.\5\16\b\2-/\5\20"+
-		"\t\2.-\3\2\2\2./\3\2\2\2/\62\3\2\2\2\60\61\7\b\2\2\61\63\5\24\13\2\62"+
-		"\60\3\2\2\2\62\63\3\2\2\2\63\13\3\2\2\2\64\65\7\n\2\2\65\r\3\2\2\2\66"+
-		"\67\7\13\2\2\67\17\3\2\2\289\7\7\2\29>\5\22\n\2:;\7\5\2\2;=\5\22\n\2<"+
-		":\3\2\2\2=@\3\2\2\2><\3\2\2\2>?\3\2\2\2?A\3\2\2\2@>\3\2\2\2AB\7\4\2\2"+
-		"B\21\3\2\2\2CD\t\2\2\2D\23\3\2\2\2EF\7\n\2\2F\25\3\2\2\2\b#\'*.\62>";
+		"\13\3\13\2\2\f\2\4\6\b\n\f\16\20\22\24\2\4\3\2\t\13\3\2\t\nC\2\26\3\2"+
+		"\2\2\4\32\3\2\2\2\6\34\3\2\2\2\b\'\3\2\2\2\n*\3\2\2\2\f\64\3\2\2\2\16"+
+		"\66\3\2\2\2\208\3\2\2\2\22C\3\2\2\2\24E\3\2\2\2\26\27\5\4\3\2\27\30\7"+
+		"\3\2\2\30\31\5\6\4\2\31\3\3\2\2\2\32\33\5\b\5\2\33\5\3\2\2\2\34\35\5\b"+
+		"\5\2\35\7\3\2\2\2\36#\5\n\6\2\37 \7\6\2\2 \"\5\n\6\2!\37\3\2\2\2\"%\3"+
+		"\2\2\2#!\3\2\2\2#$\3\2\2\2$(\3\2\2\2%#\3\2\2\2&(\7\t\2\2\'\36\3\2\2\2"+
+		"\'&\3\2\2\2(\t\3\2\2\2)+\5\f\7\2*)\3\2\2\2*+\3\2\2\2+,\3\2\2\2,.\5\16"+
+		"\b\2-/\5\20\t\2.-\3\2\2\2./\3\2\2\2/\62\3\2\2\2\60\61\7\b\2\2\61\63\5"+
+		"\24\13\2\62\60\3\2\2\2\62\63\3\2\2\2\63\13\3\2\2\2\64\65\7\n\2\2\65\r"+
+		"\3\2\2\2\66\67\7\13\2\2\67\17\3\2\2\289\7\7\2\29>\5\22\n\2:;\7\5\2\2;"+
+		"=\5\22\n\2<:\3\2\2\2=@\3\2\2\2><\3\2\2\2>?\3\2\2\2?A\3\2\2\2@>\3\2\2\2"+
+		"AB\7\4\2\2B\21\3\2\2\2CD\t\2\2\2D\23\3\2\2\2EF\t\3\2\2F\25\3\2\2\2\b#"+
+		"\'*.\62>";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

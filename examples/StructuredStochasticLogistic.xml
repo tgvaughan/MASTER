@@ -2,92 +2,77 @@
      stochastic logistic growth model. -->
 
 <beast version='2.0' namespace='master:master.model:master.steppers:master.conditions:master.outputs'>
-    
-  <run spec='EnsembleSummary'
-       simulationTime='10'
-       nSamples='1001'
-       nTraj='5000'>
-    
-    <stepper spec='TauLeapingStepper' stepSize="0.01"/>
-    <!--<stepper spec='GillespieStepper' />-->
 
-    <model spec='Model' id='model'>
-      <populationType spec='PopulationType' typeName='X' dim='2' id='X'/>
+    <run spec='EnsembleSummary'
+        simulationTime='10'
+        nSamples='1001'
+        nTraj='5000'>
 
-      <reactionGroup spec='ReactionGroup' reactionGroupName='Birth'>
-	<reaction spec='Reaction' rate="2.0">
-	  X[0] -> 2X[0]
-	</reaction>
-	<reaction spec='Reaction' rate="2.0">
-	  X[1] -> 2X[1]
-	</reaction>
-      </reactionGroup>
+        <stepper spec='TauLeapingStepper' stepSize="0.01"/>
+        <!--<stepper spec='GillespieStepper' />-->
 
-      <reactionGroup spec='ReactionGroup' reactionGroupName='Competition'>
-	<reaction spec='Reaction' rate="0.001">
-	  2X[0] -> X[0]
-	</reaction>
-	<reaction spec='Reaction' rate="0.001">
-	  2X[1] -> X[1]
-	</reaction>
-      </reactionGroup>
+        <model spec='Model' id='model'>
+            <populationType spec='PopulationType' typeName='X' dim='2' id='X'/>
 
-      <reactionGroup spec='ReactionGroup' reactionGroupName='Death'>
-	<reaction spec='Reaction' rate="0.2">
-	  X[0] -> 0
-	</reaction>
-	<reaction spec='Reaction' rate="0.2">
-	  X[1] -> 0
-	</reaction>
-      </reactionGroup>
+            <reaction spec='Reaction' rate="2.0" reactionName="Birth">
+                X[i] -> 2X[i]
+            </reaction>
 
-      <reactionGroup spec='ReactionGroup' reactionGroupName="Migration">	
-	<reaction spec='Reaction' rate="0.1">
-	  X[0] -> X[1]
-	</reaction>
-	<reaction spec='Reaction' rate="0.2">
-	  X[1] -> X[0]
-	</reaction>
-      </reactionGroup>
-    </model>
-    
-    <initialState spec='InitState'>
-      <populationSize spec='PopulationSize' size='1'>
-	<population spec='Population' type='@X' location="0"/>
-      </populationSize>
-    </initialState>
+            <reaction spec='Reaction' rate="0.001" reactionName="Competition">
+                2X[i] -> X[i]
+            </reaction>
 
-    <populationEndCondition spec='PopulationEndCondition'
-			    threshold="0"
-			    exceedCondition="false"
-			    isRejection="true">
-      <population spec='Population' type='@X' location='0'/>
-      <population spec='Population' type='@X' location='1'/>
-    </populationEndCondition>
-    
-    <momentGroup spec='MomentGroup' momentGroupName='X'>
-      <moment spec='Moment'>
-	<factor spec='Population' type="@X" location="0"/>
-      </moment>
-      <moment spec='Moment'>
-	<factor spec='Population' type="@X" location="1"/>
-      </moment>
-    </momentGroup>
+            <reaction spec='Reaction' rate="0.2" reactionName="Death">
+                X[i] -> 0
+            </reaction>
 
-    <moment spec='Moment' momentName='X1X2'>
-      <factor spec='Population' type="@X" location="0"/>
-      <factor spec='Population' type="@X" location="1"/>
-    </moment>
-    
-    <momentGroup spec='MomentGroup' momentGroupName='N' sum="true">
-      <moment spec='Moment'>
-	<factor spec='Population' type="@X" location="0"/>
-      </moment>
-      <moment spec='Moment'>
-	<factor spec='Population' type="@X" location="1"/>
-      </moment>
-    </momentGroup>
-    
-    <output spec='JsonOutput' fileName='StructuredStochasticLogistic_output.json'/>
-  </run>
+            <reactionGroup spec='ReactionGroup' reactionGroupName="Migration">	
+                <reaction spec='Reaction' rate="0.1">
+                    X[0] -> X[1]
+                </reaction>
+                <reaction spec='Reaction' rate="0.2">
+                    X[1] -> X[0]
+                </reaction>
+            </reactionGroup>
+        </model>
+
+        <initialState spec='InitState'>
+            <populationSize spec='PopulationSize' size='1'>
+                <population spec='Population' type='@X' location="0"/>
+            </populationSize>
+        </initialState>
+
+        <populationEndCondition spec='PopulationEndCondition'
+            threshold="0"
+            exceedCondition="false"
+            isRejection="true">
+            <population spec='Population' type='@X' location='0'/>
+            <population spec='Population' type='@X' location='1'/>
+        </populationEndCondition>
+
+        <momentGroup spec='MomentGroup' momentGroupName='X'>
+            <moment spec='Moment'>
+                <factor spec='Population' type="@X" location="0"/>
+            </moment>
+            <moment spec='Moment'>
+                <factor spec='Population' type="@X" location="1"/>
+            </moment>
+        </momentGroup>
+
+        <moment spec='Moment' momentName='X1X2'>
+            <factor spec='Population' type="@X" location="0"/>
+            <factor spec='Population' type="@X" location="1"/>
+        </moment>
+
+        <momentGroup spec='MomentGroup' momentGroupName='N' sum="true">
+            <moment spec='Moment'>
+                <factor spec='Population' type="@X" location="0"/>
+            </moment>
+            <moment spec='Moment'>
+                <factor spec='Population' type="@X" location="1"/>
+            </moment>
+        </momentGroup>
+
+        <output spec='JsonOutput' fileName='StructuredStochasticLogistic_output.json'/>
+    </run>
 </beast>

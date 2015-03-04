@@ -230,8 +230,8 @@ public class Reaction extends BEASTObject {
                     List<Integer> locList = new ArrayList<>();
                     if (ctx.loc() != null) {
                         for (ReactionStringParser.LocelContext locelCtx : ctx.loc().locel()) {
-                            if (locelCtx.NZINT() != null) {
-                                locList.add(Integer.parseInt(locelCtx.NZINT().getText()));
+                            if (locelCtx.NAME() == null) {
+                                locList.add(Integer.parseInt(locelCtx.getText()));
                             } else {
                                 String varName = locelCtx.NAME().getText();
                                 int varIdx = varNames.indexOf(varName);

@@ -215,22 +215,10 @@ public class Reaction extends BEASTObject {
             reaction.rates = rates;
             reaction.rateTimes = rateTimes;
 
-            // Compute rate multiplier
+            // Apply rate multiplier if present:
 
-            if (rateMultiplierVisitor == null)
-                rateMultiplierVisitor = new RateMultiplierExpressionVisitor(varNames);
-            rateMultiplierVisitor.setVarVals(varVals);
-
-            Double[] rmRes = rateMultiplierVisitor.visit(rateMultiplierParseTree);
-            if (rmRes.length != 1) {
-                throw new IllegalArgumentException(
-                    "Reaction rate multiplier must be scalar!");
-            }
-
-            // Multiply original rates by multiplier
-
-            for (int i=0; i<reaction.rates.size(); i++)
-                reaction.rates.set(i, reaction.rates.get(i)*rmRes[0]);
+            if (rateMultiplierInput.get() != null)
+                applyRateMultiplier(reaction.rates, varNames, varVals);
 
             // Walk reaction string parse tree to set up reaction topology
 
@@ -376,6 +364,35 @@ public class Reaction extends BEASTObject {
         }
 
         return reactions;
+    }
+
+    /**
+     * Evaluates rate multiplier for particular location variable combination
+     * and applies this multiplier to the given rate list.
+     * 
+     * @param rates     Rate list
+     * @param varNames  Variable name list
+     * @param varVals   Variable value array
+     */
+    public void applyRateMultiplier(List<Double> rates, List<String> varNames, int[] varVals) {
+
+        // Compute rate multiplier
+        
+        if (rateMultiplierVisitor == null)
+            rateMultiplierVisitor = new RateMultiplierExpressionVisitor(varNames);
+        rateMultiplierVisitor.setVarVals(varVals);
+        
+        Double[] rmRes = rateMultiplierVisitor.visit(rateMultiplierParseTree);
+        if (rmRes.length != 1) {
+            throw new IllegalArgumentException(
+                    "Reaction rate multiplier must be scalar!");
+        }
+        
+        // Multiply original rates by multiplier
+        
+        for (int i=0; i<rates.size(); i++)
+            rates.set(i, rates.get(i)*rmRes[0]);
+        
     }
   
     /**

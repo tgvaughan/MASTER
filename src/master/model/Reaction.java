@@ -89,7 +89,7 @@ public class Reaction extends BEASTObject {
         // Parse rate multiplier string
         if (rateMultiplierInput.get() != null) {
             ANTLRInputStream rmInput = new ANTLRInputStream(rateMultiplierInput.get());
-            ExpressionLexer rmLexer = new ExpressionLexer(rsInput);
+            ExpressionLexer rmLexer = new ExpressionLexer(rmInput);
             CommonTokenStream rmTokens = new CommonTokenStream(rmLexer);
             ExpressionParser rmParser = new ExpressionParser(rmTokens);
             rateMultiplierParseTree = rmParser.expression();

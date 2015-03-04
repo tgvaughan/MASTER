@@ -63,38 +63,38 @@ import master.postprocessors.InheritancePostProcessor;
  */
 public class InheritanceTrajectory extends Trajectory {
     
-    public Input<Boolean> samplePopulationSizesInput = new Input<Boolean>(
+    public Input<Boolean> samplePopulationSizesInput = new Input<>(
             "samplePopulationSizes",
             "Sample population sizes together with inheritance graph. (Default false.)",
             false);
     
-    public Input<Boolean> sampleAtNodesOnlyInput = new Input<Boolean>(
+    public Input<Boolean> sampleAtNodesOnlyInput = new Input<>(
             "sampleAtNodesOnly",
             "Sample population sizes only at graph node times. (Default false.)",
             false);
     
     // Lineage end conditions:
     public Input<List<LineageEndCondition>> lineageEndConditionsInput =
-            new Input<List<LineageEndCondition>>("lineageEndCondition",
+            new Input<>("lineageEndCondition",
                     "Trajectory end condition based on remaining lineages.",
                     new ArrayList<LineageEndCondition>());
     
         
     // Leaf count end conditions:
     public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput =
-            new Input<List<LeafCountEndCondition>>("leafCountEndCondition",
+            new Input<>("leafCountEndCondition",
             "Trajectory end condition based on number of terminal nodes generated.",
             new ArrayList<LeafCountEndCondition>());
     
     // Post-processors:
     public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
-            new Input<List<InheritancePostProcessor>>("inheritancePostProcessor",
+            new Input<>("inheritancePostProcessor",
                     "Post processor for inheritance graph.",
                     new ArrayList<InheritancePostProcessor>());
     
     // Outputs:
     public Input<List<InheritanceTrajectoryOutput>> outputsInput
-            = new Input<List<InheritanceTrajectoryOutput>>("output",
+            = new Input<>("output",
             "Output writer used to write results of simulation to disk.",
             new ArrayList<InheritanceTrajectoryOutput>());
     

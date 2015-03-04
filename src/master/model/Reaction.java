@@ -5,7 +5,6 @@ import beast.core.Input;
 import beast.core.Input.Validate;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.*;
-import java.text.ParseException;
 import java.util.*;
 import master.model.parsers.ReactionStringBaseListener;
 import master.model.parsers.ReactionStringLexer;
@@ -36,7 +35,7 @@ public class Reaction extends BEASTObject {
             "String description of reaction.", Validate.REQUIRED);
 
     public String reactionName;
-    public Map<Population,Integer> reactCount, prodCount, deltaCount;
+    public Map<Population, Integer> reactCount, prodCount, deltaCount;
     public Map<Population, List<Node>> reactNodes, prodNodes;
     public List<Double> rates, rateTimes;
     public double propensity;
@@ -167,6 +166,7 @@ public class Reaction extends BEASTObject {
         for (int[] varVals : variableValuesList) {
 
             // Assemble reaction
+
             Reaction reaction;
             if (reactionName != null) {
                 if (reactions.size()>0)
@@ -225,6 +225,8 @@ public class Reaction extends BEASTObject {
 
                     PopulationType popType = popTypes.get(ctx.popname().getText());
 
+                    // Assemble loc
+
                     List<Integer> locList = new ArrayList<>();
                     if (ctx.loc() != null) {
                         for (ReactionStringParser.LocelContext locelCtx : ctx.loc().locel()) {
@@ -242,8 +244,9 @@ public class Reaction extends BEASTObject {
                     for (int i=0; i<loc.length; i++)
                         loc[i] = locList.get(i);
 
-                    Node pop = new Node(new Population(popType, loc));
+                    Population pop = new Population(popType, loc);
 
+                    // Determine the number of replicates of this reagent
                     int factor;
                     if (ctx.factor() != null)
                         factor = Integer.parseInt(ctx.factor().getText());
@@ -251,13 +254,19 @@ public class Reaction extends BEASTObject {
                         factor = 1;
 
                     for (int i=0; i<factor; i++) {
-                        nodeList.add(pop);
-                        if (!popNodeMap.containsKey(pop.getPopulation()))
-                            popNodeMap.put(pop.getPopulation(), new ArrayList<>());
-                        popNodeMap.get(pop.getPopulation()).add(pop);
-                    }
+                        Node popNode = new Node(pop);
 
-                    for (int i=0; i<factor; i++) {
+                        // Add corresponding node to relevant maps, lists...
+                        nodeList.add(popNode);
+                        if (!popNodeMap.containsKey(popNode.getPopulation()))
+                            popNodeMap.put(popNode.getPopulation(), new ArrayList<>());
+                        popNodeMap.get(popNode.getPopulation()).add(popNode);
+
+                        // Assign ID to node if not explicitly given.
+                        // The default greedily assigns all products of a
+                        // particular type to be children of the first
+                        // reactant of the same type.  This always generates
+                        // trees in forward time.
                         int id;
                         if (ctx.id() != null) {
                             id = Integer.parseInt(ctx.id().getText());
@@ -310,7 +319,6 @@ public class Reaction extends BEASTObject {
             }
             
             reactions.add(reaction);
-            
         }
 
         return reactions;

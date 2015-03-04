@@ -13,7 +13,7 @@
     <run spec='InheritanceTrajectory'
          simulationTime="100"
          samplePopulationSizes="true"
-         verbosity='1'>
+         verbosity='2'>
         
         <model spec='Model'>
             <populationType spec='PopulationType' typeName='X' dim='4' id='X'/>

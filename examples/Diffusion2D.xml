@@ -12,7 +12,8 @@
 
         <model spec='Model' id='model'>
             <populationType spec='PopulationType' typeName="X" dim="51 51" id="X"/>
-            <reaction spec='Reaction' reactionName="Migration" rate="1.0">
+            <reaction spec='Reaction' reactionName="Migration" rate="1.0"
+            rateMultiplier="theta(x1-24)*theta(y1-24)">
                 <predicate spec='Predicate' exp="sum(abs([x1,y1]-[x2,y2]))=1"/>
                 X[x1,y1] -> X[x2,y2]
             </reaction>

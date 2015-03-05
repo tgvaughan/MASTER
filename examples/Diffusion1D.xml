@@ -1,0 +1,30 @@
+<!-- Simple discrete 1D diffusion model -->
+
+<beast version='2.0' namespace='master:master.model:master.outputs:master.steppers'>
+    <run spec='Trajectory'
+         simulationTime='20'
+         nSamples="100"
+         verbosity='2'>
+        
+         <!--stepper spec='GillespieStepper' /-->
+        <!--stepper spec='SALStepper' stepSize="0.1" /-->
+        <stepper spec='RateEquationStepper' stepSize="0.005" />
+
+        <model spec='Model' id='model'>
+            <populationType spec='PopulationType' typeName="X" dim="400" id="X"/>
+            <reaction spec='Reaction' reactionName="Migration" rate="50.0"
+                rateMultiplier="(1-theta(i-150)*theta(j-150)*(1-theta(i-250)*theta(j-250)) + 0.25)/1.25">
+                <predicate spec='Predicate' exp="abs(i-j)=1"/>
+                X[i] -> X[j]
+            </reaction>
+        </model>
+
+        <initialState spec='InitState'>
+            <populationSize spec='PopulationSize' size='1000'>
+                <population spec='Population' type="@X" location="200"/>
+            </populationSize>
+        </initialState>
+        
+        <output spec='JsonOutput' fileName='$(filebase)_output.json'/>
+    </run>
+</beast>

@@ -19,7 +19,6 @@ package master.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import master.model.parsers.EquationParser;
 import master.model.parsers.ExpressionBaseVisitor;
 import master.model.parsers.ExpressionParser;
 
@@ -70,7 +69,7 @@ public class RateMultiplierExpressionVisitor extends ExpressionBaseVisitor<Doubl
         
         Double [] res = new Double[Math.max(left.length, right.length)];
         for (int i=0; i<res.length; i++) {
-            if (ctx.op.getType() == EquationParser.MUL)
+            if (ctx.op.getType() == ExpressionParser.MUL)
                 res[i] = left[i%left.length]*right[i%right.length];
             else
                 res[i] = left[i%left.length]/right[i%right.length];
@@ -86,7 +85,7 @@ public class RateMultiplierExpressionVisitor extends ExpressionBaseVisitor<Doubl
         
         Double [] res = new Double[Math.max(left.length, right.length)];
         for (int i=0; i<res.length; i++) {
-            if (ctx.op.getType() == EquationParser.ADD)
+            if (ctx.op.getType() == ExpressionParser.ADD)
                 res[i] = left[i%left.length]+right[i%right.length];
             else
                 res[i] = left[i%left.length]-right[i%right.length];
@@ -106,38 +105,38 @@ public class RateMultiplierExpressionVisitor extends ExpressionBaseVisitor<Doubl
         Double [] res = null;
         
         switch(ctx.op.getType()) {
-            case EquationParser.EXP:
+            case ExpressionParser.EXP:
                 res = new Double[arg.length];
                 for (int i=0; i<arg.length; i++)
                     res[i] = Math.exp(arg[i]);
                 break;
                 
-            case EquationParser.LOG:
+            case ExpressionParser.LOG:
                 res = new Double[arg.length];
                 for (int i=0; i<arg.length; i++)
                     res[i] = Math.log(arg[i]);
                 break;
                 
-            case EquationParser.SQRT:
+            case ExpressionParser.SQRT:
                 res = new Double[arg.length];
                 for (int i=0; i<arg.length; i++)
                     res[i] = Math.sqrt(arg[i]);
                 break;
                 
-            case EquationParser.SUM:
+            case ExpressionParser.SUM:
                 res = new Double[1];
                 res[0] = 0.0;
                 for (Double el : arg)
                     res[0] += el;
                 break;
                 
-            case EquationParser.THETA:
+            case ExpressionParser.THETA:
                 res = new Double[arg.length];
                 for (int i=0; i<arg.length; i++)
                     res[i] = arg[i] < 0.0 ? 0.0 : 1.0;
                 break;
                 
-            case EquationParser.ABS:
+            case ExpressionParser.ABS:
                 res = new Double[arg.length];
                 for (int i=0; i<arg.length; i++)
                     res[i] = Math.abs(arg[i]);

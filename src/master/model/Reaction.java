@@ -212,7 +212,11 @@ public class Reaction extends BEASTObject {
                 reaction = new Reaction();
             }
 
-            reaction.rates = rates;
+            if (rateMultiplierInput.get() != null) {
+                // Need copies when reactions can have different rates:
+                reaction.rates = new ArrayList<>(rates);
+            } else
+                reaction.rates = rates;
             reaction.rateTimes = rateTimes;
 
             // Apply rate multiplier if present:
@@ -370,11 +374,11 @@ public class Reaction extends BEASTObject {
      * Evaluates rate multiplier for particular location variable combination
      * and applies this multiplier to the given rate list.
      * 
-     * @param rates     Rate list
-     * @param varNames  Variable name list
-     * @param varVals   Variable value array
+     * @param theseRates   Rate list
+     * @param varNames     Variable name list
+     * @param varVals      Variable value array
      */
-    public void applyRateMultiplier(List<Double> rates, List<String> varNames, int[] varVals) {
+    public void applyRateMultiplier(List<Double> theseRates, List<String> varNames, int[] varVals) {
 
         // Compute rate multiplier
         
@@ -389,9 +393,9 @@ public class Reaction extends BEASTObject {
         }
         
         // Multiply original rates by multiplier
-        
-        for (int i=0; i<rates.size(); i++)
-            rates.set(i, rates.get(i)*rmRes[0]);
+
+        for (int i=0; i<theseRates.size(); i++)
+            theseRates.set(i, theseRates.get(i)*rmRes[0]);
         
     }
   
@@ -594,6 +598,19 @@ public class Reaction extends BEASTObject {
             }
         } else
             sb.append("0");
+
+        // Include rates:
+        sb.append(" (");
+        for (int i=0; i<rates.size(); i++) {
+            if (i>0)
+                sb.append(", ");
+
+            sb.append(rates.get(i));
+
+            if (rates.size()>1)
+                sb.append(":").append(rateTimes.get(i));
+        }
+        sb.append(")");
 
         return sb.toString();
 

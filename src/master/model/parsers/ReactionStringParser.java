@@ -485,7 +485,6 @@ public class ReactionStringParser extends Parser {
 	}
 
 	public static class IdContext extends ParserRuleContext {
-		public Token val;
 		public TerminalNode NZINT() { return getToken(ReactionStringParser.NZINT, 0); }
 		public IdContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -509,10 +508,9 @@ public class ReactionStringParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(67);
-			((IdContext)_localctx).val = _input.LT(1);
 			_la = _input.LA(1);
 			if ( !(_la==7 || _la==NZINT) ) {
-				((IdContext)_localctx).val = (Token)_errHandler.recoverInline(this);
+			_errHandler.recoverInline(this);
 			}
 			consume();
 			}

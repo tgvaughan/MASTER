@@ -20,12 +20,11 @@
             <reaction spec='Reaction' reactionName='Birth' rate="1.0">
                 X[i] -> 2X[i]
             </reaction>
-            <reaction spec='Reaction' reactionName='Death'
-                      rate="0.01">
+            <reaction spec='Reaction' reactionName='Death' rate="0.01">
                 2X[i] -> X[i]
             </reaction>
-            <reaction spec='Reaction' reactionName='Migration'
-                      rate="0.02">
+            <reaction spec='Reaction' reactionName='Migration' rate="0.02">
+                <predicate spec='Predicate' exp="i != j"/>
                 X[i] -> X[j]
             </reaction>
         </model>                

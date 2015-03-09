@@ -26,7 +26,7 @@ public class PopulationType extends BEASTObject implements Iterable<Population> 
     
     String name; // Population type name
     int[] dims; // Bounds of vectors specifying individual populations
-    int nPops; // Total number of populations posessing this type
+    int nPops; // Total number of populations possessing this type
     
     /**
      * Default constructor.

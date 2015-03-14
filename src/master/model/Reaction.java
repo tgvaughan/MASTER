@@ -54,7 +54,7 @@ public class Reaction extends BEASTObject {
 
     ParseTree reactionStringParseTree, rateMultiplierParseTree;
     ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
-    RateMultiplierExpressionVisitor rateMultiplierVisitor;
+    ExpressionVisitor rateMultiplierVisitor;
     
     /**
      * Constructor without name.
@@ -383,7 +383,7 @@ public class Reaction extends BEASTObject {
         // Compute rate multiplier
         
         if (rateMultiplierVisitor == null)
-            rateMultiplierVisitor = new RateMultiplierExpressionVisitor(varNames);
+            rateMultiplierVisitor = new ExpressionVisitor(varNames);
         rateMultiplierVisitor.setVarVals(varVals);
         
         Double[] rmRes = rateMultiplierVisitor.visit(rateMultiplierParseTree);

@@ -30,19 +30,6 @@ public class ExpressionBaseListener implements ExpressionListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBracketed(@NotNull ExpressionParser.BracketedContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBracketed(@NotNull ExpressionParser.BracketedContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterVariable(@NotNull ExpressionParser.VariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -63,6 +50,32 @@ public class ExpressionBaseListener implements ExpressionListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitNumber(@NotNull ExpressionParser.NumberContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFactorial(@NotNull ExpressionParser.FactorialContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFactorial(@NotNull ExpressionParser.FactorialContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterFunction(@NotNull ExpressionParser.FunctionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFunction(@NotNull ExpressionParser.FunctionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -95,6 +108,45 @@ public class ExpressionBaseListener implements ExpressionListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterBooleanOp(@NotNull ExpressionParser.BooleanOpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBooleanOp(@NotNull ExpressionParser.BooleanOpContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterMulDiv(@NotNull ExpressionParser.MulDivContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitMulDiv(@NotNull ExpressionParser.MulDivContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBracketed(@NotNull ExpressionParser.BracketedContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBracketed(@NotNull ExpressionParser.BracketedContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExponentiation(@NotNull ExpressionParser.ExponentiationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -102,32 +154,6 @@ public class ExpressionBaseListener implements ExpressionListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExponentiation(@NotNull ExpressionParser.ExponentiationContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterELSEWHERE1(@NotNull ExpressionParser.ELSEWHERE1Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitELSEWHERE1(@NotNull ExpressionParser.ELSEWHERE1Context ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterELSEWHERE3(@NotNull ExpressionParser.ELSEWHERE3Context ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitELSEWHERE3(@NotNull ExpressionParser.ELSEWHERE3Context ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -147,26 +173,13 @@ public class ExpressionBaseListener implements ExpressionListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterELSEWHERE2(@NotNull ExpressionParser.ELSEWHERE2Context ctx) { }
+	@Override public void enterEquality(@NotNull ExpressionParser.EqualityContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitELSEWHERE2(@NotNull ExpressionParser.ELSEWHERE2Context ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterMulDiv(@NotNull ExpressionParser.MulDivContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMulDiv(@NotNull ExpressionParser.MulDivContext ctx) { }
+	@Override public void exitEquality(@NotNull ExpressionParser.EqualityContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

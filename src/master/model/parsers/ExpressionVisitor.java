@@ -19,13 +19,6 @@ public interface ExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	T visitUnaryOp(@NotNull ExpressionParser.UnaryOpContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link ExpressionParser#Bracketed}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBracketed(@NotNull ExpressionParser.BracketedContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link ExpressionParser#Variable}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -38,6 +31,20 @@ public interface ExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitNumber(@NotNull ExpressionParser.NumberContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link ExpressionParser#Factorial}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFactorial(@NotNull ExpressionParser.FactorialContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link ExpressionParser#Function}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunction(@NotNull ExpressionParser.FunctionContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link ExpressionParser#AddSub}.
@@ -54,25 +61,32 @@ public interface ExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	T visitArray(@NotNull ExpressionParser.ArrayContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link ExpressionParser#BooleanOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBooleanOp(@NotNull ExpressionParser.BooleanOpContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link ExpressionParser#MulDiv}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMulDiv(@NotNull ExpressionParser.MulDivContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link ExpressionParser#Bracketed}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBracketed(@NotNull ExpressionParser.BracketedContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link ExpressionParser#Exponentiation}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExponentiation(@NotNull ExpressionParser.ExponentiationContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link ExpressionParser#ELSEWHERE1}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitELSEWHERE1(@NotNull ExpressionParser.ELSEWHERE1Context ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link ExpressionParser#ELSEWHERE3}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitELSEWHERE3(@NotNull ExpressionParser.ELSEWHERE3Context ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link ExpressionParser#Negation}.
@@ -82,16 +96,9 @@ public interface ExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	T visitNegation(@NotNull ExpressionParser.NegationContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link ExpressionParser#ELSEWHERE2}.
+	 * Visit a parse tree produced by {@link ExpressionParser#Equality}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitELSEWHERE2(@NotNull ExpressionParser.ELSEWHERE2Context ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link ExpressionParser#MulDiv}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMulDiv(@NotNull ExpressionParser.MulDivContext ctx);
+	T visitEquality(@NotNull ExpressionParser.EqualityContext ctx);
 }

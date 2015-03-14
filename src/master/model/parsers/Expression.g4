@@ -3,28 +3,21 @@ grammar Expression;
 // Parser rules:
 
 expression :
-        expression op=('+'|'-') factor  # AddSub
-    |   factor                          # ELSEWHERE1
-    ;
-
-factor :
-        factor op=('*'|'/') molecule   # MulDiv
-    |   molecule                       # ELSEWHERE2
-    ;
-
-molecule :
-        '-' molecule       			             # Negation
-    |   atom '^' molecule                        # Exponentiation
-    |   atom                                     # ELSEWHERE3
-    ;
-
-atom :
         '(' expression ')'                                  # Bracketed
-    |   '[' expression (',' expression)* ']'                # Array
+    |   '{' expression (',' expression)* '}'                # Array
+    |   VARNAME '(' expression (',' expression)* ')'        # Function
     |   op=(EXP|LOG|SQRT|SUM|THETA|ABS) '(' expression ')'  # UnaryOp
-    |   VARNAME  ('[' i=NNINT ']')?                         # Variable
+    |   '-' expression                                      # Negation
+    |   expression '!'                                      # Factorial
+    |<assoc=right> expression '^' expression                # Exponentiation
+    |   expression op=('*'|'/') expression                  # MulDiv
+    |   expression op=('+'|'-') expression                  # AddSub
+    |   expression op=('&&'|'||') expression                # BooleanOp
+    |   expression op=('=='|'!='|'<'|'>'|'<='|'>=') expression  # Equality
+    |   VARNAME                                             # Variable
     |   val=(NNFLOAT | NNINT)                               # Number
     ;
+
 
 // Lexer rules:
 
@@ -40,6 +33,13 @@ SQRT : 'sqrt' ;
 SUM : 'sum' ;
 THETA : 'theta' ;
 ABS : 'abs' ;
+
+EQ: '=';
+GT: '>';
+LT: '<';
+GE: '>=';
+LE: '<=';
+NE: '!=';
 
 NNINT : '0' | NZD D* ;
 NNFLOAT : NNINT ('.' D*) ([eE] '-'? D+)? ;

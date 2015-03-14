@@ -20,17 +20,6 @@ public interface ExpressionListener extends ParseTreeListener {
 	void exitUnaryOp(@NotNull ExpressionParser.UnaryOpContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link ExpressionParser#Bracketed}.
-	 * @param ctx the parse tree
-	 */
-	void enterBracketed(@NotNull ExpressionParser.BracketedContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ExpressionParser#Bracketed}.
-	 * @param ctx the parse tree
-	 */
-	void exitBracketed(@NotNull ExpressionParser.BracketedContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link ExpressionParser#Variable}.
 	 * @param ctx the parse tree
 	 */
@@ -51,6 +40,28 @@ public interface ExpressionListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNumber(@NotNull ExpressionParser.NumberContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link ExpressionParser#Factorial}.
+	 * @param ctx the parse tree
+	 */
+	void enterFactorial(@NotNull ExpressionParser.FactorialContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ExpressionParser#Factorial}.
+	 * @param ctx the parse tree
+	 */
+	void exitFactorial(@NotNull ExpressionParser.FactorialContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link ExpressionParser#Function}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunction(@NotNull ExpressionParser.FunctionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ExpressionParser#Function}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunction(@NotNull ExpressionParser.FunctionContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ExpressionParser#AddSub}.
@@ -75,6 +86,39 @@ public interface ExpressionListener extends ParseTreeListener {
 	void exitArray(@NotNull ExpressionParser.ArrayContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link ExpressionParser#BooleanOp}.
+	 * @param ctx the parse tree
+	 */
+	void enterBooleanOp(@NotNull ExpressionParser.BooleanOpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ExpressionParser#BooleanOp}.
+	 * @param ctx the parse tree
+	 */
+	void exitBooleanOp(@NotNull ExpressionParser.BooleanOpContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link ExpressionParser#MulDiv}.
+	 * @param ctx the parse tree
+	 */
+	void enterMulDiv(@NotNull ExpressionParser.MulDivContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ExpressionParser#MulDiv}.
+	 * @param ctx the parse tree
+	 */
+	void exitMulDiv(@NotNull ExpressionParser.MulDivContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link ExpressionParser#Bracketed}.
+	 * @param ctx the parse tree
+	 */
+	void enterBracketed(@NotNull ExpressionParser.BracketedContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ExpressionParser#Bracketed}.
+	 * @param ctx the parse tree
+	 */
+	void exitBracketed(@NotNull ExpressionParser.BracketedContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ExpressionParser#Exponentiation}.
 	 * @param ctx the parse tree
 	 */
@@ -84,28 +128,6 @@ public interface ExpressionListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExponentiation(@NotNull ExpressionParser.ExponentiationContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ExpressionParser#ELSEWHERE1}.
-	 * @param ctx the parse tree
-	 */
-	void enterELSEWHERE1(@NotNull ExpressionParser.ELSEWHERE1Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link ExpressionParser#ELSEWHERE1}.
-	 * @param ctx the parse tree
-	 */
-	void exitELSEWHERE1(@NotNull ExpressionParser.ELSEWHERE1Context ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ExpressionParser#ELSEWHERE3}.
-	 * @param ctx the parse tree
-	 */
-	void enterELSEWHERE3(@NotNull ExpressionParser.ELSEWHERE3Context ctx);
-	/**
-	 * Exit a parse tree produced by {@link ExpressionParser#ELSEWHERE3}.
-	 * @param ctx the parse tree
-	 */
-	void exitELSEWHERE3(@NotNull ExpressionParser.ELSEWHERE3Context ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ExpressionParser#Negation}.
@@ -119,24 +141,13 @@ public interface ExpressionListener extends ParseTreeListener {
 	void exitNegation(@NotNull ExpressionParser.NegationContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link ExpressionParser#ELSEWHERE2}.
+	 * Enter a parse tree produced by {@link ExpressionParser#Equality}.
 	 * @param ctx the parse tree
 	 */
-	void enterELSEWHERE2(@NotNull ExpressionParser.ELSEWHERE2Context ctx);
+	void enterEquality(@NotNull ExpressionParser.EqualityContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ExpressionParser#ELSEWHERE2}.
+	 * Exit a parse tree produced by {@link ExpressionParser#Equality}.
 	 * @param ctx the parse tree
 	 */
-	void exitELSEWHERE2(@NotNull ExpressionParser.ELSEWHERE2Context ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ExpressionParser#MulDiv}.
-	 * @param ctx the parse tree
-	 */
-	void enterMulDiv(@NotNull ExpressionParser.MulDivContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ExpressionParser#MulDiv}.
-	 * @param ctx the parse tree
-	 */
-	void exitMulDiv(@NotNull ExpressionParser.MulDivContext ctx);
+	void exitEquality(@NotNull ExpressionParser.EqualityContext ctx);
 }

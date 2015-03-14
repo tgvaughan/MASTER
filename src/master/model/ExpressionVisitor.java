@@ -1,50 +1,91 @@
 /*
- * Copyright (C) 2015 Tim Vaughan (tgvaughan@gmail.com)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package master.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import master.model.parsers.ExpressionBaseVisitor;
 import master.model.parsers.ExpressionParser;
 
 /**
- * Parse tree visitor used to process rate multiplier expressions.  This is
- * almost identical to the inner class Predicate.PredicateEquationVisitor:
- * there's got to be some neat way to remove this code duplication!
  *
- * @author Tim Vaughan (tgvaughan@gmail.com)
+ * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class RateMultiplierExpressionVisitor extends ExpressionBaseVisitor<Double[]>{
+public class ExpressionVisitor extends ExpressionBaseVisitor<Double[]>{
+
     private final List<String> varNames;
     private int[] varVals;
-    
-    public RateMultiplierExpressionVisitor(List<String> varNames) {
+
+    public ExpressionVisitor(List<String> varNames) {
         this.varNames = varNames;
     }
-    
-    
+
+
     /**
-     * Set the values of the variables used when evaluating the expression.
-     *
-     * @param varVals
+     * Set the values of the variables used when evaluating the
+     * predicate equation.
+     * 
+     * @param varVals 
      */
     public void setVarVals(int[] varVals) {
         this.varVals = varVals;
+    }
+
+    @Override
+    public Double[] visitEquality(ExpressionParser.EqualityContext ctx) {
+        Double[] lhs = visit(ctx.expression(0));
+        Double[] rhs = visit(ctx.expression(1));
+
+        Double[] res = new Double[Math.max(lhs.length, rhs.length)];
+        for (int i=0; i<res.length; i++) {
+            int iLeft = i%lhs.length;
+            int iRight = i%rhs.length;
+
+            switch (ctx.op.getType()) {
+                case ExpressionParser.EQ:
+                    res[i] = booleanToDouble(
+                            Objects.equals(lhs[iLeft], rhs[iRight]));
+                    break;
+
+                case ExpressionParser.NE:
+                    res[i] = booleanToDouble(
+                            !Objects.equals(lhs[iLeft], rhs[iRight]));
+                    break;
+                    
+                case ExpressionParser.LT:
+                    res[i] = booleanToDouble(lhs[iLeft] < rhs[iRight]);
+                    break;
+                    
+                case ExpressionParser.GT:
+                    res[i] = booleanToDouble(lhs[iLeft] > rhs[iRight]);
+                    break;
+                    
+                case ExpressionParser.LE:
+                    res[i] = booleanToDouble(lhs[iLeft] <= rhs[iRight]);
+                    break;
+                    
+                case ExpressionParser.GE:
+                    res[i] = booleanToDouble(lhs[iLeft] >= rhs[iRight]);
+                    break;
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * Encode booleans as doubles.
+     *
+     * @param arg
+     * @return 1.0 if arg is true, 0.0 otherwise.
+     */
+    private double booleanToDouble(boolean arg) {
+        return arg ? 1.0 : 0.0;
     }
     
     @Override
@@ -57,15 +98,15 @@ public class RateMultiplierExpressionVisitor extends ExpressionBaseVisitor<Doubl
         String varName = ctx.VARNAME().getText();
         if (!varNames.contains(varName))
             throw new IllegalArgumentException("Variable " + varName
-                + " in predicate expression was not found in reaction string.");
+                    + " in predicate expression was not found in reaction string.");
         
         return new Double[] {(double)varVals[varNames.indexOf(varName)]};
     }
     
     @Override
     public Double[] visitMulDiv(ExpressionParser.MulDivContext ctx) {
-        Double [] left = visit(ctx.factor());
-        Double [] right = visit(ctx.molecule());
+        Double [] left = visit(ctx.expression(0));
+        Double [] right = visit(ctx.expression(1));
         
         Double [] res = new Double[Math.max(left.length, right.length)];
         for (int i=0; i<res.length; i++) {
@@ -80,8 +121,8 @@ public class RateMultiplierExpressionVisitor extends ExpressionBaseVisitor<Doubl
     
     @Override
     public Double[] visitAddSub(ExpressionParser.AddSubContext ctx) {
-        Double [] left = visit(ctx.expression());
-        Double [] right = visit(ctx.factor());
+        Double [] left = visit(ctx.expression(0));
+        Double [] right = visit(ctx.expression(1));
         
         Double [] res = new Double[Math.max(left.length, right.length)];
         for (int i=0; i<res.length; i++) {
@@ -148,7 +189,7 @@ public class RateMultiplierExpressionVisitor extends ExpressionBaseVisitor<Doubl
     
     @Override
     public Double[] visitNegation(ExpressionParser.NegationContext ctx) {
-        Double[] arg = visit(ctx.molecule());
+        Double[] arg = visit(ctx.expression());
         
         Double[] res = new Double[arg.length];
         for (int i=0; i<arg.length; i++)
@@ -159,8 +200,8 @@ public class RateMultiplierExpressionVisitor extends ExpressionBaseVisitor<Doubl
     
     @Override
     public Double[] visitExponentiation(ExpressionParser.ExponentiationContext ctx) {
-        Double [] base = visit(ctx.atom());
-        Double [] power = visit(ctx.molecule());
+        Double [] base = visit(ctx.expression(0));
+        Double [] power = visit(ctx.expression(1));
         
         Double [] res = new Double[Math.max(base.length, power.length)];
         for (int i=0; i<res.length; i++) {

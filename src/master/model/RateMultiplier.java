@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Tim Vaughan (tgvaughan@gmail.com)
+ * Copyright (C) 2015 Tim Vaughan <tgvaughan@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,17 +27,16 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
- * Class of objects representing predicate functions which are
- * applied to population location variables to determine which
- * reactions to include in a model.
  *
- * @author Tim Vaughan (tgvaughan@gmail.com)
+ * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class Predicate extends BEASTObject {
+public class RateMultiplier extends BEASTObject {
 
-    public Input<String> expInput = new Input<>("value", "Boolean-valued"
-        + " expression used to determine whether reaction should be"
-        + " included in model.", Validate.REQUIRED);
+    public Input<String> expInput = new Input<>( "value",
+            "The result of evaluating this expression involving "
+                    + "population location variables is multiplied with"
+                    + "the base reaction rate to produce a location-specific"
+                    + "rate.", Validate.REQUIRED);
 
     private ExpressionEvaluator visitor;
 
@@ -45,14 +44,13 @@ public class Predicate extends BEASTObject {
     public void initAndValidate() throws Exception { }
 
     /**
-     * Determine whether the predicate equation holds for a particular set
-     * of variable values.
+     * Evaluate rate multiplier expression for the given variable values.
      * 
-     * @param varNames
-     * @param varVals
-     * @return true if the predicate holds, false otherwise.
+     * @param varNames  Names of variables in expression
+     * @param varVals   Values of variables in expression
+     * @return result of evaluating the expression
      */
-    public boolean isTrue(List<String> varNames, int[] varVals) {
+    public double evaluate(List<String> varNames, int[] varVals) {
         if (visitor == null) {
             // Parse predicate expression
             ANTLRInputStream input = new ANTLRInputStream(expInput.get());
@@ -63,12 +61,13 @@ public class Predicate extends BEASTObject {
             visitor = new ExpressionEvaluator(parseTree, varNames, null);
         }
 
-        for (Double el : visitor.evaluate(varVals)) {
-            if (el<1.0)
-                return false;
+        Double[] res =  visitor.evaluate(varVals);
+        if (res.length != 1) {
+            throw new IllegalArgumentException(
+                    "Reaction rate multiplier must be scalar!");
         }
 
-        return true;
+        return res[0];
     }
-
+    
 }

@@ -12,9 +12,13 @@
 
         <model spec='Model' id='model'>
             <populationType spec='PopulationType' typeName="X" dim="400" id="X"/>
-            <reaction spec='Reaction' reactionName="Migration" rate="50.0"
-                rateMultiplier="(1-theta(i-150)*theta(j-150)*(1-theta(i-250)*theta(j-250)) + 0.25)/1.25">
-                <predicate spec='Predicate' exp="abs(i-j)==1"/>
+            <reaction spec='Reaction' reactionName="Migration" rate="50.0">
+                <rateMultiplier spec='RateMultiplier'>
+                    <![CDATA[
+                    ((i>150 && i<250 && j>150 && j<250) + 0.25)/1.25
+                    ]]>
+                </rateMultiplier>
+                <predicate spec='Predicate' value="abs(i-j)==1"/>
                 X[i] -> X[j]
             </reaction>
         </model>

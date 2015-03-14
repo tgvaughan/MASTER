@@ -3,19 +3,19 @@ grammar Expression;
 // Parser rules:
 
 expression :
-        '(' expression ')'                                  # Bracketed
-    |   '{' expression (',' expression)* '}'                # Array
-    |   VARNAME '(' expression (',' expression)* ')'        # Function
-    |   op=(EXP|LOG|SQRT|SUM|THETA|ABS) '(' expression ')'  # UnaryOp
-    |   '-' expression                                      # Negation
-    |   expression '!'                                      # Factorial
-    |<assoc=right> expression '^' expression                # Exponentiation
-    |   expression op=('*'|'/') expression                  # MulDiv
-    |   expression op=('+'|'-') expression                  # AddSub
-    |   expression op=('&&'|'||') expression                # BooleanOp
+        '(' expression ')'                                      # Bracketed
+    |   '{' expression (',' expression)* '}'                    # Array
+    |   VARNAME '(' expression (',' expression)* ')'            # Function
+    |   op=(EXP|LOG|SQRT|SUM|THETA|ABS) '(' expression ')'      # UnaryOp
+    |   '-' expression                                          # Negation
+    |   expression '!'                                          # Factorial
+    |<assoc=right> expression '^' expression                    # Exponentiation
+    |   expression op=('*'|'/') expression                      # MulDiv
+    |   expression op=('+'|'-') expression                      # AddSub
     |   expression op=('=='|'!='|'<'|'>'|'<='|'>=') expression  # Equality
-    |   VARNAME                                             # Variable
-    |   val=(NNFLOAT | NNINT)                               # Number
+    |   expression op=('&&'|'||') expression                    # BooleanOp
+    |   VARNAME                                                 # Variable
+    |   val=(NNFLOAT | NNINT)                                   # Number
     ;
 
 

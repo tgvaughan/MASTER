@@ -6,8 +6,6 @@ import beast.core.Input.Validate;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.*;
 import java.util.*;
-import master.model.parsers.ExpressionLexer;
-import master.model.parsers.ExpressionParser;
 import master.model.parsers.ReactionStringBaseListener;
 import master.model.parsers.ReactionStringLexer;
 import master.model.parsers.ReactionStringParser;
@@ -32,10 +30,9 @@ public class Reaction extends BEASTObject {
     public Input<String> rateInput = new Input<>("rate",
             "Individual reaction rate. (Only used if group rate unset.)");
 
-    public Input<String> rateMultiplierInput = new Input("rateMultiplier",
-        "The result of evaluating this expression involving "
-            + "population location variables is multiplied with"
-            + "the base reaction rate to produce a location-specific rate.");
+    public Input<RateMultiplier> rateMultiplierInput = new Input<>(
+            "rateMultiplier",
+            "Used to produce location-dependent reaction rates.");
 
     public Input<String> reactionStringInput = new Input<>(
             "value",
@@ -54,7 +51,6 @@ public class Reaction extends BEASTObject {
 
     ParseTree reactionStringParseTree;
     ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
-    ExpressionVisitor rateMultiplierVisitor;
     
     /**
      * Constructor without name.
@@ -368,26 +364,12 @@ public class Reaction extends BEASTObject {
     public void applyRateMultiplier(List<Double> theseRates, List<String> varNames, int[] varVals) {
 
         // Compute rate multiplier
-        
-        if (rateMultiplierVisitor == null) {
-            ANTLRInputStream rmInput = new ANTLRInputStream(rateMultiplierInput.get());
-            ExpressionLexer rmLexer = new ExpressionLexer(rmInput);
-            CommonTokenStream rmTokens = new CommonTokenStream(rmLexer);
-            ExpressionParser rmParser = new ExpressionParser(rmTokens);
-            ParseTree rmParseTree = rmParser.expression();
-            rateMultiplierVisitor = new ExpressionVisitor(rmParseTree, varNames, null);
-        }
-        
-        Double[] rmRes = rateMultiplierVisitor.evaluate(varVals);
-        if (rmRes.length != 1) {
-            throw new IllegalArgumentException(
-                    "Reaction rate multiplier must be scalar!");
-        }
+        double factor = rateMultiplierInput.get().evaluate(varNames, varVals);
         
         // Multiply original rates by multiplier
 
         for (int i=0; i<theseRates.size(); i++)
-            theseRates.set(i, theseRates.get(i)*rmRes[0]);
+            theseRates.set(i, theseRates.get(i)*factor);
         
     }
   

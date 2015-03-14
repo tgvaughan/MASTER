@@ -531,15 +531,15 @@ public class ExpressionParser extends Parser {
 
 					case 4:
 						{
-						_localctx = new BooleanOpContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new EqualityContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(50);
 						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
 						setState(51);
-						((BooleanOpContext)_localctx).op = _input.LT(1);
+						((EqualityContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(_la==AND || _la==OR) ) {
-							((BooleanOpContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQ) | (1L << GT) | (1L << LT) | (1L << GE) | (1L << LE) | (1L << NE))) != 0)) ) {
+							((EqualityContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						consume();
 						setState(52); expression(5);
@@ -548,15 +548,15 @@ public class ExpressionParser extends Parser {
 
 					case 5:
 						{
-						_localctx = new EqualityContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new BooleanOpContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(53);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
 						setState(54);
-						((EqualityContext)_localctx).op = _input.LT(1);
+						((BooleanOpContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQ) | (1L << GT) | (1L << LT) | (1L << GE) | (1L << LE) | (1L << NE))) != 0)) ) {
-							((EqualityContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						if ( !(_la==AND || _la==OR) ) {
+							((BooleanOpContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						consume();
 						setState(55); expression(4);
@@ -621,7 +621,7 @@ public class ExpressionParser extends Parser {
 		"\3\2\3\2\3\2\3\2\3\2\3\2\7\2\34\n\2\f\2\16\2\37\13\2\3\2\3\2\3\2\3\2\3"+
 		"\2\3\2\3\2\3\2\3\2\5\2*\n\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3"+
 		"\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2=\n\2\f\2\16\2@\13\2\3\2\2\3\2\3\2\2\b\3"+
-		"\2\16\23\3\2\34\35\3\2\13\f\3\2\t\n\3\2\24\25\3\2\26\33N\2)\3\2\2\2\4"+
+		"\2\16\23\3\2\34\35\3\2\13\f\3\2\t\n\3\2\26\33\3\2\24\25N\2)\3\2\2\2\4"+
 		"\5\b\2\1\2\5\6\7\n\2\2\6*\5\2\2\13\7\b\7\5\2\2\b\t\5\2\2\2\t\n\7\3\2\2"+
 		"\n*\3\2\2\2\13\f\7\6\2\2\f\21\5\2\2\2\r\16\7\4\2\2\16\20\5\2\2\2\17\r"+
 		"\3\2\2\2\20\23\3\2\2\2\21\17\3\2\2\2\21\22\3\2\2\2\22\24\3\2\2\2\23\21"+

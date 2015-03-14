@@ -13,13 +13,13 @@ import org.antlr.v4.runtime.tree.ParseTree;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class ExpressionVisitor extends ExpressionBaseVisitor<Double[]>{
+public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
 
     private final List<String> varNames;
     private int[] varVals;
     private ParseTree parseTree;
 
-    public ExpressionVisitor(ParseTree parseTree, List<String> varNames, Map<String, ExpressionVisitor> functions) {
+    public ExpressionEvaluator(ParseTree parseTree, List<String> varNames, Map<String, ExpressionEvaluator> functions) {
         this.parseTree = parseTree;
         this.varNames = varNames;
     }

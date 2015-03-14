@@ -52,7 +52,7 @@ public class Reaction extends BEASTObject {
     public List<Double> rates, rateTimes;
     public double propensity;
 
-    ParseTree reactionStringParseTree, rateMultiplierParseTree;
+    ParseTree reactionStringParseTree;
     ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
     ExpressionVisitor rateMultiplierVisitor;
     
@@ -85,15 +85,6 @@ public class Reaction extends BEASTObject {
         CommonTokenStream rsTokens = new CommonTokenStream(rsLexer);
         ReactionStringParser rsParser= new ReactionStringParser(rsTokens);
         reactionStringParseTree = rsParser.reaction();
-
-        // Parse rate multiplier string
-        if (rateMultiplierInput.get() != null) {
-            ANTLRInputStream rmInput = new ANTLRInputStream(rateMultiplierInput.get());
-            ExpressionLexer rmLexer = new ExpressionLexer(rmInput);
-            CommonTokenStream rmTokens = new CommonTokenStream(rmLexer);
-            ExpressionParser rmParser = new ExpressionParser(rmTokens);
-            rateMultiplierParseTree = rmParser.expression();
-        }
     }
 
     /**
@@ -213,16 +204,12 @@ public class Reaction extends BEASTObject {
             }
 
             if (rateMultiplierInput.get() != null) {
-                // Need copies when reactions can have different rates:
                 reaction.rates = new ArrayList<>(rates);
+                applyRateMultiplier(reaction.rates, varNames, varVals);
             } else
                 reaction.rates = rates;
             reaction.rateTimes = rateTimes;
 
-            // Apply rate multiplier if present:
-
-            if (rateMultiplierInput.get() != null)
-                applyRateMultiplier(reaction.rates, varNames, varVals);
 
             // Walk reaction string parse tree to set up reaction topology
 
@@ -382,11 +369,16 @@ public class Reaction extends BEASTObject {
 
         // Compute rate multiplier
         
-        if (rateMultiplierVisitor == null)
-            rateMultiplierVisitor = new ExpressionVisitor(varNames);
-        rateMultiplierVisitor.setVarVals(varVals);
+        if (rateMultiplierVisitor == null) {
+            ANTLRInputStream rmInput = new ANTLRInputStream(rateMultiplierInput.get());
+            ExpressionLexer rmLexer = new ExpressionLexer(rmInput);
+            CommonTokenStream rmTokens = new CommonTokenStream(rmLexer);
+            ExpressionParser rmParser = new ExpressionParser(rmTokens);
+            ParseTree rmParseTree = rmParser.expression();
+            rateMultiplierVisitor = new ExpressionVisitor(rmParseTree, varNames, null);
+        }
         
-        Double[] rmRes = rateMultiplierVisitor.visit(rateMultiplierParseTree);
+        Double[] rmRes = rateMultiplierVisitor.evaluate(varVals);
         if (rmRes.length != 1) {
             throw new IllegalArgumentException(
                     "Reaction rate multiplier must be scalar!");

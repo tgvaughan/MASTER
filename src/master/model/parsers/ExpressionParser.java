@@ -15,15 +15,15 @@ public class ExpressionParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__8=1, T__7=2, T__6=3, T__5=4, T__4=5, T__3=6, T__2=7, T__1=8, T__0=9, 
-		ADD=10, SUB=11, MUL=12, DIV=13, POW=14, EXP=15, LOG=16, SQRT=17, SUM=18, 
-		THETA=19, ABS=20, EQ=21, GT=22, LT=23, GE=24, LE=25, NE=26, NNINT=27, 
-		NNFLOAT=28, VARNAME=29, WHITESPACE=30;
+		T__5=1, T__4=2, T__3=3, T__2=4, T__1=5, T__0=6, ADD=7, SUB=8, MUL=9, DIV=10, 
+		POW=11, EXP=12, LOG=13, SQRT=14, SUM=15, THETA=16, ABS=17, AND=18, OR=19, 
+		EQ=20, GT=21, LT=22, GE=23, LE=24, NE=25, NNINT=26, NNFLOAT=27, VARNAME=28, 
+		WHITESPACE=29;
 	public static final String[] tokenNames = {
-		"<INVALID>", "')'", "','", "'('", "'&&'", "'||'", "'{'", "'=='", "'}'", 
-		"'!'", "'+'", "'-'", "'*'", "'/'", "'^'", "'exp'", "'log'", "'sqrt'", 
-		"'sum'", "'theta'", "'abs'", "'='", "'>'", "'<'", "'>='", "'<='", "'!='", 
-		"NNINT", "NNFLOAT", "VARNAME", "WHITESPACE"
+		"<INVALID>", "')'", "','", "'('", "'{'", "'}'", "'!'", "'+'", "'-'", "'*'", 
+		"'/'", "'^'", "'exp'", "'log'", "'sqrt'", "'sum'", "'theta'", "'abs'", 
+		"'&&'", "'||'", "'=='", "'>'", "'<'", "'>='", "'<='", "'!='", "NNINT", 
+		"NNFLOAT", "VARNAME", "WHITESPACE"
 	};
 	public static final int
 		RULE_expression = 0;
@@ -385,7 +385,7 @@ public class ExpressionParser extends Parser {
 				_localctx = new ArrayContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(9); match(6);
+				setState(9); match(4);
 				setState(10); expression(0);
 				setState(15);
 				_errHandler.sync(this);
@@ -401,7 +401,7 @@ public class ExpressionParser extends Parser {
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(18); match(8);
+				setState(18); match(5);
 				}
 				break;
 
@@ -538,7 +538,7 @@ public class ExpressionParser extends Parser {
 						setState(51);
 						((BooleanOpContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(_la==4 || _la==5) ) {
+						if ( !(_la==AND || _la==OR) ) {
 							((BooleanOpContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						consume();
@@ -555,7 +555,7 @@ public class ExpressionParser extends Parser {
 						setState(54);
 						((EqualityContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 7) | (1L << GT) | (1L << LT) | (1L << GE) | (1L << LE) | (1L << NE))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQ) | (1L << GT) | (1L << LT) | (1L << GE) | (1L << LE) | (1L << NE))) != 0)) ) {
 							((EqualityContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						consume();
@@ -569,7 +569,7 @@ public class ExpressionParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(56);
 						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
-						setState(57); match(9);
+						setState(57); match(6);
 						}
 						break;
 					}
@@ -616,25 +616,25 @@ public class ExpressionParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3 B\4\2\t\2\3\2\3\2"+
-		"\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2\20\n\2\f\2\16\2\23\13\2\3\2\3"+
-		"\2\3\2\3\2\3\2\3\2\3\2\7\2\34\n\2\f\2\16\2\37\13\2\3\2\3\2\3\2\3\2\3\2"+
-		"\3\2\3\2\3\2\3\2\5\2*\n\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2"+
-		"\3\2\3\2\3\2\3\2\3\2\3\2\7\2=\n\2\f\2\16\2@\13\2\3\2\2\3\2\3\2\2\b\3\2"+
-		"\21\26\3\2\35\36\3\2\16\17\3\2\f\r\3\2\6\7\4\2\t\t\30\34N\2)\3\2\2\2\4"+
-		"\5\b\2\1\2\5\6\7\r\2\2\6*\5\2\2\13\7\b\7\5\2\2\b\t\5\2\2\2\t\n\7\3\2\2"+
-		"\n*\3\2\2\2\13\f\7\b\2\2\f\21\5\2\2\2\r\16\7\4\2\2\16\20\5\2\2\2\17\r"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\37B\4\2\t\2\3\2\3"+
+		"\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2\20\n\2\f\2\16\2\23\13\2\3\2"+
+		"\3\2\3\2\3\2\3\2\3\2\3\2\7\2\34\n\2\f\2\16\2\37\13\2\3\2\3\2\3\2\3\2\3"+
+		"\2\3\2\3\2\3\2\3\2\5\2*\n\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3"+
+		"\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2=\n\2\f\2\16\2@\13\2\3\2\2\3\2\3\2\2\b\3"+
+		"\2\16\23\3\2\34\35\3\2\13\f\3\2\t\n\3\2\24\25\3\2\26\33N\2)\3\2\2\2\4"+
+		"\5\b\2\1\2\5\6\7\n\2\2\6*\5\2\2\13\7\b\7\5\2\2\b\t\5\2\2\2\t\n\7\3\2\2"+
+		"\n*\3\2\2\2\13\f\7\6\2\2\f\21\5\2\2\2\r\16\7\4\2\2\16\20\5\2\2\2\17\r"+
 		"\3\2\2\2\20\23\3\2\2\2\21\17\3\2\2\2\21\22\3\2\2\2\22\24\3\2\2\2\23\21"+
-		"\3\2\2\2\24\25\7\n\2\2\25*\3\2\2\2\26\27\7\37\2\2\27\30\7\5\2\2\30\35"+
+		"\3\2\2\2\24\25\7\7\2\2\25*\3\2\2\2\26\27\7\36\2\2\27\30\7\5\2\2\30\35"+
 		"\5\2\2\2\31\32\7\4\2\2\32\34\5\2\2\2\33\31\3\2\2\2\34\37\3\2\2\2\35\33"+
 		"\3\2\2\2\35\36\3\2\2\2\36 \3\2\2\2\37\35\3\2\2\2 !\7\3\2\2!*\3\2\2\2\""+
-		"#\t\2\2\2#$\7\5\2\2$%\5\2\2\2%&\7\3\2\2&*\3\2\2\2\'*\7\37\2\2(*\t\3\2"+
+		"#\t\2\2\2#$\7\5\2\2$%\5\2\2\2%&\7\3\2\2&*\3\2\2\2\'*\7\36\2\2(*\t\3\2"+
 		"\2)\4\3\2\2\2)\7\3\2\2\2)\13\3\2\2\2)\26\3\2\2\2)\"\3\2\2\2)\'\3\2\2\2"+
-		")(\3\2\2\2*>\3\2\2\2+,\f\t\2\2,-\7\20\2\2-=\5\2\2\t./\f\b\2\2/\60\t\4"+
-		"\2\2\60=\5\2\2\t\61\62\f\7\2\2\62\63\t\5\2\2\63=\5\2\2\b\64\65\f\6\2\2"+
-		"\65\66\t\6\2\2\66=\5\2\2\7\678\f\5\2\289\t\7\2\29=\5\2\2\6:;\f\n\2\2;"+
-		"=\7\13\2\2<+\3\2\2\2<.\3\2\2\2<\61\3\2\2\2<\64\3\2\2\2<\67\3\2\2\2<:\3"+
-		"\2\2\2=@\3\2\2\2><\3\2\2\2>?\3\2\2\2?\3\3\2\2\2@>\3\2\2\2\7\21\35)<>";
+		")(\3\2\2\2*>\3\2\2\2+,\f\t\2\2,-\7\r\2\2-=\5\2\2\t./\f\b\2\2/\60\t\4\2"+
+		"\2\60=\5\2\2\t\61\62\f\7\2\2\62\63\t\5\2\2\63=\5\2\2\b\64\65\f\6\2\2\65"+
+		"\66\t\6\2\2\66=\5\2\2\7\678\f\5\2\289\t\7\2\29=\5\2\2\6:;\f\n\2\2;=\7"+
+		"\b\2\2<+\3\2\2\2<.\3\2\2\2<\61\3\2\2\2<\64\3\2\2\2<\67\3\2\2\2<:\3\2\2"+
+		"\2=@\3\2\2\2><\3\2\2\2>?\3\2\2\2?\3\3\2\2\2@>\3\2\2\2\7\21\35)<>";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

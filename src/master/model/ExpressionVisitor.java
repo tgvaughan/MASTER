@@ -1,16 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package master.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import master.model.parsers.ExpressionBaseVisitor;
 import master.model.parsers.ExpressionParser;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
  *
@@ -20,20 +17,16 @@ public class ExpressionVisitor extends ExpressionBaseVisitor<Double[]>{
 
     private final List<String> varNames;
     private int[] varVals;
+    private ParseTree parseTree;
 
-    public ExpressionVisitor(List<String> varNames) {
+    public ExpressionVisitor(ParseTree parseTree, List<String> varNames, Map<String, ExpressionVisitor> functions) {
+        this.parseTree = parseTree;
         this.varNames = varNames;
     }
 
-
-    /**
-     * Set the values of the variables used when evaluating the
-     * predicate equation.
-     * 
-     * @param varVals 
-     */
-    public void setVarVals(int[] varVals) {
+    public Double[] evaluate(int[] varVals) {
         this.varVals = varVals;
+        return visit(parseTree);
     }
 
     @Override
@@ -219,5 +212,26 @@ public class ExpressionVisitor extends ExpressionBaseVisitor<Double[]>{
             resList.addAll(Arrays.asList(visit(ectx)));
         
         return resList.toArray(new Double[0]);
+    }
+
+    @Override
+    public Double[] visitBooleanOp(ExpressionParser.BooleanOpContext ctx) {
+        Double[] left = visit(ctx.expression(0));
+        Double[] right = visit(ctx.expression(1));
+
+        Double [] res = new Double[Math.max(left.length, right.length)];
+
+        switch(ctx.op.getType()) {
+            case ExpressionParser.AND:
+                for (int i=0; i<res.length; i++)
+                    res[i] = (left[i%left.length] != 0.0) && (right[i%right.length] != 0.0) ? 1.0 : 0.0;
+                break;
+            case ExpressionParser.OR:
+                for (int i=0; i<res.length; i++)
+                    res[i] = (left[i%left.length] != 0.0) || (right[i%right.length] != 0.0) ? 1.0 : 0.0;
+                break;
+        }
+
+        return res;
     }
 }

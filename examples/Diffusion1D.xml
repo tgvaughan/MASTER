@@ -14,7 +14,7 @@
             <populationType spec='PopulationType' typeName="X" dim="400" id="X"/>
             <reaction spec='Reaction' reactionName="Migration" rate="50.0"
                 rateMultiplier="(1-theta(i-150)*theta(j-150)*(1-theta(i-250)*theta(j-250)) + 0.25)/1.25">
-                <predicate spec='Predicate' exp="abs(i-j)=1"/>
+                <predicate spec='Predicate' exp="abs(i-j)==1"/>
                 X[i] -> X[j]
             </reaction>
         </model>

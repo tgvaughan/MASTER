@@ -39,18 +39,11 @@ public class Predicate extends BEASTObject {
         + " expression used to determine whether reaction should be"
         + " included in model.", Validate.REQUIRED);
 
-    private ParseTree parseTree;
     private ExpressionVisitor visitor;
 
     @Override
     public void initAndValidate() throws Exception {
 
-        // Parse predicate expression
-        ANTLRInputStream input = new ANTLRInputStream(expInput.get());
-        ExpressionLexer lexer = new ExpressionLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ExpressionParser parser = new ExpressionParser(tokens);
-        parseTree = parser.expression();
 
     }
 
@@ -63,12 +56,17 @@ public class Predicate extends BEASTObject {
      * @return true if the predicate holds, false otherwise.
      */
     public boolean isTrue(List<String> varNames, int[] varVals) {
-        if (visitor == null)
-            visitor = new ExpressionVisitor(varNames);
+        if (visitor == null) {
+            // Parse predicate expression
+            ANTLRInputStream input = new ANTLRInputStream(expInput.get());
+            ExpressionLexer lexer = new ExpressionLexer(input);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            ExpressionParser parser = new ExpressionParser(tokens);
+            ParseTree parseTree = parser.expression();
+            visitor = new ExpressionVisitor(parseTree, varNames, null);
+        }
 
-        visitor.setVarVals(varVals);
-
-        for (Double el : visitor.visit(parseTree)) {
+        for (Double el : visitor.evaluate(varVals)) {
             if (el<1.0)
                 return false;
         }

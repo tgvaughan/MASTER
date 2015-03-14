@@ -34,7 +34,10 @@ SUM : 'sum' ;
 THETA : 'theta' ;
 ABS : 'abs' ;
 
-EQ: '=';
+AND : '&&' ;
+OR : '||' ;
+
+EQ: '==';
 GT: '>';
 LT: '<';
 GE: '>=';

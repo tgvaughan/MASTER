@@ -165,21 +165,36 @@ public class Reaction extends BEASTObject {
             
         }, reactionStringParseTree);
 
+        // Assemble list of variable names and array of variable bounds
+        List<String> scalarVarNames = new ArrayList<>(varNameBoundsMap.keySet());
+        int[] scalarVarBounds = new int[scalarVarNames.size()];
+        for (int i=0; i<scalarVarNames.size(); i++)
+            scalarVarBounds[i] = varNameBoundsMap.get(scalarVarNames.get(i));
 
-        List<String> varNames = new ArrayList<>(varNameBoundsMap.keySet());
-        int[] varBounds = new int[varNames.size()];
-        for (int i=0; i<varNames.size(); i++)
-            varBounds[i] = varNameBoundsMap.get(varNames.get(i));
-
+        // Use bounds array to assemble list of variable value arrays
         List<int[]> variableValuesList = new ArrayList<>();
-        variableLoop(0, varBounds, new int[varNames.size()], variableValuesList);
-        
-        for (int[] varVals : variableValuesList) {
+        variableLoop(0, scalarVarBounds, new int[scalarVarNames.size()], variableValuesList);
 
-            // Test predicates
+        // Add population type dimensions as additional variables:
+        List<String> vectorVarNames = new ArrayList<>();
+        Double[][] vectorVarVals = new Double[populationTypes.size()][];
+        for (int i=0; i<populationTypes.size(); i++) {
+            PopulationType popType = populationTypes.get(i);
+            vectorVarNames.add(popType.getName() + "_dim");
+            vectorVarVals[i] = new Double[popType.getDims().length];
+            for (int j=0; j<popType.getDims().length; j++) {
+                vectorVarVals[i][j] = new Double(popType.getDims()[j]);
+            }
+        }
+        
+        // Consider every combination of variable values
+        for (int[] scalarVarVals : variableValuesList) {
+
+            // Test predicates to find whether this combination is allowed
             boolean include = true;
             for (Predicate pred : predicatesInput.get()) {
-                if (!pred.isTrue(varNames, varVals, functionExpressions)) {
+                if (!pred.isTrue(scalarVarNames, scalarVarVals,
+                        vectorVarNames, vectorVarVals, functionExpressions)) {
                     include = false;
                     break;
                 }
@@ -203,7 +218,8 @@ public class Reaction extends BEASTObject {
 
             if (rateMultiplierInput.get() != null) {
                 reaction.rates = new ArrayList<>(rates);
-                applyRateMultiplier(reaction.rates, varNames, varVals, functionExpressions);
+                applyRateMultiplier(reaction.rates, scalarVarNames, scalarVarVals,
+                        vectorVarNames, vectorVarVals, functionExpressions);
             } else
                 reaction.rates = rates;
             reaction.rateTimes = rateTimes;
@@ -265,8 +281,8 @@ public class Reaction extends BEASTObject {
                                 locList.add(Integer.parseInt(locelCtx.getText()));
                             } else {
                                 String varName = locelCtx.NAME().getText();
-                                int varIdx = varNames.indexOf(varName);
-                                locList.add(varVals[varIdx]);
+                                int varIdx = scalarVarNames.indexOf(varName);
+                                locList.add(scalarVarVals[varIdx]);
                             }
                         }
                     }
@@ -360,16 +376,20 @@ public class Reaction extends BEASTObject {
      * and applies this multiplier to the given rate list.
      * 
      * @param theseRates   Rate list
-     * @param varNames     Variable name list
-     * @param varVals      Variable value array
+     * @param scalarVarNames     Variable name list
+     * @param scalarVarVals      Variable value array
+     * @param vectorVarNames
+     * @param vectorVarVals
      */
     public void applyRateMultiplier(List<Double> theseRates,
-            List<String> varNames, int[] varVals,
+            List<String> scalarVarNames, int[] scalarVarVals,
+            List<String> vectorVarNames, Double[][] vectorVarVals,
             Map<String, ExpressionEvaluator> functionExpressions) {
 
         // Compute rate multiplier
         double factor = rateMultiplierInput.get().evaluate(
-                varNames, varVals, functionExpressions);
+                scalarVarNames, scalarVarVals, vectorVarNames, vectorVarVals,
+                functionExpressions);
         
         // Multiply original rates by multiplier
 

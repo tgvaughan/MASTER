@@ -63,7 +63,7 @@ public class Function extends BEASTObject {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         ExpressionParser parser = new ExpressionParser(tokens);
         ParseTree parseTree = parser.expression();
-        evaluator = new ExpressionEvaluator(parseTree, paramNames, null);
+        evaluator = new ExpressionEvaluator(parseTree, null, paramNames, null);
     }
 
     /**

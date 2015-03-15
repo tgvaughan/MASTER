@@ -49,13 +49,17 @@ public class Predicate extends BEASTObject {
      * Determine whether the predicate equation holds for a particular set
      * of variable values.
      * 
-     * @param varNames
-     * @param varVals
+     * @param scalarVarNames
+     * @param scalarVarVals
+     * @param vectorVarNames
+     * @param vectorVarVals
      * @param functionExpressions
      * @return true if the predicate holds, false otherwise.
      */
-    public boolean isTrue(List<String> varNames, int[] varVals,
+    public boolean isTrue(List<String> scalarVarNames, int[] scalarVarVals,
+            List<String> vectorVarNames, Double[][] vectorVarVals,
             Map<String, ExpressionEvaluator> functionExpressions) {
+
         if (visitor == null) {
             // Parse predicate expression
             ANTLRInputStream input = new ANTLRInputStream(expInput.get());
@@ -63,10 +67,11 @@ public class Predicate extends BEASTObject {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             ExpressionParser parser = new ExpressionParser(tokens);
             ParseTree parseTree = parser.expression();
-            visitor = new ExpressionEvaluator(parseTree, varNames, functionExpressions);
+            visitor = new ExpressionEvaluator(parseTree,
+                scalarVarNames, vectorVarNames, functionExpressions);
         }
 
-        for (Double el : visitor.evaluate(varVals)) {
+        for (Double el : visitor.evaluate(scalarVarVals, vectorVarVals)) {
             if (el<1.0)
                 return false;
         }

@@ -17,25 +17,23 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
 
-    private final List<String> varNames;
+    private final List<String> scalarVarNames, vectorVarNames;
     private int[] scalarVarVals;
     private Double[][] vectorVarVals;
-    private ParseTree parseTree;
-    private Map<String, ExpressionEvaluator> functions;
+    private final ParseTree parseTree;
+    private final Map<String, ExpressionEvaluator> functions;
 
-    public ExpressionEvaluator(ParseTree parseTree, List<String> varNames,
+    public ExpressionEvaluator(ParseTree parseTree,
+            List<String> scalarVarNames, List<String> vectorVarNames,
             Map<String, ExpressionEvaluator> functions) {
         this.parseTree = parseTree;
-        this.varNames = varNames;
+        this.scalarVarNames = scalarVarNames;
+        this.vectorVarNames = vectorVarNames;
         this.functions = functions;
     }
 
-    public Double[] evaluate(int[] varVals) {
-        this.scalarVarVals = varVals;
-        return visit(parseTree);
-    }
-
-    public Double[] evaluate(Double[][] vectorVarVals) {
+    public Double[] evaluate(int[] scalarVarVals, Double[][] vectorVarVals) {
+        this.scalarVarVals = scalarVarVals;
         this.vectorVarVals = vectorVarVals;
         return visit(parseTree);
     }
@@ -100,14 +98,17 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     @Override
     public Double[] visitVariable(ExpressionParser.VariableContext ctx) {
         String varName = ctx.VARNAME().getText();
-        if (!varNames.contains(varName))
-            throw new IllegalArgumentException("Variable " + varName
-                    + " in predicate expression was not found in reaction string.");
 
-        if (scalarVarVals != null)
-            return new Double[] {(double)scalarVarVals[varNames.indexOf(varName)]};
-        else
-            return vectorVarVals[varNames.indexOf(varName)];
+        if (scalarVarNames.contains(varName)) {
+            return new Double[] {(double)scalarVarVals[scalarVarNames.indexOf(varName)]};
+        }
+
+        if (vectorVarNames.contains(varName)) {
+            return vectorVarVals[vectorVarNames.indexOf(varName)];
+        }
+
+        throw new IllegalArgumentException("Variable " + varName
+            + " in predicate expression was not found in reaction string.");
     }
     
     @Override
@@ -299,7 +300,7 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
         for (int i=0; i<ctx.expression().size(); i++)
             paramVals[i] = visit(ctx.expression(i));
 
-        return funcEvaluator.evaluate(paramVals);
+        return funcEvaluator.evaluate(null, paramVals);
     }
 
     

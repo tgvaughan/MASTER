@@ -11,22 +11,32 @@ import master.model.parsers.ExpressionParser;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
+ * Evaluates expressions found in rate multipliers and predicates.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
 
     private final List<String> varNames;
-    private int[] varVals;
+    private int[] scalarVarVals;
+    private Double[][] vectorVarVals;
     private ParseTree parseTree;
+    private Map<String, ExpressionEvaluator> functions;
 
-    public ExpressionEvaluator(ParseTree parseTree, List<String> varNames, Map<String, ExpressionEvaluator> functions) {
+    public ExpressionEvaluator(ParseTree parseTree, List<String> varNames,
+            Map<String, ExpressionEvaluator> functions) {
         this.parseTree = parseTree;
         this.varNames = varNames;
+        this.functions = functions;
     }
 
     public Double[] evaluate(int[] varVals) {
-        this.varVals = varVals;
+        this.scalarVarVals = varVals;
+        return visit(parseTree);
+    }
+
+    public Double[] evaluate(Double[][] vectorVarVals) {
+        this.vectorVarVals = vectorVarVals;
         return visit(parseTree);
     }
 
@@ -94,7 +104,7 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
             throw new IllegalArgumentException("Variable " + varName
                     + " in predicate expression was not found in reaction string.");
         
-        return new Double[] {(double)varVals[varNames.indexOf(varName)]};
+        return new Double[] {(double)scalarVarVals[varNames.indexOf(varName)]};
     }
     
     @Override
@@ -260,14 +270,18 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
 
     @Override
     public Double[] visitFunction(ExpressionParser.FunctionContext ctx) {
+        String funcName = ctx.VARNAME().getText();
+        ExpressionEvaluator funcEvaluator = functions.get(funcName);
+        if (funcEvaluator == null)
+            throw new IllegalArgumentException("Reference to undefined"
+                    + " function '" + funcName + "' found.");
+
         Double[][] paramVals = new Double[ctx.expression().size()][];
 
         for (int i=0; i<ctx.expression().size(); i++)
             paramVals[i] = visit(ctx.expression(i));
 
-        // TODO
-
-        return new Double[0];
+        return funcEvaluator.evaluate(paramVals);
     }
 
     

@@ -20,6 +20,7 @@ import beast.core.BEASTObject;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import java.util.List;
+import java.util.Map;
 import master.model.parsers.ExpressionLexer;
 import master.model.parsers.ExpressionParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -50,9 +51,11 @@ public class Predicate extends BEASTObject {
      * 
      * @param varNames
      * @param varVals
+     * @param functionExpressions
      * @return true if the predicate holds, false otherwise.
      */
-    public boolean isTrue(List<String> varNames, int[] varVals) {
+    public boolean isTrue(List<String> varNames, int[] varVals,
+            Map<String, ExpressionEvaluator> functionExpressions) {
         if (visitor == null) {
             // Parse predicate expression
             ANTLRInputStream input = new ANTLRInputStream(expInput.get());
@@ -60,7 +63,7 @@ public class Predicate extends BEASTObject {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             ExpressionParser parser = new ExpressionParser(tokens);
             ParseTree parseTree = parser.expression();
-            visitor = new ExpressionEvaluator(parseTree, varNames, null);
+            visitor = new ExpressionEvaluator(parseTree, varNames, functionExpressions);
         }
 
         for (Double el : visitor.evaluate(varVals)) {

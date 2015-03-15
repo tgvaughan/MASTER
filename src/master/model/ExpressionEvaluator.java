@@ -1,5 +1,6 @@
 package master.model;
 
+import beast.math.GammaFunction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -203,7 +204,18 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
         
         return res;
     }
-    
+
+    @Override
+    public Double[] visitFactorial(ExpressionParser.FactorialContext ctx) {
+        Double[] arg = visit(ctx.expression());
+        Double[] res = new Double[arg.length];
+
+        for (int i=0; i<arg.length; i++)
+            res[i] = Math.exp(GammaFunction.lnGamma(arg[i]+1));
+
+        return res;
+    }
+
     @Override
     public Double[] visitArray(ExpressionParser.ArrayContext ctx) {
         List<Double> resList = new ArrayList<>();
@@ -245,4 +257,18 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
 
         return (cond[0] != 0.0) ? visit(ctx.expression(1)) : visit(ctx.expression(2));
     }
+
+    @Override
+    public Double[] visitFunction(ExpressionParser.FunctionContext ctx) {
+        Double[][] paramVals = new Double[ctx.expression().size()][];
+
+        for (int i=0; i<ctx.expression().size(); i++)
+            paramVals[i] = visit(ctx.expression(i));
+
+        // TODO
+
+        return new Double[0];
+    }
+
+    
 }

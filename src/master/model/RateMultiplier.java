@@ -20,6 +20,7 @@ import beast.core.BEASTObject;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import java.util.List;
+import java.util.Map;
 import master.model.parsers.ExpressionLexer;
 import master.model.parsers.ExpressionParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -48,9 +49,11 @@ public class RateMultiplier extends BEASTObject {
      * 
      * @param varNames  Names of variables in expression
      * @param varVals   Values of variables in expression
+     * @param functionExpressions
      * @return result of evaluating the expression
      */
-    public double evaluate(List<String> varNames, int[] varVals) {
+    public double evaluate(List<String> varNames, int[] varVals,
+            Map<String, ExpressionEvaluator> functionExpressions) {
         if (visitor == null) {
             // Parse predicate expression
             ANTLRInputStream input = new ANTLRInputStream(expInput.get());
@@ -58,7 +61,7 @@ public class RateMultiplier extends BEASTObject {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             ExpressionParser parser = new ExpressionParser(tokens);
             ParseTree parseTree = parser.expression();
-            visitor = new ExpressionEvaluator(parseTree, varNames, null);
+            visitor = new ExpressionEvaluator(parseTree, varNames, functionExpressions);
         }
 
         Double[] res =  visitor.evaluate(varVals);

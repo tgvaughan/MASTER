@@ -110,9 +110,11 @@ public class Reaction extends BEASTObject {
      * by the ranges given.
      * 
      * @param populationTypes
+     * @param functionExpressions
      * @return list of reactions
      */
-    public List<Reaction> getAllReactions(List<PopulationType> populationTypes) {
+    public List<Reaction> getAllReactions(List<PopulationType> populationTypes,
+            Map<String, ExpressionEvaluator> functionExpressions) {
         List<Reaction> reactions = Lists.newArrayList();
 
         // Grab lists of population types and variable names, keeping track
@@ -177,7 +179,7 @@ public class Reaction extends BEASTObject {
             // Test predicates
             boolean include = true;
             for (Predicate pred : predicatesInput.get()) {
-                if (!pred.isTrue(varNames, varVals)) {
+                if (!pred.isTrue(varNames, varVals, functionExpressions)) {
                     include = false;
                     break;
                 }
@@ -201,7 +203,7 @@ public class Reaction extends BEASTObject {
 
             if (rateMultiplierInput.get() != null) {
                 reaction.rates = new ArrayList<>(rates);
-                applyRateMultiplier(reaction.rates, varNames, varVals);
+                applyRateMultiplier(reaction.rates, varNames, varVals, functionExpressions);
             } else
                 reaction.rates = rates;
             reaction.rateTimes = rateTimes;
@@ -361,10 +363,13 @@ public class Reaction extends BEASTObject {
      * @param varNames     Variable name list
      * @param varVals      Variable value array
      */
-    public void applyRateMultiplier(List<Double> theseRates, List<String> varNames, int[] varVals) {
+    public void applyRateMultiplier(List<Double> theseRates,
+            List<String> varNames, int[] varVals,
+            Map<String, ExpressionEvaluator> functionExpressions) {
 
         // Compute rate multiplier
-        double factor = rateMultiplierInput.get().evaluate(varNames, varVals);
+        double factor = rateMultiplierInput.get().evaluate(
+                varNames, varVals, functionExpressions);
         
         // Multiply original rates by multiplier
 

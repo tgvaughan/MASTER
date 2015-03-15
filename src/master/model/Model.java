@@ -32,25 +32,31 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public class Model extends BEASTObject {
     
-    public Input<List<PopulationType>> populationTypesInput = new Input<List<PopulationType>>(
+    public Input<List<PopulationType>> populationTypesInput = new Input<>(
             "populationType",
             "Population type involved in the birth-death process.",
-            new ArrayList<PopulationType>());
+            new ArrayList<>());
     
-    public Input<List<Population>> populationsInput = new Input<List<Population>>(
+    public Input<List<Population>> populationsInput = new Input<>(
             "population",
             "Population involved in the birth-death process.",
-            new ArrayList<Population>());
+            new ArrayList<>());
+
+    public Input<List<Function>> functionsInput = new Input<>(
+            "function",
+            "Function for use in reaction predicate and "
+                    + "rate multiplier expressions.",
+            new ArrayList<>());
     
-    public Input<List<ReactionGroup>> reactionGroupsInput = new Input<List<ReactionGroup>>(
+    public Input<List<ReactionGroup>> reactionGroupsInput = new Input<>(
             "reactionGroup",
             "Group of reactions involved in the birth-death process.",
-            new ArrayList<ReactionGroup>());
+            new ArrayList<>());
     
-    public Input<List<Reaction>> reactionsInput = new Input<List<Reaction>>(
+    public Input<List<Reaction>> reactionsInput = new Input<>(
             "reaction",
             "Individual reactions involved in the birth-death process.",
-            new ArrayList<Reaction>());
+            new ArrayList<>());
 
     // Population types in model:
     List<PopulationType> types;
@@ -70,16 +76,21 @@ public class Model extends BEASTObject {
         for (Population pop : populationsInput.get())
             types.add(pop.type);
 
+        // Collect functions:
+        Map<String, ExpressionEvaluator> functionExpressions = new HashMap<>();
+        for (Function function : functionsInput.get())
+            functionExpressions.put(function.getID(), function.getEvaluator());
+
         // Add reaction groups to model:
         for (ReactionGroup reactGroup: reactionGroupsInput.get()) {
             for (Reaction react : reactGroup.getReactions())
-                reactions.addAll(react.getAllReactions(types));
+                reactions.addAll(react.getAllReactions(types, functionExpressions));
         }
 
         // Add individual reactions to model:
         for (Reaction react : reactionsInput.get()) {
             //addReaction(react);
-            reactions.addAll(react.getAllReactions(types));
+            reactions.addAll(react.getAllReactions(types, functionExpressions));
         }
     }
 

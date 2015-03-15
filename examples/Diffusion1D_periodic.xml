@@ -24,8 +24,10 @@
             <reaction spec='Reaction' reactionName="Migration" rate="50.0">
                 <rateMultiplier spec='RateMultiplier' value="inSlowRegion(i,j) ? 0.2 : 1.0"/>
 
-                <!-- Include migration between neighbours -->
-                <predicate spec='Predicate' value="j == i+1 || j== i-1"/>
+                <!-- Include migration between neighbours (periodic boundary conditions) -->
+                <predicate spec='Predicate'>
+                    j == (i+1) % X_dim[0] || j==(i+X_dim[0]-1) % X_dim[0]
+                </predicate>
 
                 X[i] -> X[j]
             </reaction>

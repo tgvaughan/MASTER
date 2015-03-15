@@ -99,12 +99,26 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     public Double[] visitVariable(ExpressionParser.VariableContext ctx) {
         String varName = ctx.VARNAME().getText();
 
-        if (scalarVarNames.contains(varName)) {
+        if (scalarVarNames != null && scalarVarNames.contains(varName)) {
+            if (ctx.expression() != null) {
+                throw new IllegalArgumentException(
+                        "Error applying index to scalar variable '"
+                                + varName + "'.");
+            }
             return new Double[] {(double)scalarVarVals[scalarVarNames.indexOf(varName)]};
         }
 
-        if (vectorVarNames.contains(varName)) {
-            return vectorVarVals[vectorVarNames.indexOf(varName)];
+        if (vectorVarNames != null && vectorVarNames.contains(varName)) {
+            Double[] vectorVar = vectorVarVals[vectorVarNames.indexOf(varName)];
+            if (ctx.expression() == null)
+                return vectorVar;
+            else {
+                Double[] indexExp = visit(ctx.expression());
+                if (indexExp.length != 1)
+                    throw new IllegalArgumentException("Non-scalar index "
+                            + "to variable '" + varName +"' provided.");
+                return new Double[] {vectorVar[indexExp[0].intValue()]};
+            }
         }
 
         throw new IllegalArgumentException("Variable " + varName

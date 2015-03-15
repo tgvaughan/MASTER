@@ -1,4 +1,5 @@
-<!-- Simple discrete 1D diffusion model -->
+<!-- Simple discrete 1D diffusion model illustrating some aspects of
+     expression-based reaction scheme creation.  -->
 
 <beast version='2.0' namespace='master:master.model:master.outputs:master.steppers'>
     <run spec='Trajectory'
@@ -14,22 +15,27 @@
             <populationType spec='PopulationType' typeName="X" dim="400" id="X"/>
 
             <!-- Define a function which returns true only for a subset of reactions:-->
-            <function spec='Function' id="inCentre" params="x y">
+            <function spec='Function' id="inSlowRegion" params="x y">
                 <![CDATA[
-                x>150 && x<250 && y>150 && y<250
+                x>=0 && x<100 && y>=0 && y<100
                 ]]>
             </function>
 
             <reaction spec='Reaction' reactionName="Migration" rate="50.0">
-                <rateMultiplier spec='RateMultiplier' value="inCentre(i,j) ? 0.2 : 1.0"/>
-                <predicate spec='Predicate' value="j==i+1 || j==i-1"/>
+                <rateMultiplier spec='RateMultiplier' value="inSlowRegion(i,j) ? 0.2 : 1.0"/>
+
+                <!-- Include migration between neighbours (periodic boundary conditions) -->
+                <predicate spec='Predicate'>
+                    j == (i+1) % X_dim[0] || j==(i+X_dim[0]-1) % X_dim[0]
+                </predicate>
+
                 X[i] -> X[j]
             </reaction>
         </model>
 
         <initialState spec='InitState'>
             <populationSize spec='PopulationSize' size='1000'>
-                <population spec='Population' type="@X" location="200"/>
+                <population spec='Population' type="@X" location="50"/>
             </populationSize>
         </initialState>
         

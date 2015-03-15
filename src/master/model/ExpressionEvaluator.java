@@ -116,11 +116,24 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
         Double [] right = visit(ctx.expression(1));
         
         Double [] res = new Double[Math.max(left.length, right.length)];
-        for (int i=0; i<res.length; i++) {
-            if (ctx.op.getType() == ExpressionParser.MUL)
-                res[i] = left[i%left.length]*right[i%right.length];
-            else
-                res[i] = left[i%left.length]/right[i%right.length];
+        switch(ctx.op.getType()) {
+            case ExpressionParser.MUL:
+                for (int i=0; i<res.length; i++)
+                    res[i] = left[i%left.length] * right[i%right.length];
+                break;
+
+            case ExpressionParser.DIV:
+                for (int i=0; i<res.length; i++)
+                    res[i] = left[i%left.length] / right[i%right.length];
+                break;
+
+            case ExpressionParser.MOD:
+                for (int i=0; i<res.length; i++)
+                    res[i] = left[i%left.length] % right[i%right.length];
+                break;
+
+            default:
+                // Should never get here.
         }
         
         return res;

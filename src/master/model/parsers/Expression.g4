@@ -10,7 +10,7 @@ expression :
     |   '-' expression                                          # Negation
     |   expression '!'                                          # Factorial
     |<assoc=right> expression '^' expression                    # Exponentiation
-    |   expression op=('*'|'/') expression                      # MulDiv
+    |   expression op=('*'|'/'|'%') expression                  # MulDiv
     |   expression op=('+'|'-') expression                      # AddSub
     |   expression op=('=='|'!='|'<'|'>'|'<='|'>=') expression  # Equality
     |   expression op=('&&'|'||') expression                    # BooleanOp
@@ -26,6 +26,7 @@ ADD : '+' ;
 SUB : '-' ;
 MUL : '*' ;
 DIV : '/' ;
+MOD : '%' ;
 POW : '^' ;
 
 EXP : 'exp' ;

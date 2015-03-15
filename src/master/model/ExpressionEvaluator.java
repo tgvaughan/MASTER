@@ -234,4 +234,15 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
 
         return res;
     }
+
+    @Override
+    public Double[] visitIfThenElse(ExpressionParser.IfThenElseContext ctx) {
+        Double[] cond = visit(ctx.expression(0));
+
+        if (cond.length != 1)
+            throw new IllegalArgumentException("Condition expressions in"
+                    + "if-then-else must be scalar.");
+
+        return (cond[0] != 0.0) ? visit(ctx.expression(1)) : visit(ctx.expression(2));
+    }
 }

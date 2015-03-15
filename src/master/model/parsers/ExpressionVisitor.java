@@ -82,6 +82,13 @@ public interface ExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	T visitBracketed(@NotNull ExpressionParser.BracketedContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link ExpressionParser#IfThenElse}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfThenElse(@NotNull ExpressionParser.IfThenElseContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link ExpressionParser#Exponentiation}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

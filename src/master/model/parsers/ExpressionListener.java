@@ -119,6 +119,17 @@ public interface ExpressionListener extends ParseTreeListener {
 	void exitBracketed(@NotNull ExpressionParser.BracketedContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link ExpressionParser#IfThenElse}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfThenElse(@NotNull ExpressionParser.IfThenElseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ExpressionParser#IfThenElse}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfThenElse(@NotNull ExpressionParser.IfThenElseContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ExpressionParser#Exponentiation}.
 	 * @param ctx the parse tree
 	 */

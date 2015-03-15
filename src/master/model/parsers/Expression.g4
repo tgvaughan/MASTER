@@ -14,6 +14,7 @@ expression :
     |   expression op=('+'|'-') expression                      # AddSub
     |   expression op=('=='|'!='|'<'|'>'|'<='|'>=') expression  # Equality
     |   expression op=('&&'|'||') expression                    # BooleanOp
+    |<assoc=right>   expression '?' expression ':' expression   # IfThenElse
     |   VARNAME                                                 # Variable
     |   val=(NNFLOAT | NNINT)                                   # Number
     ;

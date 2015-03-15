@@ -22,7 +22,7 @@
 
             <reaction spec='Reaction' reactionName="Migration" rate="50.0">
                 <rateMultiplier spec='RateMultiplier' value="inCentre(i,j) ? 0.2 : 1.0"/>
-                <predicate spec='Predicate' value="abs(i-j)==1"/>
+                <predicate spec='Predicate' value="j==i+1 || j==i-1"/>
                 X[i] -> X[j]
             </reaction>
         </model>

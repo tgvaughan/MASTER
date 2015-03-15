@@ -103,8 +103,11 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
         if (!varNames.contains(varName))
             throw new IllegalArgumentException("Variable " + varName
                     + " in predicate expression was not found in reaction string.");
-        
-        return new Double[] {(double)scalarVarVals[varNames.indexOf(varName)]};
+
+        if (scalarVarVals != null)
+            return new Double[] {(double)scalarVarVals[varNames.indexOf(varName)]};
+        else
+            return vectorVarVals[varNames.indexOf(varName)];
     }
     
     @Override
@@ -271,10 +274,12 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     @Override
     public Double[] visitFunction(ExpressionParser.FunctionContext ctx) {
         String funcName = ctx.VARNAME().getText();
-        ExpressionEvaluator funcEvaluator = functions.get(funcName);
-        if (funcEvaluator == null)
+
+        if (functions == null || functions.get(funcName) == null)
             throw new IllegalArgumentException("Reference to undefined"
                     + " function '" + funcName + "' found.");
+
+        ExpressionEvaluator funcEvaluator = functions.get(funcName);
 
         Double[][] paramVals = new Double[ctx.expression().size()][];
 

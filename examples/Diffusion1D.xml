@@ -12,12 +12,16 @@
 
         <model spec='Model' id='model'>
             <populationType spec='PopulationType' typeName="X" dim="400" id="X"/>
+
+            <!-- Define a function which returns true only for a subset of reactions:-->
+            <function spec='Function' id="inCentre" params="x y">
+                <![CDATA[
+                x>150 && x<250 && y>150 && y<250
+                ]]>
+            </function>
+
             <reaction spec='Reaction' reactionName="Migration" rate="50.0">
-                <rateMultiplier spec='RateMultiplier'>
-                    <![CDATA[
-                    ((i>150 && i<250 && j>150 && j<250) + 0.25)/1.25
-                    ]]>
-                </rateMultiplier>
+                <rateMultiplier spec='RateMultiplier' value="inCentre(i,j) ? 0.2 : 1.0"/>
                 <predicate spec='Predicate' value="abs(i-j)==1"/>
                 X[i] -> X[j]
             </reaction>

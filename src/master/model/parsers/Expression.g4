@@ -53,4 +53,7 @@ fragment NZD : [1-9] ;
 
 VARNAME : [a-zA-Z_][a-zA-Z_0-9]* ;
 
+COMMENT_SINGLELINE: '//' .*? '\n' -> skip ;
+COMMENT_MULTILINE: '/*' .*? '*/' -> skip ;
+
 WHITESPACE : [ \t\r\n]+ -> skip ;

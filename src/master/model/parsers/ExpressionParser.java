@@ -18,12 +18,14 @@ public class ExpressionParser extends Parser {
 		T__9=1, T__8=2, T__7=3, T__6=4, T__5=5, T__4=6, T__3=7, T__2=8, T__1=9, 
 		T__0=10, ADD=11, SUB=12, MUL=13, DIV=14, MOD=15, POW=16, EXP=17, LOG=18, 
 		SQRT=19, SUM=20, THETA=21, ABS=22, AND=23, OR=24, EQ=25, GT=26, LT=27, 
-		GE=28, LE=29, NE=30, NNINT=31, NNFLOAT=32, VARNAME=33, WHITESPACE=34;
+		GE=28, LE=29, NE=30, NNINT=31, NNFLOAT=32, VARNAME=33, COMMENT_SINGLELINE=34, 
+		COMMENT_MULTILINE=35, WHITESPACE=36;
 	public static final String[] tokenNames = {
 		"<INVALID>", "']'", "')'", "','", "'['", "'('", "':'", "'?'", "'{'", "'}'", 
 		"'!'", "'+'", "'-'", "'*'", "'/'", "'%'", "'^'", "'exp'", "'log'", "'sqrt'", 
 		"'sum'", "'theta'", "'abs'", "'&&'", "'||'", "'=='", "'>'", "'<'", "'>='", 
-		"'<='", "'!='", "NNINT", "NNFLOAT", "VARNAME", "WHITESPACE"
+		"'<='", "'!='", "NNINT", "NNFLOAT", "VARNAME", "COMMENT_SINGLELINE", "COMMENT_MULTILINE", 
+		"WHITESPACE"
 	};
 	public static final int
 		RULE_expression = 0;
@@ -666,7 +668,7 @@ public class ExpressionParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3$N\4\2\t\2\3\2\3\2"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3&N\4\2\t\2\3\2\3\2"+
 		"\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\7\2\20\n\2\f\2\16\2\23\13\2\3\2\3"+
 		"\2\3\2\3\2\3\2\3\2\3\2\7\2\34\n\2\f\2\16\2\37\13\2\3\2\3\2\3\2\3\2\3\2"+
 		"\3\2\3\2\3\2\3\2\3\2\3\2\3\2\5\2-\n\2\3\2\5\2\60\n\2\3\2\3\2\3\2\3\2\3"+

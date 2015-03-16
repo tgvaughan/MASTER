@@ -19,7 +19,7 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
 
     private final List<String> scalarVarNames, vectorVarNames;
     private int[] scalarVarVals;
-    private Double[][] vectorVarVals;
+    private List<Double[]> vectorVarVals;
     private final ParseTree parseTree;
     private final Map<String, ExpressionEvaluator> functions;
 
@@ -32,7 +32,7 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
         this.functions = functions;
     }
 
-    public Double[] evaluate(int[] scalarVarVals, Double[][] vectorVarVals) {
+    public Double[] evaluate(int[] scalarVarVals, List<Double[]> vectorVarVals) {
         this.scalarVarVals = scalarVarVals;
         this.vectorVarVals = vectorVarVals;
         return visit(parseTree);
@@ -109,7 +109,7 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
         }
 
         if (vectorVarNames != null && vectorVarNames.contains(varName)) {
-            Double[] vectorVar = vectorVarVals[vectorVarNames.indexOf(varName)];
+            Double[] vectorVar = vectorVarVals.get(vectorVarNames.indexOf(varName));
             if (ctx.expression() == null)
                 return vectorVar;
             else {
@@ -309,10 +309,10 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
 
         ExpressionEvaluator funcEvaluator = functions.get(funcName);
 
-        Double[][] paramVals = new Double[ctx.expression().size()][];
+        List<Double[]> paramVals = new ArrayList<>();
 
         for (int i=0; i<ctx.expression().size(); i++)
-            paramVals[i] = visit(ctx.expression(i));
+            paramVals.add(visit(ctx.expression(i)));
 
         return funcEvaluator.evaluate(null, paramVals);
     }

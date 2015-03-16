@@ -110,11 +110,11 @@ public class Reaction extends BEASTObject {
      * by the ranges given.
      * 
      * @param populationTypes
-     * @param functionExpressions
+     * @param functionMap
      * @return list of reactions
      */
     public List<Reaction> getAllReactions(List<PopulationType> populationTypes,
-            Map<String, ExpressionEvaluator> functionExpressions) {
+            Map<String, Function> functionMap) {
         List<Reaction> reactions = Lists.newArrayList();
 
         // Grab lists of population types and variable names, keeping track
@@ -177,13 +177,13 @@ public class Reaction extends BEASTObject {
 
         // Add population type dimensions as additional variables:
         List<String> vectorVarNames = new ArrayList<>();
-        Double[][] vectorVarVals = new Double[populationTypes.size()][];
+        List<Double[]> vectorVarVals = new ArrayList<>();
         for (int i=0; i<populationTypes.size(); i++) {
             PopulationType popType = populationTypes.get(i);
             vectorVarNames.add(popType.getName() + "_dim");
-            vectorVarVals[i] = new Double[popType.getDims().length];
+            vectorVarVals.add(new Double[popType.getDims().length]);
             for (int j=0; j<popType.getDims().length; j++) {
-                vectorVarVals[i][j] = new Double(popType.getDims()[j]);
+                vectorVarVals.get(i)[j] = new Double(popType.getDims()[j]);
             }
         }
         
@@ -194,7 +194,7 @@ public class Reaction extends BEASTObject {
             boolean include = true;
             for (Predicate pred : predicatesInput.get()) {
                 if (!pred.isTrue(scalarVarNames, scalarVarVals,
-                        vectorVarNames, vectorVarVals, functionExpressions)) {
+                        vectorVarNames, vectorVarVals, functionMap)) {
                     include = false;
                     break;
                 }
@@ -219,7 +219,7 @@ public class Reaction extends BEASTObject {
             if (rateMultiplierInput.get() != null) {
                 reaction.rates = new ArrayList<>(rates);
                 applyRateMultiplier(reaction.rates, scalarVarNames, scalarVarVals,
-                        vectorVarNames, vectorVarVals, functionExpressions);
+                        vectorVarNames, vectorVarVals, functionMap);
             } else
                 reaction.rates = rates;
             reaction.rateTimes = rateTimes;
@@ -380,10 +380,11 @@ public class Reaction extends BEASTObject {
      * @param scalarVarVals      Variable value array
      * @param vectorVarNames
      * @param vectorVarVals
+     * @param functionExpressions
      */
     public void applyRateMultiplier(List<Double> theseRates,
             List<String> scalarVarNames, int[] scalarVarVals,
-            List<String> vectorVarNames, Double[][] vectorVarVals,
+            List<String> vectorVarNames, List<Double[]> vectorVarVals,
             Map<String, ExpressionEvaluator> functionExpressions) {
 
         // Compute rate multiplier

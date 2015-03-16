@@ -77,20 +77,20 @@ public class Model extends BEASTObject {
             types.add(pop.type);
 
         // Collect functions:
-        Map<String, ExpressionEvaluator> functionExpressions = new HashMap<>();
+        Map<String, Function> functionMap = new HashMap<>();
         for (Function function : functionsInput.get())
-            functionExpressions.put(function.getID(), function.getEvaluator());
+            functionMap.put(function.getID(), function);
 
         // Add reaction groups to model:
         for (ReactionGroup reactGroup: reactionGroupsInput.get()) {
             for (Reaction react : reactGroup.getReactions())
-                reactions.addAll(react.getAllReactions(types, functionExpressions));
+                reactions.addAll(react.getAllReactions(types, functionMap));
         }
 
         // Add individual reactions to model:
         for (Reaction react : reactionsInput.get()) {
             //addReaction(react);
-            reactions.addAll(react.getAllReactions(types, functionExpressions));
+            reactions.addAll(react.getAllReactions(types, functionMap));
         }
     }
 

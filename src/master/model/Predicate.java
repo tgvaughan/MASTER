@@ -53,12 +53,12 @@ public class Predicate extends BEASTObject {
      * @param scalarVarVals
      * @param vectorVarNames
      * @param vectorVarVals
-     * @param functionExpressions
+     * @param functionMap
      * @return true if the predicate holds, false otherwise.
      */
     public boolean isTrue(List<String> scalarVarNames, int[] scalarVarVals,
-            List<String> vectorVarNames, Double[][] vectorVarVals,
-            Map<String, ExpressionEvaluator> functionExpressions) {
+            List<String> vectorVarNames, List<Double[]> vectorVarVals,
+            Map<String, Function> functionMap) {
 
         if (visitor == null) {
             // Parse predicate expression
@@ -68,7 +68,7 @@ public class Predicate extends BEASTObject {
             ExpressionParser parser = new ExpressionParser(tokens);
             ParseTree parseTree = parser.expression();
             visitor = new ExpressionEvaluator(parseTree,
-                scalarVarNames, vectorVarNames, functionExpressions);
+                scalarVarNames, vectorVarNames, functionMap);
         }
 
         for (Double el : visitor.evaluate(scalarVarVals, vectorVarVals)) {

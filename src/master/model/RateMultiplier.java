@@ -55,7 +55,7 @@ public class RateMultiplier extends BEASTObject {
      * @return result of evaluating the expression
      */
     public double evaluate(List<String> scalarVarNames, int[] scalarVarVals,
-            List<String> vectorVarNames, Double[][] vectorVarVals,
+            List<String> vectorVarNames, List<Double[]> vectorVarVals,
             Map<String, ExpressionEvaluator> functionExpressions) {
         if (visitor == null) {
             // Parse predicate expression

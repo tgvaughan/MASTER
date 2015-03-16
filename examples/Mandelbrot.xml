@@ -19,7 +19,6 @@
             </function>
             <function spec='Function' id="mod2" params="z" value="sum(z*z)"/>
             <function spec='Function' id="csq" params="z" value="{z[0]^2 - z[1]^2, 2*z[0]*z[1]}"/>
-            </function>
             <function spec='Function' id="inMandelbrot" params="z c n">
                 mod2(z)>4 ? 0.0
                           : n>0 ? inMandelBrot(csq(z) + c, n-1)
@@ -38,9 +37,7 @@
         </model>
 
         <initialState spec='InitState'>
-            <populationSize spec='PopulationSize' size='1000'>
-                <population spec='Population' type="@X" location="25 25"/>
-            </populationSize>
+            <!-- Empty initial state. -->
         </initialState>
         
         <output spec='JsonOutput' fileName='$(filebase)_output.json'/>

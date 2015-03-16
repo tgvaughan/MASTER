@@ -130,6 +130,17 @@ public interface ExpressionListener extends ParseTreeListener {
 	void exitIfThenElse(@NotNull ExpressionParser.IfThenElseContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link ExpressionParser#ArraySubscript}.
+	 * @param ctx the parse tree
+	 */
+	void enterArraySubscript(@NotNull ExpressionParser.ArraySubscriptContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ExpressionParser#ArraySubscript}.
+	 * @param ctx the parse tree
+	 */
+	void exitArraySubscript(@NotNull ExpressionParser.ArraySubscriptContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ExpressionParser#Exponentiation}.
 	 * @param ctx the parse tree
 	 */

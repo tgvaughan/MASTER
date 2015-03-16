@@ -5,7 +5,8 @@ grammar Expression;
 expression :
         '(' expression ')'                                      # Bracketed
     |   '{' expression (',' expression)* '}'                    # Array
-    |   VARNAME '(' expression (',' expression)* ')'            # Function
+    |   expression '[' expression ']'                           # ArraySubscript
+    |   IDENT '(' expression (',' expression)* ')'              # Function
     |   op=(EXP|LOG|SQRT|SUM|THETA|ABS) '(' expression ')'      # UnaryOp
     |   '-' expression                                          # Negation
     |   expression '!'                                          # Factorial
@@ -15,7 +16,7 @@ expression :
     |   expression op=('=='|'!='|'<'|'>'|'<='|'>=') expression  # Equality
     |   expression op=('&&'|'||') expression                    # BooleanOp
     |<assoc=right>   expression '?' expression ':' expression   # IfThenElse
-    |   VARNAME ('[' expression ']')?                           # Variable
+    |   IDENT                                                   # Variable
     |   val=(NNFLOAT | NNINT)                                   # Number
     ;
 
@@ -51,7 +52,7 @@ NNFLOAT : NNINT ('.' D*) ([eE] '-'? D+)? ;
 fragment D : [0-9] ;
 fragment NZD : [1-9] ;
 
-VARNAME : [a-zA-Z_][a-zA-Z_0-9]* ;
+IDENT : [a-zA-Z_][a-zA-Z_0-9]* ;
 
 COMMENT_SINGLELINE: '//' .*? '\n' -> skip ;
 COMMENT_MULTILINE: '/*' .*? '*/' -> skip ;

@@ -51,12 +51,12 @@ public class RateMultiplier extends BEASTObject {
      * @param scalarVarVals   Values of scalar variables in expression
      * @param vectorVarNames  Names of vector variables in expression
      * @param vectorVarVals   Values of vector variables in expression
-     * @param functionExpressions
+     * @param functions
      * @return result of evaluating the expression
      */
     public double evaluate(List<String> scalarVarNames, int[] scalarVarVals,
             List<String> vectorVarNames, List<Double[]> vectorVarVals,
-            Map<String, ExpressionEvaluator> functionExpressions) {
+            Map<String, Function> functions) {
         if (visitor == null) {
             // Parse predicate expression
             ANTLRInputStream input = new ANTLRInputStream(expInput.get());
@@ -64,11 +64,13 @@ public class RateMultiplier extends BEASTObject {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             ExpressionParser parser = new ExpressionParser(tokens);
             ParseTree parseTree = parser.expression();
-            visitor = new ExpressionEvaluator(parseTree,
-                scalarVarNames, vectorVarNames, functionExpressions);
+            visitor = new ExpressionEvaluator(parseTree, scalarVarNames, functions);
         }
 
-        Double[] res =  visitor.evaluate(scalarVarVals, vectorVarVals);
+        for (int i=0; i<vectorVarNames.size(); i++)
+            visitor.setVectorVar(vectorVarNames.get(i), vectorVarVals.get(i));
+
+        Double[] res =  visitor.evaluate(scalarVarVals);
         if (res.length != 1) {
             throw new IllegalArgumentException(
                     "Reaction rate multiplier must be scalar!");

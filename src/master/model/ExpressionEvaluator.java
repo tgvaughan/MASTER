@@ -3,6 +3,7 @@ package master.model;
 import beast.math.GammaFunction;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,25 +18,31 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
 
-    private final List<String> scalarVarNames, vectorVarNames;
+    private final List<String> scalarVarNames;
     private int[] scalarVarVals;
-    private List<Double[]> vectorVarVals;
+    private final Map<String, Double[]> vectorVarMap;
     private final ParseTree parseTree;
-    private final Map<String, ExpressionEvaluator> functions;
+    private final Map<String, Function> functions;
 
     public ExpressionEvaluator(ParseTree parseTree,
-            List<String> scalarVarNames, List<String> vectorVarNames,
-            Map<String, ExpressionEvaluator> functions) {
+            List<String> scalarVarNames, Map<String, Function> functions) {
         this.parseTree = parseTree;
         this.scalarVarNames = scalarVarNames;
-        this.vectorVarNames = vectorVarNames;
+        this.vectorVarMap = new HashMap<>();
         this.functions = functions;
     }
 
-    public Double[] evaluate(int[] scalarVarVals, List<Double[]> vectorVarVals) {
+    public Double[] evaluate(int[] scalarVarVals) {
         this.scalarVarVals = scalarVarVals;
-        this.vectorVarVals = vectorVarVals;
         return visit(parseTree);
+    }
+
+    public void setVectorVar(String varName, Double[] varVal) {
+        this.vectorVarMap.put(varName, varVal);
+    }
+
+    public void clearVectorVars() {
+        this.vectorVarMap.clear();
     }
 
     @Override
@@ -97,33 +104,18 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     
     @Override
     public Double[] visitVariable(ExpressionParser.VariableContext ctx) {
-        String varName = ctx.VARNAME().getText();
+        String varName = ctx.IDENT().getText();
 
-        if (scalarVarNames != null && scalarVarNames.contains(varName)) {
-            if (ctx.expression() != null) {
-                throw new IllegalArgumentException(
-                        "Error applying index to scalar variable '"
-                                + varName + "'.");
-            }
+        if (scalarVarNames != null && scalarVarNames.contains(varName))
             return new Double[] {(double)scalarVarVals[scalarVarNames.indexOf(varName)]};
-        }
 
-        if (vectorVarNames != null && vectorVarNames.contains(varName)) {
-            Double[] vectorVar = vectorVarVals.get(vectorVarNames.indexOf(varName));
-            if (ctx.expression() == null)
-                return vectorVar;
-            else {
-                Double[] indexExp = visit(ctx.expression());
-                if (indexExp.length != 1)
-                    throw new IllegalArgumentException("Non-scalar index "
-                            + "to variable '" + varName +"' provided.");
-                return new Double[] {vectorVar[indexExp[0].intValue()]};
-            }
-        }
+        if (vectorVarMap.containsKey(varName))
+            return vectorVarMap.get(varName);
 
         throw new IllegalArgumentException("Variable " + varName
             + " in predicate expression was not found in reaction string.");
     }
+
     
     @Override
     public Double[] visitMulDiv(ExpressionParser.MulDivContext ctx) {
@@ -268,6 +260,20 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
 
     @Override
+    public Double[] visitArraySubscript(ExpressionParser.ArraySubscriptContext ctx) {
+        Double[] array = visit(ctx.expression(0));
+        Double[] index = visit(ctx.expression(1));
+
+        if (index.length != 1)
+            throw new IllegalArgumentException("Non-scalar index into array.");
+
+        if (index[0]>=array.length)
+            throw new IllegalArgumentException("Array index out of bounds.");
+
+        return new Double[] {array[index[0].intValue()]};
+    }
+
+    @Override
     public Double[] visitBooleanOp(ExpressionParser.BooleanOpContext ctx) {
         Double[] left = visit(ctx.expression(0));
         Double[] right = visit(ctx.expression(1));
@@ -301,20 +307,26 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
 
     @Override
     public Double[] visitFunction(ExpressionParser.FunctionContext ctx) {
-        String funcName = ctx.VARNAME().getText();
+        String funcName = ctx.IDENT().getText();
 
         if (functions == null || functions.get(funcName) == null)
             throw new IllegalArgumentException("Reference to undefined"
                     + " function '" + funcName + "' found.");
 
-        ExpressionEvaluator funcEvaluator = functions.get(funcName);
+        Function function = functions.get(funcName);
+        ExpressionEvaluator funcEvaluator = function.getEvaluator(scalarVarNames, functions);
+
+        for (String varName : vectorVarMap.keySet())
+            funcEvaluator.setVectorVar(varName, vectorVarMap.get(varName));
 
         List<Double[]> paramVals = new ArrayList<>();
 
-        for (int i=0; i<ctx.expression().size(); i++)
-            paramVals.add(visit(ctx.expression(i)));
+        for (int i=0; i<ctx.expression().size(); i++) {
+            funcEvaluator.setVectorVar(function.getParamNames().get(i),
+                    visit(ctx.expression(i)));
+        }
 
-        return funcEvaluator.evaluate(null, paramVals);
+        return funcEvaluator.evaluate(scalarVarVals);
     }
 
     

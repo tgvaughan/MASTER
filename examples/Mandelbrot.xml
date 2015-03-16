@@ -1,8 +1,8 @@
-<!-- Demonstration that MASTER is Mandelbrot-complete -->
+<!-- Demonstration that MASTER expression syntax is Mandelbrot-complete -->
 
 <beast version='2.0' namespace='master:master.model:master.outputs:master.steppers'>
     <run spec='Trajectory'
-         simulationTime='20'
+         simulationTime='1'
          nSamples="10"
          verbosity='2'>
         
@@ -11,29 +11,34 @@
         <stepper spec='RateEquationStepper' stepSize="0.1" />
 
         <model spec='Model' id='model'>
-            <populationType spec='PopulationType' typeName="X" dim="51 51" id="X"/>
+            <populationType spec='PopulationType' typeName="X" dim="100 50" id="X"/>
+
+            <!-- Functions used to compute Mandelbrot set membership. -->
 
             <function spec='Function' id="toComplex" params="x y">
-                {-2 + 2.5*(x/X_dim[0] - 0.5),
-                -1.2 + 2.4*(y/X_dim[1] - 0.5)}
+                {-2 + 2.5*x/X_dim[0], -1.2 + 2.4*y/X_dim[1]}
             </function>
             <function spec='Function' id="mod2" params="z" value="sum(z*z)"/>
             <function spec='Function' id="csq" params="z" value="{z[0]^2 - z[1]^2, 2*z[0]*z[1]}"/>
+
             <function spec='Function' id="inMandelbrot" params="z c n">
                 mod2(z)>4 ? 0.0
-                          : n>0 ? inMandelBrot(csq(z) + c, n-1)
+                          : n>0 ? inMandelbrot(csq(z) + c, c, n-1)
                                 : 1.0
             </function>
 
-            <reaction spec='Reaction' reactionName="Production" rate="0.1">
-                <predicate spec='Predicate' value="inMandelbrot({0,0}, toComplex(x,y), 20)"/>
+            <!-- Add sources at locations corresponding to points in the complex plain
+                 inside the Mandelbrot set. -->
+            <reaction spec='Reaction' reactionName="Production" rate="1.0">
+                <predicate spec='Predicate' value="inMandelbrot({0,0}, toComplex(x,y), 50)"/>
                 0 -> X[x, y]
             </reaction>
 
-            <!--reaction spec='Reaction' reactionName="Migration" rate="1.0">
+            <!-- Allow for some diffusion to keep things interesting. -->
+            <reaction spec='Reaction' reactionName="Migration" rate="1.0">
                 <predicate spec='Predicate' value="sum(abs({x1,y1}-{x2,y2}))==1"/>
                 X[x1,y1] -> X[x2,y2]
-            </reaction-->
+            </reaction>
         </model>
 
         <initialState spec='InitState'>

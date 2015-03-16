@@ -89,6 +89,13 @@ public interface ExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	T visitIfThenElse(@NotNull ExpressionParser.IfThenElseContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link ExpressionParser#ArraySubscript}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArraySubscript(@NotNull ExpressionParser.ArraySubscriptContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link ExpressionParser#Exponentiation}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

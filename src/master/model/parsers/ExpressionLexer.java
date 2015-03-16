@@ -18,7 +18,7 @@ public class ExpressionLexer extends Lexer {
 		T__9=1, T__8=2, T__7=3, T__6=4, T__5=5, T__4=6, T__3=7, T__2=8, T__1=9, 
 		T__0=10, ADD=11, SUB=12, MUL=13, DIV=14, MOD=15, POW=16, EXP=17, LOG=18, 
 		SQRT=19, SUM=20, THETA=21, ABS=22, AND=23, OR=24, EQ=25, GT=26, LT=27, 
-		GE=28, LE=29, NE=30, NNINT=31, NNFLOAT=32, VARNAME=33, COMMENT_SINGLELINE=34, 
+		GE=28, LE=29, NE=30, NNINT=31, NNFLOAT=32, IDENT=33, COMMENT_SINGLELINE=34, 
 		COMMENT_MULTILINE=35, WHITESPACE=36;
 	public static String[] modeNames = {
 		"DEFAULT_MODE"
@@ -29,14 +29,14 @@ public class ExpressionLexer extends Lexer {
 		"']'", "')'", "','", "'['", "'('", "':'", "'?'", "'{'", "'}'", "'!'", 
 		"'+'", "'-'", "'*'", "'/'", "'%'", "'^'", "'exp'", "'log'", "'sqrt'", 
 		"'sum'", "'theta'", "'abs'", "'&&'", "'||'", "'=='", "'>'", "'<'", "'>='", 
-		"'<='", "'!='", "NNINT", "NNFLOAT", "VARNAME", "COMMENT_SINGLELINE", "COMMENT_MULTILINE", 
+		"'<='", "'!='", "NNINT", "NNFLOAT", "IDENT", "COMMENT_SINGLELINE", "COMMENT_MULTILINE", 
 		"WHITESPACE"
 	};
 	public static final String[] ruleNames = {
 		"T__9", "T__8", "T__7", "T__6", "T__5", "T__4", "T__3", "T__2", "T__1", 
 		"T__0", "ADD", "SUB", "MUL", "DIV", "MOD", "POW", "EXP", "LOG", "SQRT", 
 		"SUM", "THETA", "ABS", "AND", "OR", "EQ", "GT", "LT", "GE", "LE", "NE", 
-		"NNINT", "NNFLOAT", "D", "NZD", "VARNAME", "COMMENT_SINGLELINE", "COMMENT_MULTILINE", 
+		"NNINT", "NNFLOAT", "D", "NZD", "IDENT", "COMMENT_SINGLELINE", "COMMENT_MULTILINE", 
 		"WHITESPACE"
 	};
 

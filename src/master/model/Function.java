@@ -20,7 +20,9 @@ import beast.core.BEASTObject;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import master.model.parsers.ExpressionLexer;
 import master.model.parsers.ExpressionParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -42,7 +44,9 @@ public class Function extends BEASTObject {
             "Expression used as the body of the function.",
             Validate.REQUIRED);
 
-    ExpressionEvaluator evaluator;
+    List<String> paramNames;
+    private ParseTree parseTree;
+    private ExpressionEvaluator evaluator;
 
     @Override
     public void initAndValidate() throws Exception {
@@ -51,26 +55,37 @@ public class Function extends BEASTObject {
                     + " specified, as this is used to identify functions"
                     + " in expressions.");
 
-        List<String> paramNames = new ArrayList<>();
-        if (paramsInput.get() != null) {
-            for (String paramName : paramsInput.get().trim().split(" +"))
-                paramNames.add(paramName);
-        }
+        paramNames = new ArrayList<>();
+        if (paramsInput.get() != null)
+            paramNames.addAll(Arrays.asList(paramsInput.get().trim().split(" +")));
 
         // Parse function expression
         ANTLRInputStream input = new ANTLRInputStream(valueInput.get());
         ExpressionLexer lexer = new ExpressionLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         ExpressionParser parser = new ExpressionParser(tokens);
-        ParseTree parseTree = parser.expression();
-        evaluator = new ExpressionEvaluator(parseTree, null, paramNames, null);
+        parseTree = parser.expression();
     }
 
     /**
-     * Retrieve expression evaluator corresponding to this function.
-     * @return 
+     * Obtain evaluator for function expression.
+     * 
+     * @param scalarVarNames
+     * @param functionMap
+     * @return evaluator
      */
-    public ExpressionEvaluator getEvaluator() {
+    public ExpressionEvaluator getEvaluator(List<String> scalarVarNames,
+            Map<String, Function> functionMap) {
+        if (evaluator == null)
+            evaluator = new ExpressionEvaluator(parseTree, scalarVarNames, functionMap);
+
         return evaluator;
+    }
+
+    /**
+     * @return list of parameter names.
+     */
+    public List<String> getParamNames() {
+        return paramNames;
     }
 }

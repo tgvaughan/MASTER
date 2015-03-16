@@ -160,6 +160,19 @@ public class ExpressionBaseListener implements ExpressionListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterArraySubscript(@NotNull ExpressionParser.ArraySubscriptContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArraySubscript(@NotNull ExpressionParser.ArraySubscriptContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExponentiation(@NotNull ExpressionParser.ExponentiationContext ctx) { }
 	/**
 	 * {@inheritDoc}

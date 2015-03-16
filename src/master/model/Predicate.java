@@ -68,10 +68,12 @@ public class Predicate extends BEASTObject {
             ExpressionParser parser = new ExpressionParser(tokens);
             ParseTree parseTree = parser.expression();
             visitor = new ExpressionEvaluator(parseTree,
-                scalarVarNames, vectorVarNames, functionMap);
+                scalarVarNames, functionMap);
         }
+        for (int i=0; i<vectorVarNames.size(); i++)
+            visitor.setVectorVar(vectorVarNames.get(i), vectorVarVals.get(i));
 
-        for (Double el : visitor.evaluate(scalarVarVals, vectorVarVals)) {
+        for (Double el : visitor.evaluate(scalarVarVals)) {
             if (el<1.0)
                 return false;
         }

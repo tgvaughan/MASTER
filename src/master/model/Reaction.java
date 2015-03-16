@@ -380,17 +380,17 @@ public class Reaction extends BEASTObject {
      * @param scalarVarVals      Variable value array
      * @param vectorVarNames
      * @param vectorVarVals
-     * @param functionExpressions
+     * @param functionMap
      */
     public void applyRateMultiplier(List<Double> theseRates,
             List<String> scalarVarNames, int[] scalarVarVals,
             List<String> vectorVarNames, List<Double[]> vectorVarVals,
-            Map<String, ExpressionEvaluator> functionExpressions) {
+            Map<String, Function> functionMap) {
 
         // Compute rate multiplier
         double factor = rateMultiplierInput.get().evaluate(
                 scalarVarNames, scalarVarVals, vectorVarNames, vectorVarVals,
-                functionExpressions);
+                functionMap);
         
         // Multiply original rates by multiplier
 

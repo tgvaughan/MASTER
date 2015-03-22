@@ -8,12 +8,17 @@
 /.classpath
 /.settings
 
+# IntelliJ cruft:
+/.idea
+/MASTER.iml
+
 # Other cruft
 /.localrc
 
 # Build directories:
 /build
 /dist
+/out
 
 # Output files:
 *.json

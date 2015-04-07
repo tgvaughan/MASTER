@@ -24,7 +24,7 @@
                 2X[i] -> X[i]
             </reaction>
             <reaction spec='Reaction' reactionName='Migration' rate="0.02">
-                <predicate spec='Predicate' exp="i != j"/>
+                <predicate spec='Predicate' value="i != j"/>
                 X[i] -> X[j]
             </reaction>
         </model>                

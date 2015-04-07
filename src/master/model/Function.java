@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Map;
 import master.model.parsers.ExpressionLexer;
 import master.model.parsers.ExpressionParser;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
@@ -61,9 +60,30 @@ public class Function extends BEASTObject {
 
         // Parse function expression
         ANTLRInputStream input = new ANTLRInputStream(valueInput.get());
+
+        // Custom parse/lexer error listener
+        BaseErrorListener errorListener = new BaseErrorListener() {
+            @Override
+            public void syntaxError(Recognizer<?, ?> recognizer,
+                                    Object offendingSymbol,
+                                    int line, int charPositionInLine,
+                                    String msg, RecognitionException e) {
+                throw new RuntimeException("Error parsing character " +
+                        charPositionInLine + " of line " + line +
+                        " of MASTER expression function: " + msg);
+            }
+        };
+
         ExpressionLexer lexer = new ExpressionLexer(input);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(errorListener);
+
         CommonTokenStream tokens = new CommonTokenStream(lexer);
+
         ExpressionParser parser = new ExpressionParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(errorListener);
+
         parseTree = parser.expression();
     }
 

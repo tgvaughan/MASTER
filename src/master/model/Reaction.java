@@ -9,8 +9,7 @@ import java.util.*;
 import master.model.parsers.ReactionStringBaseListener;
 import master.model.parsers.ReactionStringLexer;
 import master.model.parsers.ReactionStringParser;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
@@ -77,9 +76,30 @@ public class Reaction extends BEASTObject {
 
         // Parse reaction string
         ANTLRInputStream rsInput = new ANTLRInputStream(reactionStringInput.get());
+
+        // Custom parser/lexer error listener
+        BaseErrorListener errorListener = new BaseErrorListener() {
+            @Override
+            public void syntaxError(Recognizer<?, ?> recognizer,
+                                    Object offendingSymbol,
+                                    int line, int charPositionInLine,
+                                    String msg, RecognitionException e) {
+                throw new RuntimeException("Error parsing character " +
+                        charPositionInLine + " of MASTER reaction " +
+                        "string: " + msg);
+            }
+        };
+
         ReactionStringLexer rsLexer = new ReactionStringLexer(rsInput);
+        rsLexer.removeErrorListeners();
+        rsLexer.addErrorListener(errorListener);
+
         CommonTokenStream rsTokens = new CommonTokenStream(rsLexer);
+
         ReactionStringParser rsParser= new ReactionStringParser(rsTokens);
+        rsParser.removeErrorListeners();
+        rsParser.addErrorListener(errorListener);
+
         reactionStringParseTree = rsParser.reaction();
     }
 

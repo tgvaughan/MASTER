@@ -6,6 +6,7 @@
   <run spec='EnsembleSummary'
        nSamples="1001"
        nTraj="1000"
+       verbosity="0"
        simulationTime='10'>
 
     <stepper spec='TauLeapingStepper' stepSize='0.01'/>

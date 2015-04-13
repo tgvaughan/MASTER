@@ -94,7 +94,7 @@ public abstract class XMLTestCase {
 
                 double oldDouble = Double.parseDouble(m.group());
                 BigDecimal bd = new BigDecimal(oldDouble);
-                bd = bd.round(new MathContext(14));
+                bd = bd.round(new MathContext(10));
                 pstream.print(bd.doubleValue());
 
                 lastMatchEnd = m.end();

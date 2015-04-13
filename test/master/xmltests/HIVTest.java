@@ -22,7 +22,7 @@ public class HIVTest extends XMLTestCase {
     @Override
     public Map<File, String> getOutputFileHashes() {
         Map<File, String> map = new HashMap<>();
-        map.put(new File("HIV_output_cond.json"), "c91789674945c9cb1e4003fd9875cf53");
+        map.put(new File("HIV_output_cond.json"), "7fe7879d7fd09553ff59a6c9e3f3fd55");
         return map;
     }
 }

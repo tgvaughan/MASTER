@@ -22,8 +22,8 @@ public class SIRSampleForestConditionedTest extends XMLTestCase {
     @Override
     public Map<File, String> getOutputFileHashes() {
         Map<File, String> map = new HashMap<>();
-        map.put(new File("SIRSampleForestConditioned_output.json"), "28cbb6cf7c5e76e304f9d49ddeb2edf3");
-        map.put(new File("SIRSampleForestConditioned_output.nexus"), "74a2591fe4fc418924dd8787152c35fd");
+        map.put(new File("SIRSampleForestConditioned_output.json"), "3ab6a967074d1fb464b27849ed303a88");
+        map.put(new File("SIRSampleForestConditioned_output.nexus"), "8ac5690dfbdf503cd16094739f728b9b");
         return map;
     }
 }

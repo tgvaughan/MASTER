@@ -48,16 +48,17 @@ public abstract class XMLTestCase {
         // Compute MD5 hash of generated file
         for (File outFile : getOutputFileHashes().keySet()) {
             if (getOutputFileHashes().get(outFile) != null) {
-                File filteredOutFile = truncateFloats(outFile);
+                //File filteredOutFile = truncateFloats(outFile);
 
                 String expectedHC = getOutputFileHashes().get(outFile);
-                String actualHC = Files.hash(filteredOutFile, Hashing.md5()).toString();
+                //String actualHC = Files.hash(filteredOutFile, Hashing.md5()).toString();
+                String actualHC = Files.hash(outFile, Hashing.md5()).toString();
 
                 System.out.println("Expected: " + expectedHC + " Actual: " + actualHC);
                 assertEquals(expectedHC, actualHC);
 
-                if (!filteredOutFile.delete())
-                    throw new RuntimeException("Error deleting expected output file.");
+//                if (!filteredOutFile.delete())
+//                    throw new RuntimeException("Error deleting expected output file.");
             }
 
             if (!outFile.delete())

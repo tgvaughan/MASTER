@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class Diffusion2DTestNoAuto extends XMLTestCase {
+public class Diffusion2DTest extends XMLTestCase {
 
     @Override
     public String getXMLFileName() {

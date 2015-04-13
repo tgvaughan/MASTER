@@ -107,7 +107,7 @@
 
   <!-- Run unit tests -->
   <target name="test" depends="compile-test">
-    <junit printsummary="yes" failureproperty="testFailed">
+    <junit printsummary="yes" failureproperty="testFailed" showoutput="true">
       <classpath>
 	<pathelement path="${classpath}"/>
 	<pathelement path="${build}" />

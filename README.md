@@ -9,8 +9,6 @@ inheritance relationships amongst individuals in those populations.
 For further information and extensive documentation, please refer to
 the MASTER [web page](http://compevol.github.io/MASTER).
 
-[![Build Status](https://travis-ci.org/CompEvol/MASTER.svg?branch=master)](https://travis-ci.org/CompEvol/MASTER)
-
 This software is free (as in freedom).  With the exception of the
 libraries on which it depends, it is made available under the terms of
 the GNU General Public Licence version 3, which is contained in this

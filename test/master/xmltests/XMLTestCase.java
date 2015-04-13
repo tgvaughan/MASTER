@@ -13,13 +13,15 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 
@@ -48,13 +50,57 @@ public abstract class XMLTestCase {
         // Compute MD5 hash of generated file
         for (File outFile : getOutputFileHashes().keySet()) {
             if (getOutputFileHashes().get(outFile) != null) {
-                HashCode hc = Files.hash(outFile, Hashing.md5());
+                File filteredOutFile = truncateFloats(outFile);
+
+                HashCode hc = Files.hash(filteredOutFile, Hashing.md5());
                 assertEquals(getOutputFileHashes().get(outFile), hc.toString());
+
+                if (!filteredOutFile.delete())
+                    throw new RuntimeException("Error deleting expected output file.");
             }
 
             if (!outFile.delete())
                 throw new RuntimeException("Error deleting expected output file.");
         }
+    }
+
+    /**
+     * Reduce precision of all floats in file to 14 digits in an attempt
+     * to avoid checksum mismatches due to platform-dependent rounding
+     * errors.
+     *
+     * @param oldFile file to filter
+     * @return filtered file
+     * @throws FileNotFoundException
+     */
+    public static File truncateFloats(File oldFile) throws FileNotFoundException {
+        File newFile = new File(oldFile.getName() + "_filtered");
+
+        BufferedReader reader = new BufferedReader(new FileReader(oldFile));
+        PrintStream pstream = new PrintStream(newFile);
+
+        Pattern p = Pattern.compile("[0-9]+(\\.[0-9]*)?([eE]-?[0-9]+)?");
+
+        reader.lines().forEach(s -> {
+            int lastMatchEnd = 0;
+            Matcher m = p.matcher(s);
+            while (m.find()) {
+                if (m.start()>lastMatchEnd)
+                    pstream.print(s.substring(lastMatchEnd, m.start()));
+
+                double oldDouble = Double.parseDouble(m.group());
+                BigDecimal bd = new BigDecimal(oldDouble);
+                bd = bd.round(new MathContext(14));
+                pstream.print(bd.doubleValue());
+
+                lastMatchEnd = m.end();
+            }
+
+            pstream.println(s.substring(lastMatchEnd, s.length()));
+
+        });
+
+        return newFile;
     }
 
     /**

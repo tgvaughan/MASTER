@@ -7,11 +7,11 @@ import java.util.Map;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class diffusion1D_periodicTest extends XMLTestCase {
+public class Diffusion2DTest extends XMLTestCase {
 
     @Override
     public String getXMLFileName() {
-        return "examples/Diffusion1D_periodic.xml";
+        return "examples/Diffusion2D.xml";
     }
 
     @Override
@@ -22,7 +22,7 @@ public class diffusion1D_periodicTest extends XMLTestCase {
     @Override
     public Map<File, String> getOutputFileHashes() {
         Map<File, String> map = new HashMap<>();
-        map.put(new File("Diffusion1D_periodic_output.json"), "2fca54d35f3505bb99e1340e8a96c1c2");
+        map.put(new File("Diffusion2D_output.json"), "a91b07891c5da73936899cb408c23444");
         return map;
     }
 }

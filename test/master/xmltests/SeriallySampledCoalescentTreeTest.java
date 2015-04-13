@@ -7,10 +7,11 @@ import java.util.Map;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class diffusion1DTest extends XMLTestCase {
+public class SeriallySampledCoalescentTreeTest extends XMLTestCase {
+
     @Override
     public String getXMLFileName() {
-        return "examples/Diffusion1D.xml";
+        return "examples/SeriallySampledCoalescentTree.xml";
     }
 
     @Override
@@ -21,7 +22,7 @@ public class diffusion1DTest extends XMLTestCase {
     @Override
     public Map<File, String> getOutputFileHashes() {
         Map<File, String> map = new HashMap<>();
-        map.put(new File("Diffusion1D_output.json"), "29ef09b21865b33099a4e960a04cc0dd");
+        map.put(new File("SeriallySampledCoalescentTree_output.nexus"), "75ffdd7912c251f6d7c80c604183116b");
         return map;
     }
 }

@@ -43,7 +43,7 @@ import master.InheritanceTrajectory;
  */
 @Description("Output writer capable of writing inheritance graph to"
         + " disk in extended Newick format of Cardona et al, BMC Bioinf. (2008).")
-public class NewickOutput extends BEASTObject implements 
+public class NewickOutput extends BEASTObject implements
         InheritanceTrajectoryOutput, InheritanceEnsembleOutput{
 
     public Input<String> fileNameInput = new Input<>("fileName",

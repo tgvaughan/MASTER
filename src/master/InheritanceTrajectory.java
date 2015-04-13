@@ -453,7 +453,7 @@ public class InheritanceTrajectory extends Trajectory {
             startNodes = Lists.newArrayList();
         else
             startNodes.clear();
-        
+
         for (Node startNode : spec.initNodes)
             startNodes.add(startNode.getCopy());
 

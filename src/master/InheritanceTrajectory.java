@@ -18,27 +18,16 @@ package master;
 
 import beast.core.Input;
 import beast.util.Randomizer;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multiset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.*;
 import master.conditions.LeafCountEndCondition;
 import master.conditions.LineageEndCondition;
 import master.conditions.PopulationEndCondition;
 import master.conditions.PostSimCondition;
-import master.model.Node;
-import master.model.Population;
-import master.model.PopulationSize;
-import master.model.PopulationState;
-import master.model.Reaction;
+import master.model.*;
 import master.outputs.InheritanceTrajectoryOutput;
 import master.postprocessors.InheritancePostProcessor;
+
+import java.util.*;
 
 /**
  * A class representing a stochastic inheritance trajectory generated under
@@ -77,26 +66,26 @@ public class InheritanceTrajectory extends Trajectory {
     public Input<List<LineageEndCondition>> lineageEndConditionsInput =
             new Input<>("lineageEndCondition",
                     "Trajectory end condition based on remaining lineages.",
-                    new ArrayList<LineageEndCondition>());
+                    new ArrayList<>());
     
         
     // Leaf count end conditions:
     public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput =
             new Input<>("leafCountEndCondition",
             "Trajectory end condition based on number of terminal nodes generated.",
-            new ArrayList<LeafCountEndCondition>());
+            new ArrayList<>());
     
     // Post-processors:
     public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
             new Input<>("inheritancePostProcessor",
                     "Post processor for inheritance graph.",
-                    new ArrayList<InheritancePostProcessor>());
+                    new ArrayList<>());
     
     // Outputs:
     public Input<List<InheritanceTrajectoryOutput>> outputsInput
             = new Input<>("output",
             "Output writer used to write results of simulation to disk.",
-            new ArrayList<InheritanceTrajectoryOutput>());
+            new ArrayList<>());
     
     // List of nodes present at the start of the simulation
     public List<Node> startNodes;
@@ -167,7 +156,7 @@ public class InheritanceTrajectory extends Trajectory {
         
         for (LineageEndCondition endCondition : lineageEndConditionsInput.get())
             spec.addLineageEndCondition(endCondition);
-        
+
         for (LeafCountEndCondition endCondition : leafCountEndConditionsInput.get())
             spec.addLeafCountEndCondition(endCondition);
 
@@ -204,14 +193,12 @@ public class InheritanceTrajectory extends Trajectory {
     /**
      * Build an inheritance graph corresponding to a set of lineages embedded
      * within populations evolving under a birth-death process.
-     *
-     * @param spec Inheritance trajectory simulation specification.
      */
     private void simulate() {
 
         // Create HashMaps:
-        nodesInvolved = Maps.newHashMap();
-        nextLevelNodes = Maps.newHashMap();
+        nodesInvolved = Maps.newLinkedHashMap();
+        nextLevelNodes = Maps.newLinkedHashMap();
 
 
         // Set seed if defined:
@@ -359,7 +346,7 @@ public class InheritanceTrajectory extends Trajectory {
                     seedNode.addChild(child);
                     
                     if (!activeLineages.containsKey(child.getPopulation()))
-                        activeLineages.put(child.getPopulation(), new ArrayList<Node>());
+                        activeLineages.put(child.getPopulation(), new ArrayList<>());
                     activeLineages.get(child.getPopulation()).add(child);
                     
                     currentPopState.add(seedNode.getPopulation(), 1.0);                
@@ -487,7 +474,7 @@ public class InheritanceTrajectory extends Trajectory {
         
         // Initialise active lineages with nodes present at start of simulation
         if (activeLineages == null)
-            activeLineages = Maps.newHashMap();
+            activeLineages = Maps.newLinkedHashMap();
         else
             activeLineages.clear();
         
@@ -509,7 +496,7 @@ public class InheritanceTrajectory extends Trajectory {
                 node.addChild(child);
 
                 if (!activeLineages.containsKey(nodePop))
-                    activeLineages.put(nodePop, new ArrayList<Node>());
+                    activeLineages.put(nodePop, new ArrayList<>());
                 activeLineages.get(nodePop).add(child);
 
                 currentPopState.add(nodePop, 1.0);
@@ -524,24 +511,21 @@ public class InheritanceTrajectory extends Trajectory {
         }
         
         // Sort inactive lineages nodes in order of increasing seed time:
-        Collections.sort(inactiveLineages, new Comparator<Node>() {
-            @Override
-            public int compare(Node node1, Node node2) {
-                double dt = node1.getTime()-node2.getTime();
-                
-                if (dt<0)
-                    return -1;
-                
-                if (dt>0)
-                    return 1;
-                
-                return 0;
-            }
+        Collections.sort(inactiveLineages, (node1, node2) -> {
+            double dt = node1.getTime()-node2.getTime();
+
+            if (dt<0)
+                return -1;
+
+            if (dt>0)
+                return 1;
+
+            return 0;
         });
         
         // Reset terminal node count:
         if (leafCounts == null)
-            leafCounts = HashMultiset.create();
+            leafCounts = LinkedHashMultiset.create();
         else
             leafCounts.clear();
     }
@@ -552,7 +536,6 @@ public class InheritanceTrajectory extends Trajectory {
      * without replacement from the individuals present in the current state.
      * 
      * @param chosenReaction reaction selected
-     * @return Map from nodes involved to the corresponding reactant nodes.
      */
     private void selectLineagesInvolved(Reaction chosenReaction) {
 
@@ -594,8 +577,6 @@ public class InheritanceTrajectory extends Trajectory {
     /**
      * Update the graph and the activeLineages list according to the chosen
      * reactionGroup.
-     * 
-     * @param nodesInvolved map from active lineages involved to reactant nodes
      */
     private void implementInheritanceReaction(Reaction reaction) {
        
@@ -650,7 +631,7 @@ public class InheritanceTrajectory extends Trajectory {
                 Population pop = child.getPopulation();
                 if (!child.flagIsSet()) {
                     if (!activeLineages.containsKey(pop))
-                        activeLineages.put(pop, new ArrayList<Node>());
+                        activeLineages.put(pop, new ArrayList<>());
                     activeLineages.get(pop).add(child);
                     child.setFlag(true);
                 }
@@ -671,7 +652,7 @@ public class InheritanceTrajectory extends Trajectory {
                 node.addChild(child);
                 
                 if (!activeLineages.containsKey(child.getPopulation()))
-                    activeLineages.put(child.getPopulation(), new ArrayList<Node>());
+                    activeLineages.put(child.getPopulation(), new ArrayList<>());
                 activeLineages.get(child.getPopulation()).add(child);
             }
         
@@ -704,7 +685,7 @@ public class InheritanceTrajectory extends Trajectory {
      * @return list of end nodes
      */
     public List<Node> getEndNodes() {
-        List<Node> endNodes = new ArrayList<Node>();
+        List<Node> endNodes = new ArrayList<>();
         for (Node startNode : startNodes)
             getEndNodesRecurse(startNode, endNodes);
         
@@ -725,7 +706,7 @@ public class InheritanceTrajectory extends Trajectory {
      * Construct graph component of inheritance trajectory from existing
      * network of nodes.
      *
-     * @param startNodes
+     * @param startNodes start nodes for network
      */
     public InheritanceTrajectory(Node... startNodes) {
         this.spec = null;

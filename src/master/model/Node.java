@@ -30,10 +30,10 @@ import java.util.Set;
 public class Node {
 
     // Parents of this node.
-    List<Node> parents = new ArrayList<Node>(1);
+    List<Node> parents = new ArrayList<>(1);
 
     // Children of this node.
-    List<Node> children = new ArrayList<Node>(2);
+    List<Node> children = new ArrayList<>(2);
 
     // Population to which the individual represented by this node belongs.
     Population population;

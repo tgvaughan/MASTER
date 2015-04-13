@@ -46,14 +46,14 @@ import master.InheritanceTrajectory;
 public class NewickOutput extends BEASTObject implements 
         InheritanceTrajectoryOutput, InheritanceEnsembleOutput{
 
-    public Input<String> fileNameInput = new Input<String>("fileName",
+    public Input<String> fileNameInput = new Input<>("fileName",
             "Name of file to write to.", Validate.REQUIRED);
     
-    public Input<Boolean> reverseTimeInput = new Input<Boolean>("reverseTime",
+    public Input<Boolean> reverseTimeInput = new Input<>("reverseTime",
             "Read graph in reverse time - useful for building coalescent trees.  (Default false.)",
             false);
     
-    public Input<Boolean> collapseSingleChildNodesInput = new Input<Boolean>(
+    public Input<Boolean> collapseSingleChildNodesInput = new Input<>(
             "collapseSingleChildNodes",
             "Prune nodes having a single child from output. (Default false.)",
             false);
@@ -123,20 +123,17 @@ public class NewickOutput extends BEASTObject implements
      */
     public void generateOutput(InheritanceTrajectory graph) {
         
-        leafLabels = Maps.newHashMap();
-        hybridIDs = Maps.newHashMap();
-        
         // Identify root and leaf nodes
         if (reverseTime) {
             rootNodes = findEndNodes(graph);
-            leafNodes = Sets.newHashSet(graph.startNodes);
+            leafNodes = Sets.newLinkedHashSet(graph.startNodes);
         } else {
-            rootNodes = Sets.newHashSet(graph.startNodes);
+            rootNodes = Sets.newLinkedHashSet(graph.startNodes);
             leafNodes = findEndNodes(graph);
         }
         
         // Assign a unique integer label to each unnamed leaf node:
-        leafLabels = Maps.newHashMap();
+        leafLabels = Maps.newLinkedHashMap();
         int label = 1;
         for (Node leaf : leafNodes) {
             if (leaf.getName() == null)
@@ -149,12 +146,12 @@ public class NewickOutput extends BEASTObject implements
         Set<Node> hybridNodes = findHybridNodes(rootNodes, reverseTime);
         
         // Assign a unique integer label to each hybrid node:
-        hybridIDs = Maps.newHashMap();
+        hybridIDs = Maps.newLinkedHashMap();
         label = 1;
         for (Node hybrid : hybridNodes)
             hybridIDs.put(hybrid, label++);
         
-        Set<Node> visitedHybrids = Sets.newHashSet();        
+        Set<Node> visitedHybrids = Sets.newLinkedHashSet();
         boolean first = true;
         for (Node node : rootNodes) {
             if (!first)
@@ -253,8 +250,8 @@ public class NewickOutput extends BEASTObject implements
      * @return Map of hybrid nodes to their chosen IDs.
      */
     private Set<Node> findHybridNodes(Set<Node> rootNodes, boolean reverseTime) {
-        Set<Node> visited = Sets.newHashSet();
-        Set<Node> hybridNodes = Sets.newHashSet();
+        Set<Node> visited = Sets.newLinkedHashSet();
+        Set<Node> hybridNodes = Sets.newLinkedHashSet();
         
         for (Node node : rootNodes)
             findHybridNodesInSubTree(node, visited, hybridNodes, reverseTime);
@@ -267,7 +264,7 @@ public class NewickOutput extends BEASTObject implements
      * 
      * @param node Node containing a subgraph.
      * @param visited Set containing nodes already seen.
-     * @param hybridIDs Map of hybrid nodes already found to integer labels.
+     * @param hybridLabels Set of hybrid nodes already found.
      * @param reverseTime Whether traversal is occuring in reverse time.
      */
     private void findHybridNodesInSubTree(Node node, Set<Node> visited,
@@ -296,7 +293,7 @@ public class NewickOutput extends BEASTObject implements
      * @return Set containing leaf nodes.
      */
     private Set<Node> findEndNodes(InheritanceTrajectory graph) {
-        Set<Node> endNodes = Sets.newHashSet();
+        Set<Node> endNodes = Sets.newLinkedHashSet();
         
         for (Node startNode : graph.startNodes)
             findEndNodesOnSubGraph(startNode, endNodes);

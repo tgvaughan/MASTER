@@ -52,9 +52,8 @@ public abstract class XMLTestCase {
             if (getOutputFileHashes().get(outFile) != null) {
                 File filteredOutFile = truncateFloats(outFile);
 
-                HashCode hc = Files.hash(filteredOutFile, Hashing.md5());
                 String expectedHC = getOutputFileHashes().get(outFile);
-                String actualHC = hc.toString();
+                String actualHC = Files.hash(filteredOutFile, Hashing.md5()).toString();
 
                 System.out.println("Expected: " + expectedHC + " Actual: " + actualHC);
                 assertEquals(expectedHC, actualHC);

@@ -41,8 +41,6 @@ public abstract class XMLTestCase {
     @Test
     public void test() throws IOException {
 
-        //Randomizer.setSeed(getSeed());
-
         beastMain(new String[]{"-seed", Long.toString(getSeed()),
                 "-overwrite",
                 getXMLFileName()});

@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class MandelbrotTest extends XMLTestCase{
+public class MandelbrotTestNoAuto extends XMLTestCase{
 
     @Override
     public String getXMLFileName() {

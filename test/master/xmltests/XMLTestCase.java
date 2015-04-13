@@ -53,7 +53,11 @@ public abstract class XMLTestCase {
                 File filteredOutFile = truncateFloats(outFile);
 
                 HashCode hc = Files.hash(filteredOutFile, Hashing.md5());
-                assertEquals(getOutputFileHashes().get(outFile), hc.toString());
+                String expectedHC = getOutputFileHashes().get(outFile);
+                String actualHC = hc.toString();
+
+                System.out.println("Expected: " + expectedHC + " Actual: " + actualHC);
+                assertEquals(expectedHC, actualHC);
 
                 if (!filteredOutFile.delete())
                     throw new RuntimeException("Error deleting expected output file.");

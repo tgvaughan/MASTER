@@ -6,9 +6,10 @@ import beast.core.Input.Validate;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.*;
 import java.util.*;
-import master.model.parsers.ReactionStringBaseListener;
-import master.model.parsers.ReactionStringLexer;
-import master.model.parsers.ReactionStringParser;
+
+import master.model.parsers.MASTERGrammarBaseListener;
+import master.model.parsers.MASTERGrammarLexer;
+import master.model.parsers.MASTERGrammarParser;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -90,13 +91,13 @@ public class Reaction extends BEASTObject {
             }
         };
 
-        ReactionStringLexer rsLexer = new ReactionStringLexer(rsInput);
+        MASTERGrammarLexer rsLexer = new MASTERGrammarLexer(rsInput);
         rsLexer.removeErrorListeners();
         rsLexer.addErrorListener(errorListener);
 
         CommonTokenStream rsTokens = new CommonTokenStream(rsLexer);
 
-        ReactionStringParser rsParser= new ReactionStringParser(rsTokens);
+        MASTERGrammarParser rsParser= new MASTERGrammarParser(rsTokens);
         rsParser.removeErrorListeners();
         rsParser.addErrorListener(errorListener);
 
@@ -141,24 +142,24 @@ public class Reaction extends BEASTObject {
         // of maximum values location index variables can take.
         Map<String, PopulationType> popTypes = new HashMap<>();
         Map<String, Integer> varNameBoundsMap = new HashMap<>();
-        parseTreeWalker.walk(new ReactionStringBaseListener() {
+        parseTreeWalker.walk(new MASTERGrammarBaseListener() {
 
             @Override
-            public void exitPopel(ReactionStringParser.PopelContext ctx) {
+            public void exitPopel(MASTERGrammarParser.PopelContext ctx) {
 
                 PopulationType popType = null;
                 for (PopulationType thisPopType : populationTypes) {
-                    if (ctx.popname().NAME().toString().equals(thisPopType.getName()))
+                    if (ctx.popname().IDENT().toString().equals(thisPopType.getName()))
                         popType = thisPopType;
                 }
 
                 if (popType == null) {
                     System.err.println("Uknown population type '"
-                        + ctx.popname().NAME() + "' in reaction string.");
+                        + ctx.popname().IDENT() + "' in reaction string.");
                     System.exit(1);
                 }
 
-                popTypes.put(ctx.popname().NAME().toString(), popType);
+                popTypes.put(ctx.popname().IDENT().toString(), popType);
 
                 if (ctx.loc() != null) {
 
@@ -169,8 +170,8 @@ public class Reaction extends BEASTObject {
                     }
                     
                     for (int i=0; i<ctx.loc().locel().size(); i++) {
-                        if (ctx.loc().locel(i).NAME() != null) {
-                            String varName = ctx.loc().locel(i).NAME().toString();
+                        if (ctx.loc().locel(i).IDENT() != null) {
+                            String varName = ctx.loc().locel(i).IDENT().toString();
                             if (!varNameBoundsMap.containsKey(varName)) {
                                 varNameBoundsMap.put(varName, popType.dims[i]);
                             } else {
@@ -249,7 +250,7 @@ public class Reaction extends BEASTObject {
 
             reaction.reactNodes = new HashMap<>();
             reaction.prodNodes = new HashMap<>();
-            parseTreeWalker.walk(new ReactionStringBaseListener() {
+            parseTreeWalker.walk(new MASTERGrammarBaseListener() {
 
                 List<Node> nodeList, reactNodeList, prodNodeList;
                 List<Integer> popIDs, reactPopIDs, prodPopIDs;
@@ -259,14 +260,14 @@ public class Reaction extends BEASTObject {
 
 
                 @Override
-                public void exitReactants(ReactionStringParser.ReactantsContext ctx) {
+                public void exitReactants(MASTERGrammarParser.ReactantsContext ctx) {
                     reactNodeList = nodeList;
                     reactPopIDs = popIDs;
                     reaction.reactNodes = popNodeMap;
                 }
 
                 @Override
-                public void exitProducts(ReactionStringParser.ProductsContext ctx) {
+                public void exitProducts(MASTERGrammarParser.ProductsContext ctx) {
                     prodNodeList = nodeList;
                     prodPopIDs = popIDs;
                     reaction.prodNodes = popNodeMap;
@@ -281,14 +282,14 @@ public class Reaction extends BEASTObject {
                 }
 
                 @Override
-                public void enterPopsum(ReactionStringParser.PopsumContext ctx) {
+                public void enterPopsum(MASTERGrammarParser.PopsumContext ctx) {
                     nodeList = new ArrayList<>();
                     popIDs = new ArrayList<>();
                     popNodeMap = new HashMap<>();
                 }
 
                 @Override
-                public void exitPopel(ReactionStringParser.PopelContext ctx) {
+                public void exitPopel(MASTERGrammarParser.PopelContext ctx) {
 
                     PopulationType popType = popTypes.get(ctx.popname().getText());
 
@@ -296,11 +297,11 @@ public class Reaction extends BEASTObject {
 
                     List<Integer> locList = new ArrayList<>();
                     if (ctx.loc() != null) {
-                        for (ReactionStringParser.LocelContext locelCtx : ctx.loc().locel()) {
-                            if (locelCtx.NAME() == null) {
+                        for (MASTERGrammarParser.LocelContext locelCtx : ctx.loc().locel()) {
+                            if (locelCtx.IDENT() == null) {
                                 locList.add(Integer.parseInt(locelCtx.getText()));
                             } else {
-                                String varName = locelCtx.NAME().getText();
+                                String varName = locelCtx.IDENT().getText();
                                 int varIdx = scalarVarNames.indexOf(varName);
                                 locList.add(scalarVarVals[varIdx]);
                             }
@@ -339,7 +340,7 @@ public class Reaction extends BEASTObject {
                             id = Integer.parseInt(ctx.id().getText());
                         } else {
                             if (ctx.getParent().getParent()
-                                instanceof ReactionStringParser.ReactantsContext) {
+                                instanceof MASTERGrammarParser.ReactantsContext) {
                                 id = nextPopID++;
                                 if (!seenTypeIDs.containsKey(popType))
                                     seenTypeIDs.put(popType, id);

@@ -1,6 +1,26 @@
-grammar Expression;
+grammar MASTERGrammar;
 
-// Parser rules:
+// Reaction string parser rules
+
+reaction : reactants '->' products EOF;
+reactants : popsum ;
+products : popsum ;
+popsum : popel ('+' popel)* | '0' ;
+popel : factor? popname loc? (':' id)?;
+factor : NZINT ;
+id: '0' | NZINT ;
+
+// Population size assignment parser rules
+
+assignment : popname loc? ':=' expression EOF;
+
+// Misc parser rules
+
+popname : IDENT ;
+loc : '[' locel (',' locel)* ']' ;
+locel : '0' | NZINT | IDENT ;
+
+// Expression parser rules
 
 expression :
         '(' expression ')'                                      # Bracketed
@@ -17,7 +37,7 @@ expression :
     |   expression op=('&&'|'||') expression                    # BooleanOp
     |<assoc=right>   expression '?' expression ':' expression   # IfThenElse
     |   IDENT                                                   # Variable
-    |   val=(NNFLOAT | NNINT)                                   # Number
+    |   val=('0' | NZINT | NNFLOAT )                            # Number
     ;
 
 
@@ -47,8 +67,9 @@ GE: '>=';
 LE: '<=';
 NE: '!=';
 
-NNINT : '0' | NZD D* ;
-NNFLOAT : NNINT ('.' D*) ([eE] '-'? D+)? ;
+ZERO : '0' ;
+NZINT : NZD D* ;
+NNFLOAT : ('0' | NZINT) ('.' D*) ([eE] '-'? D+)? ;
 fragment D : [0-9] ;
 fragment NZD : [1-9] ;
 

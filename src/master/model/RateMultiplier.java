@@ -21,8 +21,9 @@ import beast.core.Input;
 import beast.core.Input.Validate;
 import java.util.List;
 import java.util.Map;
-import master.model.parsers.ExpressionLexer;
-import master.model.parsers.ExpressionParser;
+
+import master.model.parsers.MASTERGrammarLexer;
+import master.model.parsers.MASTERGrammarParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -60,9 +61,9 @@ public class RateMultiplier extends BEASTObject {
         if (visitor == null) {
             // Parse predicate expression
             ANTLRInputStream input = new ANTLRInputStream(expInput.get());
-            ExpressionLexer lexer = new ExpressionLexer(input);
+            MASTERGrammarLexer lexer = new MASTERGrammarLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
-            ExpressionParser parser = new ExpressionParser(tokens);
+            MASTERGrammarParser parser = new MASTERGrammarParser(tokens);
             ParseTree parseTree = parser.expression();
             visitor = new ExpressionEvaluator(parseTree, scalarVarNames, functions);
         }

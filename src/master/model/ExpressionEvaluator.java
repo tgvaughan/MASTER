@@ -7,8 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import master.model.parsers.ExpressionBaseVisitor;
-import master.model.parsers.ExpressionParser;
+
+import master.model.parsers.MASTERGrammarBaseVisitor;
+import master.model.parsers.MASTERGrammarParser;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
@@ -16,7 +17,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
+public class ExpressionEvaluator extends MASTERGrammarBaseVisitor<Double[]> {
 
     private final List<String> scalarVarNames;
     private int[] scalarVarVals;
@@ -46,7 +47,7 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
 
     @Override
-    public Double[] visitEquality(ExpressionParser.EqualityContext ctx) {
+    public Double[] visitEquality(MASTERGrammarParser.EqualityContext ctx) {
         Double[] lhs = visit(ctx.expression(0));
         Double[] rhs = visit(ctx.expression(1));
 
@@ -56,29 +57,29 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
             int iRight = i%rhs.length;
 
             switch (ctx.op.getType()) {
-                case ExpressionParser.EQ:
+                case MASTERGrammarParser.EQ:
                     res[i] = booleanToDouble(
                             Objects.equals(lhs[iLeft], rhs[iRight]));
                     break;
 
-                case ExpressionParser.NE:
+                case MASTERGrammarParser.NE:
                     res[i] = booleanToDouble(
                             !Objects.equals(lhs[iLeft], rhs[iRight]));
                     break;
                     
-                case ExpressionParser.LT:
+                case MASTERGrammarParser.LT:
                     res[i] = booleanToDouble(lhs[iLeft] < rhs[iRight]);
                     break;
                     
-                case ExpressionParser.GT:
+                case MASTERGrammarParser.GT:
                     res[i] = booleanToDouble(lhs[iLeft] > rhs[iRight]);
                     break;
                     
-                case ExpressionParser.LE:
+                case MASTERGrammarParser.LE:
                     res[i] = booleanToDouble(lhs[iLeft] <= rhs[iRight]);
                     break;
                     
-                case ExpressionParser.GE:
+                case MASTERGrammarParser.GE:
                     res[i] = booleanToDouble(lhs[iLeft] >= rhs[iRight]);
                     break;
             }
@@ -98,12 +99,12 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
     
     @Override
-    public Double[] visitNumber(ExpressionParser.NumberContext ctx) {
+    public Double[] visitNumber(MASTERGrammarParser.NumberContext ctx) {
         return new Double[] {Double.valueOf(ctx.val.getText())};
     }
     
     @Override
-    public Double[] visitVariable(ExpressionParser.VariableContext ctx) {
+    public Double[] visitVariable(MASTERGrammarParser.VariableContext ctx) {
         String varName = ctx.IDENT().getText();
 
         if (scalarVarNames != null && scalarVarNames.contains(varName))
@@ -118,23 +119,23 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
 
     
     @Override
-    public Double[] visitMulDiv(ExpressionParser.MulDivContext ctx) {
+    public Double[] visitMulDiv(MASTERGrammarParser.MulDivContext ctx) {
         Double [] left = visit(ctx.expression(0));
         Double [] right = visit(ctx.expression(1));
         
         Double [] res = new Double[Math.max(left.length, right.length)];
         switch(ctx.op.getType()) {
-            case ExpressionParser.MUL:
+            case MASTERGrammarParser.MUL:
                 for (int i=0; i<res.length; i++)
                     res[i] = left[i%left.length] * right[i%right.length];
                 break;
 
-            case ExpressionParser.DIV:
+            case MASTERGrammarParser.DIV:
                 for (int i=0; i<res.length; i++)
                     res[i] = left[i%left.length] / right[i%right.length];
                 break;
 
-            case ExpressionParser.MOD:
+            case MASTERGrammarParser.MOD:
                 for (int i=0; i<res.length; i++)
                     res[i] = left[i%left.length] % right[i%right.length];
                 break;
@@ -147,13 +148,13 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
     
     @Override
-    public Double[] visitAddSub(ExpressionParser.AddSubContext ctx) {
+    public Double[] visitAddSub(MASTERGrammarParser.AddSubContext ctx) {
         Double [] left = visit(ctx.expression(0));
         Double [] right = visit(ctx.expression(1));
         
         Double [] res = new Double[Math.max(left.length, right.length)];
         for (int i=0; i<res.length; i++) {
-            if (ctx.op.getType() == ExpressionParser.ADD)
+            if (ctx.op.getType() == MASTERGrammarParser.ADD)
                 res[i] = left[i%left.length]+right[i%right.length];
             else
                 res[i] = left[i%left.length]-right[i%right.length];
@@ -163,48 +164,48 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
     
     @Override
-    public Double[] visitBracketed(ExpressionParser.BracketedContext ctx) {
+    public Double[] visitBracketed(MASTERGrammarParser.BracketedContext ctx) {
         return visit(ctx.expression());
     }
     
     @Override
-    public Double[] visitUnaryOp(ExpressionParser.UnaryOpContext ctx) {
+    public Double[] visitUnaryOp(MASTERGrammarParser.UnaryOpContext ctx) {
         Double [] arg = visit(ctx.expression());
         Double [] res = null;
         
         switch(ctx.op.getType()) {
-            case ExpressionParser.EXP:
+            case MASTERGrammarParser.EXP:
                 res = new Double[arg.length];
                 for (int i=0; i<arg.length; i++)
                     res[i] = Math.exp(arg[i]);
                 break;
                 
-            case ExpressionParser.LOG:
+            case MASTERGrammarParser.LOG:
                 res = new Double[arg.length];
                 for (int i=0; i<arg.length; i++)
                     res[i] = Math.log(arg[i]);
                 break;
                 
-            case ExpressionParser.SQRT:
+            case MASTERGrammarParser.SQRT:
                 res = new Double[arg.length];
                 for (int i=0; i<arg.length; i++)
                     res[i] = Math.sqrt(arg[i]);
                 break;
                 
-            case ExpressionParser.SUM:
+            case MASTERGrammarParser.SUM:
                 res = new Double[1];
                 res[0] = 0.0;
                 for (Double el : arg)
                     res[0] += el;
                 break;
                 
-            case ExpressionParser.THETA:
+            case MASTERGrammarParser.THETA:
                 res = new Double[arg.length];
                 for (int i=0; i<arg.length; i++)
                     res[i] = arg[i] < 0.0 ? 0.0 : 1.0;
                 break;
                 
-            case ExpressionParser.ABS:
+            case MASTERGrammarParser.ABS:
                 res = new Double[arg.length];
                 for (int i=0; i<arg.length; i++)
                     res[i] = Math.abs(arg[i]);
@@ -215,7 +216,7 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
     
     @Override
-    public Double[] visitNegation(ExpressionParser.NegationContext ctx) {
+    public Double[] visitNegation(MASTERGrammarParser.NegationContext ctx) {
         Double[] arg = visit(ctx.expression());
         
         Double[] res = new Double[arg.length];
@@ -226,7 +227,7 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
     
     @Override
-    public Double[] visitExponentiation(ExpressionParser.ExponentiationContext ctx) {
+    public Double[] visitExponentiation(MASTERGrammarParser.ExponentiationContext ctx) {
         Double [] base = visit(ctx.expression(0));
         Double [] power = visit(ctx.expression(1));
         
@@ -239,7 +240,7 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
 
     @Override
-    public Double[] visitFactorial(ExpressionParser.FactorialContext ctx) {
+    public Double[] visitFactorial(MASTERGrammarParser.FactorialContext ctx) {
         Double[] arg = visit(ctx.expression());
         Double[] res = new Double[arg.length];
 
@@ -250,17 +251,17 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
 
     @Override
-    public Double[] visitArray(ExpressionParser.ArrayContext ctx) {
+    public Double[] visitArray(MASTERGrammarParser.ArrayContext ctx) {
         List<Double> resList = new ArrayList<>();
         
-        for (ExpressionParser.ExpressionContext ectx : ctx.expression())
+        for (MASTERGrammarParser.ExpressionContext ectx : ctx.expression())
             resList.addAll(Arrays.asList(visit(ectx)));
         
         return resList.toArray(new Double[0]);
     }
 
     @Override
-    public Double[] visitArraySubscript(ExpressionParser.ArraySubscriptContext ctx) {
+    public Double[] visitArraySubscript(MASTERGrammarParser.ArraySubscriptContext ctx) {
         Double[] array = visit(ctx.expression(0));
         Double[] index = visit(ctx.expression(1));
 
@@ -274,18 +275,18 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
 
     @Override
-    public Double[] visitBooleanOp(ExpressionParser.BooleanOpContext ctx) {
+    public Double[] visitBooleanOp(MASTERGrammarParser.BooleanOpContext ctx) {
         Double[] left = visit(ctx.expression(0));
         Double[] right = visit(ctx.expression(1));
 
         Double [] res = new Double[Math.max(left.length, right.length)];
 
         switch(ctx.op.getType()) {
-            case ExpressionParser.AND:
+            case MASTERGrammarParser.AND:
                 for (int i=0; i<res.length; i++)
                     res[i] = (left[i%left.length] != 0.0) && (right[i%right.length] != 0.0) ? 1.0 : 0.0;
                 break;
-            case ExpressionParser.OR:
+            case MASTERGrammarParser.OR:
                 for (int i=0; i<res.length; i++)
                     res[i] = (left[i%left.length] != 0.0) || (right[i%right.length] != 0.0) ? 1.0 : 0.0;
                 break;
@@ -295,7 +296,7 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
 
     @Override
-    public Double[] visitIfThenElse(ExpressionParser.IfThenElseContext ctx) {
+    public Double[] visitIfThenElse(MASTERGrammarParser.IfThenElseContext ctx) {
         Double[] cond = visit(ctx.expression(0));
 
         if (cond.length != 1)
@@ -306,7 +307,7 @@ public class ExpressionEvaluator extends ExpressionBaseVisitor<Double[]>{
     }
 
     @Override
-    public Double[] visitFunction(ExpressionParser.FunctionContext ctx) {
+    public Double[] visitFunction(MASTERGrammarParser.FunctionContext ctx) {
         String funcName = ctx.IDENT().getText();
 
         if (functions == null || functions.get(funcName) == null)

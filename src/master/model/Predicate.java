@@ -21,8 +21,9 @@ import beast.core.Input;
 import beast.core.Input.Validate;
 import java.util.List;
 import java.util.Map;
-import master.model.parsers.ExpressionLexer;
-import master.model.parsers.ExpressionParser;
+
+import master.model.parsers.MASTERGrammarLexer;
+import master.model.parsers.MASTERGrammarParser;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -76,13 +77,13 @@ public class Predicate extends BEASTObject {
                 }
             };
 
-            ExpressionLexer lexer = new ExpressionLexer(input);
+            MASTERGrammarLexer lexer = new MASTERGrammarLexer(input);
             lexer.removeErrorListeners();
             lexer.addErrorListener(errorListener);
 
             CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-            ExpressionParser parser = new ExpressionParser(tokens);
+            MASTERGrammarParser parser = new MASTERGrammarParser(tokens);
             parser.removeErrorListeners();
             parser.addErrorListener(errorListener);
 

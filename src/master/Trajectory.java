@@ -16,11 +16,8 @@
  */
 package master;
 
-import master.model.InitState;
+import master.model.*;
 import master.conditions.PopulationEndCondition;
-import master.model.PopulationSize;
-import master.model.Model;
-import master.model.PopulationState;
 import master.steppers.GillespieStepper;
 import master.steppers.Stepper;
 import master.outputs.TrajectoryOutput;
@@ -47,57 +44,57 @@ public class Trajectory extends Runnable {
      */
     
     // Spec parameters:
-    public Input<Double> simulationTimeInput = new Input<Double>(
+    public Input<Double> simulationTimeInput = new Input<>(
             "simulationTime",
             "The maximum length of time to simulate for. (Defaults to infinite.)");
     
-    public Input<Integer> nSamplesInput = new Input<Integer>(
+    public Input<Integer> nSamplesInput = new Input<>(
             "nSamples",
             "Number of evenly spaced time points to sample state at.");
     
-    public Input<Integer> seedInput = new Input<Integer>(
+    public Input<Integer> seedInput = new Input<>(
             "seed",
             "Seed for RNG.");
     
-    public Input<Boolean> recordTrajLogPInput = new Input<Boolean>(
+    public Input<Boolean> recordTrajLogPInput = new Input<>(
             "recordTrajLogP",
             "Record log probability density for this trajectory.", false);
     
-    public Input<Stepper> stepperInput = new Input<Stepper>(
+    public Input<Stepper> stepperInput = new Input<>(
             "stepper",
             "State incrementing algorithm to use. (Default Gillespie.)",
             new GillespieStepper());
     
-    public Input<Integer> verbosityInput = new Input<Integer> (
+    public Input<Integer> verbosityInput = new Input<>(
             "verbosity", "Level of verbosity to use (0-2).", 1);
     
     // Model:
-    public Input<Model> modelInput = new Input<Model>("model",
+    public Input<Model> modelInput = new Input<>("model",
             "The specific model to simulate.",
             Input.Validate.REQUIRED);
     
     // Initial state:
-    public Input<InitState> initialStateInput = new Input<InitState>("initialState",
+    public Input<InitState> initialStateInput = new Input<>("initialState",
             "Initial state of system.",
             Input.Validate.REQUIRED);
     
     // End conditions:
-    public Input<List<PopulationEndCondition>> endConditionsInput = new Input<List<PopulationEndCondition>>(
+    public Input<List<PopulationEndCondition>> endConditionsInput = new Input<>(
             "populationEndCondition",
             "Trajectory end condition based on population sizes.",
-            new ArrayList<PopulationEndCondition>());    
+            new ArrayList<>());
     
     // Post-simulation conditioning:
     public Input<List<PostSimCondition>> postSimConditionsInput =
-            new Input<List<PostSimCondition>>("postSimCondition",
+            new Input<>("postSimCondition",
                     "A post-simulation condition.",
-                    new ArrayList<PostSimCondition>());
+                    new ArrayList<>());
     
     // Outputs:
-    public Input<List<TrajectoryOutput>> outputsInput = new Input<List<TrajectoryOutput>>(
+    public Input<List<TrajectoryOutput>> outputsInput = new Input<>(
             "output",
             "Output writer used to write simulation output to disk.",
-            new ArrayList<TrajectoryOutput>());
+            new ArrayList<>());
     
     // List of sampled states:
     List<PopulationState> sampledStates;
@@ -150,7 +147,8 @@ public class Trajectory extends Runnable {
         // Assemble initial state:
         PopulationState initState = new PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            initState.set(popSize.getPopulation(), popSize.getSize());
+            for (Population pop : popSize.getPopSizes(modelInput.get()).keySet())
+                initState.set(pop, popSize.getPopSizes(modelInput.get()).get(pop));
         spec.setInitPopulationState(initState);
         
         // Incorporate any end conditions:
@@ -361,8 +359,8 @@ public class Trajectory extends Runnable {
     /**
      *  Sample current population size state and time.
      * 
-     * @param currentState
-     * @param time 
+     * @param currentState current state of population
+     * @param time current simulation time
      */
     public final void sampleState(PopulationState currentState, double time) {
         sampledStates.add(new PopulationState(currentState));

@@ -28,10 +28,7 @@ import master.conditions.LeafCountEndCondition;
 import master.conditions.LineageEndCondition;
 import master.conditions.PopulationEndCondition;
 import master.conditions.PostSimCondition;
-import master.model.InitState;
-import master.model.Model;
-import master.model.PopulationSize;
-import master.model.PopulationState;
+import master.model.*;
 import master.outputs.InheritanceEnsembleOutput;
 import master.postprocessors.InheritancePostProcessor;
 
@@ -166,7 +163,8 @@ public class InheritanceEnsemble extends Runnable {
         // Assemble initial state:
         PopulationState initState = new PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            initState.set(popSize.getPopulation(), popSize.getSize());
+            for (Population pop : popSize.getPopSizes(modelInput.get()).keySet())
+                initState.set(pop, popSize.getPopSizes(modelInput.get()).get(pop));
         spec.setInitPopulationState(initState);        
         spec.setInitNodes(initialStateInput.get().getInitNodes());
         

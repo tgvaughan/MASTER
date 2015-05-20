@@ -146,7 +146,8 @@ public class InheritanceTrajectory extends Trajectory {
         // Assemble initial state:
         master.model.PopulationState initState = new master.model.PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            initState.set(popSize.getPopulation(), popSize.getSize());
+            for (Population pop : popSize.getPopSizes(modelInput.get()).keySet())
+                initState.set(pop, popSize.getPopSizes(modelInput.get()).get(pop));
         spec.setInitPopulationState(initState);        
         spec.setInitNodes(initialStateInput.get().getInitNodes());
         

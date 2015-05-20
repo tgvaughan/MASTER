@@ -18,6 +18,7 @@ package master;
 
 import master.model.InitState;
 import master.conditions.PopulationEndCondition;
+import master.model.Population;
 import master.model.PopulationSize;
 import master.model.Model;
 import master.steppers.Stepper;
@@ -42,62 +43,62 @@ public class Ensemble extends Runnable {
     */
     
     // Spec parameters:
-    public Input<Double> simulationTimeInput = new Input<Double>(
+    public Input<Double> simulationTimeInput = new Input<>(
             "simulationTime",
             "The length of time to simulate. (Defaults to infinite.)");
     
-    public Input<Boolean> useEvenSamplingInput = new Input<Boolean>(
+    public Input<Boolean> useEvenSamplingInput = new Input<>(
             "useEvenSampling",
             "Whether to use evenly spaced samples. (Defaults to false.)",
             false);
     
-    public Input<Integer> nSamplesInput = new Input<Integer>(
+    public Input<Integer> nSamplesInput = new Input<>(
             "nSamples",
             "Number of evenly spaced time points to sample state at.");
     
-    public Input<Integer> nTrajInput = new Input<Integer>(
+    public Input<Integer> nTrajInput = new Input<>(
             "nTraj",
             "Number of trajectories to generate.",
             Input.Validate.REQUIRED);
     
-    public Input<Integer> seedInput = new Input<Integer>(
+    public Input<Integer> seedInput = new Input<>(
             "seed",
             "Seed for RNG.");
     
-    public Input<Stepper> stepperInput = new Input<Stepper>(
+    public Input<Stepper> stepperInput = new Input<>(
             "stepper",
             "State incrementing algorithm to use. (Default Gillespie.)");
     
-    public Input<Integer> verbosityInput = new Input<Integer> (
+    public Input<Integer> verbosityInput = new Input<>(
             "verbosity", "Level of verbosity to use (0-3).", 1);
     
     // Model:
-    public Input<Model> modelInput = new Input<Model>("model",
+    public Input<Model> modelInput = new Input<>("model",
             "The specific model to simulate.",
             Input.Validate.REQUIRED);
     
     // Initial state:
-    public Input<InitState> initialStateInput = new Input<InitState>("initialState",
+    public Input<InitState> initialStateInput = new Input<>("initialState",
             "Initial state of system.",
             Input.Validate.REQUIRED);
     
     // End conditions:
-    public Input<List<PopulationEndCondition>> endConditionsInput = new Input<List<PopulationEndCondition>>(
+    public Input<List<PopulationEndCondition>> endConditionsInput = new Input<>(
             "populationEndCondition",
             "Trajectory end condition based on population sizes.",
-            new ArrayList<PopulationEndCondition>());
+            new ArrayList<>());
     
     // Post-simulation conditioning:
     public Input<List<PostSimCondition>> postSimConditionsInput =
-            new Input<List<PostSimCondition>>("postSimCondition",
+            new Input<>("postSimCondition",
                     "A post-simulation condition.",
-                    new ArrayList<PostSimCondition>());
+                    new ArrayList<>());
     
     // Outputs to write:
-    public Input<List<EnsembleOutput>> outputsInput = new Input<List<EnsembleOutput>>(
+    public Input<List<EnsembleOutput>> outputsInput = new Input<>(
             "output",
             "Output writer used to write simulation output to disk.",
-            new ArrayList<EnsembleOutput>());
+            new ArrayList<>());
 
     // The ensemble is a large number of trajectories:
     ArrayList<Trajectory> trajectories;
@@ -138,7 +139,8 @@ public class Ensemble extends Runnable {
         // Assemble initial state:
         master.model.PopulationState initState = new master.model.PopulationState();
         for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            initState.set(popSize.getPopulation(), popSize.getSize());
+            for (Population pop : popSize.getPopSizes(modelInput.get()).keySet())
+                initState.set(pop, popSize.getPopSizes(modelInput.get()).get(pop));
         spec.setInitPopulationState(initState);
                         
         // Incorporate any end conditions:
@@ -180,7 +182,7 @@ public class Ensemble extends Runnable {
         }
 
         // Initialise trajectory list:
-        trajectories = new ArrayList<Trajectory>();
+        trajectories = new ArrayList<>();
         
         // Record time at start of simulation:
         double startTime = (new Date()).getTime();

@@ -22,7 +22,7 @@ public class MandelbrotTest extends XMLTestCase{
     @Override
     public Map<File, String> getOutputFileHashes() {
         Map<File, String> map = new HashMap<>();
-        map.put(new File("Mandelbrot_output.json"), "89a7be250ac8ec962e5bcf1675259ad4");
+        map.put(new File("Mandelbrot_output.json"), "d918f84464b13daad8bcceea81d78f9e");
         return map;
     }
 }

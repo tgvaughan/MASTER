@@ -146,9 +146,11 @@ public class Trajectory extends Runnable {
         
         // Assemble initial state:
         PopulationState initState = new PopulationState();
-        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            for (Population pop : popSize.getPopSizes(modelInput.get()).keySet())
-                initState.set(pop, popSize.getPopSizes(modelInput.get()).get(pop));
+        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get()) {
+            popSize.computePopulationSizes(modelInput.get());
+            for (Population pop : popSize.getPopSizes().keySet())
+                initState.set(pop, popSize.getPopSizes().get(pop));
+        }
         spec.setInitPopulationState(initState);
         
         // Incorporate any end conditions:

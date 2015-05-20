@@ -26,6 +26,7 @@ import master.conditions.PostSimCondition;
 import master.model.*;
 import master.outputs.InheritanceTrajectoryOutput;
 import master.postprocessors.InheritancePostProcessor;
+import master.postprocessors.LineageSampler;
 
 import java.util.*;
 
@@ -145,9 +146,11 @@ public class InheritanceTrajectory extends Trajectory {
         
         // Assemble initial state:
         master.model.PopulationState initState = new master.model.PopulationState();
-        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get())
-            for (Population pop : popSize.getPopSizes(modelInput.get()).keySet())
-                initState.set(pop, popSize.getPopSizes(modelInput.get()).get(pop));
+        for (PopulationSize popSize : initialStateInput.get().popSizesInput.get()) {
+            popSize.computePopulationSizes(modelInput.get());
+            for (Population pop : popSize.getPopSizes().keySet())
+                initState.set(pop, popSize.getPopSizes().get(pop));
+        }
         spec.setInitPopulationState(initState);        
         spec.setInitNodes(initialStateInput.get().getInitNodes());
         
@@ -162,8 +165,11 @@ public class InheritanceTrajectory extends Trajectory {
             spec.addLeafCountEndCondition(endCondition);
 
         // Incorporate post-processors:
-        for (InheritancePostProcessor postProc : inheritancePostProcessorsInput.get())
+        for (InheritancePostProcessor postProc : inheritancePostProcessorsInput.get()) {
+            if (postProc instanceof LineageSampler)
+                ((LineageSampler) postProc).computePopulationSizes(modelInput.get());
             spec.addInheritancePostProcessor(postProc);
+        }
         
         // Incorporate post-simulation conditions:
         for (PostSimCondition condition : postSimConditionsInput.get())

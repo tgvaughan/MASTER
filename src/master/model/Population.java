@@ -27,15 +27,15 @@ import beast.core.parameter.IntegerParameter;
  */
 public class Population extends BEASTObject {
 
-    public Input<PopulationType> typeInput = new Input<PopulationType>(
+    public Input<PopulationType> typeInput = new Input<>(
             "type",
             "Type to which this population belongs.");
 
-    public Input<String> popNameInput = new Input<String>(
+    public Input<String> popNameInput = new Input<>(
             "populationName",
             "Name of population.  Needed if no type given.");
 
-    public Input<IntegerParameter> locationInput = new Input<IntegerParameter>(
+    public Input<IntegerParameter> locationInput = new Input<>(
             "location",
             "Vector specifying location of specific population.");
 
@@ -107,8 +107,8 @@ public class Population extends BEASTObject {
         
         precalculateHash();
     }
-    
-    /**
+
+    /*
      * Pre-calculate hash code.
      */
     private void precalculateHash() {

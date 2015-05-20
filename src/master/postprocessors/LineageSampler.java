@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import master.InheritanceTrajectory;
+import master.model.Model;
 import master.model.Node;
 import master.model.Population;
 import master.model.PopulationSize;
@@ -53,11 +54,16 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
                 && popSpecificSamplesInput.get().isEmpty())
             throw new IllegalArgumentException("Either nSamples or pSample or at least "
                     + "one populationSize must be specified.");
-        
+    }
+
+    public void computePopulationSizes(Model model) {
         populationSizes = HashMultiset.create();
-        for (PopulationSize popSize : popSpecificSamplesInput.get())
-            populationSizes.setCount(popSize.getPopulation(),
-                    (int)Math.round(popSize.getSize()));
+        for (PopulationSize popSize : popSpecificSamplesInput.get()) {
+            popSize.computePopulationSizes(model);
+            for (Population pop : popSize.getPopSizes().keySet())
+                populationSizes.setCount(pop,
+                        (int) Math.round(popSize.getPopSizes().get(pop)));
+        }
     }
     
     /**

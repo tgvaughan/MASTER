@@ -64,7 +64,19 @@ public class Model extends BEASTObject {
     // Reactions:
     List<Reaction> reactions;
     List<Double> reactionRateChangeTimes;
-    
+
+    // Functions:
+    Map<String, Function> functionMap;
+
+    /**
+     * Model constructor.
+     */
+    public Model() {
+        types = new ArrayList<>();
+        reactions = new ArrayList<>();
+        functionMap = new HashMap<>();
+    }
+
     @Override
     public void initAndValidate() throws Exception {
 
@@ -77,7 +89,6 @@ public class Model extends BEASTObject {
             types.add(pop.type);
 
         // Collect functions:
-        Map<String, Function> functionMap = new HashMap<>();
         for (Function function : functionsInput.get())
             functionMap.put(function.getID(), function);
 
@@ -94,14 +105,6 @@ public class Model extends BEASTObject {
         }
     }
 
-    /**
-     * Model constructor.
-     */
-    public Model() {
-        types = Lists.newArrayList();
-        reactions = Lists.newArrayList();
-    }
-
     /*
      * Getters:
      */
@@ -112,7 +115,11 @@ public class Model extends BEASTObject {
     public List<Reaction> getReactions() {
         return reactions;
     }
-    
+
+    public Map<String, Function> getFunctionMap() {
+        return functionMap;
+    }
+
     /**
      * Obtain ordered list of times at which reaction rates change.
      * @return 

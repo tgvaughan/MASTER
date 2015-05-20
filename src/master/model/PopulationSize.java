@@ -70,6 +70,13 @@ public class PopulationSize extends BEASTObject {
         }
     }
 
+    /**
+     * Do all the work of parsing the population size assignment string.
+     *
+     * @param assignmentString string to parse
+     * @param populationTypes list of valid population types
+     * @param functionMap map from function names to objects
+     */
     private void parseAssignmentString(String assignmentString,
                                        List<PopulationType> populationTypes,
                                        Map<String, Function> functionMap) {
@@ -99,60 +106,18 @@ public class PopulationSize extends BEASTObject {
         parser.addErrorListener(errorListener);
 
         ParseTree assignmentParseTree = parser.assignment();
+        ParseTreeWalker walker = new ParseTreeWalker();
 
         // Grab lists of population types and variable names, keeping track
         // of maximum values location index variables can take.
-        Map<String, PopulationType> popTypes = new HashMap<>();
-        Map<String, Integer> varNameBoundsMap = new HashMap<>();
-        new ParseTreeWalker().walk(new MASTERGrammarBaseListener() {
-
-            @Override
-            public void exitPopel(MASTERGrammarParser.PopelContext ctx) {
-
-                PopulationType popType = null;
-                for (PopulationType thisPopType : populationTypes) {
-                    if (ctx.popname().IDENT().toString().equals(thisPopType.getName()))
-                        popType = thisPopType;
-                }
-
-                if (popType == null) {
-                    System.err.println("Uknown population type '"
-                        + ctx.popname().IDENT() + "' in reaction string.");
-                    System.exit(1);
-                }
-
-                popTypes.put(ctx.popname().IDENT().toString(), popType);
-
-                if (ctx.loc() != null) {
-
-                    if (ctx.loc().locel().size() != popType.dims.length) {
-                        System.err.println("Population location vector"
-                            + " length does not match length of dims vector.");
-                        System.exit(0);
-                    }
-
-                    for (int i=0; i<ctx.loc().locel().size(); i++) {
-                        if (ctx.loc().locel(i).IDENT() != null) {
-                            String varName = ctx.loc().locel(i).IDENT().toString();
-                            if (!varNameBoundsMap.containsKey(varName)) {
-                                varNameBoundsMap.put(varName, popType.dims[i]);
-                            } else {
-                                if (varNameBoundsMap.get(varName)>popType.dims[i]) {
-                                    varNameBoundsMap.put(varName, popType.dims[i]);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        }, assignmentParseTree);
+        PreprocessingListener listener = new PreprocessingListener(populationTypes);
+        walker.walk(listener, assignmentParseTree);
 
         // Assemble list of variable names and array of variable bounds
-        List<String> scalarVarNames = new ArrayList<>(varNameBoundsMap.keySet());
+        List<String> scalarVarNames = new ArrayList<>(listener.getVarNameBoundsMap().keySet());
         int[] scalarVarBounds = new int[scalarVarNames.size()];
         for (int i=0; i<scalarVarNames.size(); i++)
-            scalarVarBounds[i] = varNameBoundsMap.get(scalarVarNames.get(i));
+            scalarVarBounds[i] = listener.getVarNameBoundsMap().get(scalarVarNames.get(i));
 
         // Use bounds array to assemble list of variable value arrays
         List<int[]> variableValuesList = new ArrayList<>();
@@ -166,9 +131,14 @@ public class PopulationSize extends BEASTObject {
             vectorVarNames.add(popType.getName() + "_dim");
             vectorVarVals.add(new Double[popType.getDims().length]);
             for (int j=0; j<popType.getDims().length; j++) {
-                vectorVarVals.get(i)[j] = new Double(popType.getDims()[j]);
+                vectorVarVals.get(i)[j] = (double) popType.getDims()[j];
             }
         }
+
+        ExpressionEvaluator evaluator = new ExpressionEvaluator(
+                listener.getExpressionParseTree(), scalarVarNames, functionMap);
+
+        PopulationType popType = listener.getSeenPopulationTypes().get(0);
 
 
         // Consider every combination of variable values
@@ -188,11 +158,61 @@ public class PopulationSize extends BEASTObject {
             if (!include)
                 continue;
 
-            // TODO Create population object
+            // Evaluate expression to find size
+            Double[] sizeExprValue = evaluator.evaluate(scalarVarVals);
+            if (sizeExprValue.length != 1)
+                throw new IllegalArgumentException("Population size expression " +
+                        "must evaluate to scalar.");
+            double popSize = sizeExprValue[0];
+
+            // Create population object
+            walker.walk(new MASTERGrammarBaseListener() {
+
+                @Override
+                public void exitAssignment(@NotNull MASTERGrammarParser.AssignmentContext ctx) {
+                    // Assemble loc
+
+                    List<Integer> locList = new ArrayList<>();
+                    if (ctx.loc() != null) {
+                        for (MASTERGrammarParser.LocelContext locelCtx : ctx.loc().locel()) {
+                            if (locelCtx.IDENT() == null) {
+                                locList.add(Integer.parseInt(locelCtx.getText()));
+                            } else {
+                                String varName = locelCtx.IDENT().getText();
+                                int varIdx = scalarVarNames.indexOf(varName);
+                                locList.add(scalarVarVals[varIdx]);
+                            }
+                        }
+                    }
+
+                    int[] loc = new int[locList.size()];
+                    for (int i=0; i<loc.length; i++)
+                        loc[i] = locList.get(i);
+
+                    popSizes.put(new Population(popType, loc), popSize);
+                }
+            }, assignmentParseTree);
         }
     }
 
 
+    /**
+     * Compute the population sizes implied by the inputs to this
+     * PopulationSize object. Must be called before getPopSizes().
+     *
+     * @param model corresponding MASTER model
+     */
+    public void computePopulationSizes(Model model) {
+        popSizes = new HashMap<>();
+
+        if (populationInput.get() != null)
+            popSizes.put(populationInput.get(), sizeInput.get());
+
+        if (valueInput.get() != null) {
+            parseAssignmentString(valueInput.get(),
+                    model.getPopulationTypes(), model.getFunctionMap());
+        }
+    }
 
     /**
      * Obtain the population size map implied by the inputs to this
@@ -200,20 +220,104 @@ public class PopulationSize extends BEASTObject {
      *
      * @return map from populations to their sizes.
      */
-    public Map<Population, Double> getPopSizes(Model model) {
+    public Map<Population, Double> getPopSizes() {
+        return popSizes;
+    }
 
-        if (popSizes != null)
-            return popSizes;
 
-        popSizes = new HashMap<>();
+    /**
+     * Listener for extracting population type, variable names
+     * and bounds, and expression subtree from assignment parse tree.
+     */
+    private class PreprocessingListener extends MASTERGrammarBaseListener {
 
-        if (populationInput.get() != null)
-            popSizes.put(populationInput.get(), sizeInput.get());
+        private ParseTree expressionParseTree;
+        private Map<String, PopulationType> seenPopulationTypeMap = new HashMap<>();
+        private Map<String, Integer> varNameBoundsMap = new HashMap<>();
 
-        if (valueInput.get() != null) {
+        List<PopulationType> populationTypes;
 
+        /**
+         * Construct a MASTER grammar listener that assembles the list of
+         * population types and location variables used by a reaction string
+         * or population size init string parse tree.
+         *
+         * @param populationTypes List of available population types.
+         */
+        public PreprocessingListener(List<PopulationType> populationTypes) {
+            this.populationTypes = populationTypes;
         }
 
-        return popSizes;
+        /**
+         * Retrieve population types found in the parse tree.
+         *
+         * @return map from population type names to the corresponding objects
+         */
+        public Map<String, PopulationType> getSeenPopulationTypeMap() {
+            return seenPopulationTypeMap;
+        }
+
+        public List<PopulationType> getSeenPopulationTypes() {
+            return new ArrayList<>(seenPopulationTypeMap.values());
+        }
+
+        /**
+         * Retrieve location variable bounds map.
+         *
+         * @return map from variable names to maximum allowed value
+         */
+        public Map<String, Integer> getVarNameBoundsMap() {
+            return varNameBoundsMap;
+        }
+
+        /**
+         * @return parse tree for assignment expression.
+         */
+        public ParseTree getExpressionParseTree() {
+            return expressionParseTree;
+        }
+
+        @Override
+        public void exitAssignment(@NotNull MASTERGrammarParser.AssignmentContext ctx) {
+
+
+            PopulationType popType = null;
+            for (PopulationType thisPopType : populationTypes) {
+                if (ctx.popname().IDENT().toString().equals(thisPopType.getName()))
+                    popType = thisPopType;
+            }
+
+            if (popType == null) {
+                System.err.println("Uknown population type '"
+                        + ctx.popname().IDENT() + "' in reaction string.");
+                System.exit(1);
+            }
+
+            seenPopulationTypeMap.put(ctx.popname().getText(), popType);
+
+            if (ctx.loc() != null) {
+
+                if (ctx.loc().locel().size() != popType.dims.length) {
+                    System.err.println("Population location vector"
+                            + " length does not match length of dims vector.");
+                    System.exit(0);
+                }
+
+                for (int i=0; i<ctx.loc().locel().size(); i++) {
+                    if (ctx.loc().locel(i).IDENT() != null) {
+                        String varName = ctx.loc().locel(i).IDENT().toString();
+                        if (!varNameBoundsMap.containsKey(varName)) {
+                            varNameBoundsMap.put(varName, popType.dims[i]);
+                        } else {
+                            if (varNameBoundsMap.get(varName)>popType.dims[i]) {
+                                varNameBoundsMap.put(varName, popType.dims[i]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            expressionParseTree = ctx.expression();
+        }
     }
 }

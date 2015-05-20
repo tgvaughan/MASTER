@@ -32,8 +32,8 @@
         </model>
 
         <initialState spec='InitState'>
-            <populationSize spec='PopulationSize' size='1000'>
-                <population spec='Population' type="@X" location="200"/>
+            <populationSize spec='PopulationSize'>
+                X[200] := 1000
             </populationSize>
         </initialState>
         

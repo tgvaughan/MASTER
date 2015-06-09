@@ -22,7 +22,7 @@ import master.model.PopulationState;
 import master.model.Reaction;
 
 /**
- * Deterministic rate equation stepper.  Currently uses an implicit Runge-Kutta method.
+ * Deterministic rate equation stepper.  Currently uses a semi-implicit method.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
@@ -99,7 +99,7 @@ public class RateEquationStepper extends Stepper {
 
     @Override
     public String getAlgorithmName() {
-        return "Deterministic Runge-Kutta integrator.";
+        return "Deterministic integrator.";
     }
     
     /**

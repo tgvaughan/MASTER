@@ -80,29 +80,50 @@ public class Model extends BEASTObject {
     @Override
     public void initAndValidate() throws Exception {
 
+        System.out.println("Assembling model...");
+
+        System.out.print("Setting up populations... ");
+
         // Add population types to model:
         for (PopulationType popType : populationTypesInput.get())
             types.add(popType);
-        
+
         // Add population types corresponding to individual populations to model:
         for (Population pop : populationsInput.get())
             types.add(pop.type);
+
+        System.out.println("done.");
+
+        if (functionsInput.get().size()>0)
+            System.out.print("Setting up functions... ");
 
         // Collect functions:
         for (Function function : functionsInput.get())
             functionMap.put(function.getID(), function);
 
+        if (functionsInput.get().size()>0)
+            System.out.println("done.");
+
+        System.out.print("Setting up reactions...");
+
         // Add reaction groups to model:
         for (ReactionGroup reactGroup: reactionGroupsInput.get()) {
-            for (Reaction react : reactGroup.getReactions())
+            for (Reaction react : reactGroup.getReactions()) {
+                System.out.print(" " + react.getName() + "...");
+                System.out.flush();
                 reactions.addAll(react.getAllReactions(types, functionMap));
+            }
         }
 
         // Add individual reactions to model:
         for (Reaction react : reactionsInput.get()) {
-            //addReaction(react);
+            System.out.print(" " + react.getName() + "...");
+            System.out.flush();
             reactions.addAll(react.getAllReactions(types, functionMap));
         }
+
+        System.out.println(" done.");
+        System.out.println("Model assembled.");
     }
 
     /*

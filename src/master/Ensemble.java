@@ -170,6 +170,8 @@ public class Ensemble extends Runnable {
         // Write outputs:
         for (EnsembleOutput output : outputsInput.get())
             output.write(this);        
+
+        System.out.println("Done.");
     }
     
     /**

@@ -195,6 +195,8 @@ public class InheritanceTrajectory extends Trajectory {
         // Write outputs:
         for (InheritanceTrajectoryOutput output : outputsInput.get())
             output.write(this);
+
+        System.out.println("Done.");
     }
     
     /**

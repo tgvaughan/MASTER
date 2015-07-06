@@ -206,6 +206,8 @@ public class InheritanceEnsemble extends Runnable {
         // Write outputs:
         for (InheritanceEnsembleOutput output : outputsInput.get())
             output.write(this);
+
+        System.out.println("Done.");
     }
     
     private void simulate() {

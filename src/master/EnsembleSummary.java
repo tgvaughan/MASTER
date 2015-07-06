@@ -186,6 +186,7 @@ public class EnsembleSummary extends Runnable {
         for (EnsembleSummaryOutput output : outputsInput.get())
             output.write(this);
         
+        System.out.println("Done.");
     }
 
     /**

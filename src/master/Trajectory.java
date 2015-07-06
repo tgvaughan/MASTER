@@ -181,6 +181,8 @@ public class Trajectory extends Runnable {
         // Write outputs:
         for (TrajectoryOutput output : outputsInput.get())
             output.write(this);
+
+        System.out.println("Done.");
     }
     
     /**

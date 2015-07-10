@@ -21,6 +21,7 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.StateNode;
 import beast.core.StateNodeInitialiser;
+import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.tree.Tree;
 import com.google.common.collect.Lists;
@@ -145,9 +146,14 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
     public Input<Alignment> alignmentInput = new Input<Alignment>("alignment",
             "If provided, nodes are equated with taxons having the same label.");
         
-    
+
+    public Input<RealParameter> originInput = new Input<>("origin",
+            "if provided, this is used to set the correct origin for BeastTreeFromMaster tree");
+
+    public Double origin;
+
     public BeastTreeFromMaster() { }
-    
+
     @Override
     public void initAndValidate() throws Exception {
     
@@ -190,7 +196,8 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         
         // Assemble BEAST tree:
         assembleTree(itraj);
-        
+
+        if (originInput.get()!=null) origin = itraj.t;
         // DEBUG: can check BEAST's newick tree against ours
         //log(0, System.out);
         
@@ -433,12 +440,19 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         if (m_initial.get() != null) {
             m_initial.get().assignFrom(this);
         }
+
+        if (originInput.get() != null) {
+            originInput.get().assignFromWithoutID(new RealParameter(origin.toString()));
+        }
     }
 
     @Override
     public void getInitialisedStateNodes(List<StateNode> stateNodes) {
         if (m_initial.get() != null) {
             stateNodes.add(m_initial.get());
+        }
+        if (originInput.get() != null) {
+            stateNodes.add(originInput.get());
         }
     }
 

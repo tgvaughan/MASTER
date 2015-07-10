@@ -99,7 +99,7 @@ public class InheritanceTrajectory extends Trajectory {
     private Map<Node, Node> nodesInvolved, nextLevelNodes;
     private List<Node> inactiveLineages;
     private PopulationState currentPopState;
-    private double t;
+    protected double t;
     private int sidx;
     private Multiset<Population> leafCounts;
     

@@ -367,7 +367,11 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         }
         
         beastNode.setMetaData("type", annotationNode.getPopulation().getType().getName());
-        beastNode.setMetaData("location", annotationNode.getPopulation().getLocation());
+        int[] loc = annotationNode.getPopulation().getLocation();
+        if (loc.length > 1) {
+            beastNode.setMetaData("location", loc);
+        } else if (loc.length == 1)
+            beastNode.setMetaData("location", loc[0]);
     }
     
     /**

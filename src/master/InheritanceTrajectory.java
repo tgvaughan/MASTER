@@ -157,7 +157,7 @@ public class InheritanceTrajectory extends Trajectory {
         // Incorporate any end conditions:
         for (PopulationEndCondition endCondition : endConditionsInput.get())
             spec.addPopSizeEndCondition(endCondition);
-        
+
         for (LineageEndCondition endCondition : lineageEndConditionsInput.get())
             spec.addLineageEndCondition(endCondition);
 
@@ -605,7 +605,7 @@ public class InheritanceTrajectory extends Trajectory {
             if (reactNode.getChildren().isEmpty())
                 leafCounts.add(reactNode.getPopulation());
         }
-        
+
         // Graph cleaning and activeLineages maintenance:
         for (Node node : nodesInvolved.keySet()) {
             
@@ -666,7 +666,6 @@ public class InheritanceTrajectory extends Trajectory {
             }
         
         }
-
     }
         
     /**

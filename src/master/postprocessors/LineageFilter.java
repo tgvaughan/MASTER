@@ -28,25 +28,25 @@ import master.model.Node;
  */
 public class LineageFilter extends BEASTObject implements InheritancePostProcessor {
     
-    public Input<String> reactNameInput = new Input<String>("reactionName",
+    public Input<String> reactNameInput = new Input<>("reactionName",
             "Name of reaction used to filter lineages.");
     
-    public Input<String> populationNameInput = new Input<String>("populationName",
+    public Input<String> populationNameInput = new Input<>("populationName",
             "Name of population used to filter lineages.");
     
-    public Input<Boolean> discardInput = new Input<Boolean>("discard",
+    public Input<Boolean> discardInput = new Input<>("discard",
             "Discard (instead of keep) lineages that match the name.", false);
     
-    public Input<Boolean> leavesOnlyInput = new Input<Boolean>("leavesOnly",
+    public Input<Boolean> leavesOnlyInput = new Input<>("leavesOnly",
             "Only alter leaves.", false);
     
-    public Input<String> markAnnotationInput = new Input<String>("markAnnotation",
+    public Input<String> markAnnotationInput = new Input<>("markAnnotation",
             "Mark using this annotation rather than pruning.");
     
-    public Input<Boolean> noCleanInput = new Input<Boolean>("noClean",
+    public Input<Boolean> noCleanInput = new Input<>("noClean",
             "Do not remove no-state-change nodes.", false);
     
-    public Input<Boolean> reverseTimeInput = new Input<Boolean>("reverseTime",
+    public Input<Boolean> reverseTimeInput = new Input<>("reverseTime",
             "Process inheritance graph in reverse time.  Default false.", false);
 
     private String string;
@@ -199,7 +199,7 @@ public class LineageFilter extends BEASTObject implements InheritancePostProcess
         }
         
         // Remove any unmarked start nodes:
-        List<Node> oldStartNodes = new ArrayList<Node>();
+        List<Node> oldStartNodes = new ArrayList<>();
         oldStartNodes.addAll(itraj.getStartNodes());        
         for (Node node : oldStartNodes) {
             if (!isMarked(node, markAnnotation))
@@ -267,7 +267,7 @@ public class LineageFilter extends BEASTObject implements InheritancePostProcess
      * @param reverseTime 
      */
     private static void pruneLineage(Node node, boolean reverseTime, String markAnnotation) {
-        List<Node> prevNodes = new ArrayList<Node>();
+        List<Node> prevNodes = new ArrayList<>();
         prevNodes.addAll(getPrev(node, reverseTime));
         
         for (Node prev : prevNodes) {
@@ -332,15 +332,15 @@ public class LineageFilter extends BEASTObject implements InheritancePostProcess
             
             if (node.getPopulation().equals(child.getPopulation())) {
                 
-                getPrev(child, reverseTime).remove(node);
-                getPrev(child, reverseTime).add(parent);
+                int idx = getPrev(child, reverseTime).indexOf(node);
+                getPrev(child, reverseTime).set(idx, parent);
                 
-                getNext(parent, reverseTime).remove(node);
-                getNext(parent, reverseTime).add(child);
+                idx = getNext(parent, reverseTime).indexOf(node);
+                getNext(parent, reverseTime).set(idx, child);
             }
         }
         
-        List<Node> nextNodesCopy = new ArrayList<Node>();
+        List<Node> nextNodesCopy = new ArrayList<>();
         nextNodesCopy.addAll(nextNodes);
 
         for (Node child : nextNodesCopy)

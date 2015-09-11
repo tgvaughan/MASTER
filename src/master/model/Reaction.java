@@ -204,7 +204,7 @@ public class Reaction extends BEASTObject {
             vectorVarNames.add(popType.getName() + "_dim");
             vectorVarVals.add(new Double[popType.getDims().length]);
             for (int j=0; j<popType.getDims().length; j++) {
-                vectorVarVals.get(i)[j] = new Double(popType.getDims()[j]);
+                vectorVarVals.get(i)[j] = (double) popType.getDims()[j];
             }
         }
         

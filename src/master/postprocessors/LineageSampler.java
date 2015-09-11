@@ -21,28 +21,28 @@ import master.model.PopulationSize;
  */
 public class LineageSampler extends BEASTObject implements InheritancePostProcessor {
     
-    public Input<Integer> nSamplesInput = new Input<Integer>("nSamples",
+    public Input<Integer> nSamplesInput = new Input<>("nSamples",
             "Number of lineages to sample");
 
-    public Input<Double> sampleProbabilityInput = new Input<Double>("pSample",
+    public Input<Double> sampleProbabilityInput = new Input<>("pSample",
             "Probability with which to sample each lineage.");
 
     public Input<List<PopulationSize>> popSpecificSamplesInput =
-            new Input<List<PopulationSize>>("populationSize",
-            "Population size specifying number of samples to draw "
-                    + "from individual populations.",
-                    new ArrayList<PopulationSize>());
+            new Input<>("populationSize",
+                    "Population size specifying number of samples to draw "
+                            + "from individual populations.",
+                    new ArrayList<>());
     
-    public Input<Double> samplingTimeInput = new Input<Double>("samplingTime",
+    public Input<Double> samplingTimeInput = new Input<>("samplingTime",
             "Time at which sampling is to take place");
   
-    public Input<String> markAnnotationInput = new Input<String>("markAnnotation",
+    public Input<String> markAnnotationInput = new Input<>("markAnnotation",
             "Mark using this annotation rather than pruning.");
     
-    public Input<Boolean> reverseTimeInput = new Input<Boolean>("reverseTime",
+    public Input<Boolean> reverseTimeInput = new Input<>("reverseTime",
             "Process inheritance graph in reverse time.  Default false.", false);
 
-    public Input<Boolean> noCleanInput = new Input<Boolean>("noClean",
+    public Input<Boolean> noCleanInput = new Input<>("noClean",
             "Do not remove no-state-change nodes.", false);
     
     Multiset<Population> populationSizes;
@@ -108,14 +108,14 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
             rootNodes = itraj.getStartNodes();
             leafNodes = itraj.getEndNodes();
         }
-        
+
         // Assemble list of nodes from which to sample:
-        List<Node> nodesToSample = new ArrayList<Node>();
+        List<Node> nodesToSample = new ArrayList<>();
         if (samplingTime>=0.0) {
             for (Node root : rootNodes)
-                collectNodes(root, samplingTime, nodesToSample, reverseTime,
-                        itraj);
-            
+                collectNodes(root, samplingTime, nodesToSample, reverseTime
+                );
+
             // Update startNodes if necessary:
             if (reverseTime) {
                 itraj.getStartNodes().clear();
@@ -163,13 +163,13 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
         }
         
         // Remove any remaining unmarked root nodes:
-        List<Node> oldRootNodes = new ArrayList<Node>();
+        List<Node> oldRootNodes = new ArrayList<>();
         oldRootNodes.addAll(rootNodes);
         for (Node root : oldRootNodes) {
             if (!isMarked(root, markAnnotation))
                 rootNodes.remove(root);
         }
-        
+
         // Clean graph of singleton nodes that don't represent state changes:
         if (!noClean)
             for (Node node : rootNodes)
@@ -246,7 +246,7 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
      * @param reverseTime 
      */
     private static void pruneLineage(Node node, boolean reverseTime, String markAnnotation) {
-        List<Node> prevNodes = new ArrayList<Node>();
+        List<Node> prevNodes = new ArrayList<>();
         prevNodes.addAll(getPrev(node, reverseTime));
         
         for (Node prev : prevNodes) {
@@ -264,25 +264,24 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
      * @param nodesAtSamplingTime 
      */
     private static void collectNodes(Node node, double samplingTime,
-            List<Node> nodesAtSamplingTime, boolean reverseTime,
-            InheritanceTrajectory itraj) {
+                                     List<Node> nodesAtSamplingTime, boolean reverseTime) {
 
         double timeFactor = reverseTime ? -1.0 : 1.0;
         
-        List<Node> nextNodes = new ArrayList<Node>();
+        List<Node> nextNodes = new ArrayList<>();
         nextNodes.addAll(getNext(node, reverseTime));
         
         for (Node next : nextNodes) {
             if (next.getTime()*timeFactor >= samplingTime*timeFactor) {
                 Node newNode = new Node(next.getPopulation(), samplingTime);
-                getNext(node, reverseTime).remove(next);
+                int idx = getNext(node, reverseTime).indexOf(next);
                 getPrev(next, reverseTime).remove(node);
-                getNext(node, reverseTime).add(newNode);
+                getNext(node, reverseTime).set(idx, newNode);
                 getPrev(newNode, reverseTime).add(node);
                 nodesAtSamplingTime.add(newNode);
             } else {
-                collectNodes(next, samplingTime, nodesAtSamplingTime, reverseTime,
-                        itraj);
+                collectNodes(next, samplingTime, nodesAtSamplingTime, reverseTime
+                );
             }
         }
     }
@@ -344,7 +343,7 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
         for (Node node : nodesToSample) {
             Population pop = node.getPopulation();
             if (!nodeMap.containsKey(pop))
-                nodeMap.put(pop, new ArrayList<Node>());
+                nodeMap.put(pop, new ArrayList<>());
             
             nodeMap.get(pop).add(node);
         }
@@ -403,16 +402,16 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
             Node child = nextNodes.get(0);
             
             if (node.getPopulation().equals(child.getPopulation())) {
+
+                int idx = getPrev(child, reverseTime).indexOf(node);
+                getPrev(child, reverseTime).set(idx, parent);
                 
-                getPrev(child, reverseTime).remove(node);
-                getPrev(child, reverseTime).add(parent);
-                
-                getNext(parent, reverseTime).remove(node);
-                getNext(parent, reverseTime).add(child);
+                idx = getNext(parent, reverseTime).indexOf(node);
+                getNext(parent, reverseTime).set(idx, child);
             }
         }
         
-        List<Node> nextNodesCopy = new ArrayList<Node>();
+        List<Node> nextNodesCopy = new ArrayList<>();
         nextNodesCopy.addAll(nextNodes);
 
         for (Node child : nextNodesCopy)

@@ -189,7 +189,7 @@ public class NewickOutput extends BEASTObject implements
             branchLength = Math.abs(node.getTime() - last.getTime());
         
         if (visitedHybrids.contains(node)) {
-            addLabel(node, branchLength);
+            addLabel(node, last, branchLength);
             return;
         }
         
@@ -219,7 +219,7 @@ public class NewickOutput extends BEASTObject implements
                 pstream.append(")");
             }
             
-            addLabel(node, branchLength);
+            addLabel(node, last, branchLength);
         }
     }
     
@@ -229,7 +229,7 @@ public class NewickOutput extends BEASTObject implements
      * @param node
      * @param branchLength 
      */
-    protected void addLabel(Node node, double branchLength) {
+    protected void addLabel(Node node, Node last, double branchLength) {
         
         if (leafLabels.containsKey(node))
             pstream.append(leafLabels.get(node));

@@ -625,6 +625,7 @@ public class InheritanceTrajectory extends Trajectory {
 
                 nodeIdx = child.getParents().indexOf(node);
                 child.getParents().set(nodeIdx, parent);
+                child.getEdgePopulations().set(nodeIdx, node.getPopulation());
             } else {
                 // Node is here to stay
                                 

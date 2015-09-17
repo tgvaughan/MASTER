@@ -35,8 +35,12 @@ public class Node {
     // Children of this node.
     List<Node> children = new ArrayList<>(2);
 
+
     // Population to which the individual represented by this node belongs.
     Population population;
+
+    // Population to which the incomming edges belong:
+    List<Population> edgePopulations = new ArrayList<>(1);
 
     // Height of this node.
     double time;
@@ -178,6 +182,7 @@ public class Node {
     public Node addChild(Node child) {
         children.add(child);
         child.parents.add(this);
+        child.edgePopulations.add(this.population);
 
         return this;
     }
@@ -230,5 +235,14 @@ public class Node {
 
     public Population getPopulation() {
         return population;
+    }
+
+    public List<Population> getEdgePopulations() {
+        return edgePopulations;
+    }
+
+    @Override
+    public String toString() {
+        return population.toString() + " (" + Integer.toHexString(System.identityHashCode(this)) + ")";
     }
 }

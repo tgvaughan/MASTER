@@ -1,6 +1,8 @@
 MASTER: Moments And Stochastic Trees from Event Reactions
 =========================================================
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CompEvol/MASTER?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 This software aims to provide a general means of creating simulators
 for studying the stochastic dynamics of structured populations.
 Additionally, it is capable of generating trees representing

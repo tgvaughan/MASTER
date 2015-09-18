@@ -1,0 +1,37 @@
+<!-- Simulate an inheritance tree from the SEIR epidemic model -->
+
+<beast version='2.0' namespace='master:master.model:master.conditions:master.outputs'>
+  <run spec='InheritanceTrajectory'
+       samplePopulationSizes="true"
+       verbosity="1">
+
+    <model spec='Model' id='model'>
+      <population spec='Population' id='S' populationName='S'/>
+      <population spec='Population' id='E' populationName='E'/>
+      <population spec='Population' id='I' populationName='I'/>
+      <population spec='Population' id='R' populationName='R'/>
+
+      <reaction spec='Reaction' reactionName="Infection" rate="0.005">
+          S:2 + I:1 -> I:1 + E:1
+      </reaction>
+      <reaction spec='Reaction' reactionName="Activation" rate="0.4">
+          E:1 -> I:1
+      </reaction>
+      <reaction spec='Reaction' reactionName="Recovery" rate="0.2">
+          I -> R
+      </reaction>
+    </model>
+
+    <initialState spec='InitState'>
+      <populationSize spec='PopulationSize' population='@S' size='199'/>
+      <lineageSeed spec='Individual' population='@E'/>
+    </initialState>
+
+    <!-- Simulation will terminate when no lineages remain -->
+    <lineageEndCondition spec='LineageEndCondition' nLineages="0"/>
+
+    <output spec='NexusOutput' fileName='$(filebase)_output.nexus'/>
+    <output spec='JsonOutput' fileName='$(filebase)_output.json'/>
+  </run>
+</beast>
+

@@ -96,7 +96,7 @@ public class NexusOutput extends NewickOutput {
     }
 
     @Override
-    protected void addLabel(Node node, Node last, double branchLength) {
+    protected void addLabel(Node node, Population edgePop, double branchLength) {
         
         if (leafLabels.containsKey(node))
             pstream.append(leafLabels.get(node));
@@ -104,15 +104,6 @@ public class NexusOutput extends NewickOutput {
         if (hybridIDs.containsKey(node))
             pstream.append("#").append(String.valueOf(hybridIDs.get(node)));
         // note that we've omitted the optional "type" specifier
-
-        Population edgePop;
-        if (reverseTime) {
-            int edgeIdx = last.getParents().indexOf(node);
-            edgePop = last.getEdgePopulations().get(edgeIdx);
-        } else {
-            int edgeIdx = node.getParents().indexOf(last);
-            edgePop = node.getEdgePopulations().get(edgeIdx);
-        }
 
         // Annotations traditionally refer to the branch _above_ the node
         // on the tree.  The following correction ensures this tradition is

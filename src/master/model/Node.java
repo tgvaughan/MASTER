@@ -179,10 +179,10 @@ public class Node {
      * @param child Child to add.
      * @return this
      */
-    public Node addChild(Node child) {
+    public Node addChild(Node child, Population edgePopulation) {
         children.add(child);
         child.parents.add(this);
-        child.edgePopulations.add(this.population);
+        child.edgePopulations.add(edgePopulation);
 
         return this;
     }

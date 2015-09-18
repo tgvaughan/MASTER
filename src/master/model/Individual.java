@@ -62,7 +62,7 @@ public class Individual extends BEASTObject {
             node.setName(labelInput.get());
         
         for (Individual child : childrenInput.get())
-            node.addChild(child.node);
+            node.addChild(child.node, child.node.getPopulation());
     }
 
     /**

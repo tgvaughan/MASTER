@@ -20,19 +20,19 @@ import beast.core.BEASTObject;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.LinkedHashMultiset;
+import com.google.common.collect.Multiset;
 import master.InheritanceEnsemble;
+import master.InheritanceTrajectory;
 import master.model.Node;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import master.model.Population;
+
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import master.InheritanceTrajectory;
 
 /**
  * Static methods for producing "extended Newick" representations of inheritance
@@ -126,14 +126,14 @@ public class NewickOutput extends BEASTObject implements
         // Identify root and leaf nodes
         if (reverseTime) {
             rootNodes = findEndNodes(graph);
-            leafNodes = Sets.newLinkedHashSet(graph.startNodes);
+            leafNodes = new LinkedHashSet<>(graph.startNodes); //Sets.newLinkedHashSet(graph.startNodes);
         } else {
-            rootNodes = Sets.newLinkedHashSet(graph.startNodes);
+            rootNodes = new LinkedHashSet<>(graph.startNodes); //Sets.newLinkedHashSet(graph.startNodes);
             leafNodes = findEndNodes(graph);
         }
         
         // Assign a unique integer label to each unnamed leaf node:
-        leafLabels = Maps.newLinkedHashMap();
+        leafLabels = new LinkedHashMap<>();
         int label = 1;
         for (Node leaf : leafNodes) {
             if (leaf.getName() == null)
@@ -146,12 +146,12 @@ public class NewickOutput extends BEASTObject implements
         Set<Node> hybridNodes = findHybridNodes(rootNodes, reverseTime);
         
         // Assign a unique integer label to each hybrid node:
-        hybridIDs = Maps.newLinkedHashMap();
+        hybridIDs = new LinkedHashMap<>();
         label = 1;
         for (Node hybrid : hybridNodes)
             hybridIDs.put(hybrid, label++);
         
-        Set<Node> visitedHybrids = Sets.newLinkedHashSet();
+        LinkedHashSet<Node> visitedHybrids = new LinkedHashSet<>();
         boolean first = true;
         for (Node node : rootNodes) {
             if (!first)
@@ -165,7 +165,7 @@ public class NewickOutput extends BEASTObject implements
             else
                 next = node.getChildren().get(0);
             
-            subTreeToExtendedNewick(next, node, visitedHybrids);
+            subTreeToExtendedNewick(next, node, next.getEdgePopulations().get(0), visitedHybrids);
         }
         
         pstream.append(";\n");
@@ -180,7 +180,7 @@ public class NewickOutput extends BEASTObject implements
      * @param last Previous node in traversal (null if none)
      * @param visitedHybrids Set containing hybrids already visited
      */
-    private void subTreeToExtendedNewick(Node node, Node last, Set<Node> visitedHybrids) {
+    private void subTreeToExtendedNewick(Node node, Node last, Population edgePop, Set<Node> visitedHybrids) {
         
         double branchLength;
         if (last == null)
@@ -189,47 +189,69 @@ public class NewickOutput extends BEASTObject implements
             branchLength = Math.abs(node.getTime() - last.getTime());
         
         if (visitedHybrids.contains(node)) {
-            addLabel(node, last, branchLength);
+            addLabel(node, edgePop, branchLength);
             return;
         }
         
         visitedHybrids.add(node);
         
         List<Node> nextNodes;
-        if (reverseTime)
+        List<Population> edgePops;
+        if (reverseTime) {
             nextNodes = node.getParents();
-        else
-            nextNodes = node.getChildren();
+            edgePops = node.getEdgePopulations();
+        } else {
+            /*
+            *  This is UGLY and probably SLOW (not to mention MEMORY HUNGRY)
+            *  The reason this god-awful mess exists is simply to deal with
+            *  multiple edges between a single child-parent pair of nodes,
+            *  each of which may have a distinct type.  There is surely a
+            *  better way to deal with this, but it's late.  Note that the
+            *  multiset must be linked in order for the ordering of child
+            *  nodes to reflect the order of reactants in the reaction string.
+            */
+            Multiset<Node> nextNodeSet = LinkedHashMultiset.create();
+            nextNodeSet.addAll(node.getChildren());
+            nextNodes = new ArrayList<>();
+            edgePops = new ArrayList<>();
+            for (Node next : nextNodeSet.elementSet()) {
+                for (int i=0; i<nextNodeSet.count(next); i++) {
+                    nextNodes.add(next);
+                    edgePops.add(next.getEdgePopulations().get(i));
+                }
+            }
+        }
         
         if (nextNodes.size()==1 && collapseSingleChildNodes) {
-            subTreeToExtendedNewick(nextNodes.get(0), last, visitedHybrids);
+            subTreeToExtendedNewick(nextNodes.get(0), last, edgePops.get(0), visitedHybrids);
             
         } else {
             if (nextNodes.size()>0) {
                 pstream.append("(");
                 boolean first = true;
-                for (Node next : nextNodes) {
+                for (int i=0; i<nextNodes.size(); i++) {
                     if (!first)
                         pstream.append(",");
                     else
                         first = false;
                     
-                    subTreeToExtendedNewick(next, node, visitedHybrids);
+                    subTreeToExtendedNewick(nextNodes.get(i), node, edgePops.get(i), visitedHybrids);
                 }
                 pstream.append(")");
             }
             
-            addLabel(node, last, branchLength);
+            addLabel(node, edgePop, branchLength);
         }
     }
     
     /**
      * Add node label to Newick string.
      * 
-     * @param node
-     * @param branchLength 
+     * @param node node for which label is to be created
+     * @param edgePop
+     * @param branchLength length of edge above node
      */
-    protected void addLabel(Node node, Node last, double branchLength) {
+    protected void addLabel(Node node, Population edgePop, double branchLength) {
         
         if (leafLabels.containsKey(node))
             pstream.append(leafLabels.get(node));
@@ -250,9 +272,9 @@ public class NewickOutput extends BEASTObject implements
      * @return Map of hybrid nodes to their chosen IDs.
      */
     private Set<Node> findHybridNodes(Set<Node> rootNodes, boolean reverseTime) {
-        Set<Node> visited = Sets.newLinkedHashSet();
-        Set<Node> hybridNodes = Sets.newLinkedHashSet();
-        
+        Set<Node> visited = new LinkedHashSet<>();
+        Set<Node> hybridNodes = new LinkedHashSet<>();
+
         for (Node node : rootNodes)
             findHybridNodesInSubTree(node, visited, hybridNodes, reverseTime);
         
@@ -264,14 +286,13 @@ public class NewickOutput extends BEASTObject implements
      * 
      * @param node Node containing a subgraph.
      * @param visited Set containing nodes already seen.
-     * @param hybridLabels Set of hybrid nodes already found.
+     * @param hybridNodes Set of hybrid nodes already found.
      * @param reverseTime Whether traversal is occuring in reverse time.
      */
     private void findHybridNodesInSubTree(Node node, Set<Node> visited,
-            Set<Node> hybridLabels, boolean reverseTime) {
+            Set<Node> hybridNodes, boolean reverseTime) {
         if (visited.contains(node)) {
-            if (!hybridLabels.contains(node))
-                hybridLabels.add(node);
+            hybridNodes.add(node);
             return;
         } else
             visited.add(node);
@@ -283,20 +304,21 @@ public class NewickOutput extends BEASTObject implements
             nextNodes = node.getChildren();
         
         for (Node next : nextNodes)
-            findHybridNodesInSubTree(next, visited, hybridLabels, reverseTime);
+            findHybridNodesInSubTree(next, visited, hybridNodes, reverseTime);
     }
     
     /**
      * Find "leaves" of inheritance graph.
      * 
-     * @param graph
+     * @param graph graph for which to find leaves.
      * @return Set containing leaf nodes.
      */
     private Set<Node> findEndNodes(InheritanceTrajectory graph) {
-        Set<Node> endNodes = Sets.newLinkedHashSet();
+        Set<Node> endNodes = new LinkedHashSet<>();
+        Set<Node> visitedNodes = new HashSet<>();
         
         for (Node startNode : graph.startNodes)
-            findEndNodesOnSubGraph(startNode, endNodes);
+            findEndNodesOnSubGraph(startNode, endNodes, visitedNodes);
         
         return endNodes;
     }
@@ -307,15 +329,21 @@ public class NewickOutput extends BEASTObject implements
      * @param node Current node in traversal.
      * @param endNodes Set of leaf nodes already found.
      */
-    private void findEndNodesOnSubGraph(Node node, Set<Node> endNodes) {
+    private void findEndNodesOnSubGraph(Node node, Set<Node> endNodes, Set<Node> visitedNodes) {
+
+        if (visitedNodes.contains(node))
+            return;
+
+        visitedNodes.add(node);
         
         if (node.getChildren().isEmpty()) {
             endNodes.add(node);
             return;
         }
         
-        for (Node child : node.getChildren())
-            findEndNodesOnSubGraph(child, endNodes);
+        for (Node child : node.getChildren()) {
+            findEndNodesOnSubGraph(child, endNodes, visitedNodes);
+        }
     }
     
     @Override

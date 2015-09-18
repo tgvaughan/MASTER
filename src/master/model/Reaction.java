@@ -254,7 +254,7 @@ public class Reaction extends BEASTObject {
 
                 List<Node> nodeList, reactNodeList, prodNodeList;
                 List<Integer> popIDs, reactPopIDs, prodPopIDs;
-                Map<Population, List<Node>> popNodeMap, reactPopNodeMap, prodPopNodeMap;
+                Map<Population, List<Node>> popNodeMap;
                 Map<PopulationType, Integer> seenTypeIDs = new HashMap<>();
                 int nextPopID = 0;
 
@@ -275,7 +275,8 @@ public class Reaction extends BEASTObject {
                     for (int pi=0; pi<prodNodeList.size(); pi++) {
                         for (int ri=0; ri<reactNodeList.size(); ri++) {
                             if (Objects.equals(reactPopIDs.get(ri), prodPopIDs.get(pi))) {
-                                reactNodeList.get(ri).addChild(prodNodeList.get(pi));
+                                reactNodeList.get(ri).addChild(prodNodeList.get(pi),
+                                        prodNodeList.get(pi).getPopulation());
                             }
                         }
                     }
@@ -424,15 +425,15 @@ public class Reaction extends BEASTObject {
      * Use string of the form "rate1:time1,rate2:time2,..."
      * to set the list of reaction rates associated with
      * this reaction.
-     * 
-     * @param rateString 
+     *
+     * @param rateString
      */
     public void setRateFromString(String rateString) {
         rates = Lists.newArrayList();
         rateTimes = Lists.newArrayList();
         
         boolean isFirst = true;
-        for (String ratePairStr : rateInput.get().split(",")) {
+        for (String ratePairStr : rateString.split(",")) {
             String [] ratePairSplitStr = ratePairStr.trim().split(":");
             if (ratePairSplitStr.length==1) {
                 if (!isFirst) {
@@ -468,15 +469,6 @@ public class Reaction extends BEASTObject {
             if (isFirst)
                 isFirst = false;
         }
-    }
-    
-    /**
-     * Retrieve rate list for this reaction.
-     * 
-     * @return rates
-     */
-    public List<Double> getRates() {
-        return rates;
     }
     
     /**

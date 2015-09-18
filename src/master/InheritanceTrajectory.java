@@ -352,7 +352,7 @@ public class InheritanceTrajectory extends Trajectory {
                     Node seedNode = inactiveLineages.get(0);
                     inactiveLineages.remove(0);
                     Node child = new Node(seedNode.getPopulation());
-                    seedNode.addChild(child);
+                    seedNode.addChild(child, child.getPopulation());
                     
                     if (!activeLineages.containsKey(child.getPopulation()))
                         activeLineages.put(child.getPopulation(), new ArrayList<>());
@@ -502,7 +502,7 @@ public class InheritanceTrajectory extends Trajectory {
                 
                 node.setTime(0.0);
                 Node child = new Node(nodePop);
-                node.addChild(child);
+                node.addChild(child, nodePop);
 
                 if (!activeLineages.containsKey(nodePop))
                     activeLineages.put(nodePop, new ArrayList<>());
@@ -598,7 +598,7 @@ public class InheritanceTrajectory extends Trajectory {
                 if (!nextLevelNodes.containsKey(reactChild))
                     nextLevelNodes.put(reactChild, new Node(reactChild.getPopulation()));
                 
-                node.addChild(nextLevelNodes.get(reactChild));
+                node.addChild(nextLevelNodes.get(reactChild), reactChild.getPopulation());
             }
             
             // Increment terminal node counter as necessary:
@@ -659,7 +659,7 @@ public class InheritanceTrajectory extends Trajectory {
                     activeLineages.remove(node.getPopulation());
 
                 Node child = new Node(node.getPopulation());
-                node.addChild(child);
+                node.addChild(child, child.getPopulation());
                 
                 if (!activeLineages.containsKey(child.getPopulation()))
                     activeLineages.put(child.getPopulation(), new ArrayList<>());

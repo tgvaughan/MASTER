@@ -7,9 +7,9 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+
 import master.InheritanceTrajectory;
 import master.model.Model;
 import master.model.Node;
@@ -270,14 +270,22 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
         
         List<Node> nextNodes = new ArrayList<>();
         nextNodes.addAll(getNext(node, reverseTime));
+        List<Population> nextEdgePops = getNextEdgePops(node, reverseTime);
         
-        for (Node next : nextNodes) {
+        for (int i=0; i<nextNodes.size(); i++) {
+            Node next = nextNodes.get(i);
+            Population nextPop = nextEdgePops.get(i);
             if (next.getTime()*timeFactor >= samplingTime*timeFactor) {
-                Node newNode = new Node(next.getPopulation(), samplingTime);
-                int idx = getNext(node, reverseTime).indexOf(next);
+                Node newNode = new Node(nextPop, samplingTime);
                 getPrev(next, reverseTime).remove(node);
-                getNext(node, reverseTime).set(idx, newNode);
+                getNext(node, reverseTime).set(i, newNode);
                 getPrev(newNode, reverseTime).add(node);
+
+                if (reverseTime)
+                    node.getEdgePopulations().set(i, nextPop);
+                else
+                    newNode.getEdgePopulations().add(nextPop);
+
                 nodesAtSamplingTime.add(newNode);
             } else {
                 collectNodes(next, samplingTime, nodesAtSamplingTime, reverseTime
@@ -384,6 +392,31 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
             return node.getChildren();
         else
             return node.getParents();
+    }
+
+    /**
+     * Obtain list of populations to which edges between this node and
+     * the next nodes belong.
+     *
+     * @param node node to which edges connect
+     * @param reverseTime whether reverse time is in effect
+     * @return list of populations
+     */
+    private static List<Population> getNextEdgePops(Node node, boolean reverseTime) {
+        if (reverseTime) {
+            return node.getEdgePopulations();
+        } else {
+            Set<Node> uniqueChildren = new LinkedHashSet<>(node.getChildren());
+            List<Population> edgePops = new ArrayList<>();
+            for (Node child : uniqueChildren) {
+                for (int i=0; i<child.getParents().size(); i++) {
+                    if (child.getParents().get(i).equals(node))
+                        edgePops.add(child.getEdgePopulations().get(i));
+                }
+
+            }
+            return edgePops;
+        }
     }
     
     /**

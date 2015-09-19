@@ -210,14 +210,15 @@ public class NewickOutput extends BEASTObject implements
             *  multiset must be linked in order for the ordering of child
             *  nodes to reflect the order of reactants in the reaction string.
             */
-            Multiset<Node> nextNodeSet = LinkedHashMultiset.create();
-            nextNodeSet.addAll(node.getChildren());
+            Set<Node> nextNodeSet = new LinkedHashSet<>(node.getChildren());
             nextNodes = new ArrayList<>();
             edgePops = new ArrayList<>();
-            for (Node next : nextNodeSet.elementSet()) {
-                for (int i=0; i<nextNodeSet.count(next); i++) {
-                    nextNodes.add(next);
-                    edgePops.add(next.getEdgePopulations().get(i));
+            for (Node next : nextNodeSet) {
+                for (int i=0; i<next.getEdgePopulations().size(); i++) {
+                    if (next.getParents().get(i).equals(node)) {
+                        edgePops.add(next.getEdgePopulations().get(i));
+                        nextNodes.add(next);
+                    }
                 }
             }
         }

@@ -43,7 +43,7 @@ public class RateMultiplier extends BEASTObject {
     private ExpressionEvaluator visitor;
 
     @Override
-    public void initAndValidate() throws Exception { }
+    public void initAndValidate() { }
 
     /**
      * Evaluate rate multiplier expression for the given variable values.

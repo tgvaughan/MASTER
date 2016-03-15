@@ -1,4 +1,4 @@
-// Generated from /home/tvaughan/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.5
+// Generated from /home/tvaughan/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.5.1
 package master.model.parsers;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class MASTERGrammarParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.5", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.5.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -72,7 +72,7 @@ public class MASTERGrammarParser extends Parser {
 	}
 
 	@Override
-	@NotNull
+
 	public Vocabulary getVocabulary() {
 		return VOCABULARY;
 	}
@@ -126,13 +126,13 @@ public class MASTERGrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(24); 
+			setState(24);
 			reactants();
-			setState(25); 
+			setState(25);
 			match(T__0);
-			setState(26); 
+			setState(26);
 			products();
-			setState(27); 
+			setState(27);
 			match(EOF);
 			}
 		}
@@ -176,7 +176,7 @@ public class MASTERGrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(29); 
+			setState(29);
 			popsum();
 			}
 		}
@@ -220,7 +220,7 @@ public class MASTERGrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(31); 
+			setState(31);
 			popsum();
 			}
 		}
@@ -272,7 +272,7 @@ public class MASTERGrammarParser extends Parser {
 			case IDENT:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(33); 
+				setState(33);
 				popel();
 				setState(38);
 				_errHandler.sync(this);
@@ -280,9 +280,9 @@ public class MASTERGrammarParser extends Parser {
 				while (_la==ADD) {
 					{
 					{
-					setState(34); 
+					setState(34);
 					match(ADD);
-					setState(35); 
+					setState(35);
 					popel();
 					}
 					}
@@ -295,7 +295,7 @@ public class MASTERGrammarParser extends Parser {
 			case ZERO:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(41); 
+				setState(41);
 				match(ZERO);
 				}
 				break;
@@ -357,18 +357,18 @@ public class MASTERGrammarParser extends Parser {
 			_la = _input.LA(1);
 			if (_la==NZINT) {
 				{
-				setState(44); 
+				setState(44);
 				factor();
 				}
 			}
 
-			setState(47); 
+			setState(47);
 			popname();
 			setState(49);
 			_la = _input.LA(1);
 			if (_la==T__3) {
 				{
-				setState(48); 
+				setState(48);
 				loc();
 				}
 			}
@@ -377,9 +377,9 @@ public class MASTERGrammarParser extends Parser {
 			_la = _input.LA(1);
 			if (_la==T__1) {
 				{
-				setState(51); 
+				setState(51);
 				match(T__1);
-				setState(52); 
+				setState(52);
 				id();
 				}
 			}
@@ -424,7 +424,7 @@ public class MASTERGrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(55); 
+			setState(55);
 			match(NZINT);
 			}
 		}
@@ -471,8 +471,9 @@ public class MASTERGrammarParser extends Parser {
 			_la = _input.LA(1);
 			if ( !(_la==ZERO || _la==NZINT) ) {
 			_errHandler.recoverInline(this);
+			} else {
+				consume();
 			}
-			consume();
 			}
 		}
 		catch (RecognitionException re) {
@@ -523,22 +524,22 @@ public class MASTERGrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(59); 
+			setState(59);
 			popname();
 			setState(61);
 			_la = _input.LA(1);
 			if (_la==T__3) {
 				{
-				setState(60); 
+				setState(60);
 				loc();
 				}
 			}
 
-			setState(63); 
+			setState(63);
 			match(T__2);
-			setState(64); 
+			setState(64);
 			expression(0);
-			setState(65); 
+			setState(65);
 			match(EOF);
 			}
 		}
@@ -580,7 +581,7 @@ public class MASTERGrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(67); 
+			setState(67);
 			match(IDENT);
 			}
 		}
@@ -628,9 +629,9 @@ public class MASTERGrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(69); 
+			setState(69);
 			match(T__3);
-			setState(70); 
+			setState(70);
 			locel();
 			setState(75);
 			_errHandler.sync(this);
@@ -638,9 +639,9 @@ public class MASTERGrammarParser extends Parser {
 			while (_la==T__4) {
 				{
 				{
-				setState(71); 
+				setState(71);
 				match(T__4);
-				setState(72); 
+				setState(72);
 				locel();
 				}
 				}
@@ -648,7 +649,7 @@ public class MASTERGrammarParser extends Parser {
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(78); 
+			setState(78);
 			match(T__5);
 			}
 		}
@@ -696,8 +697,9 @@ public class MASTERGrammarParser extends Parser {
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ZERO) | (1L << NZINT) | (1L << IDENT))) != 0)) ) {
 			_errHandler.recoverInline(this);
+			} else {
+				consume();
 			}
-			consume();
 			}
 		}
 		catch (RecognitionException re) {
@@ -765,22 +767,154 @@ public class MASTERGrammarParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class NumberContext extends ExpressionContext {
-		public Token val;
-		public TerminalNode NZINT() { return getToken(MASTERGrammarParser.NZINT, 0); }
-		public TerminalNode NNFLOAT() { return getToken(MASTERGrammarParser.NNFLOAT, 0); }
-		public NumberContext(ExpressionContext ctx) { copyFrom(ctx); }
+	public static class NegationContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public NegationContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterNumber(this);
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterNegation(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitNumber(this);
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitNegation(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitNumber(this);
+			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitNegation(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class MulDivContext extends ExpressionContext {
+		public Token op;
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public MulDivContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterMulDiv(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitMulDiv(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitMulDiv(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AddSubContext extends ExpressionContext {
+		public Token op;
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public AddSubContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterAddSub(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitAddSub(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitAddSub(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BooleanOpContext extends ExpressionContext {
+		public Token op;
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public BooleanOpContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterBooleanOp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitBooleanOp(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitBooleanOp(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExponentiationContext extends ExpressionContext {
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public ExponentiationContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterExponentiation(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitExponentiation(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitExponentiation(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BracketedContext extends ExpressionContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public BracketedContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterBracketed(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitBracketed(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitBracketed(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ArrayContext extends ExpressionContext {
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public ArrayContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterArray(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitArray(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitArray(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -826,157 +960,22 @@ public class MASTERGrammarParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class AddSubContext extends ExpressionContext {
-		public Token op;
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public AddSubContext(ExpressionContext ctx) { copyFrom(ctx); }
+	public static class NumberContext extends ExpressionContext {
+		public Token val;
+		public TerminalNode NZINT() { return getToken(MASTERGrammarParser.NZINT, 0); }
+		public TerminalNode NNFLOAT() { return getToken(MASTERGrammarParser.NNFLOAT, 0); }
+		public NumberContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterAddSub(this);
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterNumber(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitAddSub(this);
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitNumber(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitAddSub(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ArrayContext extends ExpressionContext {
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public ArrayContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterArray(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitArray(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitArray(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class BooleanOpContext extends ExpressionContext {
-		public Token op;
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public BooleanOpContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterBooleanOp(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitBooleanOp(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitBooleanOp(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class MulDivContext extends ExpressionContext {
-		public Token op;
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public MulDivContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterMulDiv(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitMulDiv(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitMulDiv(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class BracketedContext extends ExpressionContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public BracketedContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterBracketed(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitBracketed(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitBracketed(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class IfThenElseContext extends ExpressionContext {
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public IfThenElseContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterIfThenElse(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitIfThenElse(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitIfThenElse(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ExponentiationContext extends ExpressionContext {
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public ExponentiationContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterExponentiation(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitExponentiation(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitExponentiation(this);
+			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitNumber(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1002,25 +1001,6 @@ public class MASTERGrammarParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class NegationContext extends ExpressionContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public NegationContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterNegation(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitNegation(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitNegation(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class EqualityContext extends ExpressionContext {
 		public Token op;
 		public List<ExpressionContext> expression() {
@@ -1041,6 +1021,28 @@ public class MASTERGrammarParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitEquality(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class IfThenElseContext extends ExpressionContext {
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public IfThenElseContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).enterIfThenElse(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof MASTERGrammarListener ) ((MASTERGrammarListener)listener).exitIfThenElse(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MASTERGrammarVisitor ) return ((MASTERGrammarVisitor<? extends T>)visitor).visitIfThenElse(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1069,9 +1071,9 @@ public class MASTERGrammarParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
-				setState(83); 
+				setState(83);
 				match(SUB);
-				setState(84); 
+				setState(84);
 				expression(10);
 				}
 				break;
@@ -1080,11 +1082,11 @@ public class MASTERGrammarParser extends Parser {
 				_localctx = new BracketedContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(85); 
+				setState(85);
 				match(T__6);
-				setState(86); 
+				setState(86);
 				expression(0);
-				setState(87); 
+				setState(87);
 				match(T__7);
 				}
 				break;
@@ -1093,9 +1095,9 @@ public class MASTERGrammarParser extends Parser {
 				_localctx = new ArrayContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(89); 
+				setState(89);
 				match(T__8);
-				setState(90); 
+				setState(90);
 				expression(0);
 				setState(95);
 				_errHandler.sync(this);
@@ -1103,9 +1105,9 @@ public class MASTERGrammarParser extends Parser {
 				while (_la==T__4) {
 					{
 					{
-					setState(91); 
+					setState(91);
 					match(T__4);
-					setState(92); 
+					setState(92);
 					expression(0);
 					}
 					}
@@ -1113,7 +1115,7 @@ public class MASTERGrammarParser extends Parser {
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(98); 
+				setState(98);
 				match(T__9);
 				}
 				break;
@@ -1122,11 +1124,11 @@ public class MASTERGrammarParser extends Parser {
 				_localctx = new FunctionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(100); 
+				setState(100);
 				match(IDENT);
-				setState(101); 
+				setState(101);
 				match(T__6);
-				setState(102); 
+				setState(102);
 				expression(0);
 				setState(107);
 				_errHandler.sync(this);
@@ -1134,9 +1136,9 @@ public class MASTERGrammarParser extends Parser {
 				while (_la==T__4) {
 					{
 					{
-					setState(103); 
+					setState(103);
 					match(T__4);
-					setState(104); 
+					setState(104);
 					expression(0);
 					}
 					}
@@ -1144,7 +1146,7 @@ public class MASTERGrammarParser extends Parser {
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(110); 
+				setState(110);
 				match(T__7);
 				}
 				break;
@@ -1158,13 +1160,14 @@ public class MASTERGrammarParser extends Parser {
 				_la = _input.LA(1);
 				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EXP) | (1L << LOG) | (1L << SQRT) | (1L << SUM) | (1L << THETA) | (1L << ABS))) != 0)) ) {
 					((UnaryOpContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+				} else {
+					consume();
 				}
-				consume();
-				setState(113); 
+				setState(113);
 				match(T__6);
-				setState(114); 
+				setState(114);
 				expression(0);
-				setState(115); 
+				setState(115);
 				match(T__7);
 				}
 				break;
@@ -1173,7 +1176,7 @@ public class MASTERGrammarParser extends Parser {
 				_localctx = new VariableContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(117); 
+				setState(117);
 				match(IDENT);
 				}
 				break;
@@ -1187,8 +1190,9 @@ public class MASTERGrammarParser extends Parser {
 				_la = _input.LA(1);
 				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ZERO) | (1L << NZINT) | (1L << NNFLOAT))) != 0)) ) {
 					((NumberContext)_localctx).val = (Token)_errHandler.recoverInline(this);
+				} else {
+					consume();
 				}
-				consume();
 				}
 				break;
 			}
@@ -1209,9 +1213,9 @@ public class MASTERGrammarParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(121);
 						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
-						setState(122); 
+						setState(122);
 						match(POW);
-						setState(123); 
+						setState(123);
 						expression(8);
 						}
 						break;
@@ -1226,9 +1230,10 @@ public class MASTERGrammarParser extends Parser {
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MUL) | (1L << DIV) | (1L << MOD))) != 0)) ) {
 							((MulDivContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						} else {
+							consume();
 						}
-						consume();
-						setState(126); 
+						setState(126);
 						expression(8);
 						}
 						break;
@@ -1243,9 +1248,10 @@ public class MASTERGrammarParser extends Parser {
 						_la = _input.LA(1);
 						if ( !(_la==ADD || _la==SUB) ) {
 							((AddSubContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						} else {
+							consume();
 						}
-						consume();
-						setState(129); 
+						setState(129);
 						expression(7);
 						}
 						break;
@@ -1260,9 +1266,10 @@ public class MASTERGrammarParser extends Parser {
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQ) | (1L << GT) | (1L << LT) | (1L << GE) | (1L << LE) | (1L << NE))) != 0)) ) {
 							((EqualityContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						} else {
+							consume();
 						}
-						consume();
-						setState(132); 
+						setState(132);
 						expression(6);
 						}
 						break;
@@ -1277,9 +1284,10 @@ public class MASTERGrammarParser extends Parser {
 						_la = _input.LA(1);
 						if ( !(_la==AND || _la==OR) ) {
 							((BooleanOpContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						} else {
+							consume();
 						}
-						consume();
-						setState(135); 
+						setState(135);
 						expression(5);
 						}
 						break;
@@ -1289,13 +1297,13 @@ public class MASTERGrammarParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(136);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(137); 
+						setState(137);
 						match(T__11);
-						setState(138); 
+						setState(138);
 						expression(0);
-						setState(139); 
+						setState(139);
 						match(T__1);
-						setState(140); 
+						setState(140);
 						expression(3);
 						}
 						break;
@@ -1305,11 +1313,11 @@ public class MASTERGrammarParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(142);
 						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
-						setState(143); 
+						setState(143);
 						match(T__3);
-						setState(144); 
+						setState(144);
 						expression(0);
-						setState(145); 
+						setState(145);
 						match(T__5);
 						}
 						break;
@@ -1319,7 +1327,7 @@ public class MASTERGrammarParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(147);
 						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
-						setState(148); 
+						setState(148);
 						match(T__10);
 						}
 						break;
@@ -1345,28 +1353,28 @@ public class MASTERGrammarParser extends Parser {
 
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 11: 
+		case 11:
 			return expression_sempred((ExpressionContext)_localctx, predIndex);
 		}
 		return true;
 	}
 	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: 
+		case 0:
 			return precpred(_ctx, 8);
-		case 1: 
+		case 1:
 			return precpred(_ctx, 7);
-		case 2: 
+		case 2:
 			return precpred(_ctx, 6);
-		case 3: 
+		case 3:
 			return precpred(_ctx, 5);
-		case 4: 
+		case 4:
 			return precpred(_ctx, 4);
-		case 5: 
+		case 5:
 			return precpred(_ctx, 3);
-		case 6: 
+		case 6:
 			return precpred(_ctx, 13);
-		case 7: 
+		case 7:
 			return precpred(_ctx, 9);
 		}
 		return true;

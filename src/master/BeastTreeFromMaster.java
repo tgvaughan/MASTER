@@ -16,30 +16,26 @@
  */
 package master;
 
-import beast.core.Citation;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.StateNode;
-import beast.core.StateNodeInitialiser;
+import beast.core.*;
 import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.tree.Tree;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import master.conditions.LeafCountEndCondition;
 import master.conditions.LineageEndCondition;
 import master.conditions.PopulationEndCondition;
 import master.conditions.PostSimCondition;
 import master.model.InitState;
 import master.model.Model;
-import master.model.PopulationSize;
 import master.outputs.InheritanceTrajectoryOutput;
 import master.postprocessors.InheritancePostProcessor;
 import master.steppers.GillespieStepper;
 import master.steppers.Stepper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -56,94 +52,94 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      */
     
     // Spec parameters:
-    public Input<Double> simulationTimeInput = new Input<Double>(
+    public Input<Double> simulationTimeInput = new Input<>(
             "simulationTime",
             "The maximum length of time to simulate for. (Defaults to infinite.)");
     
-    public Input<Integer> nSamplesInput = new Input<Integer>(
+    public Input<Integer> nSamplesInput = new Input<>(
             "nSamples",
             "Number of evenly spaced time points to sample state at.");
     
-    public Input<Integer> seedInput = new Input<Integer>(
+    public Input<Integer> seedInput = new Input<>(
             "seed",
             "Seed for RNG.");
         
-    public Input<Stepper> stepperInput = new Input<Stepper>(
+    public Input<Stepper> stepperInput = new Input<>(
             "stepper",
             "State incrementing algorithm to use. (Default Gillespie.)",
             new GillespieStepper());
     
-    public Input<Integer> verbosityInput = new Input<Integer> (
+    public Input<Integer> verbosityInput = new Input<>(
             "verbosity", "Level of verbosity to use (0-2).", 1);
     
     // Model:
-    public Input<Model> modelInput = new Input<Model>("model",
+    public Input<Model> modelInput = new Input<>("model",
             "The specific model to simulate.",
             Input.Validate.REQUIRED);
     
     // Initial state:
-    public Input<InitState> initialStateInput = new Input<InitState>("initialState",
+    public Input<InitState> initialStateInput = new Input<>("initialState",
             "Initial state of system.",
             Input.Validate.REQUIRED);
     
     // End conditions:
     public Input<List<PopulationEndCondition>> popEndConditionsInput =
-            new Input<List<PopulationEndCondition>>(
+            new Input<>(
                     "populationEndCondition",
                     "Trajectory end condition based on population sizes.",
-                    new ArrayList<PopulationEndCondition>());    
+                    new ArrayList<>());
     
     // Post-simulation conditioning:
     public Input<List<PostSimCondition>> postSimConditionsInput =
-            new Input<List<PostSimCondition>>("postSimCondition",
+            new Input<>("postSimCondition",
                     "A post-simulation condition.",
-                    new ArrayList<PostSimCondition>());
+                    new ArrayList<>());
     
-        public Input<Boolean> samplePopulationSizesInput = new Input<Boolean>(
-            "samplePopulationSizes",
-            "Sample population sizes together with inheritance graph. (Default false.)",
-            false);
+        public Input<Boolean> samplePopulationSizesInput = new Input<>(
+                "samplePopulationSizes",
+                "Sample population sizes together with inheritance graph. (Default false.)",
+                false);
     
-    public Input<Boolean> sampleAtNodesOnlyInput = new Input<Boolean>(
+    public Input<Boolean> sampleAtNodesOnlyInput = new Input<>(
             "sampleAtNodesOnly",
             "Sample population sizes only at graph node times. (Default false.)",
             false);
     
     // Lineage end conditions:
     public Input<List<LineageEndCondition>> lineageEndConditionsInput =
-            new Input<List<LineageEndCondition>>("lineageEndCondition",
+            new Input<>("lineageEndCondition",
                     "Trajectory end condition based on remaining lineages.",
-                    new ArrayList<LineageEndCondition>());
+                    new ArrayList<>());
     
         
     // Leaf count end conditions:
     public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput =
-            new Input<List<LeafCountEndCondition>>("leafCountEndCondition",
-            "Trajectory end condition based on number of terminal nodes generated.",
-            new ArrayList<LeafCountEndCondition>());
+            new Input<>("leafCountEndCondition",
+                    "Trajectory end condition based on number of terminal nodes generated.",
+                    new ArrayList<>());
     
     // Post-processors:
     public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
-            new Input<List<InheritancePostProcessor>>("inheritancePostProcessor",
+            new Input<>("inheritancePostProcessor",
                     "Post processor for inheritance graph.",
-                    new ArrayList<InheritancePostProcessor>());
+                    new ArrayList<>());
     
     // Outputs:
     public Input<List<InheritanceTrajectoryOutput>> outputsInput
-            = new Input<List<InheritanceTrajectoryOutput>>("output",
+            = new Input<>("output",
             "Output writer used to write results of simulation to disk.",
-            new ArrayList<InheritanceTrajectoryOutput>());
+            new ArrayList<>());
     
     // BEAST Tree construction:
-    public Input<Boolean> reverseTimeInput = new Input<Boolean>("reverseTime",
+    public Input<Boolean> reverseTimeInput = new Input<>("reverseTime",
             "Read time in reverse when assembling tree. (Default true.)", true);
     
-    public Input<Boolean> collapseSingletonsInput = new Input<Boolean>(
+    public Input<Boolean> collapseSingletonsInput = new Input<>(
             "collapseSingletons",
             "Whether to join branches of singleton nodes together. Default true.",
             true);
     
-    public Input<Alignment> alignmentInput = new Input<Alignment>("alignment",
+    public Input<Alignment> alignmentInput = new Input<>("alignment",
             "If provided, nodes are equated with taxons having the same label.");
         
 
@@ -155,7 +151,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
     public BeastTreeFromMaster() { }
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
     
         // Initialise inheritance trajectory simulation
         
@@ -211,7 +207,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      * @throws Exception when inheritance graph is not tree-like in preferred
      * time direction.
      */
-    private void assembleTree(master.InheritanceTrajectory itraj) throws Exception {
+    private void assembleTree(master.InheritanceTrajectory itraj) {
 
         boolean reverseTime = reverseTimeInput.get();
         
@@ -234,7 +230,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         }
         
         if (rootNodes.size()!=1)
-            throw new Exception("Cannot assemble BEAST tree with multiple roots.");
+            throw new RuntimeException("Cannot assemble BEAST tree with multiple roots.");
 
         // Assign a unique integer label to each unnamed leaf node and
         // identify time of node furthest from root:
@@ -440,7 +436,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
     }
 
     @Override
-    public void initStateNodes() throws Exception {
+    public void initStateNodes() {
         if (m_initial.get() != null) {
             m_initial.get().assignFrom(this);
         }

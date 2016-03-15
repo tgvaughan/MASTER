@@ -1,6 +1,5 @@
-// Generated from /home/tvaughan/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.5
+// Generated from /home/tvaughan/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.5.1
 package master.model.parsers;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -12,290 +11,290 @@ public interface MASTERGrammarListener extends ParseTreeListener {
 	 * Enter a parse tree produced by {@link MASTERGrammarParser#reaction}.
 	 * @param ctx the parse tree
 	 */
-	void enterReaction(@NotNull MASTERGrammarParser.ReactionContext ctx);
+	void enterReaction(MASTERGrammarParser.ReactionContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MASTERGrammarParser#reaction}.
 	 * @param ctx the parse tree
 	 */
-	void exitReaction(@NotNull MASTERGrammarParser.ReactionContext ctx);
+	void exitReaction(MASTERGrammarParser.ReactionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MASTERGrammarParser#reactants}.
 	 * @param ctx the parse tree
 	 */
-	void enterReactants(@NotNull MASTERGrammarParser.ReactantsContext ctx);
+	void enterReactants(MASTERGrammarParser.ReactantsContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MASTERGrammarParser#reactants}.
 	 * @param ctx the parse tree
 	 */
-	void exitReactants(@NotNull MASTERGrammarParser.ReactantsContext ctx);
+	void exitReactants(MASTERGrammarParser.ReactantsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MASTERGrammarParser#products}.
 	 * @param ctx the parse tree
 	 */
-	void enterProducts(@NotNull MASTERGrammarParser.ProductsContext ctx);
+	void enterProducts(MASTERGrammarParser.ProductsContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MASTERGrammarParser#products}.
 	 * @param ctx the parse tree
 	 */
-	void exitProducts(@NotNull MASTERGrammarParser.ProductsContext ctx);
+	void exitProducts(MASTERGrammarParser.ProductsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MASTERGrammarParser#popsum}.
 	 * @param ctx the parse tree
 	 */
-	void enterPopsum(@NotNull MASTERGrammarParser.PopsumContext ctx);
+	void enterPopsum(MASTERGrammarParser.PopsumContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MASTERGrammarParser#popsum}.
 	 * @param ctx the parse tree
 	 */
-	void exitPopsum(@NotNull MASTERGrammarParser.PopsumContext ctx);
+	void exitPopsum(MASTERGrammarParser.PopsumContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MASTERGrammarParser#popel}.
 	 * @param ctx the parse tree
 	 */
-	void enterPopel(@NotNull MASTERGrammarParser.PopelContext ctx);
+	void enterPopel(MASTERGrammarParser.PopelContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MASTERGrammarParser#popel}.
 	 * @param ctx the parse tree
 	 */
-	void exitPopel(@NotNull MASTERGrammarParser.PopelContext ctx);
+	void exitPopel(MASTERGrammarParser.PopelContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MASTERGrammarParser#factor}.
 	 * @param ctx the parse tree
 	 */
-	void enterFactor(@NotNull MASTERGrammarParser.FactorContext ctx);
+	void enterFactor(MASTERGrammarParser.FactorContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MASTERGrammarParser#factor}.
 	 * @param ctx the parse tree
 	 */
-	void exitFactor(@NotNull MASTERGrammarParser.FactorContext ctx);
+	void exitFactor(MASTERGrammarParser.FactorContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MASTERGrammarParser#id}.
 	 * @param ctx the parse tree
 	 */
-	void enterId(@NotNull MASTERGrammarParser.IdContext ctx);
+	void enterId(MASTERGrammarParser.IdContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MASTERGrammarParser#id}.
 	 * @param ctx the parse tree
 	 */
-	void exitId(@NotNull MASTERGrammarParser.IdContext ctx);
+	void exitId(MASTERGrammarParser.IdContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MASTERGrammarParser#assignment}.
 	 * @param ctx the parse tree
 	 */
-	void enterAssignment(@NotNull MASTERGrammarParser.AssignmentContext ctx);
+	void enterAssignment(MASTERGrammarParser.AssignmentContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MASTERGrammarParser#assignment}.
 	 * @param ctx the parse tree
 	 */
-	void exitAssignment(@NotNull MASTERGrammarParser.AssignmentContext ctx);
+	void exitAssignment(MASTERGrammarParser.AssignmentContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MASTERGrammarParser#popname}.
 	 * @param ctx the parse tree
 	 */
-	void enterPopname(@NotNull MASTERGrammarParser.PopnameContext ctx);
+	void enterPopname(MASTERGrammarParser.PopnameContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MASTERGrammarParser#popname}.
 	 * @param ctx the parse tree
 	 */
-	void exitPopname(@NotNull MASTERGrammarParser.PopnameContext ctx);
+	void exitPopname(MASTERGrammarParser.PopnameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MASTERGrammarParser#loc}.
 	 * @param ctx the parse tree
 	 */
-	void enterLoc(@NotNull MASTERGrammarParser.LocContext ctx);
+	void enterLoc(MASTERGrammarParser.LocContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MASTERGrammarParser#loc}.
 	 * @param ctx the parse tree
 	 */
-	void exitLoc(@NotNull MASTERGrammarParser.LocContext ctx);
+	void exitLoc(MASTERGrammarParser.LocContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MASTERGrammarParser#locel}.
 	 * @param ctx the parse tree
 	 */
-	void enterLocel(@NotNull MASTERGrammarParser.LocelContext ctx);
+	void enterLocel(MASTERGrammarParser.LocelContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link MASTERGrammarParser#locel}.
 	 * @param ctx the parse tree
 	 */
-	void exitLocel(@NotNull MASTERGrammarParser.LocelContext ctx);
+	void exitLocel(MASTERGrammarParser.LocelContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code UnaryOp}
 	 * labeled alternative in {@link MASTERGrammarParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterUnaryOp(@NotNull MASTERGrammarParser.UnaryOpContext ctx);
+	void enterUnaryOp(MASTERGrammarParser.UnaryOpContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code UnaryOp}
 	 * labeled alternative in {@link MASTERGrammarParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitUnaryOp(@NotNull MASTERGrammarParser.UnaryOpContext ctx);
+	void exitUnaryOp(MASTERGrammarParser.UnaryOpContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code Variable}
 	 * labeled alternative in {@link MASTERGrammarParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterVariable(@NotNull MASTERGrammarParser.VariableContext ctx);
+	void enterVariable(MASTERGrammarParser.VariableContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code Variable}
 	 * labeled alternative in {@link MASTERGrammarParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitVariable(@NotNull MASTERGrammarParser.VariableContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Number}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterNumber(@NotNull MASTERGrammarParser.NumberContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Number}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitNumber(@NotNull MASTERGrammarParser.NumberContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Factorial}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterFactorial(@NotNull MASTERGrammarParser.FactorialContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Factorial}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitFactorial(@NotNull MASTERGrammarParser.FactorialContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Function}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunction(@NotNull MASTERGrammarParser.FunctionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Function}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunction(@NotNull MASTERGrammarParser.FunctionContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code AddSub}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterAddSub(@NotNull MASTERGrammarParser.AddSubContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code AddSub}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitAddSub(@NotNull MASTERGrammarParser.AddSubContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Array}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterArray(@NotNull MASTERGrammarParser.ArrayContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Array}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitArray(@NotNull MASTERGrammarParser.ArrayContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code BooleanOp}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterBooleanOp(@NotNull MASTERGrammarParser.BooleanOpContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code BooleanOp}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitBooleanOp(@NotNull MASTERGrammarParser.BooleanOpContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code MulDiv}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterMulDiv(@NotNull MASTERGrammarParser.MulDivContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code MulDiv}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitMulDiv(@NotNull MASTERGrammarParser.MulDivContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Bracketed}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterBracketed(@NotNull MASTERGrammarParser.BracketedContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Bracketed}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitBracketed(@NotNull MASTERGrammarParser.BracketedContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code IfThenElse}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterIfThenElse(@NotNull MASTERGrammarParser.IfThenElseContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code IfThenElse}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitIfThenElse(@NotNull MASTERGrammarParser.IfThenElseContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code ArraySubscript}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterArraySubscript(@NotNull MASTERGrammarParser.ArraySubscriptContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ArraySubscript}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitArraySubscript(@NotNull MASTERGrammarParser.ArraySubscriptContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code Exponentiation}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void enterExponentiation(@NotNull MASTERGrammarParser.ExponentiationContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code Exponentiation}
-	 * labeled alternative in {@link MASTERGrammarParser#expression}.
-	 * @param ctx the parse tree
-	 */
-	void exitExponentiation(@NotNull MASTERGrammarParser.ExponentiationContext ctx);
+	void exitVariable(MASTERGrammarParser.VariableContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code Negation}
 	 * labeled alternative in {@link MASTERGrammarParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterNegation(@NotNull MASTERGrammarParser.NegationContext ctx);
+	void enterNegation(MASTERGrammarParser.NegationContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code Negation}
 	 * labeled alternative in {@link MASTERGrammarParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitNegation(@NotNull MASTERGrammarParser.NegationContext ctx);
+	void exitNegation(MASTERGrammarParser.NegationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code MulDiv}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterMulDiv(MASTERGrammarParser.MulDivContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code MulDiv}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitMulDiv(MASTERGrammarParser.MulDivContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code AddSub}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterAddSub(MASTERGrammarParser.AddSubContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code AddSub}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitAddSub(MASTERGrammarParser.AddSubContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code BooleanOp}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterBooleanOp(MASTERGrammarParser.BooleanOpContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code BooleanOp}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitBooleanOp(MASTERGrammarParser.BooleanOpContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Exponentiation}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExponentiation(MASTERGrammarParser.ExponentiationContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Exponentiation}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExponentiation(MASTERGrammarParser.ExponentiationContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Bracketed}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterBracketed(MASTERGrammarParser.BracketedContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Bracketed}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitBracketed(MASTERGrammarParser.BracketedContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Array}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterArray(MASTERGrammarParser.ArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Array}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitArray(MASTERGrammarParser.ArrayContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Factorial}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterFactorial(MASTERGrammarParser.FactorialContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Factorial}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitFactorial(MASTERGrammarParser.FactorialContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Function}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunction(MASTERGrammarParser.FunctionContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Function}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunction(MASTERGrammarParser.FunctionContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Number}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterNumber(MASTERGrammarParser.NumberContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Number}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitNumber(MASTERGrammarParser.NumberContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ArraySubscript}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterArraySubscript(MASTERGrammarParser.ArraySubscriptContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ArraySubscript}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitArraySubscript(MASTERGrammarParser.ArraySubscriptContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code Equality}
 	 * labeled alternative in {@link MASTERGrammarParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterEquality(@NotNull MASTERGrammarParser.EqualityContext ctx);
+	void enterEquality(MASTERGrammarParser.EqualityContext ctx);
 	/**
 	 * Exit a parse tree produced by the {@code Equality}
 	 * labeled alternative in {@link MASTERGrammarParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitEquality(@NotNull MASTERGrammarParser.EqualityContext ctx);
+	void exitEquality(MASTERGrammarParser.EqualityContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code IfThenElse}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfThenElse(MASTERGrammarParser.IfThenElseContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code IfThenElse}
+	 * labeled alternative in {@link MASTERGrammarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfThenElse(MASTERGrammarParser.IfThenElseContext ctx);
 }

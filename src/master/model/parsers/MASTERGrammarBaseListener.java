@@ -1,8 +1,7 @@
-// Generated from /home/tvaughan/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.5
+// Generated from /home/tvaughan/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.5.1
 package master.model.parsers;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -17,336 +16,336 @@ public class MASTERGrammarBaseListener implements MASTERGrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterReaction(@NotNull MASTERGrammarParser.ReactionContext ctx) { }
+	@Override public void enterReaction(MASTERGrammarParser.ReactionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitReaction(@NotNull MASTERGrammarParser.ReactionContext ctx) { }
+	@Override public void exitReaction(MASTERGrammarParser.ReactionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterReactants(@NotNull MASTERGrammarParser.ReactantsContext ctx) { }
+	@Override public void enterReactants(MASTERGrammarParser.ReactantsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitReactants(@NotNull MASTERGrammarParser.ReactantsContext ctx) { }
+	@Override public void exitReactants(MASTERGrammarParser.ReactantsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterProducts(@NotNull MASTERGrammarParser.ProductsContext ctx) { }
+	@Override public void enterProducts(MASTERGrammarParser.ProductsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitProducts(@NotNull MASTERGrammarParser.ProductsContext ctx) { }
+	@Override public void exitProducts(MASTERGrammarParser.ProductsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPopsum(@NotNull MASTERGrammarParser.PopsumContext ctx) { }
+	@Override public void enterPopsum(MASTERGrammarParser.PopsumContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPopsum(@NotNull MASTERGrammarParser.PopsumContext ctx) { }
+	@Override public void exitPopsum(MASTERGrammarParser.PopsumContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPopel(@NotNull MASTERGrammarParser.PopelContext ctx) { }
+	@Override public void enterPopel(MASTERGrammarParser.PopelContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPopel(@NotNull MASTERGrammarParser.PopelContext ctx) { }
+	@Override public void exitPopel(MASTERGrammarParser.PopelContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFactor(@NotNull MASTERGrammarParser.FactorContext ctx) { }
+	@Override public void enterFactor(MASTERGrammarParser.FactorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFactor(@NotNull MASTERGrammarParser.FactorContext ctx) { }
+	@Override public void exitFactor(MASTERGrammarParser.FactorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterId(@NotNull MASTERGrammarParser.IdContext ctx) { }
+	@Override public void enterId(MASTERGrammarParser.IdContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitId(@NotNull MASTERGrammarParser.IdContext ctx) { }
+	@Override public void exitId(MASTERGrammarParser.IdContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAssignment(@NotNull MASTERGrammarParser.AssignmentContext ctx) { }
+	@Override public void enterAssignment(MASTERGrammarParser.AssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAssignment(@NotNull MASTERGrammarParser.AssignmentContext ctx) { }
+	@Override public void exitAssignment(MASTERGrammarParser.AssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterPopname(@NotNull MASTERGrammarParser.PopnameContext ctx) { }
+	@Override public void enterPopname(MASTERGrammarParser.PopnameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitPopname(@NotNull MASTERGrammarParser.PopnameContext ctx) { }
+	@Override public void exitPopname(MASTERGrammarParser.PopnameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLoc(@NotNull MASTERGrammarParser.LocContext ctx) { }
+	@Override public void enterLoc(MASTERGrammarParser.LocContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLoc(@NotNull MASTERGrammarParser.LocContext ctx) { }
+	@Override public void exitLoc(MASTERGrammarParser.LocContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLocel(@NotNull MASTERGrammarParser.LocelContext ctx) { }
+	@Override public void enterLocel(MASTERGrammarParser.LocelContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLocel(@NotNull MASTERGrammarParser.LocelContext ctx) { }
+	@Override public void exitLocel(MASTERGrammarParser.LocelContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterUnaryOp(@NotNull MASTERGrammarParser.UnaryOpContext ctx) { }
+	@Override public void enterUnaryOp(MASTERGrammarParser.UnaryOpContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitUnaryOp(@NotNull MASTERGrammarParser.UnaryOpContext ctx) { }
+	@Override public void exitUnaryOp(MASTERGrammarParser.UnaryOpContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVariable(@NotNull MASTERGrammarParser.VariableContext ctx) { }
+	@Override public void enterVariable(MASTERGrammarParser.VariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVariable(@NotNull MASTERGrammarParser.VariableContext ctx) { }
+	@Override public void exitVariable(MASTERGrammarParser.VariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNumber(@NotNull MASTERGrammarParser.NumberContext ctx) { }
+	@Override public void enterNegation(MASTERGrammarParser.NegationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNumber(@NotNull MASTERGrammarParser.NumberContext ctx) { }
+	@Override public void exitNegation(MASTERGrammarParser.NegationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFactorial(@NotNull MASTERGrammarParser.FactorialContext ctx) { }
+	@Override public void enterMulDiv(MASTERGrammarParser.MulDivContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFactorial(@NotNull MASTERGrammarParser.FactorialContext ctx) { }
+	@Override public void exitMulDiv(MASTERGrammarParser.MulDivContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunction(@NotNull MASTERGrammarParser.FunctionContext ctx) { }
+	@Override public void enterAddSub(MASTERGrammarParser.AddSubContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunction(@NotNull MASTERGrammarParser.FunctionContext ctx) { }
+	@Override public void exitAddSub(MASTERGrammarParser.AddSubContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAddSub(@NotNull MASTERGrammarParser.AddSubContext ctx) { }
+	@Override public void enterBooleanOp(MASTERGrammarParser.BooleanOpContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAddSub(@NotNull MASTERGrammarParser.AddSubContext ctx) { }
+	@Override public void exitBooleanOp(MASTERGrammarParser.BooleanOpContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArray(@NotNull MASTERGrammarParser.ArrayContext ctx) { }
+	@Override public void enterExponentiation(MASTERGrammarParser.ExponentiationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArray(@NotNull MASTERGrammarParser.ArrayContext ctx) { }
+	@Override public void exitExponentiation(MASTERGrammarParser.ExponentiationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBooleanOp(@NotNull MASTERGrammarParser.BooleanOpContext ctx) { }
+	@Override public void enterBracketed(MASTERGrammarParser.BracketedContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBooleanOp(@NotNull MASTERGrammarParser.BooleanOpContext ctx) { }
+	@Override public void exitBracketed(MASTERGrammarParser.BracketedContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMulDiv(@NotNull MASTERGrammarParser.MulDivContext ctx) { }
+	@Override public void enterArray(MASTERGrammarParser.ArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitMulDiv(@NotNull MASTERGrammarParser.MulDivContext ctx) { }
+	@Override public void exitArray(MASTERGrammarParser.ArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBracketed(@NotNull MASTERGrammarParser.BracketedContext ctx) { }
+	@Override public void enterFactorial(MASTERGrammarParser.FactorialContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBracketed(@NotNull MASTERGrammarParser.BracketedContext ctx) { }
+	@Override public void exitFactorial(MASTERGrammarParser.FactorialContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterIfThenElse(@NotNull MASTERGrammarParser.IfThenElseContext ctx) { }
+	@Override public void enterFunction(MASTERGrammarParser.FunctionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitIfThenElse(@NotNull MASTERGrammarParser.IfThenElseContext ctx) { }
+	@Override public void exitFunction(MASTERGrammarParser.FunctionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArraySubscript(@NotNull MASTERGrammarParser.ArraySubscriptContext ctx) { }
+	@Override public void enterNumber(MASTERGrammarParser.NumberContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArraySubscript(@NotNull MASTERGrammarParser.ArraySubscriptContext ctx) { }
+	@Override public void exitNumber(MASTERGrammarParser.NumberContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExponentiation(@NotNull MASTERGrammarParser.ExponentiationContext ctx) { }
+	@Override public void enterArraySubscript(MASTERGrammarParser.ArraySubscriptContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExponentiation(@NotNull MASTERGrammarParser.ExponentiationContext ctx) { }
+	@Override public void exitArraySubscript(MASTERGrammarParser.ArraySubscriptContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNegation(@NotNull MASTERGrammarParser.NegationContext ctx) { }
+	@Override public void enterEquality(MASTERGrammarParser.EqualityContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNegation(@NotNull MASTERGrammarParser.NegationContext ctx) { }
+	@Override public void exitEquality(MASTERGrammarParser.EqualityContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEquality(@NotNull MASTERGrammarParser.EqualityContext ctx) { }
+	@Override public void enterIfThenElse(MASTERGrammarParser.IfThenElseContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitEquality(@NotNull MASTERGrammarParser.EqualityContext ctx) { }
+	@Override public void exitIfThenElse(MASTERGrammarParser.IfThenElseContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEveryRule(@NotNull ParserRuleContext ctx) { }
+	@Override public void enterEveryRule(ParserRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitEveryRule(@NotNull ParserRuleContext ctx) { }
+	@Override public void exitEveryRule(ParserRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void visitTerminal(@NotNull TerminalNode node) { }
+	@Override public void visitTerminal(TerminalNode node) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void visitErrorNode(@NotNull ErrorNode node) { }
+	@Override public void visitErrorNode(ErrorNode node) { }
 }

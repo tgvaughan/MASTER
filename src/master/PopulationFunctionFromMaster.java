@@ -50,72 +50,72 @@ public class PopulationFunctionFromMaster extends PopulationFunction.Abstract {
      */
     
     // Spec parameters:
-    public Input<Double> simulationTimeInput = new Input<Double>(
+    public Input<Double> simulationTimeInput = new Input<>(
             "simulationTime",
             "The maximum length of time to simulate for. (Defaults to infinite.)");
     
-    public Input<Integer> nSamplesInput = new Input<Integer>(
+    public Input<Integer> nSamplesInput = new Input<>(
             "nSamples",
             "Number of evenly spaced time points to sample state at.");
     
-    public Input<Integer> seedInput = new Input<Integer>(
+    public Input<Integer> seedInput = new Input<>(
             "seed",
             "Seed for RNG.");
     
-    public Input<Stepper> stepperInput = new Input<Stepper>(
+    public Input<Stepper> stepperInput = new Input<>(
             "stepper",
             "State incrementing algorithm to use. (Default Gillespie.)",
             new GillespieStepper());
     
-    public Input<Integer> verbosityInput = new Input<Integer> (
+    public Input<Integer> verbosityInput = new Input<>(
             "verbosity", "Level of verbosity to use (0-2).", 1);
     
     // Model:
-    public Input<Model> modelInput = new Input<Model>("model",
+    public Input<Model> modelInput = new Input<>("model",
             "The specific model to simulate.",
             Input.Validate.REQUIRED);
     
     // Initial state:
-    public Input<InitState> initialStateInput = new Input<InitState>("initialState",
+    public Input<InitState> initialStateInput = new Input<>("initialState",
             "Initial state of system.",
             Input.Validate.REQUIRED);
     
     // End conditions:
-    public Input<List<PopulationEndCondition>> endConditionsInput = new Input<List<PopulationEndCondition>>(
+    public Input<List<PopulationEndCondition>> endConditionsInput = new Input<>(
             "populationEndCondition",
             "Trajectory end condition based on population sizes.",
-            new ArrayList<PopulationEndCondition>());    
+            new ArrayList<>());
     
     // Post-simulation conditioning:
     public Input<List<PostSimCondition>> postSimConditionsInput =
-            new Input<List<PostSimCondition>>("postSimCondition",
+            new Input<>("postSimCondition",
                     "A post-simulation condition.",
-                    new ArrayList<PostSimCondition>());
+                    new ArrayList<>());
     
     // Outputs:
-    public Input<List<TrajectoryOutput>> outputsInput = new Input<List<TrajectoryOutput>>(
+    public Input<List<TrajectoryOutput>> outputsInput = new Input<>(
             "output",
             "Output writer used to write simulation output to disk.",
-            new ArrayList<TrajectoryOutput>());
+            new ArrayList<>());
     
     // Inputs specific to population function generation    
 
-    public Input<String> popSizeExpressionInput = new Input<String>("popSizeExpression",
+    public Input<String> popSizeExpressionInput = new Input<>("popSizeExpression",
             "Either the name of a population or a simple mathematical expression"
-            + "involving such names. e.g. I/(2*S) if S and I are population names.",
+                    + "involving such names. e.g. I/(2*S) if S and I are population names.",
             Input.Validate.REQUIRED);
     
-    public Input<RealParameter> originInput = new Input<RealParameter>("origin",
+    public Input<RealParameter> originInput = new Input<>("origin",
             "Maps population time onto time before most recent tree sample. "
                     + "Think of this as specifying the time of the most recent "
                     + "sample in the population size trajectory time scale.",
             Input.Validate.REQUIRED);
     
-    public Input<Double> popSizeEndInput = new Input<Double>("popSizeEnd",
+    public Input<Double> popSizeEndInput = new Input<>("popSizeEnd",
             "Population size to use beyond the end of the simulated trajectory.",
             0.0);
     
-    public Input<Double> popSizeStartInput = new Input<Double>("popSizeStart",
+    public Input<Double> popSizeStartInput = new Input<>("popSizeStart",
             "Population size to use before the start of the simulated trajectory.",
             0.0);
     
@@ -126,14 +126,12 @@ public class PopulationFunctionFromMaster extends PopulationFunction.Abstract {
 
     Double[] times, popSizes, intensities, intensitiesRev;
     
-    double tIntensityTrajStart, dt;
-    
     int peakIdx;
     
     public PopulationFunctionFromMaster() { }
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
 
         // Set up trajectory simulation inputs
         

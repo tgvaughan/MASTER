@@ -69,8 +69,12 @@ public class JsonOutput extends BEASTObject implements
     public JsonOutput() { }
     
     @Override
-    public void initAndValidate() throws FileNotFoundException {
-        pstream = new PrintStream(fileNameInput.get());
+    public void initAndValidate() {
+        try {
+            pstream = new PrintStream(fileNameInput.get());
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("File " + fileNameInput.get() + " not found.");
+        }
     }
     
     /**

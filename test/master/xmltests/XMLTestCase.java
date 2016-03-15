@@ -1,14 +1,12 @@
 package master.xmltests;
 
 import beagle.BeagleFlag;
-import beast.app.BEASTVersion;
 import beast.app.BeastMCMC;
 import beast.app.beastapp.BeastMain;
 import beast.app.util.Arguments;
 import beast.core.util.Log;
 import beast.util.Randomizer;
 import beast.util.XMLParserException;
-import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import org.junit.Test;
@@ -19,7 +17,6 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -78,7 +78,7 @@ public class Model extends BEASTObject {
     }
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
 
         System.out.println("Assembling model...");
 

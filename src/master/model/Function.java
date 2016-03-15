@@ -49,7 +49,7 @@ public class Function extends BEASTObject {
     private ExpressionEvaluator evaluator;
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         if (getID() == null || getID().isEmpty())
             throw new IllegalArgumentException("Functions must have an ID"
                     + " specified, as this is used to identify functions"

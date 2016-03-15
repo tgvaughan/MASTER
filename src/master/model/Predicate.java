@@ -43,7 +43,7 @@ public class Predicate extends BEASTObject {
     private ExpressionEvaluator visitor;
 
     @Override
-    public void initAndValidate() throws Exception { }
+    public void initAndValidate() { }
 
     /**
      * Determine whether the predicate equation holds for a particular set

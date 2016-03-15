@@ -17,7 +17,6 @@
 
 package master.utilities;
 
-import master.utilities.pfe.PFEJSONVisitor;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.Input.Validate;
@@ -25,25 +24,19 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.tree.coalescent.PopulationFunction;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import master.utilities.pfe.PFEJSONVisitor;
 import master.utilities.pfe.PFExpressionLexer;
 import master.utilities.pfe.PFExpressionParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MaxIterationsExceededException;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
-import org.apache.commons.math.analysis.solvers.BrentSolver;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
@@ -51,46 +44,51 @@ import org.apache.commons.math.analysis.solvers.BrentSolver;
 @Description("Construct a population function from a JSON output file.")
 public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
     
-    public Input<String> fileNameInput = new Input<String>("fileName",
+    public Input<String> fileNameInput = new Input<>("fileName",
             "Name of JSON output file to use.", Validate.REQUIRED);
     
-    public Input<String> popSizeExpressionInput = new Input<String>("popSizeExpression",
+    public Input<String> popSizeExpressionInput = new Input<>("popSizeExpression",
             "Either the name of a population or a simple mathematical expression"
-            + "involving such names. e.g. I/(2*S) if S and I are population names.",
+                    + "involving such names. e.g. I/(2*S) if S and I are population names.",
             Validate.REQUIRED);
     
-    public Input<RealParameter> originInput = new Input<RealParameter>("origin",
+    public Input<RealParameter> originInput = new Input<>("origin",
             "Maps population time onto time before most recent tree sample. "
                     + "Think of this as specifying the time of the most recent "
                     + "sample in the population size trajectory time scale.",
             Validate.REQUIRED);
     
-    public Input<Double> popSizeEndInput = new Input<Double>("popSizeEnd",
+    public Input<Double> popSizeEndInput = new Input<>("popSizeEnd",
             "Population size to use beyond the end of the simulated trajectory.",
             0.0);
     
-    public Input<Double> popSizeStartInput = new Input<Double>("popSizeStart",
+    public Input<Double> popSizeStartInput = new Input<>("popSizeStart",
             "Population size to use before the start of the simulated trajectory.",
             0.0);
     
-    public Input<Integer> trajNumInput = new Input<Integer>("trajNum",
+    public Input<Integer> trajNumInput = new Input<>("trajNum",
             "The index of the trajectory to use if the JSON file contains an"
-            + " ensemble of trajectories, but ignored otherwise.  Default 0.", 0);
+                    + " ensemble of trajectories, but ignored otherwise.  Default 0.", 0);
 
     Double [] times, popSizes, intensities, intensitiesRev;
-    
-    double tIntensityTrajStart, dt;
     
     int peakIdx;
     
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         
         // Read in JSON file:
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(
-                new FileInputStream(fileNameInput.get()));
-       
+        JsonNode rootNode;
+
+        try {
+            rootNode = mapper.readTree(
+                    new FileInputStream(fileNameInput.get()));
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading population size trajectory file "
+                    + fileNameInput.get() + ".");
+        }
+
         JsonNode trajRootNode;
         if (rootNode.has("trajectories"))
             trajRootNode = rootNode.get("trajectories").get(trajNumInput.get());
@@ -112,14 +110,6 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
         // Calculate population sizes
         PFEJSONVisitor visitor = new PFEJSONVisitor(trajRootNode);
         popSizes = visitor.visit(tree);
-        
-        // Numerically integrate to get intensities:
-//        intensities = new Double[times.length];
-//        intensities[times.length-1] = 0.0;
-//        for (int i=times.length-1; i>0; i--) {
-//            intensities[i-1] = intensities[i]
-//                    + (times[i]-times[i-1])/popSizes[i-1];
-//        }
         
         // Find peak population size
         peakIdx=-1;
@@ -156,7 +146,7 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
 
     @Override
     public List<String> getParameterIds() {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -233,7 +223,7 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
     
     /**
      * Convert between simulation time and tree age time.
-     * @param t
+     * @param t simulation time
      * @return origin - t
      */
     private double convertTime(double t) {
@@ -242,9 +232,6 @@ public class PopulationFunctionFromJSON extends PopulationFunction.Abstract {
     
     /**
      * Main method for debugging.
-     * 
-     * @param args 
-     * @throws java.lang.Exception 
      */
     public static void main(String [] args) throws Exception {
 

@@ -1,6 +1,5 @@
-// Generated from /home/tvaughan/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.5
+// Generated from /home/tvaughan/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.5.1
 package master.model.parsers;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -18,180 +17,180 @@ public class MASTERGrammarBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitReaction(@NotNull MASTERGrammarParser.ReactionContext ctx) { return visitChildren(ctx); }
+	@Override public T visitReaction(MASTERGrammarParser.ReactionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitReactants(@NotNull MASTERGrammarParser.ReactantsContext ctx) { return visitChildren(ctx); }
+	@Override public T visitReactants(MASTERGrammarParser.ReactantsContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitProducts(@NotNull MASTERGrammarParser.ProductsContext ctx) { return visitChildren(ctx); }
+	@Override public T visitProducts(MASTERGrammarParser.ProductsContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPopsum(@NotNull MASTERGrammarParser.PopsumContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPopsum(MASTERGrammarParser.PopsumContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPopel(@NotNull MASTERGrammarParser.PopelContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPopel(MASTERGrammarParser.PopelContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitFactor(@NotNull MASTERGrammarParser.FactorContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFactor(MASTERGrammarParser.FactorContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitId(@NotNull MASTERGrammarParser.IdContext ctx) { return visitChildren(ctx); }
+	@Override public T visitId(MASTERGrammarParser.IdContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAssignment(@NotNull MASTERGrammarParser.AssignmentContext ctx) { return visitChildren(ctx); }
+	@Override public T visitAssignment(MASTERGrammarParser.AssignmentContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPopname(@NotNull MASTERGrammarParser.PopnameContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPopname(MASTERGrammarParser.PopnameContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLoc(@NotNull MASTERGrammarParser.LocContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLoc(MASTERGrammarParser.LocContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLocel(@NotNull MASTERGrammarParser.LocelContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLocel(MASTERGrammarParser.LocelContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitUnaryOp(@NotNull MASTERGrammarParser.UnaryOpContext ctx) { return visitChildren(ctx); }
+	@Override public T visitUnaryOp(MASTERGrammarParser.UnaryOpContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitVariable(@NotNull MASTERGrammarParser.VariableContext ctx) { return visitChildren(ctx); }
+	@Override public T visitVariable(MASTERGrammarParser.VariableContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitNumber(@NotNull MASTERGrammarParser.NumberContext ctx) { return visitChildren(ctx); }
+	@Override public T visitNegation(MASTERGrammarParser.NegationContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitFactorial(@NotNull MASTERGrammarParser.FactorialContext ctx) { return visitChildren(ctx); }
+	@Override public T visitMulDiv(MASTERGrammarParser.MulDivContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitFunction(@NotNull MASTERGrammarParser.FunctionContext ctx) { return visitChildren(ctx); }
+	@Override public T visitAddSub(MASTERGrammarParser.AddSubContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAddSub(@NotNull MASTERGrammarParser.AddSubContext ctx) { return visitChildren(ctx); }
+	@Override public T visitBooleanOp(MASTERGrammarParser.BooleanOpContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitArray(@NotNull MASTERGrammarParser.ArrayContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExponentiation(MASTERGrammarParser.ExponentiationContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitBooleanOp(@NotNull MASTERGrammarParser.BooleanOpContext ctx) { return visitChildren(ctx); }
+	@Override public T visitBracketed(MASTERGrammarParser.BracketedContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMulDiv(@NotNull MASTERGrammarParser.MulDivContext ctx) { return visitChildren(ctx); }
+	@Override public T visitArray(MASTERGrammarParser.ArrayContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitBracketed(@NotNull MASTERGrammarParser.BracketedContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFactorial(MASTERGrammarParser.FactorialContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitIfThenElse(@NotNull MASTERGrammarParser.IfThenElseContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFunction(MASTERGrammarParser.FunctionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitArraySubscript(@NotNull MASTERGrammarParser.ArraySubscriptContext ctx) { return visitChildren(ctx); }
+	@Override public T visitNumber(MASTERGrammarParser.NumberContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExponentiation(@NotNull MASTERGrammarParser.ExponentiationContext ctx) { return visitChildren(ctx); }
+	@Override public T visitArraySubscript(MASTERGrammarParser.ArraySubscriptContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitNegation(@NotNull MASTERGrammarParser.NegationContext ctx) { return visitChildren(ctx); }
+	@Override public T visitEquality(MASTERGrammarParser.EqualityContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitEquality(@NotNull MASTERGrammarParser.EqualityContext ctx) { return visitChildren(ctx); }
+	@Override public T visitIfThenElse(MASTERGrammarParser.IfThenElseContext ctx) { return visitChildren(ctx); }
 }

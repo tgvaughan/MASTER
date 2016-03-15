@@ -173,7 +173,7 @@ public class Trajectory extends Runnable {
     }
 
     @Override
-    public void run() throws Exception {
+    public void run() {
         
         // Generate stochastic trajectory:
         simulate();

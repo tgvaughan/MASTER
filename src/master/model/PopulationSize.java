@@ -40,7 +40,7 @@ public class PopulationSize extends BEASTObject {
     public PopulationSize() { }
 
     @Override
-    public void initAndValidate() throws Exception {
+    public void initAndValidate() {
         if (populationInput.get() != null) {
             if (sizeInput.get() == null)
                 throw new IllegalArgumentException("PopulationSize: population " +

@@ -27,13 +27,6 @@
                                 : 1.0
             </function>
 
-            <!-- Add sources at locations corresponding to points in the complex plain
-                 inside the Mandelbrot set. -->
-            <!--reaction spec='Reaction' reactionName="Production" rate="1.0">
-                <predicate spec='Predicate' value="inMandelbrot({0,0}, toComplex(x,y), 50)"/>
-                0 -> X[x, y]
-            </reaction-->
-
             <!-- Allow for some diffusion to keep things interesting. -->
             <reaction spec='Reaction' reactionName="Migration" rate="1.0">
                 <predicate spec='Predicate' value="sum(abs({x1,y1}-{x2,y2}))==1"/>

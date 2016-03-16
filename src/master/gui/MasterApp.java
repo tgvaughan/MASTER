@@ -17,6 +17,7 @@
 
 package master.gui;
 
+import beast.core.BEASTObject;
 import master.Ensemble;
 import master.EnsembleSummary;
 import master.InheritanceEnsemble;
@@ -93,7 +94,7 @@ public class MasterApp {
             Trajectory r = (Trajectory)runnable;
             spec = r.getSpec();
 
-            for (TrajectoryOutput o : r.outputsInput.get()) {
+            for (BEASTObject o : r.outputsInput.get()) {
                 if (o instanceof JsonOutput)
                     jsonOutput = (JsonOutput)o;
             }
@@ -123,7 +124,7 @@ public class MasterApp {
             InheritanceTrajectory r = (InheritanceTrajectory)runnable;
             spec = r.getSpec();
             
-            for (InheritanceTrajectoryOutput o : r.outputsInput.get()) {
+            for (BEASTObject o : r.outputsInput.get()) {
                 if (o instanceof JsonOutput) {
                     jsonOutput = (JsonOutput)o;
                     continue;

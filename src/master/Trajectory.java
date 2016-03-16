@@ -16,6 +16,7 @@
  */
 package master;
 
+import beast.core.BEASTObject;
 import master.model.*;
 import master.conditions.PopulationEndCondition;
 import master.steppers.GillespieStepper;
@@ -91,7 +92,7 @@ public class Trajectory extends Runnable {
                     new ArrayList<>());
     
     // Outputs:
-    public Input<List<TrajectoryOutput>> outputsInput = new Input<>(
+    public Input<List<BEASTObject>> outputsInput = new Input<>(
             "output",
             "Output writer used to write simulation output to disk.",
             new ArrayList<>());
@@ -179,8 +180,15 @@ public class Trajectory extends Runnable {
         simulate();
 
         // Write outputs:
-        for (TrajectoryOutput output : outputsInput.get())
-            output.write(this);
+        for (BEASTObject output : outputsInput.get()) {
+            if (output instanceof TrajectoryOutput)
+                ((TrajectoryOutput)output).write(this);
+            else
+                System.err.println("Warning: Output type " +
+                        output.getClass().getName() +
+                        " not compatible with Trajectory " +
+                        "simulation type. Skipping.");
+        }
 
         System.out.println("Done.");
     }

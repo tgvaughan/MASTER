@@ -45,81 +45,80 @@ public class InheritanceEnsemble extends Runnable {
      */
     
     // Spec parameters:
-    public Input<Double> simulationTimeInput = new Input<Double>(
+    public Input<Double> simulationTimeInput = new Input<>(
             "simulationTime",
             "The maximum length of time to simulate for. (Defaults to infinite.)");
 
-    public Input<Boolean> samplePopulationSizesInput = new Input<Boolean>(
+    public Input<Boolean> samplePopulationSizesInput = new Input<>(
             "samplePopulationSizes",
             "Sample population sizes together with inheritance graph. (Default false.)",
             false);
     
-    public Input<Integer> nSamplesInput = new Input<Integer>(
+    public Input<Integer> nSamplesInput = new Input<>(
             "nSamples",
             "Number of evenly spaced population size samples to record. (Default 0: uneven sampling)",
             0);
     
-    public Input<Boolean> sampleAtNodesOnlyInput = new Input<Boolean>(
+    public Input<Boolean> sampleAtNodesOnlyInput = new Input<>(
             "sampleAtNodesOnly",
             "Sample population sizes only at graph node times. (Default false.)",
             false);
     
-    public Input<Integer> nTrajInput = new Input<Integer>(
+    public Input<Integer> nTrajInput = new Input<>(
             "nTraj",
             "Number of trajectories to generate.",
             Input.Validate.REQUIRED);
             
-    public Input<Integer> seedInput = new Input<Integer>(
+    public Input<Integer> seedInput = new Input<>(
             "seed",
             "Seed for RNG.");
     
-    public Input<Integer> verbosityInput = new Input<Integer> (
+    public Input<Integer> verbosityInput = new Input<>(
             "verbosity", "Level of verbosity to use (0-3).", 1);
     
     // Model:
-    public Input<Model> modelInput = new Input<Model>("model",
+    public Input<Model> modelInput = new Input<>("model",
             "The specific model to simulate.", Validate.REQUIRED);
     
     // Initial state:
-    public Input<InitState> initialStateInput = new Input<InitState>("initialState",
+    public Input<InitState> initialStateInput = new Input<>("initialState",
             "Initial state of system.", Validate.REQUIRED);
     
     // Population end conditions:
-    public Input<List<PopulationEndCondition>> popEndConditionsInput = new Input<List<PopulationEndCondition>>(
+    public Input<List<PopulationEndCondition>> popEndConditionsInput = new Input<>(
             "populationEndCondition",
             "Trajectory end condition based on population sizes.",
-            new ArrayList<PopulationEndCondition>());
+            new ArrayList<>());
 
     // Lineage end conditions:
-    public Input<List<LineageEndCondition>> lineageEndConditionsInput = new Input<List<LineageEndCondition>>(
+    public Input<List<LineageEndCondition>> lineageEndConditionsInput = new Input<>(
             "lineageEndCondition",
             "Trajectory end condition based on remaining lineages.",
-            new ArrayList<LineageEndCondition>());
+            new ArrayList<>());
     
     // Leaf count end conditions:
-    public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput = new Input<List<LeafCountEndCondition>>(
+    public Input<List<LeafCountEndCondition>> leafCountEndConditionsInput = new Input<>(
             "leafCountEndCondition",
             "Trajectory end condition based on number of terminal nodes generated.",
-            new ArrayList<LeafCountEndCondition>());
+            new ArrayList<>());
     
     // Post-processors:
     public Input<List<InheritancePostProcessor>> inheritancePostProcessorsInput =
-            new Input<List<InheritancePostProcessor>>(
-            "inheritancePostProcessor",
-            "Post processor for inheritance graph.",
-            new ArrayList<InheritancePostProcessor>());
+            new Input<>("inheritancePostProcessor",
+                    "Post processor for inheritance graph.",
+                    new ArrayList<>());
     
     // Post-simulation conditioning:
     public Input<List<PostSimCondition>> postSimConditionsInput =
-            new Input<List<PostSimCondition>>("postSimCondition",
+            new Input<>("postSimCondition",
                     "A post-simulation condition.",
-                    new ArrayList<PostSimCondition>());
+                    new ArrayList<>());
 
     // Outputs:
     public Input<List<InheritanceEnsembleOutput>> outputsInput
-            = new Input<List<InheritanceEnsembleOutput>>("output",
+            = new Input<>("output",
             "Output writer used to write results of simulation to disk.",
-            new ArrayList<InheritanceEnsembleOutput>());
+            new ArrayList<>());
     
     // The ensemble is a large number of trajectories
     ArrayList<InheritanceTrajectory> itrajectories;
@@ -219,7 +218,7 @@ public class InheritanceEnsemble extends Runnable {
         }
         
         // Initialise inheritance trajectory list
-        itrajectories = new ArrayList<InheritanceTrajectory>();
+        itrajectories = new ArrayList<>();
         
                 
         // Record time at start of simulation:

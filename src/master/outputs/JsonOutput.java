@@ -45,7 +45,7 @@ import master.InheritanceTrajectory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Class containing static methods for writing tracjectory, ensemble
+ * Class containing static methods for writing trajectory, ensemble
  * and ensemble summary results to a given PrintStream using a versatile
  * JSON format.
  *

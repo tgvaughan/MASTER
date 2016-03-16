@@ -16,6 +16,7 @@
  */
 package master;
 
+import beast.core.BEASTObject;
 import beast.core.Input;
 import beast.util.Randomizer;
 import com.google.common.collect.*;
@@ -81,12 +82,6 @@ public class InheritanceTrajectory extends Trajectory {
             new Input<>("inheritancePostProcessor",
                     "Post processor for inheritance graph.",
                     new ArrayList<>());
-    
-    // Outputs:
-    public Input<List<InheritanceTrajectoryOutput>> outputsInput
-            = new Input<>("output",
-            "Output writer used to write results of simulation to disk.",
-            new ArrayList<>());
     
     // List of nodes present at the start of the simulation
     public List<Node> startNodes;
@@ -193,8 +188,15 @@ public class InheritanceTrajectory extends Trajectory {
         simulate();
 
         // Write outputs:
-        for (InheritanceTrajectoryOutput output : outputsInput.get())
-            output.write(this);
+        for (BEASTObject output : outputsInput.get()) {
+            if (output instanceof InheritanceTrajectoryOutput)
+                ((InheritanceTrajectoryOutput)output).write(this);
+            else
+                System.err.println("Warning: Output type " +
+                        output.getClass().getName() +
+                        " not compatible with InheritanceTrajectory " +
+                        "simulation type. Skipping.");
+        }
 
         System.out.println("Done.");
     }

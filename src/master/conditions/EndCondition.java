@@ -31,19 +31,14 @@ import master.model.Population;
 @Description("Abstract end condition class.")
 public abstract class EndCondition extends BEASTObject {
     
-    public Input<List<Population>> populationInput = new Input<List<Population>>(
+    public Input<List<Population>> populationInput = new Input<>(
             "population",
             "Specific population to which end condition applies (Optional).",
-            new ArrayList<Population>());
+            new ArrayList<>());
         
-    public Input<Boolean> rejectionInput = new Input<Boolean>(
+    public Input<Boolean> rejectionInput = new Input<>(
             "isRejection",
             "Whether condition causes trajectory rejection. (Default false.)",
-            false);
-    
-    public Input<Boolean> postSimulationConditionInput = new Input<Boolean>(
-            "postSimulationCondition",
-            "The condition should be applied _after_ the simulation is complete.",
             false);
 
     public EndCondition() { }

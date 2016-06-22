@@ -304,7 +304,7 @@ public class LineageSampler extends BEASTObject implements InheritancePostProces
      */
     private static List<Node> getSampledLineages(List<Node> nodesToSample, int nSamples) {
         List<Node> sampledNodes = Lists.newArrayList();
-        while (nSamples > 0 && !nodesToSample.isEmpty()) {
+        while (nSamples > 0 && nodesToSample != null && !nodesToSample.isEmpty()) {
             int index = Randomizer.nextInt(nodesToSample.size());
             Node sampledNode = nodesToSample.remove(index);
             sampledNodes.add(sampledNode);

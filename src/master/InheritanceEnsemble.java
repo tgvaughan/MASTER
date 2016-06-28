@@ -31,12 +31,13 @@ import master.conditions.PostSimCondition;
 import master.model.*;
 import master.outputs.InheritanceEnsembleOutput;
 import master.postprocessors.InheritancePostProcessor;
+import master.postprocessors.LineageSampler;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-@Description("Simulates a single trajectory under a stochastic birth-death"
-        + " model, keeping track of lineages decendent form a chosen set"
+@Description("Simulates a multiple trajectories under a stochastic birth-death"
+        + " model, keeping track of lineages which descend from a chosen set"
         + " of individuals.")
 public class InheritanceEnsemble extends Runnable {
     
@@ -180,8 +181,11 @@ public class InheritanceEnsemble extends Runnable {
             spec.addLeafCountEndCondition(endCondition);
 
         // Incorporate post-processors:
-        for (InheritancePostProcessor postProc : inheritancePostProcessorsInput.get())
+        for (InheritancePostProcessor postProc : inheritancePostProcessorsInput.get()) {
+            if (postProc instanceof LineageSampler)
+                ((LineageSampler) postProc).computePopulationSizes(modelInput.get());
             spec.addInheritancePostProcessor(postProc);
+        }
         
         // Incorporate post-simulation conditions:
         for (PostSimCondition condition : postSimConditionsInput.get())

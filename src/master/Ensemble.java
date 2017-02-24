@@ -93,7 +93,12 @@ public class Ensemble extends Runnable {
             new Input<>("postSimCondition",
                     "A post-simulation condition.",
                     new ArrayList<>());
-    
+
+    public Input<Integer> maxPostSimConditionRejectsInput =
+            new Input<>("maxPostSimConditionRejects",
+                    "Maximum number of post simulation condition failures" +
+                            "before aborting.  (Default is no limit.)");
+
     // Outputs to write:
     public Input<List<EnsembleOutput>> outputsInput = new Input<>(
             "output",
@@ -152,6 +157,9 @@ public class Ensemble extends Runnable {
         // Incorporate post-simulation conditions:
         for (PostSimCondition condition : postSimConditionsInput.get())
             spec.addPostSimCondition(condition);
+
+        if (maxPostSimConditionRejectsInput.get() != null)
+            spec.setMaxPostSimConditionRejects(maxPostSimConditionRejectsInput.get());
         
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)
@@ -200,9 +208,15 @@ public class Ensemble extends Runnable {
                         +String.valueOf(traj+1)+" of "
                         +String.valueOf(spec.nTraj));
 
-            Trajectory thisTraj = new Trajectory(spec);
-            trajectories.add(thisTraj);
+            Trajectory thisTraj = null;
 
+            try {
+                thisTraj = new Trajectory(spec);
+                trajectories.add(thisTraj);
+            } catch (RejectCountExceeded ex) {
+                System.err.println("Maximum number of post-simulation " +
+                        "condition rejections exceeded. Skipping simulation.");
+            }
         }
         
         // Record total time (in seconds) taken by calculation:

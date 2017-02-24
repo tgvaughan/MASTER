@@ -105,7 +105,7 @@ public class InheritanceTrajectory extends Trajectory {
      * 
      * @param spec inheritance trajectory specification
      */
-    public InheritanceTrajectory(InheritanceTrajectorySpec spec) {
+    public InheritanceTrajectory(InheritanceTrajectorySpec spec) throws RejectCountExceeded {
         this.spec = spec;
         
         simulate();
@@ -169,7 +169,10 @@ public class InheritanceTrajectory extends Trajectory {
         // Incorporate post-simulation conditions:
         for (PostSimCondition condition : postSimConditionsInput.get())
             spec.addPostSimCondition(condition);
-        
+
+        if (maxPostSimConditionRejectsInput.get() != null)
+            spec.setMaxPostSimConditionRejects(maxPostSimConditionRejectsInput.get());
+
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)
             spec.setSeed(seedInput.get());
@@ -185,7 +188,13 @@ public class InheritanceTrajectory extends Trajectory {
     public void run() {
         
         // Generate stochastic trajectory:
-        simulate();
+        try {
+            simulate();
+        } catch (RejectCountExceeded ex) {
+            System.err.println("Maximum number of post-simulation condition " +
+                    "rejections exceeded. Aborting.");
+            System.exit(1);
+        }
 
         // Write outputs:
         for (BEASTObject output : outputsInput.get()) {
@@ -205,7 +214,7 @@ public class InheritanceTrajectory extends Trajectory {
      * Build an inheritance graph corresponding to a set of lineages embedded
      * within populations evolving under a birth-death process.
      */
-    private void simulate() {
+    private void simulate() throws RejectCountExceeded {
 
         // Create HashMaps:
         nodesInvolved = Maps.newLinkedHashMap();
@@ -227,6 +236,7 @@ public class InheritanceTrajectory extends Trajectory {
             sampleDt = spec.getSampleDt();
 
         boolean postSimReject;
+        int postSimRejectCount = 0;
         do { // Perform simulations until no post-simulation rejection occurs
             
             initialiseSimulation();
@@ -437,6 +447,14 @@ public class InheritanceTrajectory extends Trajectory {
                 // Rejection: Start a new simulation
                 if (spec.getVerbosity()>0)
                     System.err.println("Post-simulation rejection condition met.");
+
+                postSimRejectCount += 1;
+
+                if (spec.getMaxPostSimConditionRejects()>=0 &&
+                        postSimRejectCount > spec.getMaxPostSimConditionRejects()) {
+                    throw new RejectCountExceeded();
+                }
+
             }
             
         } while (postSimReject);
@@ -522,13 +540,13 @@ public class InheritanceTrajectory extends Trajectory {
         }
         
         // Sort inactive lineages nodes in order of increasing seed time:
-        Collections.sort(inactiveLineages, (node1, node2) -> {
-            double dt = node1.getTime()-node2.getTime();
+        inactiveLineages.sort((node1, node2) -> {
+            double dt = node1.getTime() - node2.getTime();
 
-            if (dt<0)
+            if (dt < 0)
                 return -1;
 
-            if (dt>0)
+            if (dt > 0)
                 return 1;
 
             return 0;

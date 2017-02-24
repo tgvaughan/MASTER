@@ -115,6 +115,11 @@ public class InheritanceEnsemble extends Runnable {
                     "A post-simulation condition.",
                     new ArrayList<>());
 
+    public Input<Integer> maxPostSimConditionRejectsInput =
+            new Input<>("maxPostSimConditionRejects",
+                    "Maximum number of post simulation condition failures" +
+                            "before aborting.  (Default is no limit.)");
+
     // Outputs:
     public Input<List<InheritanceEnsembleOutput>> outputsInput
             = new Input<>("output",
@@ -190,7 +195,10 @@ public class InheritanceEnsemble extends Runnable {
         // Incorporate post-simulation conditions:
         for (PostSimCondition condition : postSimConditionsInput.get())
             spec.addPostSimCondition(condition);
-        
+
+        if (maxPostSimConditionRejectsInput.get() != null)
+            spec.setMaxPostSimConditionRejects(maxPostSimConditionRejectsInput.get());
+
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)
             spec.setSeed(seedInput.get());
@@ -236,9 +244,14 @@ public class InheritanceEnsemble extends Runnable {
                 System.err.println("Generating inheritance trajectory "
                         + String.valueOf(traj+1) + " of "
                         + String.valueOf(spec.nTraj));
-            
-            InheritanceTrajectory thisTraj = new InheritanceTrajectory(spec);
-            itrajectories.add(thisTraj);
+
+            try {
+                InheritanceTrajectory thisTraj = new InheritanceTrajectory(spec);
+                itrajectories.add(thisTraj);
+            } catch (RejectCountExceeded ex) {
+                System.err.println("Maximum number of post-simulation " +
+                        "condition rejections exceeded.  Skipping simulation.");
+            }
         }
         
         // Record length of time taken by calculation:

@@ -94,11 +94,16 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
             new Input<>("postSimCondition",
                     "A post-simulation condition.",
                     new ArrayList<>());
-    
-        public Input<Boolean> samplePopulationSizesInput = new Input<>(
-                "samplePopulationSizes",
-                "Sample population sizes together with inheritance graph. (Default false.)",
-                false);
+
+    public Input<Integer> maxPostSimConditionRejectsInput =
+            new Input<>("maxPostSimConditionRejects",
+                    "Maximum number of post simulation condition failures" +
+                            "before aborting.  (Default is no limit.)");
+
+    public Input<Boolean> samplePopulationSizesInput = new Input<>(
+            "samplePopulationSizes",
+            "Sample population sizes together with inheritance graph. (Default false.)",
+            false);
     
     public Input<Boolean> sampleAtNodesOnlyInput = new Input<>(
             "sampleAtNodesOnly",
@@ -181,6 +186,8 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
                 
         for (PostSimCondition postSimCondition : postSimConditionsInput.get())
             itraj.setInputValue("postSimCondition", postSimCondition);
+
+        itraj.setInputValue("maxPostSimConditionRejects", maxPostSimConditionRejectsInput.get());
         
         for (InheritanceTrajectoryOutput output : outputsInput.get())
             itraj.setInputValue("output", output);

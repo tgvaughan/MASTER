@@ -90,6 +90,11 @@ public class Trajectory extends Runnable {
             new Input<>("postSimCondition",
                     "A post-simulation condition.",
                     new ArrayList<>());
+
+    public Input<Integer> maxPostSimConditionRejectsInput =
+            new Input<>("maxPostSimConditionRejects",
+                    "Maximum number of post simulation condition failures" +
+                            "before aborting.  (Default is no limit.)");
     
     // Outputs:
     public Input<List<BEASTObject>> outputsInput = new Input<>(
@@ -114,9 +119,9 @@ public class Trajectory extends Runnable {
      * 
      * @param spec trajectory specification
      */
-    public Trajectory(TrajectorySpec spec) {
+    public Trajectory(TrajectorySpec spec) throws RejectCountExceeded {
         this.spec = spec;
-        
+
         simulate();
     }
     
@@ -162,6 +167,9 @@ public class Trajectory extends Runnable {
         for (PostSimCondition condition : postSimConditionsInput.get())
             spec.addPostSimCondition(condition);
 
+        if (maxPostSimConditionRejectsInput.get() != null)
+            spec.setMaxPostSimConditionRejects(maxPostSimConditionRejectsInput.get());
+
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)
             spec.setSeed(seedInput.get());
@@ -177,7 +185,13 @@ public class Trajectory extends Runnable {
     public void run() {
         
         // Generate stochastic trajectory:
-        simulate();
+        try {
+            simulate();
+        } catch (RejectCountExceeded ex) {
+            System.err.println("Maximum number of post-simulation condition " +
+                    "rejections exceeded. Aborting.");
+            System.exit(1);
+        }
 
         // Write outputs:
         for (BEASTObject output : outputsInput.get()) {
@@ -196,7 +210,7 @@ public class Trajectory extends Runnable {
     /**
      * Generate trajectory of birth-death process.
      */
-    private void simulate() {
+    private void simulate() throws RejectCountExceeded {
 
         // Set seed if defined:
         if (spec.seed>=0 && !spec.seedUsed) {
@@ -219,6 +233,7 @@ public class Trajectory extends Runnable {
         
         // Loop until any post-simulation rejection conditions fail.
         boolean postSimulationReject;
+        int postSimRejectCount = 0;
         do {
             sampledStates.clear();
             sampledTimes.clear();
@@ -349,6 +364,13 @@ public class Trajectory extends Runnable {
                 // Rejection: Start a new simulation
                 if (spec.getVerbosity()>0)
                     System.err.println("Post-simulation rejection condition met.");
+
+                postSimRejectCount += 1;
+
+                if (spec.getMaxPostSimConditionRejects()>=0 &&
+                        postSimRejectCount > spec.getMaxPostSimConditionRejects()) {
+                    throw new RejectCountExceeded();
+                }
             }
             
         } while (postSimulationReject);
@@ -409,3 +431,5 @@ public class Trajectory extends Runnable {
         return trajLogP;
     }
 }
+
+class RejectCountExceeded extends Exception { };

@@ -66,6 +66,8 @@ public class TrajectorySpec {
     // Leaf count post-simulation conditions:
     List<PostSimCondition> postSimConditions;
 
+    int maxPostSimConditionRejects = -1;
+
     
     // Whether to collect evenly spaced samples or let the state stepper
     // when to sample:
@@ -192,7 +194,26 @@ public class TrajectorySpec {
     public void addPostSimCondition(PostSimCondition condition) {
         this.postSimConditions.add(condition);
     }
-    
+
+    /**
+     * Set maximum number of post-sim condition rejects allowed before
+     * aborting. A value of -1 implies no limit.
+     *
+     * @param n limit to set
+     */
+    public void setMaxPostSimConditionRejects(int n) {
+        maxPostSimConditionRejects = n;
+    }
+
+     /**
+     * Retrieve maximum number of post-sim condition rejects allowed before
+     * aborting. A value of -1 implies no limit.
+     *
+     */
+    public int getMaxPostSimConditionRejects() {
+        return maxPostSimConditionRejects;
+    }
+
     /**
      * Sample population sizes at evenly spaced times.
      * 

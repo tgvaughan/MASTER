@@ -86,7 +86,11 @@ public class EnsembleSummary extends Runnable {
             new Input<>("postSimCondition",
                     "A post-simulation condition.",
                     new ArrayList<>());
-    
+
+    public Input<Integer> maxPostSimConditionRejectsInput =
+            new Input<>("maxPostSimConditionRejects",
+                    "Maximum number of post simulation condition failures" +
+                            "before aborting.  (Default is no limit.)");
     // Individual moments:
     public Input<List<Moment>> momentsInput = new Input<>(
             "moment",
@@ -151,7 +155,10 @@ public class EnsembleSummary extends Runnable {
         // Incorporate post-simulation conditions:
         for (PostSimCondition condition : postSimConditionsInput.get())
             spec.addPostSimCondition(condition);
-        
+
+        if (maxPostSimConditionRejectsInput.get() != null)
+            spec.setMaxPostSimConditionRejects(maxPostSimConditionRejectsInput.get());
+
         // Check for zero-length moment and moment group lists (no point to calculation!)
         if (momentGroupsInput.get().isEmpty() && momentsInput.get().isEmpty())
             throw new IllegalArgumentException("EnsembleSummary doesn't specfy any moments!");

@@ -115,8 +115,8 @@ public class InheritanceEnsemble extends Runnable {
                     "A post-simulation condition.",
                     new ArrayList<>());
 
-    public Input<Integer> maxPostSimConditionRejectsInput =
-            new Input<>("maxPostSimConditionRejects",
+    public Input<Integer> maxConditionRejectsInput =
+            new Input<>("maxConditionRejects",
                     "Maximum number of post simulation condition failures" +
                             "before aborting.  (Default is no limit.)");
 
@@ -196,8 +196,8 @@ public class InheritanceEnsemble extends Runnable {
         for (PostSimCondition condition : postSimConditionsInput.get())
             spec.addPostSimCondition(condition);
 
-        if (maxPostSimConditionRejectsInput.get() != null)
-            spec.setMaxPostSimConditionRejects(maxPostSimConditionRejectsInput.get());
+        if (maxConditionRejectsInput.get() != null)
+            spec.setMaxConditionRejects(maxConditionRejectsInput.get());
 
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)

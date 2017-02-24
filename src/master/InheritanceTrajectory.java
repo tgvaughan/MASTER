@@ -170,8 +170,8 @@ public class InheritanceTrajectory extends Trajectory {
         for (PostSimCondition condition : postSimConditionsInput.get())
             spec.addPostSimCondition(condition);
 
-        if (maxPostSimConditionRejectsInput.get() != null)
-            spec.setMaxPostSimConditionRejects(maxPostSimConditionRejectsInput.get());
+        if (maxConditionRejectsInput.get() != null)
+            spec.setMaxConditionRejects(maxConditionRejectsInput.get());
 
         // Set seed if provided, otherwise use default BEAST seed:
         if (seedInput.get()!=null)
@@ -191,7 +191,7 @@ public class InheritanceTrajectory extends Trajectory {
         try {
             simulate();
         } catch (RejectCountExceeded ex) {
-            System.err.println("Maximum number of post-simulation condition " +
+            System.err.println("Maximum number of condition " +
                     "rejections exceeded. Aborting.");
             System.exit(1);
         }
@@ -236,7 +236,7 @@ public class InheritanceTrajectory extends Trajectory {
             sampleDt = spec.getSampleDt();
 
         boolean postSimReject;
-        int postSimRejectCount = 0;
+        int rejectCount = 0;
         do { // Perform simulations until no post-simulation rejection occurs
             
             initialiseSimulation();
@@ -288,7 +288,14 @@ public class InheritanceTrajectory extends Trajectory {
                         // Rejection: Abort and start a new simulation
                         if (spec.getVerbosity()>0)
                             System.err.println("Rejection end condition met "
-                                    + "at time " + t);   
+                                    + "at time " + t);
+                        rejectCount += 1;
+
+                        if (spec.getMaxConditionRejects()>=0 &&
+                                rejectCount > spec.getMaxConditionRejects()) {
+                            throw new RejectCountExceeded();
+                        }
+
                         initialiseSimulation();
                         continue;
                     } else {
@@ -448,10 +455,10 @@ public class InheritanceTrajectory extends Trajectory {
                 if (spec.getVerbosity()>0)
                     System.err.println("Post-simulation rejection condition met.");
 
-                postSimRejectCount += 1;
+                rejectCount += 1;
 
-                if (spec.getMaxPostSimConditionRejects()>=0 &&
-                        postSimRejectCount > spec.getMaxPostSimConditionRejects()) {
+                if (spec.getMaxConditionRejects()>=0 &&
+                        rejectCount > spec.getMaxConditionRejects()) {
                     throw new RejectCountExceeded();
                 }
 

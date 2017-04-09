@@ -392,6 +392,12 @@ public class InheritanceTrajectory extends Trajectory {
                         sampleState(currentPopState, t);
                     break;
                 }
+
+                // Throw informative exception if time is infinite at this point
+                if (Double.isInfinite(t)) {
+                   throw new IllegalStateException("Inheritance simulation reached infinite time.  Consider adding " +
+                           "an EndCondition or setting an explicit simulationTime.");
+                }
                 
                 // Choose reaction to implement
                 double u = Randomizer.nextDouble()*totalPropensity;
@@ -404,7 +410,7 @@ public class InheritanceTrajectory extends Trajectory {
                         break;
                     }
                 }
-                
+
                 // Calculate trajectory probability contribution of event
                 if (spec.isTrajLogPRecordingOn() && chosenReaction != null)
                     trajLogP += Math.log(chosenReaction.getPropensity());

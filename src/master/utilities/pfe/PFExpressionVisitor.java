@@ -1,6 +1,5 @@
-// Generated from PFExpression.g4 by ANTLR 4.2
+// Generated from /Users/vaughant/code/beast_and_friends/MASTER/src/master/utilities/pfe/PFExpression.g4 by ANTLR 4.7
 package master.utilities.pfe;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -12,79 +11,78 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface PFExpressionVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link PFExpressionParser#Bracketed}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBracketed(@NotNull PFExpressionParser.BracketedContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link PFExpressionParser#Mul}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMul(@NotNull PFExpressionParser.MulContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link PFExpressionParser#MulOrDiv}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMulOrDiv(@NotNull PFExpressionParser.MulOrDivContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link PFExpressionParser#start}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStart(@NotNull PFExpressionParser.StartContext ctx);
-
+	T visitStart(PFExpressionParser.StartContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PFExpressionParser#Add}.
+	 * Visit a parse tree produced by the {@code Add}
+	 * labeled alternative in {@link PFExpressionParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAdd(@NotNull PFExpressionParser.AddContext ctx);
-
+	T visitAdd(PFExpressionParser.AddContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PFExpressionParser#number}.
+	 * Visit a parse tree produced by the {@code Sub}
+	 * labeled alternative in {@link PFExpressionParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumber(@NotNull PFExpressionParser.NumberContext ctx);
-
+	T visitSub(PFExpressionParser.SubContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PFExpressionParser#pop}.
+	 * Visit a parse tree produced by the {@code MulOrDiv}
+	 * labeled alternative in {@link PFExpressionParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPop(@NotNull PFExpressionParser.PopContext ctx);
-
+	T visitMulOrDiv(PFExpressionParser.MulOrDivContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PFExpressionParser#Sub}.
+	 * Visit a parse tree produced by the {@code Div}
+	 * labeled alternative in {@link PFExpressionParser#term}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSub(@NotNull PFExpressionParser.SubContext ctx);
-
+	T visitDiv(PFExpressionParser.DivContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link PFExpressionParser#Unit}.
+	 * Visit a parse tree produced by the {@code Mul}
+	 * labeled alternative in {@link PFExpressionParser#term}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUnit(@NotNull PFExpressionParser.UnitContext ctx);
-
+	T visitMul(PFExpressionParser.MulContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Unit}
+	 * labeled alternative in {@link PFExpressionParser#term}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnit(PFExpressionParser.UnitContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Bracketed}
+	 * labeled alternative in {@link PFExpressionParser#factor}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBracketed(PFExpressionParser.BracketedContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code pop}
+	 * labeled alternative in {@link PFExpressionParser#factor}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPop(PFExpressionParser.PopContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code number}
+	 * labeled alternative in {@link PFExpressionParser#factor}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumber(PFExpressionParser.NumberContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link PFExpressionParser#population}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPopulation(@NotNull PFExpressionParser.PopulationContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link PFExpressionParser#Div}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDiv(@NotNull PFExpressionParser.DivContext ctx);
+	T visitPopulation(PFExpressionParser.PopulationContext ctx);
 }

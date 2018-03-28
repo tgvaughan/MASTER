@@ -1,6 +1,5 @@
-// Generated from PFExpression.g4 by ANTLR 4.2
+// Generated from /Users/vaughant/code/beast_and_friends/MASTER/src/master/utilities/pfe/PFExpression.g4 by ANTLR 4.7
 package master.utilities.pfe;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -18,85 +17,75 @@ public class PFExpressionBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitBracketed(@NotNull PFExpressionParser.BracketedContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitStart(PFExpressionParser.StartContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMul(@NotNull PFExpressionParser.MulContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitAdd(PFExpressionParser.AddContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitMulOrDiv(@NotNull PFExpressionParser.MulOrDivContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitSub(PFExpressionParser.SubContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitStart(@NotNull PFExpressionParser.StartContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitMulOrDiv(PFExpressionParser.MulOrDivContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAdd(@NotNull PFExpressionParser.AddContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitDiv(PFExpressionParser.DivContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitNumber(@NotNull PFExpressionParser.NumberContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitMul(PFExpressionParser.MulContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPop(@NotNull PFExpressionParser.PopContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitUnit(PFExpressionParser.UnitContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitSub(@NotNull PFExpressionParser.SubContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitBracketed(PFExpressionParser.BracketedContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitUnit(@NotNull PFExpressionParser.UnitContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitPop(PFExpressionParser.PopContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPopulation(@NotNull PFExpressionParser.PopulationContext ctx) { return visitChildren(ctx); }
-
+	@Override public T visitNumber(PFExpressionParser.NumberContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitDiv(@NotNull PFExpressionParser.DivContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPopulation(PFExpressionParser.PopulationContext ctx) { return visitChildren(ctx); }
 }

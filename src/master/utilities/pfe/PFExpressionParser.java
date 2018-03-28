@@ -1,4 +1,4 @@
-// Generated from PFExpression.g4 by ANTLR 4.2
+// Generated from /Users/vaughant/code/beast_and_friends/MASTER/src/master/utilities/pfe/PFExpression.g4 by ANTLR 4.7
 package master.utilities.pfe;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,27 +11,61 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class PFExpressionParser extends Parser {
+	static { RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION); }
+
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__5=1, T__4=2, T__3=3, T__2=4, T__1=5, T__0=6, POPTYPE=7, LOC=8, NUM=9, 
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, POPTYPE=7, LOC=8, NUM=9, 
 		WHITESPACE=10;
-	public static final String[] tokenNames = {
-		"<INVALID>", "')'", "'+'", "'-'", "'*'", "'('", "'/'", "POPTYPE", "LOC", 
-		"NUM", "WHITESPACE"
-	};
 	public static final int
 		RULE_start = 0, RULE_expression = 1, RULE_term = 2, RULE_factor = 3, RULE_population = 4;
 	public static final String[] ruleNames = {
 		"start", "expression", "term", "factor", "population"
 	};
 
-	@Override
-	public String getGrammarFileName() { return "PFExpression.g4"; }
+	private static final String[] _LITERAL_NAMES = {
+		null, "'+'", "'-'", "'*'", "'/'", "'('", "')'"
+	};
+	private static final String[] _SYMBOLIC_NAMES = {
+		null, null, null, null, null, null, null, "POPTYPE", "LOC", "NUM", "WHITESPACE"
+	};
+	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
+
+	/**
+	 * @deprecated Use {@link #VOCABULARY} instead.
+	 */
+	@Deprecated
+	public static final String[] tokenNames;
+	static {
+		tokenNames = new String[_SYMBOLIC_NAMES.length];
+		for (int i = 0; i < tokenNames.length; i++) {
+			tokenNames[i] = VOCABULARY.getLiteralName(i);
+			if (tokenNames[i] == null) {
+				tokenNames[i] = VOCABULARY.getSymbolicName(i);
+			}
+
+			if (tokenNames[i] == null) {
+				tokenNames[i] = "<INVALID>";
+			}
+		}
+	}
 
 	@Override
-	public String[] getTokenNames() { return tokenNames; }
+	@Deprecated
+	public String[] getTokenNames() {
+		return tokenNames;
+	}
+
+	@Override
+
+	public Vocabulary getVocabulary() {
+		return VOCABULARY;
+	}
+
+	@Override
+	public String getGrammarFileName() { return "PFExpression.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
@@ -55,14 +89,6 @@ public class PFExpressionParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_start; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterStart(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitStart(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitStart(this);
 			else return visitor.visitChildren(this);
@@ -75,7 +101,8 @@ public class PFExpressionParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(10); expression(0);
+			setState(10);
+			expression(0);
 			}
 		}
 		catch (RecognitionException re) {
@@ -100,41 +127,14 @@ public class PFExpressionParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class MulOrDivContext extends ExpressionContext {
-		public TermContext term() {
-			return getRuleContext(TermContext.class,0);
-		}
-		public MulOrDivContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterMulOrDiv(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitMulOrDiv(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitMulOrDiv(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class AddContext extends ExpressionContext {
-		public TermContext term() {
-			return getRuleContext(TermContext.class,0);
-		}
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TermContext term() {
+			return getRuleContext(TermContext.class,0);
+		}
 		public AddContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterAdd(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitAdd(this);
-		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitAdd(this);
@@ -142,24 +142,27 @@ public class PFExpressionParser extends Parser {
 		}
 	}
 	public static class SubContext extends ExpressionContext {
-		public TermContext term() {
-			return getRuleContext(TermContext.class,0);
-		}
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TermContext term() {
+			return getRuleContext(TermContext.class,0);
+		}
 		public SubContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterSub(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitSub(this);
-		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitSub(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class MulOrDivContext extends ExpressionContext {
+		public TermContext term() {
+			return getRuleContext(TermContext.class,0);
+		}
+		public MulOrDivContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitMulOrDiv(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -184,18 +187,20 @@ public class PFExpressionParser extends Parser {
 			_ctx = _localctx;
 			_prevctx = _localctx;
 
-			setState(13); term(0);
+			setState(13);
+			term(0);
 			}
 			_ctx.stop = _input.LT(-1);
 			setState(23);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
-			while ( _alt!=2 && _alt!=-1 ) {
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
 					setState(21);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,0,_ctx) ) {
 					case 1:
 						{
@@ -203,19 +208,22 @@ public class PFExpressionParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(15);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(16); match(2);
-						setState(17); term(0);
+						setState(16);
+						match(T__0);
+						setState(17);
+						term(0);
 						}
 						break;
-
 					case 2:
 						{
 						_localctx = new SubContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(18);
 						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-						setState(19); match(3);
-						setState(20); term(0);
+						setState(19);
+						match(T__1);
+						setState(20);
+						term(0);
 						}
 						break;
 					}
@@ -249,6 +257,20 @@ public class PFExpressionParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
+	public static class DivContext extends TermContext {
+		public TermContext term() {
+			return getRuleContext(TermContext.class,0);
+		}
+		public FactorContext factor() {
+			return getRuleContext(FactorContext.class,0);
+		}
+		public DivContext(TermContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitDiv(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class MulContext extends TermContext {
 		public TermContext term() {
 			return getRuleContext(TermContext.class,0);
@@ -257,14 +279,6 @@ public class PFExpressionParser extends Parser {
 			return getRuleContext(FactorContext.class,0);
 		}
 		public MulContext(TermContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterMul(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitMul(this);
-		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitMul(this);
@@ -277,38 +291,8 @@ public class PFExpressionParser extends Parser {
 		}
 		public UnitContext(TermContext ctx) { copyFrom(ctx); }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterUnit(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitUnit(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitUnit(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class DivContext extends TermContext {
-		public TermContext term() {
-			return getRuleContext(TermContext.class,0);
-		}
-		public FactorContext factor() {
-			return getRuleContext(FactorContext.class,0);
-		}
-		public DivContext(TermContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterDiv(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitDiv(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitDiv(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -333,18 +317,20 @@ public class PFExpressionParser extends Parser {
 			_ctx = _localctx;
 			_prevctx = _localctx;
 
-			setState(27); factor();
+			setState(27);
+			factor();
 			}
 			_ctx.stop = _input.LT(-1);
 			setState(37);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
-			while ( _alt!=2 && _alt!=-1 ) {
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
 					setState(35);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
 					case 1:
 						{
@@ -352,19 +338,22 @@ public class PFExpressionParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_term);
 						setState(29);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(30); match(4);
-						setState(31); factor();
+						setState(30);
+						match(T__2);
+						setState(31);
+						factor();
 						}
 						break;
-
 					case 2:
 						{
 						_localctx = new DivContext(new TermContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_term);
 						setState(32);
 						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-						setState(33); match(6);
-						setState(34); factor();
+						setState(33);
+						match(T__3);
+						setState(34);
+						factor();
 						}
 						break;
 					}
@@ -398,38 +387,11 @@ public class PFExpressionParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class BracketedContext extends FactorContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public BracketedContext(FactorContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterBracketed(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitBracketed(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitBracketed(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class PopContext extends FactorContext {
 		public PopulationContext population() {
 			return getRuleContext(PopulationContext.class,0);
 		}
 		public PopContext(FactorContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterPop(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitPop(this);
-		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitPop(this);
@@ -440,16 +402,19 @@ public class PFExpressionParser extends Parser {
 		public TerminalNode NUM() { return getToken(PFExpressionParser.NUM, 0); }
 		public NumberContext(FactorContext ctx) { copyFrom(ctx); }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterNumber(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitNumber(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitNumber(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BracketedContext extends FactorContext {
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public BracketedContext(FactorContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitBracketed(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -459,28 +424,34 @@ public class PFExpressionParser extends Parser {
 		enterRule(_localctx, 6, RULE_factor);
 		try {
 			setState(46);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case 5:
+			case T__4:
 				_localctx = new BracketedContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(40); match(5);
-				setState(41); expression(0);
-				setState(42); match(1);
+				setState(40);
+				match(T__4);
+				setState(41);
+				expression(0);
+				setState(42);
+				match(T__5);
 				}
 				break;
 			case POPTYPE:
 				_localctx = new PopContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(44); population();
+				setState(44);
+				population();
 				}
 				break;
 			case NUM:
 				_localctx = new NumberContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(45); match(NUM);
+				setState(45);
+				match(NUM);
 				}
 				break;
 			default:
@@ -506,14 +477,6 @@ public class PFExpressionParser extends Parser {
 		}
 		@Override public int getRuleIndex() { return RULE_population; }
 		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterPopulation(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitPopulation(this);
-		}
-		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitPopulation(this);
 			else return visitor.visitChildren(this);
@@ -526,12 +489,15 @@ public class PFExpressionParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(48); match(POPTYPE);
+			setState(48);
+			match(POPTYPE);
 			setState(50);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
 			case 1:
 				{
-				setState(49); match(LOC);
+				setState(49);
+				match(LOC);
 				}
 				break;
 			}
@@ -550,42 +516,45 @@ public class PFExpressionParser extends Parser {
 
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 1: return expression_sempred((ExpressionContext)_localctx, predIndex);
-
-		case 2: return term_sempred((TermContext)_localctx, predIndex);
+		case 1:
+			return expression_sempred((ExpressionContext)_localctx, predIndex);
+		case 2:
+			return term_sempred((TermContext)_localctx, predIndex);
 		}
 		return true;
 	}
 	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return precpred(_ctx, 3);
-
-		case 1: return precpred(_ctx, 2);
+		case 0:
+			return precpred(_ctx, 3);
+		case 1:
+			return precpred(_ctx, 2);
 		}
 		return true;
 	}
 	private boolean term_sempred(TermContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 2: return precpred(_ctx, 3);
-
-		case 3: return precpred(_ctx, 2);
+		case 2:
+			return precpred(_ctx, 3);
+		case 3:
+			return precpred(_ctx, 2);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\f\67\4\2\t\2\4\3"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\f\67\4\2\t\2\4\3"+
 		"\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\7\3\30\n\3\f\3\16\3\33\13\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\7\4"+
 		"&\n\4\f\4\16\4)\13\4\3\5\3\5\3\5\3\5\3\5\3\5\5\5\61\n\5\3\6\3\6\5\6\65"+
-		"\n\6\3\6\2\4\4\6\7\2\4\6\b\n\2\28\2\f\3\2\2\2\4\16\3\2\2\2\6\34\3\2\2"+
-		"\2\b\60\3\2\2\2\n\62\3\2\2\2\f\r\5\4\3\2\r\3\3\2\2\2\16\17\b\3\1\2\17"+
-		"\20\5\6\4\2\20\31\3\2\2\2\21\22\f\5\2\2\22\23\7\4\2\2\23\30\5\6\4\2\24"+
-		"\25\f\4\2\2\25\26\7\5\2\2\26\30\5\6\4\2\27\21\3\2\2\2\27\24\3\2\2\2\30"+
+		"\n\6\3\6\2\4\4\6\7\2\4\6\b\n\2\2\28\2\f\3\2\2\2\4\16\3\2\2\2\6\34\3\2"+
+		"\2\2\b\60\3\2\2\2\n\62\3\2\2\2\f\r\5\4\3\2\r\3\3\2\2\2\16\17\b\3\1\2\17"+
+		"\20\5\6\4\2\20\31\3\2\2\2\21\22\f\5\2\2\22\23\7\3\2\2\23\30\5\6\4\2\24"+
+		"\25\f\4\2\2\25\26\7\4\2\2\26\30\5\6\4\2\27\21\3\2\2\2\27\24\3\2\2\2\30"+
 		"\33\3\2\2\2\31\27\3\2\2\2\31\32\3\2\2\2\32\5\3\2\2\2\33\31\3\2\2\2\34"+
-		"\35\b\4\1\2\35\36\5\b\5\2\36\'\3\2\2\2\37 \f\5\2\2 !\7\6\2\2!&\5\b\5\2"+
-		"\"#\f\4\2\2#$\7\b\2\2$&\5\b\5\2%\37\3\2\2\2%\"\3\2\2\2&)\3\2\2\2\'%\3"+
-		"\2\2\2\'(\3\2\2\2(\7\3\2\2\2)\'\3\2\2\2*+\7\7\2\2+,\5\4\3\2,-\7\3\2\2"+
+		"\35\b\4\1\2\35\36\5\b\5\2\36\'\3\2\2\2\37 \f\5\2\2 !\7\5\2\2!&\5\b\5\2"+
+		"\"#\f\4\2\2#$\7\6\2\2$&\5\b\5\2%\37\3\2\2\2%\"\3\2\2\2&)\3\2\2\2\'%\3"+
+		"\2\2\2\'(\3\2\2\2(\7\3\2\2\2)\'\3\2\2\2*+\7\7\2\2+,\5\4\3\2,-\7\b\2\2"+
 		"-\61\3\2\2\2.\61\5\n\6\2/\61\7\13\2\2\60*\3\2\2\2\60.\3\2\2\2\60/\3\2"+
 		"\2\2\61\t\3\2\2\2\62\64\7\t\2\2\63\65\7\n\2\2\64\63\3\2\2\2\64\65\3\2"+
 		"\2\2\65\13\3\2\2\2\b\27\31%\'\60\64";

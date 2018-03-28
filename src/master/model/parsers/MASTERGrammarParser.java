@@ -1,4 +1,4 @@
-// Generated from /home/tvaughan/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.5.1
+// Generated from /Users/vaughant/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.7
 package master.model.parsers;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class MASTERGrammarParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.5.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -267,6 +267,7 @@ public class MASTERGrammarParser extends Parser {
 		int _la;
 		try {
 			setState(42);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NZINT:
 			case IDENT:
@@ -354,6 +355,7 @@ public class MASTERGrammarParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(45);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==NZINT) {
 				{
@@ -365,6 +367,7 @@ public class MASTERGrammarParser extends Parser {
 			setState(47);
 			popname();
 			setState(49);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__3) {
 				{
@@ -374,6 +377,7 @@ public class MASTERGrammarParser extends Parser {
 			}
 
 			setState(53);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__1) {
 				{
@@ -471,7 +475,10 @@ public class MASTERGrammarParser extends Parser {
 			_la = _input.LA(1);
 			if ( !(_la==ZERO || _la==NZINT) ) {
 			_errHandler.recoverInline(this);
-			} else {
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
 				consume();
 			}
 			}
@@ -527,6 +534,7 @@ public class MASTERGrammarParser extends Parser {
 			setState(59);
 			popname();
 			setState(61);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__3) {
 				{
@@ -697,7 +705,10 @@ public class MASTERGrammarParser extends Parser {
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ZERO) | (1L << NZINT) | (1L << IDENT))) != 0)) ) {
 			_errHandler.recoverInline(this);
-			} else {
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
 				consume();
 			}
 			}
@@ -1064,111 +1075,115 @@ public class MASTERGrammarParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(119);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,9,_ctx) ) {
 			case 1:
-				{
-				_localctx = new NegationContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-
-				setState(83);
-				match(SUB);
-				setState(84);
-				expression(10);
-				}
-				break;
-			case 2:
 				{
 				_localctx = new BracketedContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(85);
+
+				setState(83);
 				match(T__6);
-				setState(86);
+				setState(84);
 				expression(0);
-				setState(87);
+				setState(85);
 				match(T__7);
 				}
 				break;
-			case 3:
+			case 2:
 				{
 				_localctx = new ArrayContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(89);
+				setState(87);
 				match(T__8);
-				setState(90);
+				setState(88);
 				expression(0);
-				setState(95);
+				setState(93);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==T__4) {
 					{
 					{
-					setState(91);
+					setState(89);
 					match(T__4);
-					setState(92);
+					setState(90);
 					expression(0);
 					}
 					}
-					setState(97);
+					setState(95);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(98);
+				setState(96);
 				match(T__9);
 				}
 				break;
-			case 4:
+			case 3:
 				{
 				_localctx = new FunctionContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(100);
+				setState(98);
 				match(IDENT);
-				setState(101);
+				setState(99);
 				match(T__6);
-				setState(102);
+				setState(100);
 				expression(0);
-				setState(107);
+				setState(105);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==T__4) {
 					{
 					{
-					setState(103);
+					setState(101);
 					match(T__4);
-					setState(104);
+					setState(102);
 					expression(0);
 					}
 					}
-					setState(109);
+					setState(107);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
+				setState(108);
+				match(T__7);
+				}
+				break;
+			case 4:
+				{
+				_localctx = new UnaryOpContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(110);
+				((UnaryOpContext)_localctx).op = _input.LT(1);
+				_la = _input.LA(1);
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EXP) | (1L << LOG) | (1L << SQRT) | (1L << SUM) | (1L << THETA) | (1L << ABS))) != 0)) ) {
+					((UnaryOpContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
+					consume();
+				}
+				setState(111);
+				match(T__6);
+				setState(112);
+				expression(0);
+				setState(113);
 				match(T__7);
 				}
 				break;
 			case 5:
 				{
-				_localctx = new UnaryOpContext(_localctx);
+				_localctx = new NegationContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(112);
-				((UnaryOpContext)_localctx).op = _input.LT(1);
-				_la = _input.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EXP) | (1L << LOG) | (1L << SQRT) | (1L << SUM) | (1L << THETA) | (1L << ABS))) != 0)) ) {
-					((UnaryOpContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-				} else {
-					consume();
-				}
-				setState(113);
-				match(T__6);
-				setState(114);
-				expression(0);
 				setState(115);
-				match(T__7);
+				match(SUB);
+				setState(116);
+				expression(10);
 				}
 				break;
 			case 6:
@@ -1190,7 +1205,10 @@ public class MASTERGrammarParser extends Parser {
 				_la = _input.LA(1);
 				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ZERO) | (1L << NZINT) | (1L << NNFLOAT))) != 0)) ) {
 					((NumberContext)_localctx).val = (Token)_errHandler.recoverInline(this);
-				} else {
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
 					consume();
 				}
 				}
@@ -1206,6 +1224,7 @@ public class MASTERGrammarParser extends Parser {
 					_prevctx = _localctx;
 					{
 					setState(149);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
 					case 1:
 						{
@@ -1230,7 +1249,10 @@ public class MASTERGrammarParser extends Parser {
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MUL) | (1L << DIV) | (1L << MOD))) != 0)) ) {
 							((MulDivContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-						} else {
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
 							consume();
 						}
 						setState(126);
@@ -1248,7 +1270,10 @@ public class MASTERGrammarParser extends Parser {
 						_la = _input.LA(1);
 						if ( !(_la==ADD || _la==SUB) ) {
 							((AddSubContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-						} else {
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
 							consume();
 						}
 						setState(129);
@@ -1266,7 +1291,10 @@ public class MASTERGrammarParser extends Parser {
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQ) | (1L << GT) | (1L << LT) | (1L << GE) | (1L << LE) | (1L << NE))) != 0)) ) {
 							((EqualityContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-						} else {
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
 							consume();
 						}
 						setState(132);
@@ -1284,7 +1312,10 @@ public class MASTERGrammarParser extends Parser {
 						_la = _input.LA(1);
 						if ( !(_la==AND || _la==OR) ) {
 							((BooleanOpContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-						} else {
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
 							consume();
 						}
 						setState(135);
@@ -1381,20 +1412,20 @@ public class MASTERGrammarParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3)\u009d\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3)\u009d\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\3\2\3\2\3\2\3\2\3\2\3\3\3\3\3\4\3\4\3\5\3\5\3\5\7"+
 		"\5\'\n\5\f\5\16\5*\13\5\3\5\5\5-\n\5\3\6\5\6\60\n\6\3\6\3\6\5\6\64\n\6"+
 		"\3\6\3\6\5\68\n\6\3\7\3\7\3\b\3\b\3\t\3\t\5\t@\n\t\3\t\3\t\3\t\3\t\3\n"+
 		"\3\n\3\13\3\13\3\13\3\13\7\13L\n\13\f\13\16\13O\13\13\3\13\3\13\3\f\3"+
-		"\f\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\7\r`\n\r\f\r\16\rc\13\r"+
-		"\3\r\3\r\3\r\3\r\3\r\3\r\3\r\7\rl\n\r\f\r\16\ro\13\r\3\r\3\r\3\r\3\r\3"+
+		"\f\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\7\r^\n\r\f\r\16\ra\13\r\3\r\3\r"+
+		"\3\r\3\r\3\r\3\r\3\r\7\rj\n\r\f\r\16\rm\13\r\3\r\3\r\3\r\3\r\3\r\3\r\3"+
 		"\r\3\r\3\r\3\r\3\r\5\rz\n\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3"+
 		"\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r\3\r"+
 		"\7\r\u0098\n\r\f\r\16\r\u009b\13\r\3\r\2\3\30\16\2\4\6\b\n\f\16\20\22"+
 		"\24\26\30\2\n\3\2#$\4\2#$&&\3\2\25\32\3\2#%\3\2\21\23\3\2\17\20\3\2\35"+
-		"\"\3\2\33\34\u00a7\2\32\3\2\2\2\4\37\3\2\2\2\6!\3\2\2\2\b,\3\2\2\2\n/"+
-		"\3\2\2\2\f9\3\2\2\2\16;\3\2\2\2\20=\3\2\2\2\22E\3\2\2\2\24G\3\2\2\2\26"+
+		"\"\3\2\33\34\2\u00a7\2\32\3\2\2\2\4\37\3\2\2\2\6!\3\2\2\2\b,\3\2\2\2\n"+
+		"/\3\2\2\2\f9\3\2\2\2\16;\3\2\2\2\20=\3\2\2\2\22E\3\2\2\2\24G\3\2\2\2\26"+
 		"R\3\2\2\2\30y\3\2\2\2\32\33\5\4\3\2\33\34\7\3\2\2\34\35\5\6\4\2\35\36"+
 		"\7\2\2\3\36\3\3\2\2\2\37 \5\b\5\2 \5\3\2\2\2!\"\5\b\5\2\"\7\3\2\2\2#("+
 		"\5\n\6\2$%\7\17\2\2%\'\5\n\6\2&$\3\2\2\2\'*\3\2\2\2(&\3\2\2\2()\3\2\2"+
@@ -1406,13 +1437,13 @@ public class MASTERGrammarParser extends Parser {
 		"\5\2\2BC\5\30\r\2CD\7\2\2\3D\21\3\2\2\2EF\7&\2\2F\23\3\2\2\2GH\7\6\2\2"+
 		"HM\5\26\f\2IJ\7\7\2\2JL\5\26\f\2KI\3\2\2\2LO\3\2\2\2MK\3\2\2\2MN\3\2\2"+
 		"\2NP\3\2\2\2OM\3\2\2\2PQ\7\b\2\2Q\25\3\2\2\2RS\t\3\2\2S\27\3\2\2\2TU\b"+
-		"\r\1\2UV\7\20\2\2Vz\5\30\r\fWX\7\t\2\2XY\5\30\r\2YZ\7\n\2\2Zz\3\2\2\2"+
-		"[\\\7\13\2\2\\a\5\30\r\2]^\7\7\2\2^`\5\30\r\2_]\3\2\2\2`c\3\2\2\2a_\3"+
-		"\2\2\2ab\3\2\2\2bd\3\2\2\2ca\3\2\2\2de\7\f\2\2ez\3\2\2\2fg\7&\2\2gh\7"+
-		"\t\2\2hm\5\30\r\2ij\7\7\2\2jl\5\30\r\2ki\3\2\2\2lo\3\2\2\2mk\3\2\2\2m"+
-		"n\3\2\2\2np\3\2\2\2om\3\2\2\2pq\7\n\2\2qz\3\2\2\2rs\t\4\2\2st\7\t\2\2"+
-		"tu\5\30\r\2uv\7\n\2\2vz\3\2\2\2wz\7&\2\2xz\t\5\2\2yT\3\2\2\2yW\3\2\2\2"+
-		"y[\3\2\2\2yf\3\2\2\2yr\3\2\2\2yw\3\2\2\2yx\3\2\2\2z\u0099\3\2\2\2{|\f"+
+		"\r\1\2UV\7\t\2\2VW\5\30\r\2WX\7\n\2\2Xz\3\2\2\2YZ\7\13\2\2Z_\5\30\r\2"+
+		"[\\\7\7\2\2\\^\5\30\r\2][\3\2\2\2^a\3\2\2\2_]\3\2\2\2_`\3\2\2\2`b\3\2"+
+		"\2\2a_\3\2\2\2bc\7\f\2\2cz\3\2\2\2de\7&\2\2ef\7\t\2\2fk\5\30\r\2gh\7\7"+
+		"\2\2hj\5\30\r\2ig\3\2\2\2jm\3\2\2\2ki\3\2\2\2kl\3\2\2\2ln\3\2\2\2mk\3"+
+		"\2\2\2no\7\n\2\2oz\3\2\2\2pq\t\4\2\2qr\7\t\2\2rs\5\30\r\2st\7\n\2\2tz"+
+		"\3\2\2\2uv\7\20\2\2vz\5\30\r\fwz\7&\2\2xz\t\5\2\2yT\3\2\2\2yY\3\2\2\2"+
+		"yd\3\2\2\2yp\3\2\2\2yu\3\2\2\2yw\3\2\2\2yx\3\2\2\2z\u0099\3\2\2\2{|\f"+
 		"\n\2\2|}\7\24\2\2}\u0098\5\30\r\n~\177\f\t\2\2\177\u0080\t\6\2\2\u0080"+
 		"\u0098\5\30\r\n\u0081\u0082\f\b\2\2\u0082\u0083\t\7\2\2\u0083\u0098\5"+
 		"\30\r\t\u0084\u0085\f\7\2\2\u0085\u0086\t\b\2\2\u0086\u0098\5\30\r\b\u0087"+
@@ -1424,7 +1455,7 @@ public class MASTERGrammarParser extends Parser {
 		"\u0081\3\2\2\2\u0097\u0084\3\2\2\2\u0097\u0087\3\2\2\2\u0097\u008a\3\2"+
 		"\2\2\u0097\u0090\3\2\2\2\u0097\u0095\3\2\2\2\u0098\u009b\3\2\2\2\u0099"+
 		"\u0097\3\2\2\2\u0099\u009a\3\2\2\2\u009a\31\3\2\2\2\u009b\u0099\3\2\2"+
-		"\2\16(,/\63\67?Mamy\u0097\u0099";
+		"\2\16(,/\63\67?M_ky\u0097\u0099";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

@@ -1,3 +1,3 @@
-<addon name="MASTER" version="5.1.1">
-    <depends on="BEAST" atleast="2.4.0"/>
+<addon name="MASTER" version="6.0.0">
+    <depends on="BEAST" atleast="2.5.0" atmost="2.5.9"/>
 </addon>

@@ -200,7 +200,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         // Assemble BEAST tree:
         assembleTree(itraj);
 
-        if (originInput.get()!=null) origin = itraj.t;
+        origin = itraj.t;
         // DEBUG: can check BEAST's newick tree against ours
         //log(0, System.out);
         
@@ -449,7 +449,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         }
 
         if (originInput.get() != null) {
-            originInput.get().assignFromWithoutID(new RealParameter(origin.toString()));
+            originInput.get().setValue(origin);
         }
     }
 

@@ -38,14 +38,22 @@ public class LineageEndCondition extends EndCondition {
             "nLineages",
             "Linage count threshold for end condition.",
             Validate.REQUIRED);
-    
+
+    public Input<Boolean> alsoGreaterThanInput = new Input<>(
+            "alsoGreaterThan",
+            "Condition is also met when the lineage count is greater " +
+                    "than nLineages. (Default false).",
+            false);
+
     private int nLineages;
+    private boolean alsoGreaterThan;
     
     public LineageEndCondition() { }
     
     @Override
     public void initAndValidate() {
         nLineages = nLineagesInput.get();
+        alsoGreaterThan = alsoGreaterThanInput.get();
     }
 
     /**
@@ -69,7 +77,7 @@ public class LineageEndCondition extends EndCondition {
             }
         }
         
-        return size == nLineages;
+        return size == nLineages || (alsoGreaterThan && (size > nLineages));
     }
 
     /**

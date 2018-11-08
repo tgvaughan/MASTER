@@ -257,6 +257,9 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
                 youngestLeafTime = leaf.getTime();
             }
         }
+
+        // Reset node array
+        m_nodes = null;
         
         // Create BEAST tree root node:
         beast.evolution.tree.Node beastRoot = new beast.evolution.tree.Node();

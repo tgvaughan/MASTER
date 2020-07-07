@@ -399,6 +399,11 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
                     throw new IllegalArgumentException("Alignment does not contain taxon named " + leaf.getID());
 
                 leaf.setNr(alignmentInput.get().getTaxonIndex(leaf.getID()));
+            } else if (m_taxonset.get() != null) {
+                if (!m_taxonset.get().getTaxaNames().contains(leaf.getID()))
+                    throw new IllegalArgumentException("TaxonSet does not contain taxon named " + leaf.getID());
+
+                leaf.setNr(m_taxonset.get().getTaxonIndex(leaf.getID()));
             } else {
                 leaf.setNr(nodeNr);
                 nodeNr += 1;

@@ -76,7 +76,7 @@ public class PFEVisitor extends PFExpressionBaseVisitor<Double[]> {
         if (popType != null)
             return new Population(popType, loc);
         else
-            throw new IllegalStateException("Uknown population type "
+            throw new IllegalStateException("Unknown population type "
                     + popTypeString + ".");
     }
 

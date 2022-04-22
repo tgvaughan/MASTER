@@ -154,7 +154,7 @@ public class Reaction extends BEASTObject {
                 }
 
                 if (popType == null) {
-                    System.err.println("Uknown population type '"
+                    System.err.println("Unknown population type '"
                         + ctx.popname().IDENT() + "' in reaction string.");
                     System.exit(1);
                 }

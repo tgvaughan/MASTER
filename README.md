@@ -14,9 +14,8 @@ libraries on which it depends, it is made available under the terms of
 the GNU General Public Licence version 3, which is contained in this
 directory in the file named COPYING.
 
-The following software is currently bundled with MASTER:
+The following software libraries are currently bundled with MASTER:
 
-* Beast 2 (http://www.beast2.org)
 * Google Guava (http://code.google.com/p/guava-libraries/)
 * Jackson (http://jackson.codehaus.org/)
 

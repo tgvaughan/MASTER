@@ -1,19 +1,19 @@
 <!-- Example use of the BeastTreeFromMaster simulation type to initialise a BEAST 2
      MCMC chain with a coalescent tree described by a MASTER model. -->
 
-<beast version='2.0'
-       namespace='beast.core
-                  :beast.evolution.tree.coalescent
-                  :beast.core.util
-                  :beast.evolution.nuc
-                  :beast.evolution.operators
-                  :beast.evolution.sitemodel
-                  :beast.evolution.substitutionmodel
-                  :beast.evolution.likelihood
+<beast version="2.0"
+       namespace="beast.base.inference
+                  :beast.base.evolution.tree
+                  :beast.base.evolution.tree.coalescent
+                  :beast.base.evolution.nuc
+                  :beast.base.evolution.operator
+                  :beast.base.evolution.sitemodel
+                  :beast.base.evolution.substitutionmodel
+                  :beast.base.evolution.likelihood
                   :master
                   :master.conditions
                   :master.model
-                  :master.outputs'>
+                  :master.outputs">
 
 
     <!-- The sequence alignment (each sequence refers to a taxon above).         -->
@@ -60,8 +60,8 @@
         <siteModel idref="siteModel"/>
     </input>
 
-    <input spec='beast.core.parameter.RealParameter' id="hky.kappa">1.0</input>
-    <input spec='beast.core.parameter.RealParameter' id="popSize">1.0</input>
+    <input spec='beast.base.inference.parameter.RealParameter' id="hky.kappa">1.0</input>
+    <input spec='beast.base.inference.parameter.RealParameter' id="popSize">1.0</input>
 
     <!-- Use MASTER to generate an initial coalescent tree -->
     <input spec='BeastTreeFromMaster' alignment="@alignment" reverseTime="true" id='tree'>

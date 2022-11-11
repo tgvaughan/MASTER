@@ -6,17 +6,17 @@
      (primate) data! -->
 
 <beast version='2.0'
-       namespace='beast.core
-                  :beast.evolution.alignment
-                  :beast.evolution.tree
-                  :beast.evolution.tree.coalescent
-                  :beast.core.util
-                  :beast.core.parameter
-                  :beast.evolution.nuc
-                  :beast.evolution.operators
-                  :beast.evolution.sitemodel
-                  :beast.evolution.substitutionmodel
-                  :beast.evolution.likelihood
+       namespace='beast.base.inference
+                  :beast.base.evolution.alignment
+                  :beast.base.evolution.tree
+                  :beast.base.evolution.tree.coalescent
+                  :beast.base.core.util
+                  :beast.base.inference.parameter
+                  :beast.base.evolution.nuc
+                  :beast.base.evolution.operator
+                  :beast.base.evolution.sitemodel
+                  :beast.base.evolution.substitutionmodel
+                  :beast.base.evolution.likelihood
                   :master
                   :master.model
                   :master.steppers
@@ -64,12 +64,12 @@
     </input>
 
     <!-- Starting tree -->
-    <tree spec='beast.util.ClusterTree' id='tree' clusterType='upgma'>
+    <tree spec='ClusterTree' id='tree' clusterType='upgma'>
         <input name='taxa' idref='alignment'/>
         <taxonset spec="TaxonSet" alignment="@alignment"/>
     </tree>
 
-    <input spec='beast.core.parameter.RealParameter' id="hky.kappa">1.0</input>
+    <input spec='RealParameter' id="hky.kappa">1.0</input>
 
     <!-- Tree likelihood given sequence alignment -->    
     <distribution spec='TreeLikelihood' id="treeLikelihood">
@@ -114,8 +114,8 @@
     </distribution>
 
     <distribution id="parameterPriors" spec="CompoundDistribution">
-      <distribution spec="beast.math.distributions.Prior" x="@hky.kappa">
-        <distr spec="beast.math.distributions.OneOnX"/>
+      <distribution spec="beast.base.inference.distribution.Prior" x="@hky.kappa">
+        <distr spec="beast.base.inference.distribution.OneOnX"/>
       </distribution>
     </distribution>
 

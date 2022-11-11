@@ -24,4 +24,7 @@
 *.json
 *.nexus
 *.tree
+*.trees
 *.newick
+*.log
+*.state

@@ -1,3 +1,49 @@
-<addon name="MASTER" version="6.1.2">
-    <depends on="BEAST" atleast="2.5.0" atmost="2.6.9"/>
+<addon name="MASTER" version="7.0.0">
+  <depends on="BEAST.base" atleast="2.7.0" atmost="2.7.9"/>
+  <depends on="BEAST.app" atleast="2.7.0" atmost="2.7.9"/>
+
+  <service type="beast.base.core.BEASTInterface">
+    <provider classname="master.Ensemble"/>
+    <provider classname="master.InheritanceEnsemble"/>
+    <provider classname="master.InheritanceTrajectory"/>
+    <provider classname="master.EnsembleSummary"/>
+    <provider classname="master.Trajectory"/>
+    <provider classname="master.BeastTreeFromMaster"/>
+    <provider classname="master.postprocessors.LineageSampler"/>
+    <provider classname="master.postprocessors.InheritancePostProcessor"/>
+    <provider classname="master.postprocessors.LineageFilter"/>
+    <provider classname="master.PopulationFunctionFromMaster"/>
+    <provider classname="master.conditions.CompositeLineageEndCondition"/>
+    <provider classname="master.conditions.PostSimCondition"/>
+    <provider classname="master.conditions.LeafCountEndCondition"/>
+    <provider classname="master.conditions.LineageEndCondition"/>
+    <provider classname="master.conditions.EndCondition"/>
+    <provider classname="master.conditions.PopulationEndCondition"/>
+    <provider classname="master.conditions.LeafCountPostSimCondition"/>
+    <provider classname="master.model.InitState"/>
+    <provider classname="master.model.MultipleIndividuals"/>
+    <provider classname="master.model.PopulationType"/>
+    <provider classname="master.model.Reaction"/>
+    <provider classname="master.model.Individual"/>
+    <provider classname="master.model.PopulationSize"/>
+    <provider classname="master.model.RateMultiplier"/>
+    <provider classname="master.model.Predicate"/>
+    <provider classname="master.model.MomentGroup"/>
+    <provider classname="master.model.Moment"/>
+    <provider classname="master.model.ReactionGroup"/>
+    <provider classname="master.model.PopulationState"/>
+    <provider classname="master.model.Function"/>
+    <provider classname="master.model.Model"/>
+    <provider classname="master.model.Population"/>
+    <provider classname="master.steppers.SALStepper"/>
+    <provider classname="master.steppers.TauLeapingStepper"/>
+    <provider classname="master.steppers.RateEquationStepper"/>
+    <provider classname="master.steppers.GillespieStepper"/>
+    <provider classname="master.outputs.NewickOutput"/>
+    <provider classname="master.outputs.NexusOutput"/>
+    <provider classname="master.outputs.JsonOutput"/>
+    <provider classname="master.outputs.TrajectoryOutput"/>
+    <provider classname="master.outputs.EnsembleSummaryOutput"/>
+  </service>
+
 </addon>

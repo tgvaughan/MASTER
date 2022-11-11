@@ -1,9 +1,9 @@
 package master.model;
 
-import beast.core.BEASTObject;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.parameter.IntegerParameter;
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.parameter.IntegerParameter;
 import com.google.common.collect.Maps;
 import java.util.Iterator;
 import java.util.Map;

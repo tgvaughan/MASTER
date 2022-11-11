@@ -17,9 +17,9 @@
 
 package master.model;
 
-import beast.core.BEASTObject;
-import beast.core.Input;
-import beast.core.Input.Validate;
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -18,7 +18,6 @@ package master.steppers;
 
 import master.model.Model;
 import master.model.PopulationState;
-import master.steppers.Stepper;
 
 /**
  * A dummy stepper to include in spec for inheritance graphs. (May actually

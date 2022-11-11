@@ -16,10 +16,14 @@
  */
 package master;
 
-import beast.core.*;
-import beast.core.parameter.RealParameter;
-import beast.evolution.alignment.Alignment;
-import beast.evolution.tree.Tree;
+import beast.base.core.Citation;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.StateNode;
+import beast.base.inference.StateNodeInitialiser;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.alignment.Alignment;
+import beast.base.evolution.tree.Tree;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import master.conditions.LeafCountEndCondition;
@@ -262,7 +266,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         m_nodes = null;
         
         // Create BEAST tree root node:
-        beast.evolution.tree.Node beastRoot = new beast.evolution.tree.Node();
+        beast.base.evolution.tree.Node beastRoot = new beast.base.evolution.tree.Node();
         
         // Assemble Tree
         assembleSubtree(masterRoot, beastRoot, youngestLeafTime, leafLabels);
@@ -323,7 +327,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      * @return 
      */
     private void assembleSubtree(master.model.Node masterNode,
-            beast.evolution.tree.Node beastNode, double timeOffset,
+            beast.base.evolution.tree.Node beastNode, double timeOffset,
             Map<master.model.Node,String> leafLabels) {
         
         // Deal with potential time reversal:
@@ -344,7 +348,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
         
         // Add children:
         for (master.model.Node masterChild : masterChildren) {
-            beast.evolution.tree.Node beastChild = new beast.evolution.tree.Node();
+            beast.base.evolution.tree.Node beastChild = new beast.base.evolution.tree.Node();
             assembleSubtree(masterChild, beastChild, timeOffset, leafLabels);
             beastNode.addChild(beastChild);
         }        
@@ -363,7 +367,7 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      * @param beastNode 
      */
     private void annotateNode(master.model.Node masterNode,
-            beast.evolution.tree.Node beastNode) {
+            beast.base.evolution.tree.Node beastNode) {
         
         master.model.Node annotationNode;
         if (reverseTimeInput.get()) {
@@ -388,12 +392,12 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      * 
      * @param beastRoot Root of BEAST tree.
      */
-    public void initNodeNumbers(beast.evolution.tree.Node beastRoot) {
+    public void initNodeNumbers(beast.base.evolution.tree.Node beastRoot) {
 
-        List<beast.evolution.tree.Node> leaves = getBeastLeaves(beastRoot);
+        List<beast.base.evolution.tree.Node> leaves = getBeastLeaves(beastRoot);
 
         int nodeNr = 0;
-        for (beast.evolution.tree.Node leaf : leaves) {
+        for (beast.base.evolution.tree.Node leaf : leaves) {
             if (alignmentInput.get() != null) {
                 if (!alignmentInput.get().getTaxaNames().contains(leaf.getID()))
                     throw new IllegalArgumentException("Alignment does not contain taxon named " + leaf.getID());
@@ -412,14 +416,14 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
 
         nodeNr = leaves.size();
         
-        List<beast.evolution.tree.Node> nodes = Lists.newArrayList();
-        List<beast.evolution.tree.Node> nodesPrime = Lists.newArrayList();
+        List<beast.base.evolution.tree.Node> nodes = Lists.newArrayList();
+        List<beast.base.evolution.tree.Node> nodesPrime = Lists.newArrayList();
 
         nodes.addAll(leaves);
 
         while(nodes.size()>1) {
             nodesPrime.clear();
-            for (beast.evolution.tree.Node node : nodes) {
+            for (beast.base.evolution.tree.Node node : nodes) {
 
                 if (node.getParent() != null && !nodesPrime.contains(node.getParent()) && node.getParent().getNr() == 0) {
                     node.getParent().setNr(nodeNr++);
@@ -438,13 +442,13 @@ public class BeastTreeFromMaster extends Tree implements StateNodeInitialiser {
      * @param node
      * @return 
      */
-    List <beast.evolution.tree.Node> getBeastLeaves(beast.evolution.tree.Node node) {        
-        List<beast.evolution.tree.Node> nodeList = Lists.newArrayList();
+    List <beast.base.evolution.tree.Node> getBeastLeaves(beast.base.evolution.tree.Node node) {
+        List<beast.base.evolution.tree.Node> nodeList = Lists.newArrayList();
         
         if (node.isLeaf()) {
             nodeList.add(node);
         } else {
-            for (beast.evolution.tree.Node child : node.getChildren())
+            for (beast.base.evolution.tree.Node child : node.getChildren())
                 nodeList.addAll(getBeastLeaves(child));
         }
         return nodeList;

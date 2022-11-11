@@ -16,8 +16,8 @@
  */
 package master.model;
 
-import beast.core.BEASTObject;
-import beast.core.Input;
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
 import com.google.common.collect.*;
 import java.util.*;
 import com.fasterxml.jackson.annotation.JsonValue;

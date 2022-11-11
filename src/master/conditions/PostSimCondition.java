@@ -17,7 +17,7 @@
 
 package master.conditions;
 
-import beast.core.BEASTObject;
+import beast.base.core.BEASTObject;
 import com.fasterxml.jackson.annotation.JsonValue;
 import master.InheritanceTrajectory;
 import master.Trajectory;

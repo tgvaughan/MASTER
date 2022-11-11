@@ -1,6 +1,6 @@
 package master.conditions;
 
-import beast.core.Input;
+import beast.base.core.Input;
 import master.model.Node;
 import master.model.Population;
 

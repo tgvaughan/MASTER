@@ -16,7 +16,7 @@
  */
 package master.steppers;
 
-import beast.util.Randomizer;
+import beast.base.util.Randomizer;
 import master.model.Model;
 import master.model.PopulationState;
 import master.model.Reaction;

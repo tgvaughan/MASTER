@@ -17,7 +17,7 @@
 
 package master.gui;
 
-import beast.core.BEASTObject;
+import beast.base.core.BEASTObject;
 import master.Ensemble;
 import master.EnsembleSummary;
 import master.InheritanceEnsemble;
@@ -41,7 +41,7 @@ public class MasterApp {
 
     MasterFrame view;
     
-    beast.core.Runnable runnable;
+    beast.base.inference.Runnable runnable;
     master.TrajectorySpec spec;
     
     JsonOutput jsonOutput;
@@ -76,7 +76,7 @@ public class MasterApp {
      * Set BEAST representation of a MASTER simulation
      * @param runnable 
      */
-    public void setRunnable(beast.core.Runnable runnable) {
+    public void setRunnable(beast.base.inference.Runnable runnable) {
         this.runnable = runnable;
     }
     

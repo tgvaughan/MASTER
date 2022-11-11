@@ -16,9 +16,9 @@
  */
 package master.model;
 
-import beast.core.BEASTObject;
-import beast.core.Input;
-import beast.core.parameter.IntegerParameter;
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
+import beast.base.inference.parameter.IntegerParameter;
 
 /**
  * Specifies a particular population/deme of a given type.

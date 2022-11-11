@@ -16,8 +16,8 @@
  */
 package master.postprocessors;
 
-import beast.core.BEASTObject;
-import beast.core.Input;
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
 import java.util.ArrayList;
 import java.util.List;
 import master.InheritanceTrajectory;

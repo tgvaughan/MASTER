@@ -16,14 +16,10 @@
  */
 package master.outputs;
 
-import beast.core.Description;
-import java.io.FileNotFoundException;
+import beast.base.core.Description;
 import master.InheritanceEnsemble;
-import master.model.Node;
-import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import master.InheritanceTrajectory;
+import master.model.Node;
 import master.model.Population;
 
 /**

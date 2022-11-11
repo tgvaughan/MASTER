@@ -17,7 +17,7 @@
 
 package master.utilities;
 
-import beast.core.parameter.RealParameter;
+import beast.base.inference.parameter.RealParameter;
 import java.io.PrintStream;
 import org.junit.Test;
 import static org.junit.Assert.*;

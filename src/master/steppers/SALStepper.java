@@ -16,8 +16,8 @@
  */
 package master.steppers;
 
-import beast.core.Input;
-import beast.util.Randomizer;
+import beast.base.core.Input;
+import beast.base.util.Randomizer;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
 import master.model.Model;

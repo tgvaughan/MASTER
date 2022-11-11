@@ -1,6 +1,9 @@
 package master.model;
 
-import beast.core.*;
+import beast.base.core.BEASTObject;
+import beast.base.core.Description;
+import beast.base.core.Input;
+
 import java.util.*;
 
 /**

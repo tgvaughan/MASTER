@@ -16,15 +16,13 @@
  */
 package master.model;
 
-import master.model.Node;
-import beast.core.BEASTObject;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
+import beast.base.core.BEASTObject;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
+
 import java.util.List;
-import master.model.Population;
 
 /**
  * @author Tim Vaughan <tgvaughan@gmail.com>

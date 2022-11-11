@@ -16,7 +16,7 @@
  */
 package master.steppers;
 
-import beast.core.BEASTObject;
+import beast.base.core.BEASTObject;
 import master.model.Model;
 import master.model.PopulationState;
 import com.fasterxml.jackson.annotation.JsonValue;

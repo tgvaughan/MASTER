@@ -1,12 +1,12 @@
 package master.xmltests;
 
 import beagle.BeagleFlag;
-import beast.app.BeastMCMC;
-import beast.app.beastapp.BeastMain;
-import beast.app.util.Arguments;
-import beast.core.util.Log;
-import beast.util.Randomizer;
-import beast.util.XMLParserException;
+import beast.base.core.Log;
+import beast.base.parser.XMLParserException;
+import beast.base.util.Randomizer;
+import beast.pkgmgmt.Arguments;
+import beastfx.app.beast.BeastMCMC;
+import beastfx.app.beast.BeastMain;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import org.junit.Test;
@@ -45,17 +45,12 @@ public abstract class XMLTestCase {
         // Compute MD5 hash of generated file
         for (File outFile : getOutputFileHashes().keySet()) {
             if (getOutputFileHashes().get(outFile) != null) {
-                //File filteredOutFile = truncateFloats(outFile);
 
                 String expectedHC = getOutputFileHashes().get(outFile);
-                //String actualHC = Files.hash(filteredOutFile, Hashing.md5()).toString();
                 String actualHC = Files.hash(outFile, Hashing.md5()).toString();
 
                 System.out.println("Expected: " + expectedHC + " Actual: " + actualHC);
                 assertEquals(expectedHC, actualHC);
-
-//                if (!filteredOutFile.delete())
-//                    throw new RuntimeException("Error deleting expected output file.");
             }
 
             if (!outFile.delete())
@@ -113,14 +108,10 @@ public abstract class XMLTestCase {
     private int beastMain(final String[] args) throws java.io.IOException {
 
         final List<String> MCMCargs = new ArrayList<>();
-//    	Utils.loadUIManager();
 
         final Arguments arguments = new Arguments(
                 new Arguments.Option[]{
 
-//                        new Arguments.Option("verbose", "Give verbose XML parsing messages"),
-//                        new Arguments.Option("warnings", "Show warning messages about BEAST XML file"),
-//                        new Arguments.Option("strict", "Fail on non-conforming BEAST XML file"),
                         new Arguments.Option("working", "Change working directory to input file's directory"),
                         new Arguments.LongOption("seed", "Specify a random number generator seed"),
                         new Arguments.StringOption("prefix", "PREFIX", "Specify a prefix for all output log filenames"),
@@ -338,9 +329,7 @@ public abstract class XMLTestCase {
             // set all the settings...
             MCMCargs.add(inputFile.getAbsolutePath());
             beastMCMC.parseArgs(MCMCargs.toArray(new String[MCMCargs.size()]));
-
-
-            new BeastMain(beastMCMC, null, maxErrorCount);
+            beastMCMC.run();
         } catch (RuntimeException rte) {
             // logger.severe will throw a RTE but we want to keep the console visible
         } catch (XMLParserException e) {

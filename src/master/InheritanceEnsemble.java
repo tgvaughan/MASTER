@@ -16,11 +16,11 @@
  */
 package master;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.util.Randomizer;
-import beast.core.Runnable;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.util.Randomizer;
+import beast.base.inference.Runnable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

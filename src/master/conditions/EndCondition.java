@@ -17,9 +17,9 @@
 
 package master.conditions;
 
-import beast.core.BEASTObject;
-import beast.core.Description;
-import beast.core.Input;
+import beast.base.core.BEASTObject;
+import beast.base.core.Description;
+import beast.base.core.Input;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.ArrayList;
 import java.util.List;

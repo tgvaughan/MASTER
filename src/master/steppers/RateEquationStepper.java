@@ -16,7 +16,7 @@
  */
 package master.steppers;
 
-import beast.core.Input;
+import beast.base.core.Input;
 import master.model.Model;
 import master.model.PopulationState;
 import master.model.Reaction;

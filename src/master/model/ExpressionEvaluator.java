@@ -1,6 +1,5 @@
 package master.model;
 
-import beast.math.GammaFunction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import beast.base.util.GammaFunction;
 import master.model.parsers.MASTERGrammarBaseVisitor;
 import master.model.parsers.MASTERGrammarParser;
 import org.antlr.v4.runtime.tree.ParseTree;

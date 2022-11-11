@@ -16,9 +16,9 @@
  */
 package master;
 
-import beast.core.BEASTObject;
-import beast.core.Input;
-import beast.util.Randomizer;
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
+import beast.base.util.Randomizer;
 import com.google.common.collect.*;
 import master.conditions.LeafCountEndCondition;
 import master.conditions.LineageEndCondition;

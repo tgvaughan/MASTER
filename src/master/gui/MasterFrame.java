@@ -17,31 +17,20 @@
 
 package master.gui;
 
-import beast.util.XMLParser;
-import java.io.File;
-import java.io.FileFilter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-import master.EnsembleSpec;
-import master.EnsembleSummarySpec;
-import master.InheritanceEnsemble;
-import master.InheritanceEnsembleSpec;
-import master.InheritanceTrajectory;
-import master.InheritanceTrajectorySpec;
-import master.TrajectorySpec;
+import beast.base.parser.XMLParser;
+import master.*;
 import master.model.Model;
 import master.model.PopulationType;
-import master.model.Reaction;
 import master.outputs.JsonOutput;
 import master.outputs.NewickOutput;
 import master.outputs.NexusOutput;
 import master.steppers.GillespieStepper;
 import master.steppers.SALStepper;
 import master.steppers.TauLeapingStepper;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.io.File;
 
 /**
  *
@@ -727,7 +716,7 @@ public class MasterFrame extends javax.swing.JFrame {
 
     }
     
-    public void updateExecutionTab(beast.core.Runnable runnable,
+    public void updateExecutionTab(beast.base.inference.Runnable runnable,
             JsonOutput jsonOutput,
             NewickOutput newickOutput,
             NexusOutput nexusOutput) {

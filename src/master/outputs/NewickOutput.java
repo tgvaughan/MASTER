@@ -16,13 +16,10 @@
  */
 package master.outputs;
 
-import beast.core.BEASTObject;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.LinkedHashMultiset;
-import com.google.common.collect.Multiset;
+import beast.base.core.BEASTObject;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
 import master.InheritanceEnsemble;
 import master.InheritanceTrajectory;
 import master.model.Node;

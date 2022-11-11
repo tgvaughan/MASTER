@@ -17,9 +17,9 @@
 
 package master;
 
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
-import beast.evolution.tree.coalescent.PopulationFunction;
+import beast.base.core.Input;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.tree.coalescent.PopulationFunction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

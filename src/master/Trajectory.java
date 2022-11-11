@@ -16,15 +16,15 @@
  */
 package master;
 
-import beast.core.BEASTObject;
+import beast.base.core.BEASTObject;
+import beast.base.inference.Runnable;
 import master.model.*;
 import master.conditions.PopulationEndCondition;
 import master.steppers.GillespieStepper;
 import master.steppers.Stepper;
 import master.outputs.TrajectoryOutput;
-import beast.core.Input;
-import beast.core.Runnable;
-import beast.util.Randomizer;
+import beast.base.core.Input;
+import beast.base.util.Randomizer;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Date;

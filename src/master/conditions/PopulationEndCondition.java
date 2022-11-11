@@ -18,7 +18,7 @@ package master.conditions;
 
 import master.model.Population;
 import master.model.PopulationState;
-import beast.core.Input;
+import beast.base.core.Input;
 
 /**
  * Population end condition which is met when (depending on the construction)

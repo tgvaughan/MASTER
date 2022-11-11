@@ -16,9 +16,9 @@
  */
 package master.conditions;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Input.Validate;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
 import java.util.List;
 import java.util.Map;
 import master.model.Node;

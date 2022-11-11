@@ -16,8 +16,8 @@
  */
 package master.conditions;
 
-import beast.core.Description;
-import beast.core.Input;
+import beast.base.core.Description;
+import beast.base.core.Input;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import java.util.ArrayList;

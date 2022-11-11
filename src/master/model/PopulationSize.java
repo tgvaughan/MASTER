@@ -1,8 +1,8 @@
 package master.model;
 
-import beast.core.BEASTObject;
-import beast.core.Description;
-import beast.core.Input;
+import beast.base.core.BEASTObject;
+import beast.base.core.Description;
+import beast.base.core.Input;
 import master.model.parsers.MASTERGrammarBaseListener;
 import master.model.parsers.MASTERGrammarLexer;
 import master.model.parsers.MASTERGrammarParser;

@@ -16,8 +16,8 @@
  */
 package master.outputs;
 
-import beast.core.BEASTObject;
-import beast.core.Input;
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.FileNotFoundException;

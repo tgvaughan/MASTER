@@ -1,6 +1,5 @@
-// Generated from PFExpression.g4 by ANTLR 4.2
+// Generated from /Users/vaughant/code/beast_and_friends/MASTER/src/master/utilities/pfe/PFExpression.g4 by ANTLR 4.10.1
 package master.utilities.pfe;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -9,123 +8,131 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface PFExpressionListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#Bracketed}.
-	 * @param ctx the parse tree
-	 */
-	void enterBracketed(@NotNull PFExpressionParser.BracketedContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#Bracketed}.
-	 * @param ctx the parse tree
-	 */
-	void exitBracketed(@NotNull PFExpressionParser.BracketedContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#Mul}.
-	 * @param ctx the parse tree
-	 */
-	void enterMul(@NotNull PFExpressionParser.MulContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#Mul}.
-	 * @param ctx the parse tree
-	 */
-	void exitMul(@NotNull PFExpressionParser.MulContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#MulOrDiv}.
-	 * @param ctx the parse tree
-	 */
-	void enterMulOrDiv(@NotNull PFExpressionParser.MulOrDivContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#MulOrDiv}.
-	 * @param ctx the parse tree
-	 */
-	void exitMulOrDiv(@NotNull PFExpressionParser.MulOrDivContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link PFExpressionParser#start}.
 	 * @param ctx the parse tree
 	 */
-	void enterStart(@NotNull PFExpressionParser.StartContext ctx);
+	void enterStart(PFExpressionParser.StartContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link PFExpressionParser#start}.
 	 * @param ctx the parse tree
 	 */
-	void exitStart(@NotNull PFExpressionParser.StartContext ctx);
-
+	void exitStart(PFExpressionParser.StartContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#Add}.
+	 * Enter a parse tree produced by the {@code Add}
+	 * labeled alternative in {@link PFExpressionParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterAdd(@NotNull PFExpressionParser.AddContext ctx);
+	void enterAdd(PFExpressionParser.AddContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#Add}.
+	 * Exit a parse tree produced by the {@code Add}
+	 * labeled alternative in {@link PFExpressionParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitAdd(@NotNull PFExpressionParser.AddContext ctx);
-
+	void exitAdd(PFExpressionParser.AddContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#number}.
+	 * Enter a parse tree produced by the {@code Sub}
+	 * labeled alternative in {@link PFExpressionParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterNumber(@NotNull PFExpressionParser.NumberContext ctx);
+	void enterSub(PFExpressionParser.SubContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#number}.
+	 * Exit a parse tree produced by the {@code Sub}
+	 * labeled alternative in {@link PFExpressionParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitNumber(@NotNull PFExpressionParser.NumberContext ctx);
-
+	void exitSub(PFExpressionParser.SubContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#pop}.
+	 * Enter a parse tree produced by the {@code MulOrDiv}
+	 * labeled alternative in {@link PFExpressionParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterPop(@NotNull PFExpressionParser.PopContext ctx);
+	void enterMulOrDiv(PFExpressionParser.MulOrDivContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#pop}.
+	 * Exit a parse tree produced by the {@code MulOrDiv}
+	 * labeled alternative in {@link PFExpressionParser#expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitPop(@NotNull PFExpressionParser.PopContext ctx);
-
+	void exitMulOrDiv(PFExpressionParser.MulOrDivContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#Sub}.
+	 * Enter a parse tree produced by the {@code Div}
+	 * labeled alternative in {@link PFExpressionParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void enterSub(@NotNull PFExpressionParser.SubContext ctx);
+	void enterDiv(PFExpressionParser.DivContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#Sub}.
+	 * Exit a parse tree produced by the {@code Div}
+	 * labeled alternative in {@link PFExpressionParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void exitSub(@NotNull PFExpressionParser.SubContext ctx);
-
+	void exitDiv(PFExpressionParser.DivContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#Unit}.
+	 * Enter a parse tree produced by the {@code Mul}
+	 * labeled alternative in {@link PFExpressionParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void enterUnit(@NotNull PFExpressionParser.UnitContext ctx);
+	void enterMul(PFExpressionParser.MulContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#Unit}.
+	 * Exit a parse tree produced by the {@code Mul}
+	 * labeled alternative in {@link PFExpressionParser#term}.
 	 * @param ctx the parse tree
 	 */
-	void exitUnit(@NotNull PFExpressionParser.UnitContext ctx);
-
+	void exitMul(PFExpressionParser.MulContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Unit}
+	 * labeled alternative in {@link PFExpressionParser#term}.
+	 * @param ctx the parse tree
+	 */
+	void enterUnit(PFExpressionParser.UnitContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Unit}
+	 * labeled alternative in {@link PFExpressionParser#term}.
+	 * @param ctx the parse tree
+	 */
+	void exitUnit(PFExpressionParser.UnitContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code Bracketed}
+	 * labeled alternative in {@link PFExpressionParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void enterBracketed(PFExpressionParser.BracketedContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code Bracketed}
+	 * labeled alternative in {@link PFExpressionParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void exitBracketed(PFExpressionParser.BracketedContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code pop}
+	 * labeled alternative in {@link PFExpressionParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void enterPop(PFExpressionParser.PopContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code pop}
+	 * labeled alternative in {@link PFExpressionParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void exitPop(PFExpressionParser.PopContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code number}
+	 * labeled alternative in {@link PFExpressionParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void enterNumber(PFExpressionParser.NumberContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code number}
+	 * labeled alternative in {@link PFExpressionParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void exitNumber(PFExpressionParser.NumberContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link PFExpressionParser#population}.
 	 * @param ctx the parse tree
 	 */
-	void enterPopulation(@NotNull PFExpressionParser.PopulationContext ctx);
+	void enterPopulation(PFExpressionParser.PopulationContext ctx);
 	/**
 	 * Exit a parse tree produced by {@link PFExpressionParser#population}.
 	 * @param ctx the parse tree
 	 */
-	void exitPopulation(@NotNull PFExpressionParser.PopulationContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link PFExpressionParser#Div}.
-	 * @param ctx the parse tree
-	 */
-	void enterDiv(@NotNull PFExpressionParser.DivContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PFExpressionParser#Div}.
-	 * @param ctx the parse tree
-	 */
-	void exitDiv(@NotNull PFExpressionParser.DivContext ctx);
+	void exitPopulation(PFExpressionParser.PopulationContext ctx);
 }

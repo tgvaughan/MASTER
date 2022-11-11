@@ -1,4 +1,4 @@
-// Generated from /Users/vaughant/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.7
+// Generated from /Users/vaughant/code/beast_and_friends/MASTER/src/master/model/parsers/MASTERGrammar.g4 by ANTLR 4.10.1
 package master.model.parsers;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 

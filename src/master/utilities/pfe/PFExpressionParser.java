@@ -1,4 +1,4 @@
-// Generated from /Users/vaughant/code/beast_and_friends/MASTER/src/master/utilities/pfe/PFExpression.g4 by ANTLR 4.7
+// Generated from /Users/vaughant/code/beast_and_friends/MASTER/src/master/utilities/pfe/PFExpression.g4 by ANTLR 4.10.1
 package master.utilities.pfe;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class PFExpressionParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.10.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -21,16 +21,25 @@ public class PFExpressionParser extends Parser {
 		WHITESPACE=10;
 	public static final int
 		RULE_start = 0, RULE_expression = 1, RULE_term = 2, RULE_factor = 3, RULE_population = 4;
-	public static final String[] ruleNames = {
-		"start", "expression", "term", "factor", "population"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"start", "expression", "term", "factor", "population"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, "'+'", "'-'", "'*'", "'/'", "'('", "')'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, null, null, "POPTYPE", "LOC", "NUM", "WHITESPACE"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, "'+'", "'-'", "'*'", "'/'", "'('", "')'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, null, null, null, null, null, null, "POPTYPE", "LOC", "NUM", "WHITESPACE"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -80,6 +89,7 @@ public class PFExpressionParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class StartContext extends ParserRuleContext {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -88,6 +98,14 @@ public class PFExpressionParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_start; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterStart(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitStart(this);
+		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitStart(this);
@@ -136,6 +154,14 @@ public class PFExpressionParser extends Parser {
 		}
 		public AddContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterAdd(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitAdd(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitAdd(this);
 			else return visitor.visitChildren(this);
@@ -150,6 +176,14 @@ public class PFExpressionParser extends Parser {
 		}
 		public SubContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterSub(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitSub(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitSub(this);
 			else return visitor.visitChildren(this);
@@ -160,6 +194,14 @@ public class PFExpressionParser extends Parser {
 			return getRuleContext(TermContext.class,0);
 		}
 		public MulOrDivContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterMulOrDiv(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitMulOrDiv(this);
+		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitMulOrDiv(this);
@@ -266,6 +308,14 @@ public class PFExpressionParser extends Parser {
 		}
 		public DivContext(TermContext ctx) { copyFrom(ctx); }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterDiv(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitDiv(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitDiv(this);
 			else return visitor.visitChildren(this);
@@ -280,6 +330,14 @@ public class PFExpressionParser extends Parser {
 		}
 		public MulContext(TermContext ctx) { copyFrom(ctx); }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterMul(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitMul(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitMul(this);
 			else return visitor.visitChildren(this);
@@ -290,6 +348,14 @@ public class PFExpressionParser extends Parser {
 			return getRuleContext(FactorContext.class,0);
 		}
 		public UnitContext(TermContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterUnit(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitUnit(this);
+		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitUnit(this);
@@ -393,6 +459,14 @@ public class PFExpressionParser extends Parser {
 		}
 		public PopContext(FactorContext ctx) { copyFrom(ctx); }
 		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterPop(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitPop(this);
+		}
+		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitPop(this);
 			else return visitor.visitChildren(this);
@@ -401,6 +475,14 @@ public class PFExpressionParser extends Parser {
 	public static class NumberContext extends FactorContext {
 		public TerminalNode NUM() { return getToken(PFExpressionParser.NUM, 0); }
 		public NumberContext(FactorContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterNumber(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitNumber(this);
+		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitNumber(this);
@@ -412,6 +494,14 @@ public class PFExpressionParser extends Parser {
 			return getRuleContext(ExpressionContext.class,0);
 		}
 		public BracketedContext(FactorContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterBracketed(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitBracketed(this);
+		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitBracketed(this);
@@ -476,6 +566,14 @@ public class PFExpressionParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_population; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).enterPopulation(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof PFExpressionListener ) ((PFExpressionListener)listener).exitPopulation(this);
+		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof PFExpressionVisitor ) return ((PFExpressionVisitor<? extends T>)visitor).visitPopulation(this);
@@ -543,21 +641,39 @@ public class PFExpressionParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\f\67\4\2\t\2\4\3"+
-		"\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
-		"\3\7\3\30\n\3\f\3\16\3\33\13\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\7\4"+
-		"&\n\4\f\4\16\4)\13\4\3\5\3\5\3\5\3\5\3\5\3\5\5\5\61\n\5\3\6\3\6\5\6\65"+
-		"\n\6\3\6\2\4\4\6\7\2\4\6\b\n\2\2\28\2\f\3\2\2\2\4\16\3\2\2\2\6\34\3\2"+
-		"\2\2\b\60\3\2\2\2\n\62\3\2\2\2\f\r\5\4\3\2\r\3\3\2\2\2\16\17\b\3\1\2\17"+
-		"\20\5\6\4\2\20\31\3\2\2\2\21\22\f\5\2\2\22\23\7\3\2\2\23\30\5\6\4\2\24"+
-		"\25\f\4\2\2\25\26\7\4\2\2\26\30\5\6\4\2\27\21\3\2\2\2\27\24\3\2\2\2\30"+
-		"\33\3\2\2\2\31\27\3\2\2\2\31\32\3\2\2\2\32\5\3\2\2\2\33\31\3\2\2\2\34"+
-		"\35\b\4\1\2\35\36\5\b\5\2\36\'\3\2\2\2\37 \f\5\2\2 !\7\5\2\2!&\5\b\5\2"+
-		"\"#\f\4\2\2#$\7\6\2\2$&\5\b\5\2%\37\3\2\2\2%\"\3\2\2\2&)\3\2\2\2\'%\3"+
-		"\2\2\2\'(\3\2\2\2(\7\3\2\2\2)\'\3\2\2\2*+\7\7\2\2+,\5\4\3\2,-\7\b\2\2"+
-		"-\61\3\2\2\2.\61\5\n\6\2/\61\7\13\2\2\60*\3\2\2\2\60.\3\2\2\2\60/\3\2"+
-		"\2\2\61\t\3\2\2\2\62\64\7\t\2\2\63\65\7\n\2\2\64\63\3\2\2\2\64\65\3\2"+
-		"\2\2\65\13\3\2\2\2\b\27\31%\'\60\64";
+		"\u0004\u0001\n5\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0001"+
+		"\u0000\u0001\u0000\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001"+
+		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0005\u0001\u0016"+
+		"\b\u0001\n\u0001\f\u0001\u0019\t\u0001\u0001\u0002\u0001\u0002\u0001\u0002"+
+		"\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002"+
+		"\u0005\u0002$\b\u0002\n\u0002\f\u0002\'\t\u0002\u0001\u0003\u0001\u0003"+
+		"\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0003\u0003/\b\u0003"+
+		"\u0001\u0004\u0001\u0004\u0003\u00043\b\u0004\u0001\u0004\u0000\u0002"+
+		"\u0002\u0004\u0005\u0000\u0002\u0004\u0006\b\u0000\u00006\u0000\n\u0001"+
+		"\u0000\u0000\u0000\u0002\f\u0001\u0000\u0000\u0000\u0004\u001a\u0001\u0000"+
+		"\u0000\u0000\u0006.\u0001\u0000\u0000\u0000\b0\u0001\u0000\u0000\u0000"+
+		"\n\u000b\u0003\u0002\u0001\u0000\u000b\u0001\u0001\u0000\u0000\u0000\f"+
+		"\r\u0006\u0001\uffff\uffff\u0000\r\u000e\u0003\u0004\u0002\u0000\u000e"+
+		"\u0017\u0001\u0000\u0000\u0000\u000f\u0010\n\u0003\u0000\u0000\u0010\u0011"+
+		"\u0005\u0001\u0000\u0000\u0011\u0016\u0003\u0004\u0002\u0000\u0012\u0013"+
+		"\n\u0002\u0000\u0000\u0013\u0014\u0005\u0002\u0000\u0000\u0014\u0016\u0003"+
+		"\u0004\u0002\u0000\u0015\u000f\u0001\u0000\u0000\u0000\u0015\u0012\u0001"+
+		"\u0000\u0000\u0000\u0016\u0019\u0001\u0000\u0000\u0000\u0017\u0015\u0001"+
+		"\u0000\u0000\u0000\u0017\u0018\u0001\u0000\u0000\u0000\u0018\u0003\u0001"+
+		"\u0000\u0000\u0000\u0019\u0017\u0001\u0000\u0000\u0000\u001a\u001b\u0006"+
+		"\u0002\uffff\uffff\u0000\u001b\u001c\u0003\u0006\u0003\u0000\u001c%\u0001"+
+		"\u0000\u0000\u0000\u001d\u001e\n\u0003\u0000\u0000\u001e\u001f\u0005\u0003"+
+		"\u0000\u0000\u001f$\u0003\u0006\u0003\u0000 !\n\u0002\u0000\u0000!\"\u0005"+
+		"\u0004\u0000\u0000\"$\u0003\u0006\u0003\u0000#\u001d\u0001\u0000\u0000"+
+		"\u0000# \u0001\u0000\u0000\u0000$\'\u0001\u0000\u0000\u0000%#\u0001\u0000"+
+		"\u0000\u0000%&\u0001\u0000\u0000\u0000&\u0005\u0001\u0000\u0000\u0000"+
+		"\'%\u0001\u0000\u0000\u0000()\u0005\u0005\u0000\u0000)*\u0003\u0002\u0001"+
+		"\u0000*+\u0005\u0006\u0000\u0000+/\u0001\u0000\u0000\u0000,/\u0003\b\u0004"+
+		"\u0000-/\u0005\t\u0000\u0000.(\u0001\u0000\u0000\u0000.,\u0001\u0000\u0000"+
+		"\u0000.-\u0001\u0000\u0000\u0000/\u0007\u0001\u0000\u0000\u000002\u0005"+
+		"\u0007\u0000\u000013\u0005\b\u0000\u000021\u0001\u0000\u0000\u000023\u0001"+
+		"\u0000\u0000\u00003\t\u0001\u0000\u0000\u0000\u0006\u0015\u0017#%.2";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
